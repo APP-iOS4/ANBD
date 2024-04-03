@@ -16,6 +16,7 @@
 		CB7BEDF02BBD537A00C0F298 /* Pretendard-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CB7BEDEB2BBD537A00C0F298 /* Pretendard-SemiBold.otf */; };
 		CB7BEDF22BBD538A00C0F298 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB7BEDF12BBD538A00C0F298 /* Colors.xcassets */; };
 		CB7BEE412BBD588000C0F298 /* ANBDModel in Frameworks */ = {isa = PBXBuildFile; productRef = CB7BEE402BBD588000C0F298 /* ANBDModel */; };
+		CB7BEE452BBD5C3D00C0F298 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CB7BEE442BBD5C3D00C0F298 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		CB7BEDEA2BBD537A00C0F298 /* Pretendard-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Regular.otf"; sourceTree = "<group>"; };
 		CB7BEDEB2BBD537A00C0F298 /* Pretendard-SemiBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-SemiBold.otf"; sourceTree = "<group>"; };
 		CB7BEDF12BBD538A00C0F298 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
+		CB7BEE442BBD5C3D00C0F298 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +102,7 @@
 		CB7BEE032BBD54D900C0F298 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				CB7BEE442BBD5C3D00C0F298 /* GoogleService-Info.plist */,
 				CB7BEDEC2BBD537A00C0F298 /* Font */,
 				CB7BEDD62BBD4EE500C0F298 /* Assets.xcassets */,
 				CB7BEDF12BBD538A00C0F298 /* Colors.xcassets */,
@@ -186,6 +189,7 @@
 				CB7BEDED2BBD537A00C0F298 /* Pretendard-Bold.otf in Resources */,
 				CB7BEDEF2BBD537A00C0F298 /* Pretendard-Regular.otf in Resources */,
 				CB7BEDF22BBD538A00C0F298 /* Colors.xcassets in Resources */,
+				CB7BEE452BBD5C3D00C0F298 /* GoogleService-Info.plist in Resources */,
 				CB7BEDF02BBD537A00C0F298 /* Pretendard-SemiBold.otf in Resources */,
 				CB7BEDEE2BBD537A00C0F298 /* Pretendard-Medium.otf in Resources */,
 			);

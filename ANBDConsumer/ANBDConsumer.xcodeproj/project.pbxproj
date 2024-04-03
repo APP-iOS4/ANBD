@@ -31,6 +31,7 @@
 		CB7BEE372BBD57CE00C0F298 /* CommunityViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7BEE362BBD57CE00C0F298 /* CommunityViewModel.swift */; };
 		CB7BEE3B2BBD57FD00C0F298 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7BEE3A2BBD57FD00C0F298 /* HomeViewModel.swift */; };
 		CB7BEE3E2BBD587200C0F298 /* ANBDModel in Frameworks */ = {isa = PBXBuildFile; productRef = CB7BEE3D2BBD587200C0F298 /* ANBDModel */; };
+		CB7BEE432BBD5BEC00C0F298 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CB7BEE422BBD5BEC00C0F298 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +59,7 @@
 		CB7BEE322BBD57B500C0F298 /* TradeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeViewModel.swift; sourceTree = "<group>"; };
 		CB7BEE362BBD57CE00C0F298 /* CommunityViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityViewModel.swift; sourceTree = "<group>"; };
 		CB7BEE3A2BBD57FD00C0F298 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		CB7BEE422BBD5BEC00C0F298 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -137,6 +139,7 @@
 		CB7BEE062BBD551800C0F298 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				CB7BEE422BBD5BEC00C0F298 /* GoogleService-Info.plist */,
 				CB7BEDF72BBD539F00C0F298 /* Font */,
 				CB7BEDBC2BBD4E9F00C0F298 /* Assets.xcassets */,
 				CB7BEDFC2BBD53AF00C0F298 /* Colors.xcassets */,
@@ -396,6 +399,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CB7BEDBD2BBD4E9F00C0F298 /* Assets.xcassets in Resources */,
+				CB7BEE432BBD5BEC00C0F298 /* GoogleService-Info.plist in Resources */,
 				CB7BEDFA2BBD53A000C0F298 /* Pretendard-Regular.otf in Resources */,
 				CB7BEDFB2BBD53A000C0F298 /* Pretendard-SemiBold.otf in Resources */,
 				CB7BEDFD2BBD53AF00C0F298 /* Colors.xcassets in Resources */,

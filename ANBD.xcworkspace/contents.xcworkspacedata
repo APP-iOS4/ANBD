@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:ANBDModel">
+   </FileRef>
+   <FileRef
+      location = "group:ANBDConsumer/ANBDConsumer.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:ANBDAdmin/ANBDAdmin.xcodeproj">
+   </FileRef>
+</Workspace>

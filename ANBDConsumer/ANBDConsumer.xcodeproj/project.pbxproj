@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CB198CF02BBF8E84000C2709 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198CEF2BBF8E84000C2709 /* Category.swift */; };
 		CB7BEDB92BBD4E9D00C0F298 /* ANBDConsumerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7BEDB82BBD4E9D00C0F298 /* ANBDConsumerApp.swift */; };
 		CB7BEDBB2BBD4E9D00C0F298 /* ANBDTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7BEDBA2BBD4E9D00C0F298 /* ANBDTabView.swift */; };
 		CB7BEDBD2BBD4E9F00C0F298 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB7BEDBC2BBD4E9F00C0F298 /* Assets.xcassets */; };
@@ -35,6 +36,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CB198CEF2BBF8E84000C2709 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		CB7BEDB52BBD4E9D00C0F298 /* ANBDConsumer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ANBDConsumer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB7BEDB82BBD4E9D00C0F298 /* ANBDConsumerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ANBDConsumerApp.swift; sourceTree = "<group>"; };
 		CB7BEDBA2BBD4E9D00C0F298 /* ANBDTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ANBDTabView.swift; sourceTree = "<group>"; };
@@ -230,6 +232,7 @@
 			isa = PBXGroup;
 			children = (
 				CB7BEE202BBD568A00C0F298 /* ANBDFont.swift */,
+				CB198CEF2BBF8E84000C2709 /* Category.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -420,6 +423,7 @@
 				CB7BEE272BBD575700C0F298 /* AuthenticationViewModel.swift in Sources */,
 				CB7BEE1D2BBD566700C0F298 /* HomeView.swift in Sources */,
 				CB7BEE332BBD57B500C0F298 /* TradeViewModel.swift in Sources */,
+				CB198CF02BBF8E84000C2709 /* Category.swift in Sources */,
 				CB7BEE372BBD57CE00C0F298 /* CommunityViewModel.swift in Sources */,
 				CB7BEE112BBD563700C0F298 /* CommonUIView.swift in Sources */,
 				CB7BEE192BBD565500C0F298 /* TradeView.swift in Sources */,

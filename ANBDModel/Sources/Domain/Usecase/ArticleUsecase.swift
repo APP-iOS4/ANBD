@@ -1,6 +1,6 @@
 //
-//  File.swift
-//  
+//  ArticleUsecase.swift
+//
 //
 //  Created by 유지호 on 4/5/24.
 //

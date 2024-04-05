@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A83F2F982BBFC07C00E3EB13 /* NormalCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83F2F972BBFC07C00E3EB13 /* NormalCarouselView.swift */; };
+		A83F2F9B2BBFCD7D00E3EB13 /* SafariWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83F2F9A2BBFCD7D00E3EB13 /* SafariWebView.swift */; };
 		CB198CF02BBF8E84000C2709 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198CEF2BBF8E84000C2709 /* Category.swift */; };
 		CB198CF22BBF8FC8000C2709 /* CategoryDividerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198CF12BBF8FC8000C2709 /* CategoryDividerView.swift */; };
 		CB198CF62BBFD0A3000C2709 /* WriteButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198CF52BBFD0A3000C2709 /* WriteButtonView.swift */; };
@@ -39,6 +41,8 @@
 
 /* Begin PBXFileReference section */
 		A83F2F962BBF951E00E3EB13 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		A83F2F972BBFC07C00E3EB13 /* NormalCarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalCarouselView.swift; sourceTree = "<group>"; };
+		A83F2F9A2BBFCD7D00E3EB13 /* SafariWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebView.swift; sourceTree = "<group>"; };
 		CB198CEF2BBF8E84000C2709 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		CB198CF12BBF8FC8000C2709 /* CategoryDividerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryDividerView.swift; sourceTree = "<group>"; };
 		CB198CF52BBFD0A3000C2709 /* WriteButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteButtonView.swift; sourceTree = "<group>"; };
@@ -222,6 +226,8 @@
 			isa = PBXGroup;
 			children = (
 				CB7BEE102BBD563700C0F298 /* CommonUIView.swift */,
+				A83F2F972BBFC07C00E3EB13 /* NormalCarouselView.swift */,
+				A83F2F9A2BBFCD7D00E3EB13 /* SafariWebView.swift */,
 				CB198CF12BBF8FC8000C2709 /* CategoryDividerView.swift */,
 				CB198CF52BBFD0A3000C2709 /* WriteButtonView.swift */,
 			);
@@ -427,6 +433,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CB7BEE3B2BBD57FD00C0F298 /* HomeViewModel.swift in Sources */,
+				A83F2F9B2BBFCD7D00E3EB13 /* SafariWebView.swift in Sources */,
 				CB7BEE2B2BBD578A00C0F298 /* MypageViewModel.swift in Sources */,
 				CB7BEE272BBD575700C0F298 /* AuthenticationViewModel.swift in Sources */,
 				CB7BEE1D2BBD566700C0F298 /* HomeView.swift in Sources */,
@@ -444,6 +451,7 @@
 				CB7BEE1B2BBD565C00C0F298 /* CommunityView.swift in Sources */,
 				CB7BEE232BBD56B900C0F298 /* View+Extension.swift in Sources */,
 				CB7BEDB92BBD4E9D00C0F298 /* ANBDConsumerApp.swift in Sources */,
+				A83F2F982BBFC07C00E3EB13 /* NormalCarouselView.swift in Sources */,
 				CB7BEE172BBD564E00C0F298 /* ChatView.swift in Sources */,
 				CB7BEE152BBD564800C0F298 /* MypageView.swift in Sources */,
 			);

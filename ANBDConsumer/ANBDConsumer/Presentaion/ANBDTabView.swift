@@ -11,7 +11,7 @@ struct ANBDTabView: View {
     var body: some View {
         TabView {
             NavigationStack {
-                //HomeView()
+                HomeView()
             }
             .tabItem {
                 Label("홈", systemImage: "house")

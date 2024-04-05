@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum Location: String, Codable {
+public enum Location: String, Codable, CaseIterable {
     case seoul = "서울"
     case gyeonggi = "경기"
     case incheon = "인천"

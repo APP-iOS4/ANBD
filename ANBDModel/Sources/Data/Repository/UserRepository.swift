@@ -68,7 +68,7 @@ struct DefaultUserRepository: UserRepository {
         guard let _ = try? await userDB.document(user.id).updateData([
             "nickname": user.nickname,
             "favoriteLocation": user.favoriteLocation,
-            "userLevel": user.userLevel,
+            "userLevel": user.userLevel.rawValue,
             "isAgreeMarketing": user.isAgreeMarketing,
             "likeArticles": user.likeArticles,
             "likeTrades": user.likeTrades

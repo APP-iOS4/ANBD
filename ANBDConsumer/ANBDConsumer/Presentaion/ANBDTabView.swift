@@ -26,7 +26,7 @@ struct ANBDTabView: View {
             }
             
             NavigationStack {
-                //NBView()
+                TradeView()
             }
             .tabItem {
                 Label("나눔·거래", systemImage: "arrow.3.trianglepath")

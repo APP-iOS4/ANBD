@@ -14,12 +14,17 @@ struct TradeView: View {
         ZStack(alignment: .bottomTrailing) {
             VStack {
                 CategoryDividerView(category: $category)
+                
+                TabView(selection: $category) {
+                    listView
+                    listView
+                }
             }//VStack
             
             Button(action: {
                 
             }, label: {
-                
+                WriteButtonView()
             })
         }//ZStack
         .navigationTitle("나눔 · 거래")
@@ -30,6 +35,19 @@ struct TradeView: View {
             }
         }
     }
+}
+
+extension TradeView {
+    var listView: some View {
+        ScrollView {
+            LazyVStack {
+//                ForEach() { item in
+//                    NavigationLink(value: )
+//                }
+            }
+        }
+    }
+    
 }
 
 

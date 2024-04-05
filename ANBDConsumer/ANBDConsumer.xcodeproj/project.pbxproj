@@ -32,6 +32,7 @@
 		CB7BEE3B2BBD57FD00C0F298 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7BEE3A2BBD57FD00C0F298 /* HomeViewModel.swift */; };
 		CB7BEE3E2BBD587200C0F298 /* ANBDModel in Frameworks */ = {isa = PBXBuildFile; productRef = CB7BEE3D2BBD587200C0F298 /* ANBDModel */; };
 		CB7BEE432BBD5BEC00C0F298 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CB7BEE422BBD5BEC00C0F298 /* GoogleService-Info.plist */; };
+		D75C3A4D2BBF8C6900ED948C /* CommunityListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75C3A4C2BBF8C6900ED948C /* CommunityListCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,6 +61,7 @@
 		CB7BEE362BBD57CE00C0F298 /* CommunityViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityViewModel.swift; sourceTree = "<group>"; };
 		CB7BEE3A2BBD57FD00C0F298 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		CB7BEE422BBD5BEC00C0F298 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		D75C3A4C2BBF8C6900ED948C /* CommunityListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityListCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -302,6 +304,7 @@
 			isa = PBXGroup;
 			children = (
 				CB7BEE1A2BBD565C00C0F298 /* CommunityView.swift */,
+				D75C3A4C2BBF8C6900ED948C /* CommunityListCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -416,6 +419,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CB7BEE3B2BBD57FD00C0F298 /* HomeViewModel.swift in Sources */,
+				D75C3A4D2BBF8C6900ED948C /* CommunityListCell.swift in Sources */,
 				CB7BEE2B2BBD578A00C0F298 /* MypageViewModel.swift in Sources */,
 				CB7BEE272BBD575700C0F298 /* AuthenticationViewModel.swift in Sources */,
 				CB7BEE1D2BBD566700C0F298 /* HomeView.swift in Sources */,

@@ -128,13 +128,13 @@ struct StorageManager {
     public func downloadImage(
         path storagePath: StoragePath,
         containerID: String,
-        imageURL: String
+        imagePath: String
     ) async throws -> Data {
         return try await withCheckedThrowingContinuation { continuation in
             storageRef
                 .child(storagePath.rawValue)
                 .child(containerID)
-                .child(imageURL)
+                .child(imagePath)
                 .getData(maxSize: 1 * 1024 * 1024) { result in
                     switch result {
                     case .success(let imageData):
@@ -156,12 +156,12 @@ struct StorageManager {
     public func downloadImageList(
         path storagePath: StoragePath,
         containerID: String,
-        imageURLs: [String]
+        imagePaths: [String]
     ) async throws -> [Data] {
         var imageDatas: [Data] = []
         
-        for imageURL in imageURLs {
-            let imageData = try await downloadImage(path: storagePath, containerID: containerID, imageURL: imageURL)
+        for imagePath in imagePaths {
+            let imageData = try await downloadImage(path: storagePath, containerID: containerID, imagePath: imagePath)
             imageDatas.append(imageData)
         }
         
@@ -173,12 +173,12 @@ struct StorageManager {
     public func deleteImage(
         path storagePath: StoragePath,
         containerID: String,
-        imageURL: String
+        imagePath: String
     ) async throws {
         guard let _ = try? await storageRef
             .child(storagePath.rawValue)
             .child(containerID)
-            .child(imageURL)
+            .child(imagePath)
             .delete()
         else {
             throw StorageError.deleteError
@@ -190,10 +190,10 @@ struct StorageManager {
     public func deleteImageList(
         path storagePath: StoragePath,
         containerID: String,
-        imageURLs: [String]
+        imagePaths: [String]
     ) async throws {
-        for imageURL in imageURLs {
-            try await deleteImage(path: storagePath, containerID: containerID, imageURL: imageURL)
+        for imagePath in imagePaths {
+            try await deleteImage(path: storagePath, containerID: containerID, imagePath: imagePath)
         }
     }
 }

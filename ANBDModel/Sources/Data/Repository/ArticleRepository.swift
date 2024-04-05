@@ -60,8 +60,8 @@ struct DefaultArticleRepository: ArticleRepository {
     
     // MARK: Update
     func updateArticle(article: Article) async throws {
-        guard let _ = try? await articleDB.document(article.id).setData([
-            "category": article.category,
+        guard let _ = try? await articleDB.document(article.id).updateData([
+            "category": article.category.rawValue,
             "title": article.title,
             "content": article.content,
             "imagePaths": article.imagePaths,

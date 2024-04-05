@@ -1,37 +1,11 @@
 //
-//  File.swift
-//  
+//  User.swift
+//
 //
 //  Created by 유지호 on 4/3/24.
 //
 
 import Foundation
-
-public enum UserLevel: Int, Codable {
-    case banned = 0
-    case consumer = 1
-    case admin = 2
-}
-
-public enum Location: String, Codable {
-    case seoul
-    case gyeonggi
-    case incheon
-    case gwangju
-    case busan
-    case dague
-    case daejeon
-    case ulsan
-    case gangwon
-    case gyeongBuk
-    case gyeongNam
-    case jeonBuk
-    case jeonNam
-    case chungBuk
-    case chungNam
-    case sejong
-    case jeju
-}
 
 /// DB에 저장되는 유저의 정보
 public struct User: Codable, Identifiable {

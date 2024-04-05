@@ -11,28 +11,30 @@ struct HomeView: View {
     @EnvironmentObject private var homeViewModel: HomeViewModel
     
     var body: some View {
-        ScrollView {
-            LazyVStack {
-                adView
-                
-                accuaView
-                
-                Divider()
-                    .padding(.vertical, 20)
-                
-                nanuaView
-                
-                Divider()
-                    .padding(.vertical, 20)
-                
-                baccuaView
-                
-                Divider()
-                    .padding(.vertical, 20)
-                
-                dasiView
+        GeometryReader { geometry in
+            ScrollView {
+                LazyVStack {
+                    adView
+                    
+                    AccuaView(geo: geometry)
+                    
+                    Divider()
+                        .padding(.vertical, 20)
+                    
+                    nanuaView
+                    
+                    Divider()
+                        .padding(.vertical, 20)
+                    
+                    baccuaView
+                    
+                    Divider()
+                        .padding(.vertical, 20)
+                    
+                    DasiView(geo: geometry)
+                }
+                .padding()
             }
-            .padding()
         }
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
@@ -42,20 +44,20 @@ struct HomeView: View {
                     .padding(.leading, 4)
             }
             
-            /// SearchView로 이동
             ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    
-                }, label: {
+                NavigationLink(value: "검색하기 뷰") {
                     Image(systemName: "magnifyingglass")
                         .resizable()
                         .frame(width: 20)
                         .foregroundStyle(.gray900)
-                })
+                }
             }
         }
         .fullScreenCover(isPresented: $homeViewModel.isShowingWebView) {
             SafariWebView(url: URL(string: homeViewModel.blogURL) ?? URL(string: "www.naver.com")!)
+        }
+        .navigationDestination(for: String.self) { text in
+            Text(text)
         }
     }
     
@@ -77,11 +79,13 @@ struct HomeView: View {
     
     
     // MARK: - 아껴쓰기 Section
-    private var accuaView: some View {
-        VStack(alignment: .leading) {
+    @ViewBuilder
+    private func AccuaView(geo: GeometryProxy) -> some View {
+        VStack {
             SectionHeaderView(.accua)
             
             CommunityCellView(.accua)
+                .frame(width: geo.size.width * 0.9, height: 130)
         }
     }
     
@@ -116,11 +120,13 @@ struct HomeView: View {
     }
     
     // MARK: - 다시쓰기 Section
-    private var dasiView: some View {
-        VStack(alignment: .leading) {
+    @ViewBuilder
+    private func DasiView(geo: GeometryProxy) -> some View {
+        VStack {
             SectionHeaderView(.dasi)
             
             CommunityCellView(.dasi)
+                .frame(width: geo.size.width * 0.9, height: 130)
         }
     }
     
@@ -167,16 +173,14 @@ struct HomeView: View {
                 
                 Spacer()
                 
-                Button(action: {
-                    
-                }, label: {
+                NavigationLink(value: "\(category.description)") {
                     HStack {
                         Text("더보기")
                         
                         Image(systemName: "chevron.forward")
                     }
-                })
-                .font(ANBDFont.body2)
+                    .font(ANBDFont.body2)
+                }
             }
             .padding(.bottom, 3)
             

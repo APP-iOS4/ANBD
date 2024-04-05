@@ -14,5 +14,6 @@ public protocol UserRepository {
     func checkUser(email: String) async throws
     func checkUser(nickname: String) async throws
     func updateUserInfo(user: User) async throws
+    func updateUserInfoList(articleID: String) async throws
     func deleteUserInfo(userID: String) async throws
 }

@@ -1,13 +1,13 @@
 //
-//  File.swift
-//  
+//  TradeCategory.swift
+//
 //
 //  Created by 유지호 on 4/5/24.
 //
 
 import Foundation
 
-public enum TradeCategory: Int, Codable {
+public enum TradeCategory: Int, Codable, CaseIterable {
     case nanua = 0
     case baccua = 1
     

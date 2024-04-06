@@ -17,6 +17,7 @@ public struct Trade: Codable, Identifiable {
     public var createdAt: Date
     public var category: TradeCategory
     
+    public var location: Location
     public var tradeState: TradeState
     
     public var title: String
@@ -33,6 +34,7 @@ public struct Trade: Codable, Identifiable {
         writerNickname: String,
         createdAt: Date = .now,
         category: TradeCategory,
+        location: Location,
         tradeState: TradeState = .trading,
         title: String,
         content: String,
@@ -45,6 +47,7 @@ public struct Trade: Codable, Identifiable {
         self.writerNickname = writerNickname
         self.createdAt = createdAt
         self.category = category
+        self.location = location
         self.tradeState = tradeState
         self.title = title
         self.content = content

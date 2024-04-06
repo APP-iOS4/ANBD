@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A816E5FA2BC1056F00138CFC /* ChatListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A816E5F92BC1056F00138CFC /* ChatListCell.swift */; };
 		A83F2F982BBFC07C00E3EB13 /* NormalCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83F2F972BBFC07C00E3EB13 /* NormalCarouselView.swift */; };
 		A83F2F9B2BBFCD7D00E3EB13 /* SafariWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83F2F9A2BBFCD7D00E3EB13 /* SafariWebView.swift */; };
 		CB198CF02BBF8E84000C2709 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198CEF2BBF8E84000C2709 /* Category.swift */; };
@@ -40,6 +41,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A816E5F92BC1056F00138CFC /* ChatListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListCell.swift; sourceTree = "<group>"; };
 		A83F2F962BBF951E00E3EB13 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A83F2F972BBFC07C00E3EB13 /* NormalCarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalCarouselView.swift; sourceTree = "<group>"; };
 		A83F2F9A2BBFCD7D00E3EB13 /* SafariWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebView.swift; sourceTree = "<group>"; };
@@ -287,6 +289,7 @@
 			isa = PBXGroup;
 			children = (
 				CB7BEE162BBD564E00C0F298 /* ChatView.swift */,
+				A816E5F92BC1056F00138CFC /* ChatListCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -447,6 +450,7 @@
 				CB7BEE212BBD568A00C0F298 /* ANBDFont.swift in Sources */,
 				CB198CF22BBF8FC8000C2709 /* CategoryDividerView.swift in Sources */,
 				CB7BEE2F2BBD57A000C0F298 /* ChatViewModel.swift in Sources */,
+				A816E5FA2BC1056F00138CFC /* ChatListCell.swift in Sources */,
 				CB198CF62BBFD0A3000C2709 /* WriteButtonView.swift in Sources */,
 				CB7BEE1B2BBD565C00C0F298 /* CommunityView.swift in Sources */,
 				CB7BEE232BBD56B900C0F298 /* View+Extension.swift in Sources */,

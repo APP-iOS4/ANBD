@@ -11,7 +11,7 @@ struct ANBDTabView: View {
     var body: some View {
         TabView {
             NavigationStack {
-                //HomeView()
+                HomeView()
             }
             .tabItem {
                 Label("홈", systemImage: "house")
@@ -26,7 +26,7 @@ struct ANBDTabView: View {
             }
             
             NavigationStack {
-                //NBView()
+                TradeView()
             }
             .tabItem {
                 Label("나눔·거래", systemImage: "arrow.3.trianglepath")

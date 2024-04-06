@@ -32,12 +32,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 @main
 struct ANBDConsumerApp: App {
-    
+    @StateObject private var homeViewModel = HomeViewModel()
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
     var body: some Scene {
         WindowGroup {
             ANBDTabView()
         }
+        .environmentObject(homeViewModel)
     }
 }

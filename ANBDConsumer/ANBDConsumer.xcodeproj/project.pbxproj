@@ -7,7 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A83F2F982BBFC07C00E3EB13 /* NormalCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83F2F972BBFC07C00E3EB13 /* NormalCarouselView.swift */; };
+		A83F2F9B2BBFCD7D00E3EB13 /* SafariWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83F2F9A2BBFCD7D00E3EB13 /* SafariWebView.swift */; };
 		CB198CF02BBF8E84000C2709 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198CEF2BBF8E84000C2709 /* Category.swift */; };
+		CB198CF22BBF8FC8000C2709 /* CategoryDividerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198CF12BBF8FC8000C2709 /* CategoryDividerView.swift */; };
+		CB198CF62BBFD0A3000C2709 /* WriteButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198CF52BBFD0A3000C2709 /* WriteButtonView.swift */; };
 		CB7BEDB92BBD4E9D00C0F298 /* ANBDConsumerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7BEDB82BBD4E9D00C0F298 /* ANBDConsumerApp.swift */; };
 		CB7BEDBB2BBD4E9D00C0F298 /* ANBDTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7BEDBA2BBD4E9D00C0F298 /* ANBDTabView.swift */; };
 		CB7BEDBD2BBD4E9F00C0F298 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB7BEDBC2BBD4E9F00C0F298 /* Assets.xcassets */; };
@@ -39,7 +43,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A83F2F962BBF951E00E3EB13 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		A83F2F972BBFC07C00E3EB13 /* NormalCarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalCarouselView.swift; sourceTree = "<group>"; };
+		A83F2F9A2BBFCD7D00E3EB13 /* SafariWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebView.swift; sourceTree = "<group>"; };
 		CB198CEF2BBF8E84000C2709 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
+		CB198CF12BBF8FC8000C2709 /* CategoryDividerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryDividerView.swift; sourceTree = "<group>"; };
+		CB198CF52BBFD0A3000C2709 /* WriteButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteButtonView.swift; sourceTree = "<group>"; };
 		CB7BEDB52BBD4E9D00C0F298 /* ANBDConsumer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ANBDConsumer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB7BEDB82BBD4E9D00C0F298 /* ANBDConsumerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ANBDConsumerApp.swift; sourceTree = "<group>"; };
 		CB7BEDBA2BBD4E9D00C0F298 /* ANBDTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ANBDTabView.swift; sourceTree = "<group>"; };
@@ -102,6 +111,7 @@
 		CB7BEDB72BBD4E9D00C0F298 /* ANBDConsumer */ = {
 			isa = PBXGroup;
 			children = (
+				A83F2F962BBF951E00E3EB13 /* Info.plist */,
 				CB7BEE042BBD550700C0F298 /* App */,
 				CB7BEE052BBD551000C0F298 /* Presentaion */,
 				CB7BEE072BBD556300C0F298 /* Common */,
@@ -222,6 +232,10 @@
 			isa = PBXGroup;
 			children = (
 				CB7BEE102BBD563700C0F298 /* CommonUIView.swift */,
+				A83F2F972BBFC07C00E3EB13 /* NormalCarouselView.swift */,
+				A83F2F9A2BBFCD7D00E3EB13 /* SafariWebView.swift */,
+				CB198CF12BBF8FC8000C2709 /* CategoryDividerView.swift */,
+				CB198CF52BBFD0A3000C2709 /* WriteButtonView.swift */,
 			);
 			path = CommonUI;
 			sourceTree = "<group>";
@@ -430,6 +444,7 @@
 				CB7BEE3B2BBD57FD00C0F298 /* HomeViewModel.swift in Sources */,
 				D75C3A4D2BBF8C6900ED948C /* ArticleListCell.swift in Sources */,
 				D75C3A512BBFD9DB00ED948C /* ArticleCreateView.swift in Sources */,
+				A83F2F9B2BBFCD7D00E3EB13 /* SafariWebView.swift in Sources */,
 				CB7BEE2B2BBD578A00C0F298 /* MypageViewModel.swift in Sources */,
 				CB7BEE272BBD575700C0F298 /* AuthenticationViewModel.swift in Sources */,
 				CB7BEE1D2BBD566700C0F298 /* HomeView.swift in Sources */,
@@ -442,9 +457,13 @@
 				CB7BEDBB2BBD4E9D00C0F298 /* ANBDTabView.swift in Sources */,
 				CB7BEE132BBD564100C0F298 /* AuthenticationView.swift in Sources */,
 				CB7BEE212BBD568A00C0F298 /* ANBDFont.swift in Sources */,
+				CB198CF22BBF8FC8000C2709 /* CategoryDividerView.swift in Sources */,
 				CB7BEE2F2BBD57A000C0F298 /* ChatViewModel.swift in Sources */,
+				CB198CF62BBFD0A3000C2709 /* WriteButtonView.swift in Sources */,
+				CB7BEE1B2BBD565C00C0F298 /* CommunityView.swift in Sources */,
 				CB7BEE232BBD56B900C0F298 /* View+Extension.swift in Sources */,
 				CB7BEDB92BBD4E9D00C0F298 /* ANBDConsumerApp.swift in Sources */,
+				A83F2F982BBFC07C00E3EB13 /* NormalCarouselView.swift in Sources */,
 				CB7BEE172BBD564E00C0F298 /* ChatView.swift in Sources */,
 				D75C3A532BC1377400ED948C /* ArticleView.swift in Sources */,
 				CB7BEE152BBD564800C0F298 /* MypageView.swift in Sources */,
@@ -584,6 +603,7 @@
 				DEVELOPMENT_TEAM = 6R3M7VGRP2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ANBDConsumer/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -617,6 +637,7 @@
 				DEVELOPMENT_TEAM = 6R3M7VGRP2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ANBDConsumer/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

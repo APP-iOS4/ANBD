@@ -17,4 +17,8 @@ public enum TradeCategory: Int, Codable, CaseIterable {
         case .baccua: "바꿔쓰기"
         }
     }
+    
+    static public var allDescriptions: [String] {
+        return TradeCategory.allCases.map { $0.description }
+    }
 }

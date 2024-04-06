@@ -17,4 +17,8 @@ public enum ArticleCategory: Int, Codable, CaseIterable {
         case .dasi: "바꿔쓰기"
         }
     }
+    
+    static public var allDescriptions: [String] {
+        return ArticleCategory.allCases.map { $0.description }
+    }
 }

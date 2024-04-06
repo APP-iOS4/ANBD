@@ -15,53 +15,54 @@ struct ChatDetailView: View {
     
     /// 메시지 관련 변수
     @State private var message: String = ""
-    @State private var messages: [Message] = [Message(userID: "likelion123", userNickname: "줄이", createdAt: Calendar.current.date(byAdding: .day, value: -6, to: .now) ?? .now, content: "하이하이방가"),
-                               Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -5, to: .now) ?? .now, content: "머요"),
-                               Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -3, to: .now) ?? .now, content: "한"),
-                               Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -3, to: .now) ?? .now, content: "글"),
-                               Message(userID: "ltsnotme", userNickname: "죠니", createdAt: .now, content: "자"),
-                               Message(userID: "ltsnotme", userNickname: "죠니", createdAt: .now, content: "테스트"),
-                               Message(userID: "likelion123", userNickname: "줄이", createdAt: .now, image: "DummyImage1"),
-                               Message(userID: "likelion123", userNickname: "줄이", createdAt: Calendar.current.date(byAdding: .day, value: -6, to: .now) ?? .now, content: "하이하이방가"),
-                               Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -5, to: .now) ?? .now, content: "머요"),
-                               Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -3, to: .now) ?? .now, content: "한"),
-                               Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -3, to: .now) ?? .now, content: "글"),
-                               Message(userID: "ltsnotme", userNickname: "죠니", createdAt: .now, content: "자"),
-                               Message(userID: "ltsnotme", userNickname: "죠니", createdAt: .now, content: "테스트"),
-                               Message(userID: "likelion123", userNickname: "줄이", createdAt: .now, image: "DummyImage1"),]
+    @State private var messages: [Message] = [
+        Message(userID: "likelion123", userNickname: "줄이", createdAt: Calendar.current.date(byAdding: .day, value: -7, to: .now) ?? .now, content: "7일전메시지내가보냄"),
+        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -7, to: .now) ?? .now, content: "7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄"),
+        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -6, to: .now) ?? .now, content: "짜자자잔6일전메시지내가안보냄"),
+        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -6, to: .now) ?? .now, content: "짜자자잔"),
+        Message(userID: "likelion123", userNickname: "줄이", createdAt: Calendar.current.date(byAdding: .day, value: -6, to: .now) ?? .now, content: "짜자자잔이거는 6일전 내가보냄"),
+        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -5, to: .now) ?? .now, content: "5일전 내가 안보냄"),
+        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -3, to: .now) ?? .now, content: "3일전 내가 안보냄내가내가내가 안보냈어"),
+        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -3, to: .now) ?? .now, content: "내가내낙나내나나는 아니ㅑ야"),
+        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: .now, content: "오늘 나 아님"),
+        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: .now, content: "오늘 나 아님222"),
+        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: .now, image: "DummyImage1"),
+        Message(userID: "likelion123", userNickname: "줄이", createdAt: .now, content: "오늘 내가 보냄"),
+        Message(userID: "likelion123", userNickname: "줄이", createdAt: .now, image: "DummyImage1"),]
     
     
     /// Sheet 관련 변수
     @State private var isShowingConfirmSheet: Bool = false
+    @State private var isTrading: Bool = true
     
     var body: some View {
         VStack {
             messageHeaderView
-                .padding()
-                .background(.white)
+                .padding(.vertical, 5)
+                .padding(.horizontal, 15)
                 
+            Divider()
+            
             ScrollView {
-                ForEach(0..<messages.count) { i in
+                ForEach(0..<messages.count, id: \.self) { i in
                     /// 날짜 구분선
                     if i == 0 || messages[i].dateStringWithYear != messages[i-1].dateStringWithYear {
                         MessageDateDividerView(dateString: messages[i].dateStringWithYear)
                             .padding()
-                            .padding(.vertical, 10)
+                            .padding(.top, i == 0 ? 5 : 25)
+                            .padding(.bottom, 25)
                     }
                     
                     MessageCell(message: messages[i])
+                        .padding(.vertical, 1)
                         .padding(.horizontal, 20)
                 }
             }
-            .padding(.vertical, 10)
-            .background(.white)
             .defaultScrollAnchor(.bottom)
             
             messageSendView
                 .padding()
-                .background(.white)
         }
-        .background(.gray50)
         .navigationTitle(userNickname)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
@@ -119,7 +120,7 @@ struct ChatDetailView: View {
             Spacer()
             
             VStack(alignment: .leading) {
-                Text("거래완")
+                TradeStateChangeView(isTrading: $isTrading)
                 
                 Spacer()
             }
@@ -198,7 +199,7 @@ struct ChatDetailView: View {
     }
 }
 
-// MARK: - 말풍선 Extension
+// MARK: - 메시지 Cell
 extension ChatDetailView {
     @ViewBuilder
     private func MessageCell(message: Message) -> some View {
@@ -252,8 +253,8 @@ extension ChatDetailView {
 
 
 // TODO: Message Struct -> ANBDModel에 추가시 삭제 예정
-struct Message: Hashable {
-    var id: String = UUID().uuidString
+struct Message: Hashable, Identifiable {
+    let id: String = UUID().uuidString
     
     let userID: String
     var userNickname: String

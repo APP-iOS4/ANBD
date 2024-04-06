@@ -1,5 +1,5 @@
 //
-//  CommunityListCell.swift
+//  ArticleListCell.swift
 //  ANBDConsumer
 //
 //  Created by 기 표 on 4/5/24.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CommunityListCell: View {
+struct ArticleListCell: View {
     var body: some View {
         HStack(alignment: .top) {
             Image(systemName: "square.fill")
@@ -57,5 +57,5 @@ struct CommunityListCell: View {
 }
 
 #Preview {
-    CommunityListCell()
+    ArticleListCell()
 }

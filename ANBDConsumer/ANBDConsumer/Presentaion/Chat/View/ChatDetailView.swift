@@ -34,13 +34,15 @@ struct ChatDetailView: View {
     /// Sheet 관련 변수
     @State private var isShowingConfirmSheet: Bool = false
     @State private var isTrading: Bool = true
+    @State private var isShowingImageDetailView: Bool = false
+    @State private var detailImage: String = "DummyPuppy3"
     
     var body: some View {
         VStack {
             messageHeaderView
                 .padding(.vertical, 5)
                 .padding(.horizontal, 15)
-                
+            
             Divider()
             
             ScrollView {
@@ -53,9 +55,24 @@ struct ChatDetailView: View {
                             .padding(.bottom, 25)
                     }
                     
-                    MessageCell(message: messages[i])
-                        .padding(.vertical, 1)
-                        .padding(.horizontal, 20)
+                    /// 이미지 · 텍스트
+                    if messages[i].imageURL != nil {
+                        /// 시도 1. FullScreenCover
+                        Button(action: {
+                            if let imageURL = messages[i].imageURL {
+                                detailImage = imageURL
+                                isShowingImageDetailView.toggle()
+                            }
+                        }, label: {
+                            MessageCell(message: messages[i])
+                                .padding(.vertical, 1)
+                                .padding(.horizontal, 20)
+                        })
+                    } else {
+                        MessageCell(message: messages[i])
+                            .padding(.vertical, 1)
+                            .padding(.horizontal, 20)
+                    }
                 }
             }
             .defaultScrollAnchor(.bottom)
@@ -88,6 +105,9 @@ struct ChatDetailView: View {
             Button("채팅방 나가기", role: .destructive) {
                 // TODO: 채팅방 나가기
             }
+        }
+        .fullScreenCover(isPresented: $isShowingImageDetailView) {
+            ImageDetailView(imageString: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
         }
         .onAppear {
             messages.sort(by: { $0.createdAt < $1.createdAt })

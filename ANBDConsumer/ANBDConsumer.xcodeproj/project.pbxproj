@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		A816E5FA2BC1056F00138CFC /* ChatListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A816E5F92BC1056F00138CFC /* ChatListCell.swift */; };
+		A816E5FC2BC11B7800138CFC /* ChatDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A816E5FB2BC11B7800138CFC /* ChatDetailView.swift */; };
+		A816E5FE2BC1254B00138CFC /* TradeStateChangeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A816E5FD2BC1254B00138CFC /* TradeStateChangeView.swift */; };
 		A83F2F982BBFC07C00E3EB13 /* NormalCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83F2F972BBFC07C00E3EB13 /* NormalCarouselView.swift */; };
 		A83F2F9B2BBFCD7D00E3EB13 /* SafariWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83F2F9A2BBFCD7D00E3EB13 /* SafariWebView.swift */; };
 		CB198CF02BBF8E84000C2709 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198CEF2BBF8E84000C2709 /* Category.swift */; };
@@ -42,6 +44,8 @@
 
 /* Begin PBXFileReference section */
 		A816E5F92BC1056F00138CFC /* ChatListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListCell.swift; sourceTree = "<group>"; };
+		A816E5FB2BC11B7800138CFC /* ChatDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatDetailView.swift; sourceTree = "<group>"; };
+		A816E5FD2BC1254B00138CFC /* TradeStateChangeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeStateChangeView.swift; sourceTree = "<group>"; };
 		A83F2F962BBF951E00E3EB13 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A83F2F972BBFC07C00E3EB13 /* NormalCarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalCarouselView.swift; sourceTree = "<group>"; };
 		A83F2F9A2BBFCD7D00E3EB13 /* SafariWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebView.swift; sourceTree = "<group>"; };
@@ -232,6 +236,7 @@
 				A83F2F9A2BBFCD7D00E3EB13 /* SafariWebView.swift */,
 				CB198CF12BBF8FC8000C2709 /* CategoryDividerView.swift */,
 				CB198CF52BBFD0A3000C2709 /* WriteButtonView.swift */,
+				A816E5FD2BC1254B00138CFC /* TradeStateChangeView.swift */,
 			);
 			path = CommonUI;
 			sourceTree = "<group>";
@@ -290,6 +295,7 @@
 			children = (
 				CB7BEE162BBD564E00C0F298 /* ChatView.swift */,
 				A816E5F92BC1056F00138CFC /* ChatListCell.swift */,
+				A816E5FB2BC11B7800138CFC /* ChatDetailView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -456,6 +462,8 @@
 				CB7BEE232BBD56B900C0F298 /* View+Extension.swift in Sources */,
 				CB7BEDB92BBD4E9D00C0F298 /* ANBDConsumerApp.swift in Sources */,
 				A83F2F982BBFC07C00E3EB13 /* NormalCarouselView.swift in Sources */,
+				A816E5FC2BC11B7800138CFC /* ChatDetailView.swift in Sources */,
+				A816E5FE2BC1254B00138CFC /* TradeStateChangeView.swift in Sources */,
 				CB7BEE172BBD564E00C0F298 /* ChatView.swift in Sources */,
 				CB7BEE152BBD564800C0F298 /* MypageView.swift in Sources */,
 			);

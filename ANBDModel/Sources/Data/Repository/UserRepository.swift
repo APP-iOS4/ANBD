@@ -95,6 +95,22 @@ struct DefaultUserRepository: UserRepository {
         }
     }
     
+    func updateUserInfoList(tradeID: String) async throws {
+        guard let snapshot = try? await userDB.whereField("likeTrades", arrayContains: tradeID).getDocuments().documents
+        else {
+            throw DBError.getDocumentError(message: "tradeID를 좋아요한 User documents를 읽어오는데 실패했습니다.")
+        }
+        
+        let userInfoList = snapshot.compactMap { try? $0.data(as: User.self) }
+        
+        for userInfo in userInfoList {
+            var updatingUserInfo = userInfo
+            updatingUserInfo.likeTrades = userInfo.likeTrades.filter { $0 != tradeID }
+            
+            try await updateUserInfo(user: updatingUserInfo)
+        }
+    }
+    
     
     // MARK: Delete
     func deleteUserInfo(userID: String) async throws {

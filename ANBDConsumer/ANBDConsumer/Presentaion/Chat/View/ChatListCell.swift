@@ -19,10 +19,10 @@ struct ChatListCell: View {
             ZStack {
                 Circle()
                     .fill(Color.gray100)
-                    .frame(width: 50)
+                    .frame(width: 55)
                 
                 Text("🐳")
-                    .font(.system(size: 30))
+                    .font(.system(size: 33))
             }
             .padding(.trailing, 10)
             
@@ -40,7 +40,7 @@ struct ChatListCell: View {
                     .foregroundStyle(Color.gray400)
                     .font(ANBDFont.body2)
             }
-            .padding(.vertical, 13)
+            .padding(.vertical, 9)
             
             Spacer()
             
@@ -56,9 +56,9 @@ struct ChatListCell: View {
                     unreadMessageBage
                 }
             }
-            .padding(.vertical, 13)
+            .padding(.vertical, 9)
         }
-        .frame(height: 60)
+        .frame(height: 70)
     }
     
     /// 안읽은 메시지 뱃지

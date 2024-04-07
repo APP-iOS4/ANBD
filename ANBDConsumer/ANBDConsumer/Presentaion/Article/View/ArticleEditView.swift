@@ -1,28 +1,28 @@
 //
-//  ArticleCreateView.swift
+//  ArticleEditView.swift
 //  ANBDConsumer
 //
-//  Created by 기 표 on 4/5/24.
+//  Created by 기 표 on 4/7/24.
 //
 
 import SwiftUI
 import PhotosUI
 
-struct ArticleCreateView: View {
-    
-    @Binding var flag: Category
-    @Binding var isShowingCreateView: Bool
+struct ArticleEditView: View {
 
-    @State private var title: String = ""
+    @Binding var isShowingEditView: Bool
+
+    @State private var flag: Category = .accua
+    @State private var title : String = ""
     @State private var content : String = ""
+    
     @State private var isShowingImageAlert: Bool = false
     @State private var selectedItems: [PhotosPickerItem] = []
     @State private var selectedImageData: [Data] = []
-    @State private var selectedMenuText: String = "아껴쓰기"
+    @State private var articleImage: UIImage?
+    
+    var placeHolder : String = "ANBD 이용자들을 위해 여러분들의 Tip,Custom을 공유해주세요!"
 
-    
-    var placeHolder : String = "ANBD 이용자들을 위해 여러분들의 아껴쓰기 / 다시쓰기 Tip을 전수해주세요!"
-    
     var body: some View {
         NavigationStack {
             VStack {
@@ -37,10 +37,10 @@ struct ArticleCreateView: View {
                             .font(ANBDFont.SubTitle2)
                         
                         Text("명예훼손, 광고/홍보 목적의 글은 올리실 수 없어요.")
-                            .font(ANBDFont.body1)
                     }
-                    .foregroundStyle(.gray50)
+                    .font(ANBDFont.body1)
                 }
+                .foregroundStyle(.gray50)
                 .padding(10)
                 
                 VStack {
@@ -58,11 +58,13 @@ struct ArticleCreateView: View {
                                 .padding(.leading , 20)
                                 .padding(.top , 8)
                         }
+                        
                         TextEditor(text: $content)
                             .scrollContentBackground(.hidden)
                             .font(ANBDFont.body1)
                             .padding(.leading, 15)
                     }
+                    
                     ScrollView(.horizontal) {
                         HStack {
                             ForEach(selectedImageData, id: \.self) {
@@ -76,7 +78,6 @@ struct ArticleCreateView: View {
                                             .clipped()
                                             .padding(10)
                                     }
-                                    
                                     Button {
                                         if let idx = selectedImageData.firstIndex(of: photoData) {
                                             selectedImageData.remove(at: idx)
@@ -94,11 +95,9 @@ struct ArticleCreateView: View {
                                 }
                             }
                         }
-                        
                     }
                 }
                 Divider()
-                
                 HStack {
                     if selectedImageData.count == 5 {
                         Button(action: {
@@ -118,43 +117,11 @@ struct ArticleCreateView: View {
                         }
                         .foregroundStyle(.accent)
                     }
+                    
                     Spacer()
                 }
                 .frame(height: 40)
                 .padding(.leading, 10)
-            }
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        isShowingCreateView.toggle()
-                    } label: {
-                        Text("완료")
-                    }
-                    .disabled(title.isEmpty || content.isEmpty)
-                }
-                
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(role: .cancel) {
-                        isShowingCreateView.toggle()
-                    } label: {
-                        Text("취소")
-                    }
-                }
-            }
-            .toolbarTitleMenu {
-                Button {
-                    flag = .accua
-                    selectedMenuText = "아껴쓰기"
-                } label: {
-                    Text("아껴쓰기")
-                }
-                
-                Button {
-                    flag = .dasi
-                    selectedMenuText = "다시쓰기"
-                } label: {
-                    Text("다시쓰기")
-                }
             }
             .onChange(of: selectedItems) {
                 for newItem in selectedItems {
@@ -172,12 +139,30 @@ struct ArticleCreateView: View {
             .alert("이미지는 최대 5장만 가능합니다", isPresented: $isShowingImageAlert) {
                 Button("확인", role: .cancel) { }
             }
-            .navigationTitle(selectedMenuText)
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        isShowingEditView.toggle()
+                    } label: {
+                        Text("수정")
+                            .disabled(title.isEmpty || content.isEmpty)
+                    }
+                }
+                
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(role: .cancel) {
+                        isShowingEditView.toggle()
+                    } label: {
+                        Text("취소")
+                    }
+                }
+            }
+            .navigationTitle("수정하기")
             .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
 
 #Preview {
-    ArticleCreateView(flag: .constant(.accua), isShowingCreateView: .constant(true))
+    ArticleEditView(isShowingEditView: .constant(true))
 }

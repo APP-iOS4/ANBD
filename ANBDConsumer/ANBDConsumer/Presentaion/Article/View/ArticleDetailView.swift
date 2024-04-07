@@ -13,6 +13,7 @@ struct ArticleDetailView: View {
     @State private var isShowingComment: Bool = false
     @State private var comments: [Comment] = []
     @State private var commentText: String = ""
+    @State private var isShowingEditView = false
     
     struct Comment: Identifiable {
         let id: UUID = UUID()
@@ -150,10 +151,11 @@ struct ArticleDetailView: View {
                                     Text("신고하기")
                                 }
                             }
+                            
                         }
+                        .padding(.horizontal, 10)
+                        .padding(.bottom, 20)
                     }
-                    .padding(.horizontal, 10)
-                    .padding(.bottom, 20)
                 }
             }
             .padding()
@@ -182,9 +184,12 @@ struct ArticleDetailView: View {
                 }
             }
         }
+        .fullScreenCover(isPresented: $isShowingEditView) {
+            ArticleEditView(isShowingEditView: $isShowingEditView)
+        }
         .navigationTitle("정보 공유")
         .navigationBarTitleDisplayMode(.inline)
-
+        
         HStack {
             ZStack {
                 Rectangle()

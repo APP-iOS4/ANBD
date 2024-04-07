@@ -10,7 +10,7 @@ import FirebaseFirestore
 
 @available(iOS 13, *)
 struct DefaultUserRepository: UserRepository {
-
+    
     let userDB = Firestore.firestore().collection("User")
     
     init() { }
@@ -75,6 +75,23 @@ struct DefaultUserRepository: UserRepository {
         ])
         else {
             throw DBError.updateDocumentError(message: "User 정보를 업데이트하는데 실패했습니다.")
+        }
+    }
+    
+    /// 좋아요한 게시글이 삭제됐을 때 User의 좋아요한 배열에서 삭제하는 메서드
+    func updateUserInfoList(articleID: String) async throws {
+        guard let snapshot = try? await userDB.whereField("likedArticles", arrayContains: articleID).getDocuments().documents
+        else {
+            throw DBError.getDocumentError(message: "articleID를 좋아요한 User documents를 읽어오는데 실패했습니다.")
+        }
+        
+        let userInfoList = snapshot.compactMap { try? $0.data(as: User.self) }
+        
+        for userInfo in userInfoList {
+            var updatingUserInfo = userInfo
+            updatingUserInfo.likeArticles = userInfo.likeArticles.filter { $0 != articleID }
+            
+            try await updateUserInfo(user: updatingUserInfo)
         }
     }
     

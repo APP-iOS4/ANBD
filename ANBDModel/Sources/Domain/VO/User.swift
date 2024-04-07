@@ -8,6 +8,7 @@
 import Foundation
 
 /// DB에 저장되는 유저의 정보
+@available(iOS 15, *)
 public struct User: Codable, Identifiable {
     /// 유저의 고유 식별값
     public var id: String

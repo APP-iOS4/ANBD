@@ -7,14 +7,18 @@
 
 import Foundation
 
-public enum ArticleCategory: Int, Codable {
+public enum ArticleCategory: Int, Codable, CaseIterable {
     case accua = 0
-    case baccua = 1
+    case dasi = 1
     
     public var description: String {
         switch self {
         case .accua: "아껴쓰기"
-        case .baccua: "바꿔쓰기"
+        case .dasi: "바꿔쓰기"
         }
+    }
+    
+    static public var allDescriptions: [String] {
+        return ArticleCategory.allCases.map { $0.description }
     }
 }

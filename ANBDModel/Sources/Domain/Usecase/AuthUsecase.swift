@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseAuth
 
+@available(iOS 15, *)
 public protocol AuthUsecase {
     func signIn(email: String, password: String) async throws -> User
     func signUp(email: String,
@@ -24,7 +25,7 @@ public protocol AuthUsecase {
     func checkDuplicatedNickname(nickname: String) async -> Bool
 }
 
-@available(iOS 13, *)
+@available(iOS 15, *)
 public struct DefaultAuthUsecase: AuthUsecase {
     
     private let userRepository = DefaultUserRepository()

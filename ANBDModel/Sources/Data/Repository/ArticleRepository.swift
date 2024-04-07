@@ -45,6 +45,19 @@ struct DefaultArticleRepository: ArticleRepository {
         return snapshot.compactMap { try? $0.data(as: Article.self) }
     }
     
+    func readArticleList(category: ArticleCategory) async throws -> [Article] {
+        guard let snapshot = try? await articleDB
+            .whereField("category", isEqualTo: category)
+            .order(by: "createdAt", descending: true)
+            .getDocuments()
+            .documents
+        else {
+            throw DBError.getDocumentError(message: "category가 일치하는 Article documents를 읽어오는데 실패했습니다.")
+        }
+        
+        return snapshot.compactMap { try? $0.data(as: Article.self) }
+    }
+    
     func readArticleList(writerID: String) async throws -> [Article] {
         guard let snapshot = try? await articleDB.whereField("writerID", isEqualTo: writerID)
             .order(by: "createdAt", descending: true)
@@ -60,8 +73,8 @@ struct DefaultArticleRepository: ArticleRepository {
     
     // MARK: Update
     func updateArticle(article: Article) async throws {
-        guard let _ = try? await articleDB.document(article.id).setData([
-            "category": article.category,
+        guard let _ = try? await articleDB.document(article.id).updateData([
+            "category": article.category.rawValue,
             "title": article.title,
             "content": article.content,
             "imagePaths": article.imagePaths,

@@ -8,7 +8,7 @@
 import Foundation
 
 @available(iOS 15, *)
-public struct Article: Codable, Identifiable {
+public struct Article: Codable, Identifiable, Hashable {
     /// 게시글의 고유 식별값
     public private(set) var id: String
     
@@ -23,7 +23,7 @@ public struct Article: Codable, Identifiable {
     
     /// 게시글의 카테고리
     ///
-    /// 0이면 아껴쓰기, 1이면 바꿔쓰기이다.
+    /// 0이면 아껴쓰기, 1이면 다시쓰기이다.
     public var category: ArticleCategory
     
     /// 게시글의 제목
@@ -32,7 +32,7 @@ public struct Article: Codable, Identifiable {
     /// 게시글의 내용
     public var content: String
     
-    /// 게시글의 사진 URL 배열
+    /// 게시글의 이미지 Path 배열
     public var imagePaths: [String]
     
     /// 게시글의 좋아요 수

@@ -178,7 +178,7 @@ struct ArticleDetailView: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 15)
                         .rotationEffect(.degrees(90))
-                        .foregroundStyle(.black)
+                        .foregroundStyle(.gray900)
                 }
             }
         }

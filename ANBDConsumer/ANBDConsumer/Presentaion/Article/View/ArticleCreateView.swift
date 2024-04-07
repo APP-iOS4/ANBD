@@ -11,12 +11,15 @@ import PhotosUI
 struct ArticleCreateView: View {
     
     @Binding var flag: Category
-    
+    @Binding var isShowingCreateView: Bool
+
     @State private var title: String = ""
     @State private var content : String = ""
     @State private var showingAlert: Bool = false
     @State private var selectedItems: [PhotosPickerItem] = []
     @State private var selectedImageData: [Data] = []
+    @State private var selectedMenuText: String = "아껴쓰기"
+
     
     var placeHolder : String = "ANBD 이용자들을 위해 여러분들의 아껴쓰기 / 다시쓰기 Tip을 전수해주세요!"
     
@@ -120,6 +123,39 @@ struct ArticleCreateView: View {
                 .frame(height: 40)
                 .padding(.leading, 10)
             }
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        isShowingCreateView.toggle()
+                    } label: {
+                        Text("완료")
+                    }
+                    .disabled(title.isEmpty || content.isEmpty)
+                }
+                
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(role: .cancel) {
+                        isShowingCreateView.toggle()
+                    } label: {
+                        Text("취소")
+                    }
+                }
+            }
+            .toolbarTitleMenu {
+                Button {
+                    flag = .accua
+                    selectedMenuText = "아껴쓰기"
+                } label: {
+                    Text("아껴쓰기")
+                }
+                
+                Button {
+                    flag = .dasi
+                    selectedMenuText = "다시쓰기"
+                } label: {
+                    Text("다시쓰기")
+                }
+            }
             .onChange(of: selectedItems) {
                 for newItem in selectedItems {
                     Task {
@@ -136,11 +172,12 @@ struct ArticleCreateView: View {
             .alert("이미지는 최대 5장만 가능합니다", isPresented: $showingAlert) {
                 Button("확인", role: .cancel) { }
             }
+            .navigationTitle(selectedMenuText)
+            .navigationBarTitleDisplayMode(.inline)
         }
-        .navigationTitle("정보 공유")
     }
 }
 
 #Preview {
-    ArticleCreateView(flag: .constant(.accua))
+    ArticleCreateView(flag: .constant(.accua), isShowingCreateView: .constant(true))
 }

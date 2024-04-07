@@ -326,8 +326,8 @@
 			children = (
 				D75C3A522BC1377400ED948C /* ArticleView.swift */,
 				D75C3A4C2BBF8C6900ED948C /* ArticleListCell.swift */,
-				D75C3A4E2BBFB40200ED948C /* ArticleDetailView.swift */,
 				D75C3A502BBFD9DB00ED948C /* ArticleCreateView.swift */,
+				D75C3A4E2BBFB40200ED948C /* ArticleDetailView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -460,7 +460,6 @@
 				CB198CF22BBF8FC8000C2709 /* CategoryDividerView.swift in Sources */,
 				CB7BEE2F2BBD57A000C0F298 /* ChatViewModel.swift in Sources */,
 				CB198CF62BBFD0A3000C2709 /* WriteButtonView.swift in Sources */,
-				CB7BEE1B2BBD565C00C0F298 /* CommunityView.swift in Sources */,
 				CB7BEE232BBD56B900C0F298 /* View+Extension.swift in Sources */,
 				CB7BEDB92BBD4E9D00C0F298 /* ANBDConsumerApp.swift in Sources */,
 				A83F2F982BBFC07C00E3EB13 /* NormalCarouselView.swift in Sources */,

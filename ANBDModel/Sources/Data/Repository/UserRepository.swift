@@ -8,7 +8,7 @@
 import Foundation
 import FirebaseFirestore
 
-@available(iOS 13, *)
+@available(iOS 15, *)
 struct DefaultUserRepository: UserRepository {
     
     let userDB = Firestore.firestore().collection("User")

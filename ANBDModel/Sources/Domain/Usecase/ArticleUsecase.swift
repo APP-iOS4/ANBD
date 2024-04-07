@@ -13,6 +13,7 @@ public protocol ArticleUsecase {
     func writeArticle(article: Article, imageDatas: [Data]) async throws
     func loadArticle(articleID: String) async throws -> Article
     func loadArticleList() async throws -> [Article]
+    func loadArticleList(category: ArticleCategory) async throws -> [Article]
     func loadArticleList(writerID: String) async throws -> [Article]
     func updateArticle(article: Article, imageDatas: [Data]) async throws
     func likeArticle(articleID: String) async throws

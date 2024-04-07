@@ -27,7 +27,7 @@ struct UserActivityInformationView: View {
     }
     
     @ViewBuilder
-    func ActivityInformationComponent(title: String, count: Int) -> some View {
+    private func ActivityInformationComponent(title: String, count: Int) -> some View {
         Button(action: {
             
         }, label: {

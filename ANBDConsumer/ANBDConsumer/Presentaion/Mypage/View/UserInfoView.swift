@@ -8,11 +8,13 @@
 import SwiftUI
 
 struct UserInfoView: View {
-    @EnvironmentObject var mypageViewModel: MyPageViewModel
+    @EnvironmentObject private var myPageViewModel: MyPageViewModel
+    
+    @State private var isShowingAccountManagementView = false
     
     var body: some View {
         HStack {
-            Image(uiImage: mypageViewModel.userProfileImage)
+            Image(uiImage: myPageViewModel.userProfileImage)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 90, height: 90)
@@ -20,11 +22,11 @@ struct UserInfoView: View {
                 .padding(.horizontal)
             
             VStack(alignment: .leading, spacing: 10) {
-                Text("\(mypageViewModel.userNickname) 님")
+                Text("\(myPageViewModel.userNickname) 님")
                     .foregroundStyle(Color.gray900)
                     .font(ANBDFont.Heading3)
                 
-                Text("선호 지역 : \(mypageViewModel.userPreferredTradingArea)")
+                Text("선호 지역 : \(myPageViewModel.userPreferredTradingArea)")
                     .foregroundStyle(Color.gray400)
                     .font(ANBDFont.Caption3)
                 
@@ -35,7 +37,7 @@ struct UserInfoView: View {
                     Spacer()
                     
                     Button(action: {
-                        // 계정관리 뷰
+                        isShowingAccountManagementView.toggle()
                     }, label: {
                         Text("계정관리")
                     })
@@ -46,6 +48,11 @@ struct UserInfoView: View {
         .padding()
         .navigationTitle("마이페이지")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(isPresented: $isShowingAccountManagementView) {
+            AccountManagementView()
+                // 아마 최상위에서 주입하면 지워도 되지 않을까?
+                .environmentObject(myPageViewModel)
+        }
     }
 }
 

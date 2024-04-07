@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct OtherSettingsView: View {
-    @State var isShowingPolicyView: Bool = false
+    @State private var isShowingPolicyView: Bool = false
     
     var body: some View {
         VStack(alignment: .leading) {

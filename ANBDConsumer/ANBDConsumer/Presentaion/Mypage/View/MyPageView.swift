@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MyPageView: View {
-    @StateObject private var mypageViewModel = MyPageViewModel()
+    @StateObject private var myPageViewModel = MyPageViewModel()
     
     var body: some View {
         VStack {
@@ -20,7 +20,7 @@ struct MyPageView: View {
             
             Spacer()
         }
-        .environmentObject(mypageViewModel)
+        .environmentObject(myPageViewModel)
     }
 }
 

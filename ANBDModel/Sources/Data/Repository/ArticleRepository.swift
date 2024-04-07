@@ -52,7 +52,7 @@ struct DefaultArticleRepository: ArticleRepository {
             .getDocuments()
             .documents
         else {
-            throw DBError.getDocumentError(message: "writerID가 일치하는 Article documents를 읽어오는데 실패했습니다.")
+            throw DBError.getDocumentError(message: "category가 일치하는 Article documents를 읽어오는데 실패했습니다.")
         }
         
         return snapshot.compactMap { try? $0.data(as: Article.self) }

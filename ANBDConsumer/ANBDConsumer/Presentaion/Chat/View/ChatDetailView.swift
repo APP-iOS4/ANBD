@@ -40,7 +40,7 @@ struct ChatDetailView: View {
     
     /// Product 관련 함수 (추후 삭제 ......)
     @State private var isTrading: Bool = true
-    @State private var isDeleted: Bool = true
+    @State private var isDeleted: Bool = false
     
     var body: some View {
         ZStack {

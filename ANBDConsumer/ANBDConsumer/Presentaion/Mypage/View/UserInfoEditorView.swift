@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import ANBDModel
 import PhotosUI
 
 struct UserInfoEditorView: View {
@@ -19,7 +20,7 @@ struct UserInfoEditorView: View {
     
     @State private var userProfileImage: UIImage?
     @State private var userNickname: String = ""
-    @State private var selectedFavoriteLocation: TestLocation = .seoul
+    @State private var selectedFavoriteLocation: Location = .seoul
     
     var body: some View {
         VStack(spacing: 40) {
@@ -52,6 +53,7 @@ struct UserInfoEditorView: View {
             
             Button(action: {
                 // 닉네임이 비어있으면 안됨!
+                dismiss()
             }, label: {
                 Text("완료")
             })

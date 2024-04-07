@@ -26,7 +26,7 @@ final class MyPageViewModel: ObservableObject {
                                likeTrades: [])
     
     @Published var editedUserNickname = ""
-    @Published var editedUserFavoriteLocation: TestLocation = .seoul
+    @Published var editedUserFavoriteLocation: Location = .seoul
     
     func checkVaildEditingComplete() -> Bool {
         if editedUserNickname.isEmpty || editedUserNickname == self.user.nickname {

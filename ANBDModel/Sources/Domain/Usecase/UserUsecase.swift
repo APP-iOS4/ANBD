@@ -7,6 +7,7 @@
 
 import Foundation
 
+@available(iOS 15, *)
 public protocol UserUsecase {
     func getUserInfo(userID: String) async throws -> User
     func getUserInfoList() async throws -> [User]
@@ -14,7 +15,7 @@ public protocol UserUsecase {
     func updateUserInfo(user: User) async throws
 }
 
-@available(iOS 13, *)
+@available(iOS 15, *)
 public struct DefaultUserUsecase: UserUsecase {
 
     private let userRepository = DefaultUserRepository()

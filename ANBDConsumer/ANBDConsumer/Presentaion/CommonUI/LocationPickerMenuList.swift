@@ -8,35 +8,15 @@
 import SwiftUI
 import ANBDModel
 
-enum TestLocation: String, CaseIterable {
-    case seoul
-    case gyeonggi
-    case incheon
-    case gwangju
-    case busan
-    case dague
-    case daejeon
-    case ulsan
-    case gangwon
-    case gyeongBuk
-    case gyeongNam
-    case jeonBuk
-    case jeonNam
-    case chungBuk
-    case chungNam
-    case sejong
-    case jeju
-}
-
 struct LocationPickerMenuList: View {
-    @Binding var selectedItem: TestLocation
+    @Binding var selectedItem: Location
     
-    let sendAction: (_ item: TestLocation) -> Void
+    let sendAction: (_ item: Location) -> Void
     
     var body: some View {
         ScrollView {
             LazyVStack {
-                ForEach(TestLocation.allCases, id: \.self) { item in
+                ForEach(Location.allCases, id: \.self) { item in
                     VStack {
                         Button(action: {
                             sendAction(item)
@@ -45,7 +25,7 @@ struct LocationPickerMenuList: View {
                                 .font(ANBDFont.body1)
                                 .foregroundStyle(Color.gray900)
                                 .padding(.vertical, 5)
-                                .frame(width: 150)
+                                .frame(width: 100)
                                 .overlay(alignment: .leading) {
                                     if selectedItem == item {
                                         Image(systemName: "checkmark")

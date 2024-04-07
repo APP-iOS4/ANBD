@@ -6,10 +6,11 @@
 //
 
 import SwiftUI
+import ANBDModel
 
 struct LocationPickerMenu: View {
     @State private var isShowingMenuList = false
-    @Binding var selectedItem: TestLocation
+    @Binding var selectedItem: Location
     
     var body: some View {
         Button(action: {
@@ -18,7 +19,7 @@ struct LocationPickerMenu: View {
             }
         }, label: {
             HStack {
-                Text("\(selectedItem)")
+                Text("\(selectedItem.rawValue)")
                     .font(ANBDFont.SubTitle1)
                     .foregroundStyle(Color.gray900)
                 

@@ -65,15 +65,4 @@ public struct Article: Codable, Identifiable {
         self.likeCount = likeCount
         self.commentCount = commentCount
     }
-    
-    func toDomain() -> UpdatingArticle {
-        return UpdatingArticle(
-            id: self.id,
-            writerID: self.writerID,
-            category: self.category,
-            title: self.title,
-            content: self.content,
-            imageDatas: []
-        )
-    }
 }

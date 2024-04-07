@@ -10,14 +10,16 @@ import SwiftUI
 struct AccountManagementView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     
+    @State private var isShowingEditorView = false
+    
     var body: some View {
         VStack(spacing: 40) {
             DetailInfoComponentView(title: "가입한 계정", content: "sjybext@naver.com")
                 .padding(.top, 30)
             
-            DetailInfoComponentView(title: "닉네임", content: myPageViewModel.userNickname)
+            DetailInfoComponentView(title: "닉네임", content: myPageViewModel.user.nickname)
             
-            DetailInfoComponentView(title: "선호하는 거래 지역", content: myPageViewModel.userPreferredTradingArea)
+            DetailInfoComponentView(title: "선호하는 거래 지역", content: myPageViewModel.user.favoriteLocation.rawValue)
             
             VStack {
                 Rectangle()
@@ -45,18 +47,24 @@ struct AccountManagementView: View {
                 Rectangle()
                     .fill(Color.gray50)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .ignoresSafeArea()
             }
         }
         .navigationTitle("내 정보")
         .navigationBarTitleDisplayMode(.inline)
+        
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {
-                    // 수정 뷰
+                    isShowingEditorView.toggle()
                 }, label: {
                     Text("수정")
                 })
             }
+        }
+        
+        .fullScreenCover(isPresented: $isShowingEditorView) {
+            UserInfoEditorView()
         }
     }
     

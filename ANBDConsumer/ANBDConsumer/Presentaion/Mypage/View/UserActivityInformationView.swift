@@ -31,13 +31,14 @@ struct UserActivityInformationView: View {
         Button(action: {
             
         }, label: {
-            VStack(alignment: .center) {
+            VStack(alignment: .center, spacing: 5) {
                 
                 Text("\(title)")
                     .foregroundStyle(Color.gray500)
                     .font(ANBDFont.SubTitle3)
                 
                 Text("\(count)")
+                    .font(ANBDFont.pretendardSemiBold(22))
             }
         })
     }

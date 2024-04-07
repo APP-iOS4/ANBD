@@ -11,7 +11,7 @@ struct MyPageView: View {
     @StateObject private var myPageViewModel = MyPageViewModel()
     
     var body: some View {
-        VStack {
+        VStack(spacing: 30) {
             UserInfoView()
             
             UserActivityInformationView()

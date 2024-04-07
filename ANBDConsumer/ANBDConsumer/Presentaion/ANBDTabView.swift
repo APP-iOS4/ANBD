@@ -33,7 +33,7 @@ struct ANBDTabView: View {
             }
             
             NavigationStack {
-                //ChatView()
+                ChatView()
             }
             .tabItem {
                 Label("채팅", systemImage: "bubble.right")

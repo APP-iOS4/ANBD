@@ -9,11 +9,11 @@ import SwiftUI
 import ANBDModel
 
 struct ChatDetailView: View {
-    /// 사용자 관련 변수
+    /// 사용자 관련 변수 (추후 UserViewModel 연결 후 삭제)
     var myUserID: String = "likelion123"
     var userNickname: String = "죠니"
     
-    /// 메시지 관련 변수
+    /// 메시지 관련 변수 (추후 ChatViewModel 연결 후 삭제)
     @State private var message: String = ""
     @State private var messages: [Message] = [
         Message(userID: "likelion123", userNickname: "줄이", createdAt: Calendar.current.date(byAdding: .day, value: -7, to: .now) ?? .now, content: "7일전메시지내가보냄"),
@@ -33,52 +33,65 @@ struct ChatDetailView: View {
     
     /// Sheet 관련 변수
     @State private var isShowingConfirmSheet: Bool = false
-    @State private var isTrading: Bool = true
+    @State private var isShowingCustomAlertView: Bool = false
     @State private var isShowingImageDetailView: Bool = false
     @State private var detailImage: String = "DummyPuppy3"
+    @Environment(\.dismiss) private var dismiss
+    
+    /// Product 관련 함수 (추후 삭제 ......)
+    @State private var isTrading: Bool = true
+    @State private var isDeleted: Bool = true
     
     var body: some View {
-        VStack {
-            messageHeaderView
-                .padding(.vertical, 5)
-                .padding(.horizontal, 15)
-            
-            Divider()
-            
-            ScrollView {
-                ForEach(0..<messages.count, id: \.self) { i in
-                    /// 날짜 구분선
-                    if i == 0 || messages[i].dateStringWithYear != messages[i-1].dateStringWithYear {
-                        MessageDateDividerView(dateString: messages[i].dateStringWithYear)
-                            .padding()
-                            .padding(.top, i == 0 ? 5 : 25)
-                            .padding(.bottom, 25)
-                    }
-                    
-                    /// 이미지 · 텍스트
-                    if messages[i].imageURL != nil {
-                        /// 시도 1. FullScreenCover
-                        Button(action: {
-                            if let imageURL = messages[i].imageURL {
-                                detailImage = imageURL
-                                isShowingImageDetailView.toggle()
-                            }
-                        }, label: {
+        ZStack {
+            VStack {
+                messageHeaderView
+                    .padding(.vertical, 5)
+                    .padding(.horizontal, 15)
+                
+                Divider()
+                
+                ScrollView {
+                    ForEach(0..<messages.count, id: \.self) { i in
+                        /// 날짜 구분선
+                        if i == 0 || messages[i].dateStringWithYear != messages[i-1].dateStringWithYear {
+                            MessageDateDividerView(dateString: messages[i].dateStringWithYear)
+                                .padding()
+                                .padding(.top, i == 0 ? 5 : 25)
+                                .padding(.bottom, 25)
+                        }
+                        
+                        /// 이미지 · 텍스트
+                        if messages[i].imageURL != nil {
+                            Button(action: {
+                                if let imageURL = messages[i].imageURL {
+                                    detailImage = imageURL
+                                    isShowingImageDetailView.toggle()
+                                }
+                            }, label: {
+                                MessageCell(message: messages[i])
+                                    .padding(.vertical, 1)
+                                    .padding(.horizontal, 20)
+                            })
+                        } else {
                             MessageCell(message: messages[i])
                                 .padding(.vertical, 1)
                                 .padding(.horizontal, 20)
-                        })
-                    } else {
-                        MessageCell(message: messages[i])
-                            .padding(.vertical, 1)
-                            .padding(.horizontal, 20)
+                        }
                     }
                 }
+                .defaultScrollAnchor(.bottom)
+                
+                messageSendView
+                    .padding()
             }
-            .defaultScrollAnchor(.bottom)
             
-            messageSendView
-                .padding()
+            if isShowingCustomAlertView {
+                CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertView, viewType: .leaveChatRoom) {
+                    print("채팅방 나가기 ~~")
+                    dismiss()
+                }
+            }
         }
         .navigationTitle(userNickname)
         .navigationBarTitleDisplayMode(.inline)
@@ -103,7 +116,7 @@ struct ChatDetailView: View {
             }
             
             Button("채팅방 나가기", role: .destructive) {
-                // TODO: 채팅방 나가기
+                isShowingCustomAlertView.toggle()
             }
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
@@ -117,21 +130,29 @@ struct ChatDetailView: View {
     // MARK: - 메시지 해더 뷰 (Trade 관련)
     private var messageHeaderView: some View {
         HStack {
-            Image("DummyImage1")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 70, height: 70)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-                .padding(.trailing, 10)
-            
+            if isDeleted {
+                Image(systemName: "exclamationmark.square.fill")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 60, height: 60)
+                    .padding(.trailing, 10)
+                    .foregroundStyle(.gray500)
+            } else {
+                Image("DummyImage1")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 70, height: 70)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .padding(.trailing, 10)
+            }
             
             VStack(alignment: .leading) {
-                Text("나 헤드셋 님 매직 키보드 플리증용용")
+                Text(isDeleted ? "삭제된 게시물" : "나 헤드셋 님 매직 키보드 플리증용용")
                     .lineLimit(1)
                     .font(ANBDFont.SubTitle3)
                 
                 Spacer()
-                Text("헤드셋 ↔ 무선 키보드")
+                Text(isDeleted ? "글쓴이가 삭제한 게시물이에요. " : "헤드셋 ↔ 무선 키보드")
                     .foregroundStyle(.gray400)
                     .font(ANBDFont.Caption3)
             }
@@ -139,12 +160,14 @@ struct ChatDetailView: View {
             
             Spacer()
             
-            VStack(alignment: .leading) {
-                TradeStateChangeView(isTrading: $isTrading)
-                
-                Spacer()
+            if !isDeleted {
+                VStack(alignment: .leading) {
+                    TradeStateChangeView(isTrading: $isTrading)
+                    
+                    Spacer()
+                }
+                .padding(.vertical, 5)
             }
-            .padding(.vertical, 5)
         }
         .frame(height: 70)
         .foregroundStyle(.gray900)

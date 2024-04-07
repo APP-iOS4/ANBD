@@ -12,6 +12,9 @@
 		425FD3A92BC2469300143993 /* UserActivityInformationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 425FD3A82BC2469300143993 /* UserActivityInformationView.swift */; };
 		425FD3AB2BC246AD00143993 /* OtherSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 425FD3AA2BC246AD00143993 /* OtherSettingsView.swift */; };
 		42C7BBD82BC2518000F0805A /* AccountManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C7BBD72BC2518000F0805A /* AccountManagementView.swift */; };
+		42C7BBDA2BC2793B00F0805A /* UserInfoEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C7BBD92BC2793B00F0805A /* UserInfoEditorView.swift */; };
+		42EE634E2BC2BCA100100FF4 /* LocationPickerMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42EE634D2BC2BCA100100FF4 /* LocationPickerMenu.swift */; };
+		42EE63502BC2BEEF00100FF4 /* LocationPickerMenuList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42EE634F2BC2BEEF00100FF4 /* LocationPickerMenuList.swift */; };
 		A83F2F982BBFC07C00E3EB13 /* NormalCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83F2F972BBFC07C00E3EB13 /* NormalCarouselView.swift */; };
 		A83F2F9B2BBFCD7D00E3EB13 /* SafariWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83F2F9A2BBFCD7D00E3EB13 /* SafariWebView.swift */; };
 		CB198CF02BBF8E84000C2709 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198CEF2BBF8E84000C2709 /* Category.swift */; };
@@ -50,6 +53,9 @@
 		425FD3A82BC2469300143993 /* UserActivityInformationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActivityInformationView.swift; sourceTree = "<group>"; };
 		425FD3AA2BC246AD00143993 /* OtherSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherSettingsView.swift; sourceTree = "<group>"; };
 		42C7BBD72BC2518000F0805A /* AccountManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountManagementView.swift; sourceTree = "<group>"; };
+		42C7BBD92BC2793B00F0805A /* UserInfoEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoEditorView.swift; sourceTree = "<group>"; };
+		42EE634D2BC2BCA100100FF4 /* LocationPickerMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPickerMenu.swift; sourceTree = "<group>"; };
+		42EE634F2BC2BEEF00100FF4 /* LocationPickerMenuList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPickerMenuList.swift; sourceTree = "<group>"; };
 		A83F2F962BBF951E00E3EB13 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A83F2F972BBFC07C00E3EB13 /* NormalCarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalCarouselView.swift; sourceTree = "<group>"; };
 		A83F2F9A2BBFCD7D00E3EB13 /* SafariWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebView.swift; sourceTree = "<group>"; };
@@ -249,6 +255,8 @@
 				A83F2F9A2BBFCD7D00E3EB13 /* SafariWebView.swift */,
 				CB198CF12BBF8FC8000C2709 /* CategoryDividerView.swift */,
 				CB198CF52BBFD0A3000C2709 /* WriteButtonView.swift */,
+				42EE634D2BC2BCA100100FF4 /* LocationPickerMenu.swift */,
+				42EE634F2BC2BEEF00100FF4 /* LocationPickerMenuList.swift */,
 			);
 			path = CommonUI;
 			sourceTree = "<group>";
@@ -294,6 +302,7 @@
 				425FD3A62BC2463000143993 /* UserInfoView.swift */,
 				425FD3A82BC2469300143993 /* UserActivityInformationView.swift */,
 				42C7BBD72BC2518000F0805A /* AccountManagementView.swift */,
+				42C7BBD92BC2793B00F0805A /* UserInfoEditorView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -466,10 +475,13 @@
 				CB7BEE272BBD575700C0F298 /* AuthenticationViewModel.swift in Sources */,
 				CB7BEE1D2BBD566700C0F298 /* HomeView.swift in Sources */,
 				CB7BEE332BBD57B500C0F298 /* TradeViewModel.swift in Sources */,
+				42EE634E2BC2BCA100100FF4 /* LocationPickerMenu.swift in Sources */,
 				CB198CF02BBF8E84000C2709 /* Category.swift in Sources */,
 				CB7BEE372BBD57CE00C0F298 /* CommunityViewModel.swift in Sources */,
+				42C7BBDA2BC2793B00F0805A /* UserInfoEditorView.swift in Sources */,
 				CB7BEE112BBD563700C0F298 /* CommonUIView.swift in Sources */,
 				CB7BEE192BBD565500C0F298 /* TradeView.swift in Sources */,
+				42EE63502BC2BEEF00100FF4 /* LocationPickerMenuList.swift in Sources */,
 				CB7BEDBB2BBD4E9D00C0F298 /* ANBDTabView.swift in Sources */,
 				CB7BEE132BBD564100C0F298 /* AuthenticationView.swift in Sources */,
 				CB7BEE212BBD568A00C0F298 /* ANBDFont.swift in Sources */,

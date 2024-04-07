@@ -22,11 +22,11 @@ struct UserInfoView: View {
                 .padding(.horizontal)
             
             VStack(alignment: .leading, spacing: 10) {
-                Text("\(myPageViewModel.userNickname) 님")
+                Text("\(myPageViewModel.user.nickname) 님")
                     .foregroundStyle(Color.gray900)
-                    .font(ANBDFont.Heading3)
+                    .font(ANBDFont.pretendardBold(24))
                 
-                Text("선호 지역 : \(myPageViewModel.userPreferredTradingArea)")
+                Text("선호 지역 : \(myPageViewModel.user.favoriteLocation)")
                     .foregroundStyle(Color.gray400)
                     .font(ANBDFont.Caption3)
                 
@@ -52,6 +52,7 @@ struct UserInfoView: View {
             AccountManagementView()
                 // 아마 최상위에서 주입하면 지워도 되지 않을까?
                 .environmentObject(myPageViewModel)
+                .toolbarRole(.editor)
         }
     }
 }

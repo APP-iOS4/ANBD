@@ -23,8 +23,8 @@ public struct Article: Codable, Identifiable, Hashable {
     
     /// 게시글의 카테고리
     ///
-    /// 0이면 아껴쓰기, 1이면 다시쓰기이다.
-    public var category: ArticleCategory
+    /// 0이면 아껴쓰기, 3이면 다시쓰기이다.
+    public var category: ANBDCategory
     
     /// 게시글의 제목
     public var title: String
@@ -47,7 +47,7 @@ public struct Article: Codable, Identifiable, Hashable {
         writerID: String,
         writerNickname: String,
         createdAt: Date = .now,
-        category: ArticleCategory,
+        category: ANBDCategory,
         title: String,
         content: String,
         imagePaths: [String] = [],

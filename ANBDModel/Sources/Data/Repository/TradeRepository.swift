@@ -47,7 +47,7 @@ struct DefaultTradeRepository: TradeRepository {
         return snapshot.compactMap { try? $0.data(as: Trade.self) }
     }
     
-    func readTradeList(category: TradeCategory) async throws -> [Trade] {
+    func readTradeList(category: ANBDCategory) async throws -> [Trade] {
         guard let snapshot = try? await tradeDB
             .whereField("category", isEqualTo: category.rawValue)
             .order(by: "createdAt", descending: true)
@@ -88,7 +88,7 @@ struct DefaultTradeRepository: TradeRepository {
     
     
     // MARK: Update
-    func updateTrade(category: TradeCategory, trade: Trade) async throws {
+    func updateTrade(trade: Trade) async throws {
         guard let _ = try? tradeDB.document(trade.id).setData(from: trade)
         else {
             throw DBError.updateDocumentError(message: "Trade document를 업데이트하는데 실패했습니다.")

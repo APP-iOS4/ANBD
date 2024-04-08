@@ -45,7 +45,7 @@ struct DefaultArticleRepository: ArticleRepository {
         return snapshot.compactMap { try? $0.data(as: Article.self) }
     }
     
-    func readArticleList(category: ArticleCategory) async throws -> [Article] {
+    func readArticleList(category: ANBDCategory) async throws -> [Article] {
         guard let snapshot = try? await articleDB
             .whereField("category", isEqualTo: category)
             .order(by: "createdAt", descending: true)

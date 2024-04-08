@@ -62,7 +62,7 @@ struct ArticleDetailView: View {
                         .font(ANBDFont.body1)
                         .padding(.bottom, 10)
                     
-                    Image(systemName: "square.fill")
+                    Image("DummyImage1")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .padding(.bottom, 10)

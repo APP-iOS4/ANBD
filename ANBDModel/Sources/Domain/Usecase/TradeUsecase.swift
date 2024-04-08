@@ -13,11 +13,9 @@ public protocol TradeUsecase {
     func writeTrade(trade: Trade, imageDatas: [Data]) async throws
     func loadTrade(tradeID: String) async throws -> Trade
     func loadTradeList() async throws -> [Trade]
-    func loadTradeList(category: ANBDCategory) async throws -> [Trade]
     func loadTradeList(writerID: String) async throws -> [Trade]
     func searchTrade(keyword: String) async throws -> [Trade]
     func refreshAllTradeList() async throws -> [Trade]
-    func refreshCategoryTradeList(category: ANBDCategory) async throws -> [Trade]
     func refreshWriterIDTradeList(writerID: String) async throws -> [Trade]
     func refreshSearchTradeList(keyword: String) async throws -> [Trade]
     func updateTrade(trade: Trade, imageDatas: [Data]) async throws
@@ -71,15 +69,6 @@ public struct DefaultTradeUsecase: TradeUsecase {
     }
     
     
-    /// 카테고리가 일치하는 모든 Trade를 불러오는 메서드
-    /// - Parameters:
-    ///   - category: Trade의 카테고리 (나눠쓰기, 바꿔쓰기)
-    /// - Returns: 카테고리가 일치하는 Trade 배열
-    public func loadTradeList(category: ANBDCategory) async throws -> [Trade] {
-        try await tradeRepository.readTradeList(category: category)
-    }
-    
-    
     /// 작성자 ID가 일치하는 모든 Trade를 불러오는 메서드
     /// - Parameters:
     ///   - writerID: 작성자의 ID
@@ -102,15 +91,6 @@ public struct DefaultTradeUsecase: TradeUsecase {
     ///  - Returns: Trade 배열
     public func refreshAllTradeList() async throws -> [Trade] {
         try await tradeRepository.refreshAll()
-    }
-    
-    
-    /// 페이지네이션 Query를 초기화하고 카테고리가 일치하는 최신 Trade 목록 10개를 불러오는 메서드
-    /// - Parameters:
-    ///   - category: 불러올 Trade의 카테고리
-    /// - Returns: 카테고리가 일치하는 Trade 배열
-    public func refreshCategoryTradeList(category: ANBDCategory) async throws -> [Trade] {
-        try await tradeRepository.refreshCategory(category: category)
     }
     
     

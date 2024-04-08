@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum ItemCategory: CaseIterable {
+public enum ItemCategory: String, Codable, CaseIterable {
     case digital
     case furnitureInterior
     case menClothingAccessories

@@ -14,16 +14,17 @@ public protocol TradeUsecase {
     func loadTrade(tradeID: String) async throws -> Trade
     func loadTradeList() async throws -> [Trade]
     func loadTradeList(category: ANBDCategory) async throws -> [Trade]
-    func loadTradeList(tradeState: TradeState) async throws -> [Trade]
     func loadTradeList(writerID: String) async throws -> [Trade]
+    func searchTrade(keyword: String) async throws -> [Trade]
     func refreshAllTradeList() async throws -> [Trade]
     func refreshCategoryTradeList(category: ANBDCategory) async throws -> [Trade]
-    func refreshStateTradeList(tradeState: TradeState) async throws -> [Trade]
     func refreshWriterIDTradeList(writerID: String) async throws -> [Trade]
+    func refreshSearchTradeList(keyword: String) async throws -> [Trade]
     func updateTrade(trade: Trade, imageDatas: [Data]) async throws
     func updateTradeState(tradeID: String, tradeState: TradeState) async throws
     func likeTrade(tradeID: String) async throws
     func deleteTrade(trade: Trade) async throws
+    func resetQuery()
 }
 
 @available(iOS 15, *)
@@ -79,21 +80,21 @@ public struct DefaultTradeUsecase: TradeUsecase {
     }
     
     
-    /// 거래상태가 일치하는 모든 Trade를 불러오는 메서드
-    /// - Parameters:
-    ///   - tradeState: Trade의 상태 (거래중, 거래완료)
-    /// - Returns: 거래상태가 일치하는 Trade 배열
-    public func loadTradeList(tradeState: TradeState) async throws -> [Trade] {
-        try await tradeRepository.readTradeList(tradeState: tradeState)
-    }
-    
-    
     /// 작성자 ID가 일치하는 모든 Trade를 불러오는 메서드
     /// - Parameters:
     ///   - writerID: 작성자의 ID
     /// - Returns: 작성자 ID가 일치하는 Trade 배열
     public func loadTradeList(writerID: String) async throws -> [Trade] {
         try await tradeRepository.readTradeList(writerID: writerID)
+    }
+    
+    
+    /// keyword로 Trade을 불러오는 메서드
+    /// - Parameters:
+    ///   - keyword: 검색할 keyword
+    /// - Returns: title, content, itemCategory가 keyword에 해당하는 Trade 배열
+    public func searchTrade(keyword: String) async throws -> [Trade] {
+        try await tradeRepository.readTradeList(keyword: keyword)
     }
     
     
@@ -113,21 +114,21 @@ public struct DefaultTradeUsecase: TradeUsecase {
     }
     
     
-    /// 페이지네이션 Query를 초기화하고 거래상태가 일치하는 최신 Trade 목록 10개를 불러오는 메서드
-    /// - Parameters:
-    ///   - tradeState: 불러올 Trade의 거래상태
-    /// - Returns: 거래상태가 일치하는 Trade 배열
-    public func refreshStateTradeList(tradeState: TradeState) async throws -> [Trade] {
-        try await tradeRepository.refreshCategory(tradeState: tradeState)
-    }
-    
-    
     /// 페이지네이션 Query를 초기화하고 작성자 ID가 일치하는 최신 Trade 목록 10개를 불러오는 메서드
     /// - Parameters:
     ///   - writerID: 불러올 Trade의 writerID
     /// - Returns: writerID가 일치하는 Trade 배열
     public func refreshWriterIDTradeList(writerID: String) async throws -> [Trade] {
         try await tradeRepository.refreshWriterID(writerID: writerID)
+    }
+    
+    
+    /// 페이지네이션 Query를 초기화하고 키워드에 해당하는 최신 Trade 목록 10개를 불러오는 메서드
+    /// - Parameters:
+    ///   - keyword: 검색할 Trade의 키워드
+    /// - Returns: title, content, itemCategory가 키워드에 해당하는 Trade 배열
+    public func refreshSearchTradeList(keyword: String) async throws -> [Trade] {
+        try await tradeRepository.refreshSearch(keyword: keyword)
     }
     
     
@@ -182,6 +183,13 @@ public struct DefaultTradeUsecase: TradeUsecase {
         try await storage.deleteImageList(path: .trade, containerID: trade.id, imagePaths: trade.imagePaths)
         try await tradeRepository.deleteTrade(tradeID: trade.id)
         try await userRepository.updateUserInfoList(tradeID: trade.id)
+    }
+    
+    /// 검색 결과 페이지네이션 쿼리를 초기화하는 메서드
+    ///
+    /// 검색 뷰에서 벗어날 때마다 호출해줘야한다.
+    public func resetQuery() {
+        tradeRepository.resetQuery()
     }
     
 }

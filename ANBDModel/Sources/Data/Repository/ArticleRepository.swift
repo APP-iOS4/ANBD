@@ -18,6 +18,7 @@ final class DefaultArticleRepository: ArticleRepository {
     private var accuaQuery: Query?
     private var dasiQuery: Query?
     private var writerIDQuery: Query?
+    private var searchQuery: Query?
     
     init() { }
     
@@ -164,6 +165,55 @@ final class DefaultArticleRepository: ArticleRepository {
         }
     }
     
+    func readArticleList(keyword: String) async throws -> [Article] {
+        guard !keyword.isEmpty else { return [] }
+        
+        var requestQuery: Query
+        let filteredQuery = articleDB
+            .whereFilter(
+                .orFilter([
+                    .andFilter([
+                        .whereField("title", isGreaterOrEqualTo: keyword),
+                        .whereField("title", isLessThan: keyword + "힣")
+                    ]),
+                    .andFilter([
+                        .whereField("content", isGreaterOrEqualTo: keyword),
+                        .whereField("content", isLessThan: keyword + "힣")
+                    ])
+                ])
+            )
+            .order(by: "createdAt", descending: true)
+            .limit(to: 10)
+        
+        if let searchQuery {
+            requestQuery = searchQuery
+        } else {
+            requestQuery = filteredQuery
+        }
+        
+        return try await withCheckedThrowingContinuation { [weak self] continuation in
+            requestQuery.addSnapshotListener { [weak self] snapshot, error in
+                guard let snapshot else {
+                    print(error.debugDescription)
+                    continuation.resume(throwing: DBError.getDocumentError(message: "keyword에 해당하는 Article documents를 읽어오는데 실패했습니다."))
+                    return
+                }
+                
+                guard let lastSnapshot = snapshot.documents.last else {
+                    print("end")
+                    return
+                }
+                
+                let next = filteredQuery.start(afterDocument: lastSnapshot)
+                
+                self?.searchQuery = next
+                
+                let articleList = snapshot.documents.compactMap { try? $0.data(as: Article.self) }
+                continuation.resume(returning: articleList)
+            }
+        }
+    }
+    
     func refreshAll() async throws -> [Article] {
         allQuery = nil
         return try await readArticleList()
@@ -184,6 +234,12 @@ final class DefaultArticleRepository: ArticleRepository {
     func refreshWriterID(writerID: String) async throws -> [Article] {
         writerIDQuery = nil
         return try await readArticleList(writerID: writerID)
+    }
+    
+    func refreshSearch(keyword: String) async throws -> [Article] {
+        guard !keyword.isEmpty else { return [] }
+        searchQuery = nil
+        return try await readArticleList(keyword: keyword)
     }
     
     
@@ -209,6 +265,14 @@ final class DefaultArticleRepository: ArticleRepository {
         else {
             throw DBError.deleteDocumentError(message: "ID가 일치하는 Article document를 삭제하는데 실패했습니다.")
         }
+    }
+    
+    func resetQuery() {
+        allQuery = nil
+        accuaQuery = nil
+        dasiQuery = nil
+        writerIDQuery = nil
+        searchQuery = nil
     }
     
 }

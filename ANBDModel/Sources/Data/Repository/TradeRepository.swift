@@ -16,16 +16,29 @@ final class DefaultTradeRepository: TradeRepository {
     private var allQuery: Query?
     private var nanuaQuery: Query?
     private var baccuaQuery: Query?
-    private var tradingQuery: Query?
-    private var finishQuery: Query?
     private var writerIDQuery: Query?
+    private var searchQuery: Query?
     
     init() { }
     
     
     // MARK: Create
     func createTrade(trade: Trade) async throws {
-        guard let _ = try? tradeDB.document(trade.id).setData(from: trade)
+        guard let _ = try? await tradeDB.document(trade.id).setData([
+            "id": trade.id,
+            "writerID": trade.writerID,
+            "writerNickname": trade.writerNickname,
+            "createdAt": trade.createdAt,
+            "category": trade.category,
+            "itemCategory": trade.itemCategory.rawValue,
+            "location": trade.location,
+            "tradeState": trade.tradeState,
+            "title": trade.title,
+            "content": trade.content,
+            "myProduct": trade.myProduct,
+            "wantProduct": trade.wantProduct as Any,
+            "imagePaths": trade.imagePaths
+        ])
         else {
             throw DBError.setDocumentError(message: "Trade document를 추가하는데 실패했습니다.")
         }
@@ -126,51 +139,6 @@ final class DefaultTradeRepository: TradeRepository {
         }
     }
     
-    func readTradeList(tradeState: TradeState) async throws -> [Trade] {
-        var requestQuery: Query
-        
-        if tradeState == .trading, let tradingQuery {
-            requestQuery = tradingQuery
-        } else if tradeState == .finish, let finishQuery {
-            requestQuery = finishQuery
-        }
-        
-        requestQuery = tradeDB
-            .whereField("tradeState", isEqualTo: tradeState)
-            .order(by: "createdAt", descending: true)
-            .limit(to: 10)
-        
-        return try await withCheckedThrowingContinuation { [weak self] continuation in
-            requestQuery.addSnapshotListener { [weak self] snapshot, error in
-                guard let snapshot else {
-                    print(error.debugDescription)
-                    continuation.resume(throwing: DBError.getDocumentError(message: "tradeState가 일치하는 Article documents를 읽어오는데 실패했습니다."))
-                    return
-                }
-                
-                guard let lastSnapshot = snapshot.documents.last else {
-                    print("end")
-                    return
-                }
-                
-                let next = self?.tradeDB
-                    .whereField("tradeState", isEqualTo: tradeState)
-                    .order(by: "createdAt", descending: true)
-                    .limit(to: 10)
-                    .start(afterDocument: lastSnapshot)
-                
-                if tradeState == .trading {
-                    self?.tradingQuery = next
-                } else {
-                    self?.finishQuery = next
-                }
-                    
-                let tradeList = snapshot.documents.compactMap { try? $0.data(as: Trade.self) }
-                continuation.resume(returning: tradeList)
-            }
-        }
-    }
-    
     func readTradeList(writerID: String) async throws -> [Trade] {
         var requestQuery: Query
         
@@ -210,6 +178,56 @@ final class DefaultTradeRepository: TradeRepository {
         }
     }
     
+    func readTradeList(keyword: String) async throws -> [Trade] {
+        guard !keyword.isEmpty else { return [] }
+        
+        var requestQuery: Query
+        let filteredQuery = tradeDB
+            .whereFilter(
+                .orFilter([
+                    .whereField("itemCategory", isEqualTo: keyword),
+                    .andFilter([
+                        .whereField("title", isGreaterOrEqualTo: keyword),
+                        .whereField("title", isLessThan: keyword + "힣")
+                    ]),
+                    .andFilter([
+                        .whereField("content", isGreaterOrEqualTo: keyword),
+                        .whereField("content", isLessThan: keyword + "힣")
+                    ])
+                ])
+            )
+            .order(by: "createdAt", descending: true)
+            .limit(to: 10)
+        
+        if let searchQuery {
+            requestQuery = searchQuery
+        } else {
+            requestQuery = filteredQuery
+        }
+        
+        return try await withCheckedThrowingContinuation { [weak self] continuation in
+            requestQuery.addSnapshotListener { [weak self] snapshot, error in
+                guard let snapshot else {
+                    print(error.debugDescription)
+                    continuation.resume(throwing: DBError.getDocumentError(message: "keyword에 해당하는 Article documents를 읽어오는데 실패했습니다."))
+                    return
+                }
+                
+                guard let lastSnapshot = snapshot.documents.last else {
+                    print("end")
+                    return
+                }
+                
+                let next = filteredQuery.start(afterDocument: lastSnapshot)
+                
+                self?.searchQuery = next
+                
+                let tradeList = snapshot.documents.compactMap { try? $0.data(as: Trade.self) }
+                continuation.resume(returning: tradeList)
+            }
+        }
+    }
+    
     func refreshAll() async throws -> [Trade] {
         allQuery = nil
         return try await readTradeList()
@@ -227,19 +245,15 @@ final class DefaultTradeRepository: TradeRepository {
         return try await readTradeList(category: category)
     }
     
-    func refreshCategory(tradeState: TradeState) async throws -> [Trade] {
-        if tradeState == .trading {
-            tradingQuery = nil
-        } else {
-            finishQuery = nil
-        }
-        
-        return try await readTradeList(tradeState: tradeState)
-    }
-    
     func refreshWriterID(writerID: String) async throws -> [Trade] {
         writerIDQuery = nil
         return try await readTradeList(writerID: writerID)
+    }
+    
+    func refreshSearch(keyword: String) async throws -> [Trade] {
+        guard !keyword.isEmpty else { return [] }
+        searchQuery = nil
+        return try await readTradeList(keyword: keyword)
     }
     
     
@@ -267,6 +281,14 @@ final class DefaultTradeRepository: TradeRepository {
         else {
             throw DBError.deleteDocumentError(message: "ID가 일치하는 Trade document를 삭제하는데 실패했습니다.")
         }
+    }
+    
+    func resetQuery() {
+        allQuery = nil
+        nanuaQuery = nil
+        baccuaQuery = nil
+        writerIDQuery = nil
+        searchQuery = nil
     }
     
 }

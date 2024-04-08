@@ -20,7 +20,7 @@ public enum ItemCategory: String, Codable, CaseIterable {
     case petSupplies
     case otherUsedItems
     
-    public var labelText: String {
+    public var description: String {
         switch self {
         case .digital:
             return "디지털 기기"

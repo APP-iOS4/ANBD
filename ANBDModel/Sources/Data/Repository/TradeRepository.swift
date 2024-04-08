@@ -9,9 +9,16 @@ import Foundation
 import FirebaseFirestore
 
 @available(iOS 15, *)
-struct DefaultTradeRepository: TradeRepository {
+final class DefaultTradeRepository: TradeRepository {
     
     let tradeDB = Firestore.firestore().collection("TradeBoard")
+    
+    private var allQuery: Query?
+    private var nanuaQuery: Query?
+    private var baccuaQuery: Query?
+    private var tradingQuery: Query?
+    private var finishQuery: Query?
+    private var writerIDQuery: Query?
     
     init() { }
     
@@ -36,54 +43,203 @@ struct DefaultTradeRepository: TradeRepository {
     }
     
     func readTradeList() async throws -> [Trade] {
-        guard let snapshot = try? await tradeDB
-            .order(by: "createdAt", descending: true)
-            .getDocuments()
-            .documents
-        else {
-            throw DBError.getDocumentError(message: "Trade documents를 읽어오는데 실패했습니다.")
+        var requestQuery: Query
+        
+        if let allQuery {
+            requestQuery = allQuery
+        } else {
+            requestQuery = tradeDB
+                .order(by: "createdAt", descending: true)
+                .limit(to: 10)
         }
         
-        return snapshot.compactMap { try? $0.data(as: Trade.self) }
+        return try await withCheckedThrowingContinuation { [weak self] continuation in
+            requestQuery.addSnapshotListener { [weak self] snapshot, error in
+                guard let snapshot else {
+                    print(error.debugDescription)
+                    continuation.resume(throwing: DBError.getDocumentError(message: "Trade documents를 읽어오는데 실패했습니다."))
+                    return
+                }
+                
+                guard let lastSnapshot = snapshot.documents.last else {
+                    print("end")
+                    return
+                }
+                
+                let next = self?.tradeDB
+                    .order(by: "createdAt", descending: true)
+                    .limit(to: 10)
+                    .start(afterDocument: lastSnapshot)
+                
+                self?.allQuery = next
+                
+                let tradeList = snapshot.documents.compactMap { try? $0.data(as: Trade.self) }
+                continuation.resume(returning: tradeList)
+            }
+        }
     }
     
     func readTradeList(category: ANBDCategory) async throws -> [Trade] {
-        guard let snapshot = try? await tradeDB
-            .whereField("category", isEqualTo: category.rawValue)
-            .order(by: "createdAt", descending: true)
-            .getDocuments()
-            .documents
-        else {
-            throw DBError.getDocumentError(message: "Trade documents를 읽어오는데 실패했습니다.")
+        guard category == .nanua || category == .baccua else { return [] }
+        
+        var requestQuery: Query
+        
+        if category == .nanua, let nanuaQuery {
+            requestQuery = nanuaQuery
+        } else if category == .baccua, let baccuaQuery {
+            requestQuery = baccuaQuery
         }
         
-        return snapshot.compactMap { try? $0.data(as: Trade.self) }
+        requestQuery = tradeDB
+            .whereField("category", isEqualTo: category)
+            .order(by: "createdAt", descending: true)
+            .limit(to: 10)
+        
+        return try await withCheckedThrowingContinuation { [weak self] continuation in
+            requestQuery.addSnapshotListener { [weak self] snapshot, error in
+                guard let snapshot else {
+                    print(error.debugDescription)
+                    continuation.resume(throwing: DBError.getDocumentError(message: "category가 일치하는 Trade documents를 읽어오는데 실패했습니다."))
+                    return
+                }
+                
+                guard let lastSnapshot = snapshot.documents.last else {
+                    print("end")
+                    return
+                }
+                
+                let next = self?.tradeDB
+                    .whereField("category", isEqualTo: category)
+                    .order(by: "createdAt", descending: true)
+                    .limit(to: 10)
+                    .start(afterDocument: lastSnapshot)
+                
+                if category == .nanua {
+                    self?.nanuaQuery = next
+                } else {
+                    self?.baccuaQuery = next
+                }
+                    
+                let tradeList = snapshot.documents.compactMap { try? $0.data(as: Trade.self) }
+                continuation.resume(returning: tradeList)
+            }
+        }
     }
     
     func readTradeList(tradeState: TradeState) async throws -> [Trade] {
-        guard let snapshot = try? await tradeDB
-            .whereField("tradeState", isEqualTo: tradeState.rawValue)
-            .order(by: "createdAt", descending: true)
-            .getDocuments()
-            .documents
-        else {
-            throw DBError.getDocumentError(message: "Trade documents를 읽어오는데 실패했습니다.")
+        var requestQuery: Query
+        
+        if tradeState == .trading, let tradingQuery {
+            requestQuery = tradingQuery
+        } else if tradeState == .finish, let finishQuery {
+            requestQuery = finishQuery
         }
         
-        return snapshot.compactMap { try? $0.data(as: Trade.self) }
+        requestQuery = tradeDB
+            .whereField("tradeState", isEqualTo: tradeState)
+            .order(by: "createdAt", descending: true)
+            .limit(to: 10)
+        
+        return try await withCheckedThrowingContinuation { [weak self] continuation in
+            requestQuery.addSnapshotListener { [weak self] snapshot, error in
+                guard let snapshot else {
+                    print(error.debugDescription)
+                    continuation.resume(throwing: DBError.getDocumentError(message: "tradeState가 일치하는 Article documents를 읽어오는데 실패했습니다."))
+                    return
+                }
+                
+                guard let lastSnapshot = snapshot.documents.last else {
+                    print("end")
+                    return
+                }
+                
+                let next = self?.tradeDB
+                    .whereField("tradeState", isEqualTo: tradeState)
+                    .order(by: "createdAt", descending: true)
+                    .limit(to: 10)
+                    .start(afterDocument: lastSnapshot)
+                
+                if tradeState == .trading {
+                    self?.tradingQuery = next
+                } else {
+                    self?.finishQuery = next
+                }
+                    
+                let tradeList = snapshot.documents.compactMap { try? $0.data(as: Trade.self) }
+                continuation.resume(returning: tradeList)
+            }
+        }
     }
     
     func readTradeList(writerID: String) async throws -> [Trade] {
-        guard let snapshot = try? await tradeDB
-            .whereField("writerID", isEqualTo: writerID)
-            .order(by: "createdAt", descending: true)
-            .getDocuments()
-            .documents
-        else {
-            throw DBError.getDocumentError(message: "Trade documents를 읽어오는데 실패했습니다.")
+        var requestQuery: Query
+        
+        if let writerIDQuery {
+            requestQuery = writerIDQuery
+        } else {
+            requestQuery = tradeDB
+                .whereField("writerID", isEqualTo: writerID)
+                .order(by: "createdAt", descending: true)
+                .limit(to: 10)
         }
         
-        return snapshot.compactMap { try? $0.data(as: Trade.self) }
+        return try await withCheckedThrowingContinuation { [weak self] continuation in
+            requestQuery.addSnapshotListener { [weak self] snapshot, error in
+                guard let snapshot else {
+                    print(error.debugDescription)
+                    continuation.resume(throwing: DBError.getDocumentError(message: "writerID가 일치하는 Trade documents를 읽어오는데 실패했습니다."))
+                    return
+                }
+                
+                guard let lastSnapshot = snapshot.documents.last else {
+                    print("end")
+                    return
+                }
+                
+                let next = self?.tradeDB
+                    .whereField("writerID", isEqualTo: writerID)
+                    .order(by: "createdAt", descending: true)
+                    .limit(to: 10)
+                    .start(afterDocument: lastSnapshot)
+                
+                self?.writerIDQuery = next
+                
+                let tradeList = snapshot.documents.compactMap { try? $0.data(as: Trade.self) }
+                continuation.resume(returning: tradeList)
+            }
+        }
+    }
+    
+    func refreshAll() async throws -> [Trade] {
+        allQuery = nil
+        return try await readTradeList()
+    }
+    
+    func refreshCategory(category: ANBDCategory) async throws -> [Trade] {
+        guard category == .nanua || category == .baccua else { return [] }
+        
+        if category == .nanua {
+            nanuaQuery = nil
+        } else {
+            baccuaQuery = nil
+        }
+        
+        return try await readTradeList(category: category)
+    }
+    
+    func refreshCategory(tradeState: TradeState) async throws -> [Trade] {
+        if tradeState == .trading {
+            tradingQuery = nil
+        } else {
+            finishQuery = nil
+        }
+        
+        return try await readTradeList(tradeState: tradeState)
+    }
+    
+    func refreshWriterID(writerID: String) async throws -> [Trade] {
+        writerIDQuery = nil
+        return try await readTradeList(writerID: writerID)
     }
     
     

@@ -38,6 +38,7 @@ struct OtherSettingsView: View {
         }
         .navigationDestination(isPresented: $isShowingPolicyView) {
             Text("약관 및 정책")
+                .toolbar(.hidden, for: .tabBar)
         }
     }
 }

@@ -20,13 +20,13 @@ struct TradeListView: View {
                 Button(action: {
                     isShowingLocation.toggle()
                 }, label: {
-                    WhiteCapsuleButtonView(text: "지역", isForFiltering: true)
+                    CapsuleButtonView(text: "지역", isForFiltering: true)
                 })
                 
                 Button(action: {
                     isShowingItemCategory.toggle()
                 }, label: {
-                    WhiteCapsuleButtonView(text: "카테고리", isForFiltering: true)
+                    CapsuleButtonView(text: "카테고리", isForFiltering: true)
                 })
             }
             .padding(.horizontal)

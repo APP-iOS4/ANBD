@@ -43,7 +43,7 @@ struct TradeView: View {
                         Button(action: {
                             self.isShowingLocation.toggle()
                         }, label: {
-                            WhiteCapsuleButtonView(text: "지역")
+                            CapsuleButtonView(text: "지역")
                                 .frame(width: 100)
                         })
                     } else if location.count == 1 {
@@ -57,8 +57,8 @@ struct TradeView: View {
                         Button(action: {
                             self.isShowingLocation.toggle()
                         }, label: {
-                            BlueCapsuleButtonView(text: "지역 \(location.count)")
-                                .frame(width: 100)
+//                            BlueCapsuleButtonView(text: "지역 \(location.count)")
+//                                .frame(width: 100)
                         })
                     }
                     
@@ -67,22 +67,22 @@ struct TradeView: View {
                         Button(action: {
                             self.isShowingCategory.toggle()
                         }, label: {
-                            WhiteCapsuleButtonView(text: "카테고리")
+                            CapsuleButtonView(text: "카테고리")
                                 .frame(width: 100)
                         })
                     } else if itemCategory.count == 1 {
                         Button(action: {
                             self.isShowingCategory.toggle()
                         }, label: {
-                            BlueCapsuleButtonView(text: itemCategory.first!.labelText)
-                                .frame(width: 100)
+//                            BlueCapsuleButtonView(text: itemCategory.first!.labelText)
+//                                .frame(width: 100)
                         })
                     } else {
                         Button(action: {
                             self.isShowingCategory.toggle()
                         }, label: {
-                            BlueCapsuleButtonView(text: "카테고리 \(itemCategory.count)")
-                                .frame(width: 100)
+//                            BlueCapsuleButtonView(text: "카테고리 \(itemCategory.count)")
+//                                .frame(width: 100)
                         })
                     }
                 }//HStack

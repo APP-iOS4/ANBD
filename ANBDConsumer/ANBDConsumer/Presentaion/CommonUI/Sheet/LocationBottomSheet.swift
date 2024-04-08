@@ -15,7 +15,9 @@ struct LocationBottomSheet: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                LightBlueCapsuleButtonView(text: "지역 \(tradeViewModel.selectedLocations.count)")
+                CapsuleButtonView(text: "지역 \(tradeViewModel.selectedLocations.count)", buttonColor: .lightBlue, fontColor: .accent)
+                    .padding(.top)
+                    .padding(.leading)
                     .padding(.trailing, 280)
                     
                 Spacer()

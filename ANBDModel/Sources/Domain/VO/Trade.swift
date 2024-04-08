@@ -23,8 +23,8 @@ public struct Trade: Codable, Identifiable, Hashable {
     
     /// 거래글의 카테고리
     ///
-    /// 0이면 나눠쓰기, 1이면 바꿔쓰기이다.
-    public var category: TradeCategory
+    /// 1이면 나눠쓰기, 2이면 바꿔쓰기이다.
+    public var category: ANBDCategory
     
     /// 작성자의 물건 카테고리
     public var itemCategory: ItemCategory
@@ -56,7 +56,7 @@ public struct Trade: Codable, Identifiable, Hashable {
         writerID: String,
         writerNickname: String,
         createdAt: Date = .now,
-        category: TradeCategory,
+        category: ANBDCategory,
         itemCategory: ItemCategory,
         location: Location,
         tradeState: TradeState = .trading,

@@ -13,7 +13,7 @@ public protocol ArticleUsecase {
     func writeArticle(article: Article, imageDatas: [Data]) async throws
     func loadArticle(articleID: String) async throws -> Article
     func loadArticleList() async throws -> [Article]
-    func loadArticleList(category: ArticleCategory) async throws -> [Article]
+    func loadArticleList(category: ANBDCategory) async throws -> [Article]
     func loadArticleList(writerID: String) async throws -> [Article]
     func updateArticle(article: Article, imageDatas: [Data]) async throws
     func likeArticle(articleID: String) async throws
@@ -68,7 +68,7 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     /// - Parameters:
     ///   - category: 불러올 Article의 카테고리
     /// - Returns: 카테고리가 일치하는 Article 배열
-    public func loadArticleList(category: ArticleCategory) async throws -> [Article] {
+    public func loadArticleList(category: ANBDCategory) async throws -> [Article] {
         try await articleRepository.readArticleList(category: category)
     }
     

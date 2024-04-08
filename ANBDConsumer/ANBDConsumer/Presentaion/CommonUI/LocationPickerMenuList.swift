@@ -21,7 +21,7 @@ struct LocationPickerMenuList: View {
                         Button(action: {
                             sendAction(item)
                         }, label: {
-                            Text(item.rawValue)
+                            Text(item.description)
                                 .font(ANBDFont.body1)
                                 .foregroundStyle(Color.gray900)
                                 .padding(.vertical, 5)

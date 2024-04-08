@@ -19,7 +19,7 @@ struct LocationPickerMenu: View {
             }
         }, label: {
             HStack {
-                Text("\(selectedItem.rawValue)")
+                Text("\(selectedItem.description)")
                     .font(ANBDFont.SubTitle1)
                     .foregroundStyle(Color.gray900)
                 

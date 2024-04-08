@@ -11,6 +11,12 @@
 		424CA0052BC397A600F83F8D /* TextFieldWithTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0042BC397A600F83F8D /* TextFieldWithTitle.swift */; };
 		424CA0072BC39C7C00F83F8D /* BlueSquareButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0062BC39C7C00F83F8D /* BlueSquareButton.swift */; };
 		424CA0092BC3A79900F83F8D /* SignUpEmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0082BC3A79900F83F8D /* SignUpEmailView.swift */; };
+		424CA00B2BC3AB7800F83F8D /* SignUpPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA00A2BC3AB7800F83F8D /* SignUpPasswordView.swift */; };
+		424CA00D2BC3B4CE00F83F8D /* SignUpUserInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA00C2BC3B4CE00F83F8D /* SignUpUserInfoView.swift */; };
+		424CA00F2BC3B83700F83F8D /* SignUpAgreeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA00E2BC3B83700F83F8D /* SignUpAgreeView.swift */; };
+		424CA0112BC3B8AA00F83F8D /* CheckAgreeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0102BC3B8AA00F83F8D /* CheckAgreeView.swift */; };
+		424CA0132BC3C0E200F83F8D /* TermsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0122BC3C0E200F83F8D /* TermsView.swift */; };
+		424CA0152BC3C45E00F83F8D /* SignUpComleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0142BC3C45E00F83F8D /* SignUpComleteView.swift */; };
 		425FD3A72BC2463000143993 /* UserInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 425FD3A62BC2463000143993 /* UserInfoView.swift */; };
 		425FD3A92BC2469300143993 /* UserActivityInformationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 425FD3A82BC2469300143993 /* UserActivityInformationView.swift */; };
 		425FD3AB2BC246AD00143993 /* OtherSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 425FD3AA2BC246AD00143993 /* OtherSettingsView.swift */; };
@@ -60,6 +66,12 @@
 		424CA0042BC397A600F83F8D /* TextFieldWithTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldWithTitle.swift; sourceTree = "<group>"; };
 		424CA0062BC39C7C00F83F8D /* BlueSquareButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueSquareButton.swift; sourceTree = "<group>"; };
 		424CA0082BC3A79900F83F8D /* SignUpEmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpEmailView.swift; sourceTree = "<group>"; };
+		424CA00A2BC3AB7800F83F8D /* SignUpPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpPasswordView.swift; sourceTree = "<group>"; };
+		424CA00C2BC3B4CE00F83F8D /* SignUpUserInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpUserInfoView.swift; sourceTree = "<group>"; };
+		424CA00E2BC3B83700F83F8D /* SignUpAgreeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpAgreeView.swift; sourceTree = "<group>"; };
+		424CA0102BC3B8AA00F83F8D /* CheckAgreeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckAgreeView.swift; sourceTree = "<group>"; };
+		424CA0122BC3C0E200F83F8D /* TermsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsView.swift; sourceTree = "<group>"; };
+		424CA0142BC3C45E00F83F8D /* SignUpComleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpComleteView.swift; sourceTree = "<group>"; };
 		425FD3A62BC2463000143993 /* UserInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoView.swift; sourceTree = "<group>"; };
 		425FD3A82BC2469300143993 /* UserActivityInformationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActivityInformationView.swift; sourceTree = "<group>"; };
 		425FD3AA2BC246AD00143993 /* OtherSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherSettingsView.swift; sourceTree = "<group>"; };
@@ -296,6 +308,12 @@
 			children = (
 				CB7BEE122BBD564100C0F298 /* AuthenticationView.swift */,
 				424CA0082BC3A79900F83F8D /* SignUpEmailView.swift */,
+				424CA00A2BC3AB7800F83F8D /* SignUpPasswordView.swift */,
+				424CA0142BC3C45E00F83F8D /* SignUpComleteView.swift */,
+				424CA00C2BC3B4CE00F83F8D /* SignUpUserInfoView.swift */,
+				424CA00E2BC3B83700F83F8D /* SignUpAgreeView.swift */,
+				424CA0102BC3B8AA00F83F8D /* CheckAgreeView.swift */,
+				424CA0122BC3C0E200F83F8D /* TermsView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -487,6 +505,7 @@
 				425FD3AB2BC246AD00143993 /* OtherSettingsView.swift in Sources */,
 				A83F2F9B2BBFCD7D00E3EB13 /* SafariWebView.swift in Sources */,
 				425FD3A72BC2463000143993 /* UserInfoView.swift in Sources */,
+				424CA00B2BC3AB7800F83F8D /* SignUpPasswordView.swift in Sources */,
 				CB7BEE2B2BBD578A00C0F298 /* MyPageViewModel.swift in Sources */,
 				CB7BEE2B2BBD578A00C0F298 /* MyPageViewModel.swift in Sources */,
 				A816E6022BC1706600138CFC /* CustomAlertView.swift in Sources */,
@@ -499,6 +518,7 @@
 				CB7BEE372BBD57CE00C0F298 /* CommunityViewModel.swift in Sources */,
 				424CA0092BC3A79900F83F8D /* SignUpEmailView.swift in Sources */,
 				42C7BBDA2BC2793B00F0805A /* UserInfoEditingView.swift in Sources */,
+				424CA0152BC3C45E00F83F8D /* SignUpComleteView.swift in Sources */,
 				CB7BEE112BBD563700C0F298 /* CommonUIView.swift in Sources */,
 				CB7BEE192BBD565500C0F298 /* TradeView.swift in Sources */,
 				42EE63502BC2BEEF00100FF4 /* LocationPickerMenuList.swift in Sources */,
@@ -507,17 +527,21 @@
 				CB7BEE132BBD564100C0F298 /* AuthenticationView.swift in Sources */,
 				CB7BEE212BBD568A00C0F298 /* ANBDFont.swift in Sources */,
 				CB198CF22BBF8FC8000C2709 /* CategoryDividerView.swift in Sources */,
+				424CA0112BC3B8AA00F83F8D /* CheckAgreeView.swift in Sources */,
 				CB7BEE2F2BBD57A000C0F298 /* ChatViewModel.swift in Sources */,
+				424CA00D2BC3B4CE00F83F8D /* SignUpUserInfoView.swift in Sources */,
 				A816E5FA2BC1056F00138CFC /* ChatListCell.swift in Sources */,
 				CB198CF62BBFD0A3000C2709 /* WriteButtonView.swift in Sources */,
 				424CA0032BC3686500F83F8D /* AnotherUserProfileView.swift in Sources */,
 				CB7BEE1B2BBD565C00C0F298 /* CommunityView.swift in Sources */,
 				CB7BEE232BBD56B900C0F298 /* View+Extension.swift in Sources */,
 				425FD3A92BC2469300143993 /* UserActivityInformationView.swift in Sources */,
+				424CA0132BC3C0E200F83F8D /* TermsView.swift in Sources */,
 				CB7BEDB92BBD4E9D00C0F298 /* ANBDConsumerApp.swift in Sources */,
 				A83F2F982BBFC07C00E3EB13 /* NormalCarouselView.swift in Sources */,
 				A816E5FC2BC11B7800138CFC /* ChatDetailView.swift in Sources */,
 				A816E5FE2BC1254B00138CFC /* TradeStateChangeView.swift in Sources */,
+				424CA00F2BC3B83700F83F8D /* SignUpAgreeView.swift in Sources */,
 				CB7BEE172BBD564E00C0F298 /* ChatView.swift in Sources */,
 				CB7BEE152BBD564800C0F298 /* MyPageView.swift in Sources */,
 			);

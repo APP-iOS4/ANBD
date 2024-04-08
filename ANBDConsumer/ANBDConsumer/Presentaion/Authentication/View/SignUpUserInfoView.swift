@@ -1,26 +1,27 @@
 //
-//  SignUpEmailView.swift
+//  SignUpUserInfoView.swift
 //  ANBDConsumer
 //
 //  Created by 김성민 on 4/8/24.
 //
 
 import SwiftUI
+import ANBDModel
 
-struct SignUpEmailView: View {
+struct SignUpUserInfoView: View {
     enum FocusableField {
-        case email
+        case nickname
     }
     
-    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var authenticationViewModel: AuthenticationViewModel
     
     @FocusState private var focus: FocusableField?
     
     @State private var navigate = false
+    @State private var selectedLocation: Location = .seoul
     
     var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
             Text("회원가입")
                 .font(ANBDFont.Heading2)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -28,41 +29,37 @@ struct SignUpEmailView: View {
                 .padding(.bottom, 70)
             
             TextFieldWithTitle(fieldType: .normal,
-                               title: "이메일 주소",
-                               placeholder: "예) anbd@anbd.co.kr",
-                               inputText: $authenticationViewModel.signUpEmailString)
-            .focused($focus, equals: .email)
-            .keyboardType(.emailAddress)
+                               title: "닉네임",
+                               placeholder: "2~20자의 닉네임을 입력해주세요.",
+                               inputText: $authenticationViewModel.signUpNicknameString)
+            .focused($focus, equals: .nickname)
             .textInputAutocapitalization(.never)
             .autocorrectionDisabled(true)
             .submitLabel(.go)
             .onSubmit {
                 nextButtonAction()
             }
+            .padding(.bottom)
             
             if !authenticationViewModel.errorMessage.isEmpty {
                 Text(authenticationViewModel.errorMessage)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 8)
+                    .padding(.bottom)
                     .font(ANBDFont.Caption1)
                     .foregroundStyle(Color.heartRed)
             }
             
-            HStack {
-                Text("이미 계정이 있으신가요?")
-                    .foregroundStyle(.gray)
-                
-                Button("로그인") {
-                    dismiss()
-                }
-                .foregroundStyle(.primary)
-            }
-            .font(ANBDFont.body2)
-            .padding(.top, 22)
+            Text("선호하는 거래 지역")
+                .font(ANBDFont.SubTitle3)
+                .foregroundStyle(Color.gray900)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            
+            LocationPickerMenu(selectedItem: $selectedLocation)
+                .frame(width: 170)
             
             Spacer()
             
-            BlueSquareButton(title: "다음", isDisabled: !authenticationViewModel.isValidSignUpEmail) {
+            BlueSquareButton(title: "다음", isDisabled: !authenticationViewModel.isValidSignUpNickname) {
                 nextButtonAction()
             }
         }
@@ -72,7 +69,7 @@ struct SignUpEmailView: View {
         }
         
         .onAppear {
-            focus = .email
+            focus = .nickname
         }
         
         .toolbar {
@@ -96,11 +93,11 @@ struct SignUpEmailView: View {
 }
 
 #Preview {
-    SignUpEmailView()
+    SignUpUserInfoView()
         .environmentObject(AuthenticationViewModel())
 }
 
-extension SignUpEmailView {
+extension SignUpUserInfoView {
     private func downKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }

@@ -64,7 +64,18 @@ struct AuthenticationView: View {
                                placeholder: "8~16자 (숫자, 영문, 특수기호 중 2개 이상)",
                                inputText: $authenticationViewModel.loginPasswordString)
             .focused($focus, equals: .password)
-            .submitLabel(.done)
+            .submitLabel(.go)
+            .onSubmit {
+                // 로그인
+            }
+            
+            if !authenticationViewModel.errorMessage.isEmpty {
+                Text(authenticationViewModel.errorMessage)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 8)
+                    .font(ANBDFont.Caption1)
+                    .foregroundStyle(.heartRed)
+            }
         }
         .toolbar {
             ToolbarItem(placement: .keyboard) {
@@ -136,7 +147,8 @@ struct AuthenticationView: View {
                     .foregroundStyle(Color.gray400)
                 
                 NavigationLink("회원가입") {
-                    // 회원가입 뷰
+                    SignUpEmailView()
+                        .environmentObject(authenticationViewModel)
                 }
                 .foregroundStyle(Color.accent)
             }
@@ -146,7 +158,10 @@ struct AuthenticationView: View {
 }
 
 #Preview {
-    AuthenticationView()
+    NavigationStack {
+        AuthenticationView()
+            .environmentObject(AuthenticationViewModel())
+    }
 }
 
 extension AuthenticationView {

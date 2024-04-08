@@ -16,12 +16,12 @@ public protocol TradeRepository {
     func readTrade(tradeID: String) async throws -> Trade
     func readTradeList() async throws -> [Trade]
     func readTradeList(category: ANBDCategory) async throws -> [Trade]
-    func readTradeList(tradeState: TradeState) async throws -> [Trade]
     func readTradeList(writerID: String) async throws -> [Trade]
+    func readTradeList(keyword: String) async throws -> [Trade]
     func refreshAll() async throws -> [Trade]
     func refreshCategory(category: ANBDCategory) async throws -> [Trade]
-    func refreshCategory(tradeState: TradeState) async throws -> [Trade]
     func refreshWriterID(writerID: String) async throws -> [Trade]
+    func refreshSearch(keyword: String) async throws -> [Trade]
     
     // MARK: Update
     func updateTrade(trade: Trade) async throws
@@ -29,4 +29,5 @@ public protocol TradeRepository {
     
     // MARK: Delete
     func deleteTrade(tradeID: String) async throws
+    func resetQuery()
 }

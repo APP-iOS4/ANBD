@@ -33,6 +33,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct ANBDConsumerApp: App {
     @StateObject private var homeViewModel = HomeViewModel()
+    @StateObject private var tradeViewModel = TradeViewModel()
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
     var body: some Scene {
@@ -40,5 +41,6 @@ struct ANBDConsumerApp: App {
             ANBDTabView()
         }
         .environmentObject(homeViewModel)
+        .environmentObject(tradeViewModel)
     }
 }

@@ -12,6 +12,7 @@ public enum StoragePath: String {
     case article = "Article"
     case trade = "Trade"
     case profile = "Profile"
+    case chat = "Chat"
 }
 
 @available(iOS 15, *)

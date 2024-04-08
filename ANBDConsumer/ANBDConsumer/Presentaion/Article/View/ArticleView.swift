@@ -30,7 +30,7 @@ class DummyArticle {
 struct ArticleView: View {
     
     @State private var isShowingCreateView: Bool = false
-    @State var category: Category = .accua
+    @State var category: ANBDCategory = .accua
     @State private var sortOption: SortOption = .time
     private var articles = DummyArticle().articles
     @State private var filteredArticles: [Article] = []

@@ -12,7 +12,7 @@ import ANBDModel
 struct ArticleCreateView: View {
     
     @EnvironmentObject private var articleViewModel: ArticleViewModel
-    @Binding var flag: Category
+    @Binding var flag: ANBDCategory
     @Binding var isShowingCreateView: Bool
 
     @State private var title: String = ""

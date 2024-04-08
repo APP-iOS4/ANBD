@@ -6,9 +6,10 @@
 //
 
 import SwiftUI
+import ANBDModel
 
 struct CategoryDividerView: View {
-    @Binding var category: Category
+    @Binding var category: ANBDCategory
     var isFromSearchView: Bool = false
     
     var body: some View {
@@ -73,17 +74,17 @@ struct CategoryDividerView: View {
     }
     
     @ViewBuilder
-    func categoryText(_ cate: Category, _ geo: GeometryProxy) -> some View {
+    func categoryText(_ cate: ANBDCategory, _ geo: GeometryProxy) -> some View {
         VStack {
             Text("\(cate.description)")
                 .font(ANBDFont.SubTitle1)
                 .fontWeight(.semibold)
-                .foregroundStyle(.gray900)
+                .foregroundStyle(category == cate ? .gray900 : .gray400)
             Rectangle()
-                .fill(.white)
+                .fill(.clear)
                 .frame(height: 2)
             Rectangle()
-                .fill(category == cate ? .accent : .white)
+                .fill(category == cate ? .accent : .clear)
                 .frame(width: (isFromSearchView ? geo.size.width/5 : geo.size.width/3), height: 2)
         }
     }

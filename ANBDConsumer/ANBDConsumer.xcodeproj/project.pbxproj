@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		420E29D22BC23A0D00DB004B /* DefaultUserProfileImage.001.png in Resources */ = {isa = PBXBuildFile; fileRef = 420E29D12BC23A0D00DB004B /* DefaultUserProfileImage.001.png */; };
 		424CA0032BC3686500F83F8D /* AnotherUserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0022BC3686500F83F8D /* AnotherUserProfileView.swift */; };
+		424CA0052BC397A600F83F8D /* TextFieldWithTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0042BC397A600F83F8D /* TextFieldWithTitle.swift */; };
+		424CA0072BC39C7C00F83F8D /* BlueSquareButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0062BC39C7C00F83F8D /* BlueSquareButton.swift */; };
+		424CA0092BC3A79900F83F8D /* SignUpEmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0082BC3A79900F83F8D /* SignUpEmailView.swift */; };
 		425FD3A72BC2463000143993 /* UserInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 425FD3A62BC2463000143993 /* UserInfoView.swift */; };
 		425FD3A92BC2469300143993 /* UserActivityInformationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 425FD3A82BC2469300143993 /* UserActivityInformationView.swift */; };
 		425FD3AB2BC246AD00143993 /* OtherSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 425FD3AA2BC246AD00143993 /* OtherSettingsView.swift */; };
@@ -54,8 +56,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		420E29D12BC23A0D00DB004B /* DefaultUserProfileImage.001.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DefaultUserProfileImage.001.png; sourceTree = "<group>"; };
 		424CA0022BC3686500F83F8D /* AnotherUserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnotherUserProfileView.swift; sourceTree = "<group>"; };
+		424CA0042BC397A600F83F8D /* TextFieldWithTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldWithTitle.swift; sourceTree = "<group>"; };
+		424CA0062BC39C7C00F83F8D /* BlueSquareButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueSquareButton.swift; sourceTree = "<group>"; };
+		424CA0082BC3A79900F83F8D /* SignUpEmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpEmailView.swift; sourceTree = "<group>"; };
 		425FD3A62BC2463000143993 /* UserInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoView.swift; sourceTree = "<group>"; };
 		425FD3A82BC2469300143993 /* UserActivityInformationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActivityInformationView.swift; sourceTree = "<group>"; };
 		425FD3AA2BC246AD00143993 /* OtherSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherSettingsView.swift; sourceTree = "<group>"; };
@@ -113,14 +117,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		420E29D02BC2389F00DB004B /* DefaultProfileImage */ = {
-			isa = PBXGroup;
-			children = (
-				420E29D12BC23A0D00DB004B /* DefaultUserProfileImage.001.png */,
-			);
-			path = DefaultProfileImage;
-			sourceTree = "<group>";
-		};
 		CB7BEDAC2BBD4E9D00C0F298 = {
 			isa = PBXGroup;
 			children = (
@@ -187,7 +183,6 @@
 		CB7BEE062BBD551800C0F298 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
-				420E29D02BC2389F00DB004B /* DefaultProfileImage */,
 				CB7BEE422BBD5BEC00C0F298 /* GoogleService-Info.plist */,
 				CB7BEDF72BBD539F00C0F298 /* Font */,
 				CB7BEDBC2BBD4E9F00C0F298 /* Assets.xcassets */,
@@ -273,6 +268,8 @@
 				A816E5FF2BC162DC00138CFC /* ImageDetailView.swift */,
 				A816E6012BC1706600138CFC /* CustomAlertView.swift */,
 				424CA0022BC3686500F83F8D /* AnotherUserProfileView.swift */,
+				424CA0042BC397A600F83F8D /* TextFieldWithTitle.swift */,
+				424CA0062BC39C7C00F83F8D /* BlueSquareButton.swift */,
 			);
 			path = CommonUI;
 			sourceTree = "<group>";
@@ -298,6 +295,7 @@
 			isa = PBXGroup;
 			children = (
 				CB7BEE122BBD564100C0F298 /* AuthenticationView.swift */,
+				424CA0082BC3A79900F83F8D /* SignUpEmailView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -466,7 +464,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CB7BEDBD2BBD4E9F00C0F298 /* Assets.xcassets in Resources */,
-				420E29D22BC23A0D00DB004B /* DefaultUserProfileImage.001.png in Resources */,
 				CB7BEE432BBD5BEC00C0F298 /* GoogleService-Info.plist in Resources */,
 				CB7BEDFA2BBD53A000C0F298 /* Pretendard-Regular.otf in Resources */,
 				CB7BEDFB2BBD53A000C0F298 /* Pretendard-SemiBold.otf in Resources */,
@@ -484,6 +481,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				42C7BBD82BC2518000F0805A /* AccountManagementView.swift in Sources */,
+				424CA0072BC39C7C00F83F8D /* BlueSquareButton.swift in Sources */,
 				CB7BEE3B2BBD57FD00C0F298 /* HomeViewModel.swift in Sources */,
 				CB7BEE2B2BBD578A00C0F298 /* MyPageViewModel.swift in Sources */,
 				425FD3AB2BC246AD00143993 /* OtherSettingsView.swift in Sources */,
@@ -499,10 +497,12 @@
 				42EE634E2BC2BCA100100FF4 /* LocationPickerMenu.swift in Sources */,
 				CB198CF02BBF8E84000C2709 /* Category.swift in Sources */,
 				CB7BEE372BBD57CE00C0F298 /* CommunityViewModel.swift in Sources */,
+				424CA0092BC3A79900F83F8D /* SignUpEmailView.swift in Sources */,
 				42C7BBDA2BC2793B00F0805A /* UserInfoEditingView.swift in Sources */,
 				CB7BEE112BBD563700C0F298 /* CommonUIView.swift in Sources */,
 				CB7BEE192BBD565500C0F298 /* TradeView.swift in Sources */,
 				42EE63502BC2BEEF00100FF4 /* LocationPickerMenuList.swift in Sources */,
+				424CA0052BC397A600F83F8D /* TextFieldWithTitle.swift in Sources */,
 				CB7BEDBB2BBD4E9D00C0F298 /* ANBDTabView.swift in Sources */,
 				CB7BEE132BBD564100C0F298 /* AuthenticationView.swift in Sources */,
 				CB7BEE212BBD568A00C0F298 /* ANBDFont.swift in Sources */,

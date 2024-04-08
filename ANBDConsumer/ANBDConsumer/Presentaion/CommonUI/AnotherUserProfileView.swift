@@ -14,7 +14,7 @@ struct AnotherUserProfileView: View {
     var body: some View {
         VStack(spacing: 30) {
             HStack {
-                Image(uiImage: UIImage(named: "DefaultUserProfileImage.001.png")!)
+                Image("DefaultUserProfileImage")
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 90, height: 90)

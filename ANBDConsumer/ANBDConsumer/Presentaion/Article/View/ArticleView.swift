@@ -6,12 +6,13 @@
 //
 
 import SwiftUI
+import ANBDModel
 
 struct ArticleView: View {
     
     @State private var isShowingCreateView: Bool = false
     @State var category: Category = .accua
-    
+    var articles: [Article]
 //    private var filteredList: [Int] {
 //        switch category {
 //        case .nanua: [1, 2, 3, 4, 5, 6]
@@ -41,6 +42,7 @@ struct ArticleView: View {
                     self.isShowingCreateView.toggle()
                 } label: {
                     WriteButtonView()
+                        .padding(10)
                 }
             }
         }
@@ -61,14 +63,19 @@ extension ArticleView {
     var articleListView: some View {
         ScrollView {
             LazyVStack {
-//                ForEach(filteredList, id: \.self) { article in
-//                        NavigationLink(value: , label: )
-//                }
+                ForEach(articles) { article in
+//                    NavigationLink(value: article) {
+//                        ArticleListCell()
+//                    }
+                }
             }
+//            .navigationDestination(for: articles.self) { article in
+//                ArticleDetailView()
+//            }
         }
     }
 }
 
 #Preview {
-    ArticleView()
+    ArticleView(articles: [])
 }

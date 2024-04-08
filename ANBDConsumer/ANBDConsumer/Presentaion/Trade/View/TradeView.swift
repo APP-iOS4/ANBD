@@ -54,6 +54,10 @@ struct TradeView: View {
                 Image(systemName: "magnifyingglass")
             }
         }
+        .onDisappear {
+            tradeViewModel.selectedLocations = []
+            tradeViewModel.selectedItemCategories = []
+        }
     }
 }
 

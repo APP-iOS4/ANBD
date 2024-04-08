@@ -58,7 +58,12 @@ struct TradeListView: View {
                 ScrollView {
                     LazyVStack {
                         ForEach(tradeViewModel.filteredTrades) { trade in
-                            TradeListCell(trade: trade)
+                            if trade == tradeViewModel.filteredTrades.last {
+                                TradeListCell(trade: trade)
+                                    .padding(.bottom, 70)
+                            } else {
+                                TradeListCell(trade: trade)
+                            }
                         }
                     }
                     .padding()

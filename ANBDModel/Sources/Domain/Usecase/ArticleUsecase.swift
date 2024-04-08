@@ -15,6 +15,9 @@ public protocol ArticleUsecase {
     func loadArticleList() async throws -> [Article]
     func loadArticleList(category: ANBDCategory) async throws -> [Article]
     func loadArticleList(writerID: String) async throws -> [Article]
+    func refreshAllArticleList() async throws -> [Article]
+    func refreshCategoryArticleList(category: ANBDCategory) async throws -> [Article]
+    func refreshWriterIDArticleList(writerID: String) async throws -> [Article]
     func updateArticle(article: Article, imageDatas: [Data]) async throws
     func likeArticle(articleID: String) async throws
     func deleteArticle(article: Article) async throws
@@ -64,6 +67,7 @@ public struct DefaultArticleUsecase: ArticleUsecase {
         try await articleRepository.readArticleList()
     }
 
+    
     /// 카테고리가 일치하는 모든 Article을 불러오는 메서드
     /// - Parameters:
     ///   - category: 불러올 Article의 카테고리
@@ -72,6 +76,7 @@ public struct DefaultArticleUsecase: ArticleUsecase {
         try await articleRepository.readArticleList(category: category)
     }
     
+    
     /// writerID가 일치하는 모든 Article을 불러오는 메서드
     /// - Parameters:
     ///   - writerID: 불러올 Article의 writerID
@@ -79,6 +84,32 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     public func loadArticleList(writerID: String) async throws -> [Article] {
         try await articleRepository.readArticleList(writerID: writerID)
     }
+    
+    
+    /// 페이지네이션 Query를 초기화하고 최신 Article 목록 10개를 반환하는 메서드
+    ///  - Returns: Article 배열
+    public func refreshAllArticleList() async throws -> [Article] {
+        try await articleRepository.refreshAll()
+    }
+    
+    
+    /// 페이지네이션 Query를 초기화하고 카테고리가 일치하는 최신 Article 목록 10개를 불러오는 메서드
+    /// - Parameters:
+    ///   - category: 불러올 Article의 카테고리
+    /// - Returns: 카테고리가 일치하는 Article 배열
+    public func refreshCategoryArticleList(category: ANBDCategory) async throws -> [Article] {
+        try await articleRepository.refreshCategory(category: category)
+    }
+    
+    
+    /// 페이지네이션 Query를 초기화하고 작성자 ID가 일치하는 최신 Article 목록 10개를 불러오는 메서드
+    /// - Parameters:
+    ///   - writerID: 불러올 Article의 writerID
+    /// - Returns: writerID가 일치하는 Article 배열
+    public func refreshWriterIDArticleList(writerID: String) async throws -> [Article] {
+        try await articleRepository.refreshWriterID(writerID: writerID)
+    }
+    
     
     /// Article을 수정하는 메서드
     /// - Parameters:

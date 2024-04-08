@@ -18,6 +18,10 @@ public protocol TradeRepository {
     func readTradeList(category: ANBDCategory) async throws -> [Trade]
     func readTradeList(tradeState: TradeState) async throws -> [Trade]
     func readTradeList(writerID: String) async throws -> [Trade]
+    func refreshAll() async throws -> [Trade]
+    func refreshCategory(category: ANBDCategory) async throws -> [Trade]
+    func refreshCategory(tradeState: TradeState) async throws -> [Trade]
+    func refreshWriterID(writerID: String) async throws -> [Trade]
     
     // MARK: Update
     func updateTrade(trade: Trade) async throws

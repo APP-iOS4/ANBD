@@ -19,7 +19,7 @@ struct AccountManagementView: View {
             
             DetailInfoComponentView(title: "닉네임", content: myPageViewModel.user.nickname)
             
-            DetailInfoComponentView(title: "선호하는 거래 지역", content: myPageViewModel.user.favoriteLocation.rawValue)
+            DetailInfoComponentView(title: "선호하는 거래 지역", content: myPageViewModel.user.favoriteLocation.description)
             
             VStack {
                 Rectangle()

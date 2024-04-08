@@ -8,24 +8,20 @@
 import SwiftUI
 
 struct CheckboxView: View {
-    @Binding var isChecked: Bool
+    var isChecked: Bool
     var text: String
     
     var body: some View {
-        Button {
-            isChecked.toggle()
-        } label: {
-            HStack(spacing: 10) {
-                Image(systemName: isChecked ? "checkmark.square.fill" : "square")
-                    .resizable()
-                    .frame(width: 15, height: 15)
-                    .foregroundStyle(isChecked ? .accent : .gray800)
-                
-                Text(text)
-                    .font(ANBDFont.pretendardRegular(18))
-                    .foregroundStyle(.gray900)
-                Spacer()
-            }
+        HStack(spacing: 10) {
+            Image(systemName: isChecked ? "checkmark.square.fill" : "square")
+                .resizable()
+                .frame(width: 15, height: 15)
+                .foregroundStyle(isChecked ? .accent : .gray800)
+            
+            Text(text)
+                .font(ANBDFont.pretendardRegular(18))
+                .foregroundStyle(.gray900)
+            Spacer()
         }
     }
 }

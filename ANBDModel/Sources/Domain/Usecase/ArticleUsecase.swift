@@ -37,6 +37,7 @@ public struct ArticleUsecase: ArticleUsecaseProtocol {
     ///    - article: 작성한 Article
     ///    - imageDatas: 저장할 사진 Data 배열
     public func writeArticle(article: Article, imageDatas: [Data]) async throws {
+        
         let imagePaths = try await storage.uploadImageList(path: .article, containerID: article.id, imageDatas: imageDatas)
         let newArticle = Article(
             id: article.id,

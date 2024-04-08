@@ -50,9 +50,8 @@ struct UserInfoView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(isPresented: $isShowingAccountManagementView) {
             AccountManagementView()
-                // 아마 최상위에서 주입하면 지워도 되지 않을까?
-                .environmentObject(myPageViewModel)
                 .toolbarRole(.editor)
+                .toolbar(.hidden, for: .tabBar)
         }
     }
 }

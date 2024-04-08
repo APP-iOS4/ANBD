@@ -18,10 +18,6 @@ struct UserInfoEditingView: View {
     
     @State private var photosPickerItem: PhotosPickerItem?
     
-    @State private var userProfileImage: UIImage?
-    @State private var userNickname: String = ""
-    @State private var selectedFavoriteLocation: Location = .seoul
-    
     var body: some View {
         VStack(spacing: 40) {
             CustomTitleBar()
@@ -34,16 +30,12 @@ struct UserInfoEditingView: View {
             
             Spacer()
         }
-        .onAppear {
-            myPageViewModel.editedUserNickname = myPageViewModel.user.nickname
-        }
     }
     
     @ViewBuilder
     private func CustomTitleBar() -> some View {
         HStack {
             Button(action: {
-                // MARK: 수정사항이 있었으면 Alert
                 dismiss()
             }, label: {
                 Image(systemName: "xmark")
@@ -52,12 +44,13 @@ struct UserInfoEditingView: View {
             Spacer()
             
             Button(action: {
-                // 닉네임이 비어있으면 안됨!
+                myPageViewModel.user.nickname = myPageViewModel.editedUserNickname
+                myPageViewModel.user.favoriteLocation = myPageViewModel.tempUserFavoriteLocation
                 dismiss()
             }, label: {
                 Text("완료")
             })
-            .disabled(myPageViewModel.checkVaildEditingComplete())
+            .disabled(myPageViewModel.validateEditing())
         }
         .padding(.horizontal)
         .padding(.vertical, 5)
@@ -129,6 +122,9 @@ struct UserInfoEditingView: View {
             Divider()
         }
         .padding(.horizontal, 20)
+        .onAppear {
+            myPageViewModel.editedUserNickname = myPageViewModel.user.nickname
+        }
     }
     
     @ViewBuilder
@@ -140,10 +136,13 @@ struct UserInfoEditingView: View {
                 .padding(.bottom, 5)
                 .frame(maxWidth: .infinity, alignment: .leading)
             
-            LocationPickerMenu(selectedItem: $selectedFavoriteLocation)
+            LocationPickerMenu(selectedItem: $myPageViewModel.tempUserFavoriteLocation)
                 .frame(width: 170)
         }
         .padding(.horizontal, 20)
+        .onAppear {
+            myPageViewModel.tempUserFavoriteLocation = myPageViewModel.user.favoriteLocation
+        }
     }
     
     private func TextFieldUIKit(placeholder: String, text: Binding<String>) -> some View {

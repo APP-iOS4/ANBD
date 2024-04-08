@@ -26,10 +26,10 @@ final class MyPageViewModel: ObservableObject {
                                likeTrades: [])
     
     @Published var editedUserNickname = ""
-    @Published var editedUserFavoriteLocation: Location = .seoul
+    @Published var tempUserFavoriteLocation: Location = .seoul
     
-    func checkVaildEditingComplete() -> Bool {
-        if editedUserNickname.isEmpty || editedUserNickname == self.user.nickname {
+    func validateEditing() -> Bool {
+        if (editedUserNickname.isEmpty || editedUserNickname == self.user.nickname) && (tempUserFavoriteLocation == self.user.favoriteLocation) {
             return true
         } else {
             return false

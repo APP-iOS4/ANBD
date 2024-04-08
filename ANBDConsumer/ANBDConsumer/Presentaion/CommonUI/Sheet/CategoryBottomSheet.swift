@@ -14,24 +14,63 @@ struct CategoryBottomSheet: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-              ScrollView {
-                  HStack {
-                      LightBlueCapsuleButtonView(text: "카테고리 \(tradeViewModel.selectedItemCategories.count)")
-                          .frame(width: 100)
-                          .padding()
-                      Spacer()
-                  }
+            HStack {
+                LightBlueCapsuleButtonView(text: "카테고리 \(tradeViewModel.selectedItemCategories.count)")
+                    .padding(.trailing, 250)
+                Spacer()
+            }
+            
+            ScrollView {
                 ForEach(ItemCategory.allCases, id: \.self) { item in
-//                    CheckboxView(isChecked: $tradeViewModel.isSelectedItemCategories[1], text: item.labelText)
+                    Button(action: {
+                        if tradeViewModel.selectedItemCategories.contains(item) {
+                            tradeViewModel.selectedItemCategories.remove(item)
+                        } else {
+                            tradeViewModel.selectedItemCategories.insert(item)
+                        }
+                    }, label: {
+                        CheckboxView(isChecked: tradeViewModel.selectedItemCategories.contains(item), text: item.labelText)
+                    })
                 }
                 .padding(.horizontal)
+                
                 Spacer()
             }
             
             HStack {
-                //초기화
-                //적용하기
+                Button(action: {
+                    tradeViewModel.selectedItemCategories = []
+                }, label: {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(.gray100)
+                        
+                        Text("초기화")
+                            .foregroundStyle(.gray900)
+                    }
+                })
+                .padding(.trailing, 40)
+                
+                Button(action: {
+                    isShowingCategory.toggle()
+                }, label: {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 10)
+                        
+                        Text("적용하기")
+                            .foregroundStyle(.white)
+                    }
+                })
+                .padding(.leading, -40)
             }
+            .frame(height: 50)
+            .padding()
         }
     }
+}
+
+
+#Preview {
+    CategoryBottomSheet(isShowingCategory: .constant(true))
+        .environmentObject(TradeViewModel())
 }

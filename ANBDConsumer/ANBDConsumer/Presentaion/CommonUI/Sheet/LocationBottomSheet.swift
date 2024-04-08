@@ -16,7 +16,8 @@ struct LocationBottomSheet: View {
         VStack(alignment: .leading) {
             HStack {
                 LightBlueCapsuleButtonView(text: "지역 \(tradeViewModel.selectedLocations.count)")
-                    .frame(width: 100)
+                    .padding(.trailing, 280)
+                    
                 Spacer()
             }
             

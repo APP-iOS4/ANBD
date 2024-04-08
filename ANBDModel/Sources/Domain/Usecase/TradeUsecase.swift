@@ -16,6 +16,10 @@ public protocol TradeUsecase {
     func loadTradeList(category: ANBDCategory) async throws -> [Trade]
     func loadTradeList(tradeState: TradeState) async throws -> [Trade]
     func loadTradeList(writerID: String) async throws -> [Trade]
+    func refreshAllTradeList() async throws -> [Trade]
+    func refreshCategoryTradeList(category: ANBDCategory) async throws -> [Trade]
+    func refreshStateTradeList(tradeState: TradeState) async throws -> [Trade]
+    func refreshWriterIDTradeList(writerID: String) async throws -> [Trade]
     func updateTrade(trade: Trade, imageDatas: [Data]) async throws
     func updateTradeState(tradeID: String, tradeState: TradeState) async throws
     func likeTrade(tradeID: String) async throws
@@ -90,6 +94,40 @@ public struct DefaultTradeUsecase: TradeUsecase {
     /// - Returns: 작성자 ID가 일치하는 Trade 배열
     public func loadTradeList(writerID: String) async throws -> [Trade] {
         try await tradeRepository.readTradeList(writerID: writerID)
+    }
+    
+    
+    /// 페이지네이션 Query를 초기화하고 최신 Trade 목록 10개를 반환하는 메서드
+    ///  - Returns: Trade 배열
+    public func refreshAllTradeList() async throws -> [Trade] {
+        try await tradeRepository.refreshAll()
+    }
+    
+    
+    /// 페이지네이션 Query를 초기화하고 카테고리가 일치하는 최신 Trade 목록 10개를 불러오는 메서드
+    /// - Parameters:
+    ///   - category: 불러올 Trade의 카테고리
+    /// - Returns: 카테고리가 일치하는 Trade 배열
+    public func refreshCategoryTradeList(category: ANBDCategory) async throws -> [Trade] {
+        try await tradeRepository.refreshCategory(category: category)
+    }
+    
+    
+    /// 페이지네이션 Query를 초기화하고 거래상태가 일치하는 최신 Trade 목록 10개를 불러오는 메서드
+    /// - Parameters:
+    ///   - tradeState: 불러올 Trade의 거래상태
+    /// - Returns: 거래상태가 일치하는 Trade 배열
+    public func refreshStateTradeList(tradeState: TradeState) async throws -> [Trade] {
+        try await tradeRepository.refreshCategory(tradeState: tradeState)
+    }
+    
+    
+    /// 페이지네이션 Query를 초기화하고 작성자 ID가 일치하는 최신 Trade 목록 10개를 불러오는 메서드
+    /// - Parameters:
+    ///   - writerID: 불러올 Trade의 writerID
+    /// - Returns: writerID가 일치하는 Trade 배열
+    public func refreshWriterIDTradeList(writerID: String) async throws -> [Trade] {
+        try await tradeRepository.refreshWriterID(writerID: writerID)
     }
     
     

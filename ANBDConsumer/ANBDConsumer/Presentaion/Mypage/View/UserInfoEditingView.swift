@@ -9,7 +9,7 @@ import SwiftUI
 import ANBDModel
 import PhotosUI
 
-struct UserInfoEditorView: View {
+struct UserInfoEditingView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     @Environment(\.dismiss) private var dismiss
     
@@ -154,6 +154,6 @@ struct UserInfoEditorView: View {
 }
 
 #Preview {
-    UserInfoEditorView()
+    UserInfoEditingView()
         .environmentObject(MyPageViewModel())
 }

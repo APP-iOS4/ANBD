@@ -64,7 +64,7 @@ struct AccountManagementView: View {
         }
         
         .fullScreenCover(isPresented: $isShowingEditorView) {
-            UserInfoEditorView()
+            UserInfoEditingView()
         }
     }
     

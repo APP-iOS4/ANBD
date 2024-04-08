@@ -12,6 +12,7 @@ public protocol ArticleRepository {
     func crateArticle(article: Article) async throws
     func readArticle(articleID: String) async throws -> Article
     func readArticleList() async throws -> [Article]
+    func readArticleList(category: ANBDCategory) async throws -> [Article]
     func readArticleList(writerID: String) async throws -> [Article]
     func updateArticle(article: Article) async throws
     func deleteArticle(article: Article) async throws

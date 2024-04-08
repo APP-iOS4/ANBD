@@ -8,7 +8,7 @@
 import Foundation
 
 @available(iOS 15, *)
-public struct Article: Codable, Identifiable {
+public struct Article: Codable, Identifiable, Hashable {
     /// 게시글의 고유 식별값
     public private(set) var id: String
     
@@ -23,8 +23,8 @@ public struct Article: Codable, Identifiable {
     
     /// 게시글의 카테고리
     ///
-    /// 0이면 아껴쓰기, 1이면 바꿔쓰기이다.
-    public var category: ArticleCategory
+    /// 0이면 아껴쓰기, 3이면 다시쓰기이다.
+    public var category: ANBDCategory
     
     /// 게시글의 제목
     public var title: String
@@ -32,7 +32,7 @@ public struct Article: Codable, Identifiable {
     /// 게시글의 내용
     public var content: String
     
-    /// 게시글의 사진 URL 배열
+    /// 게시글의 이미지 Path 배열
     public var imagePaths: [String]
     
     /// 게시글의 좋아요 수
@@ -47,7 +47,7 @@ public struct Article: Codable, Identifiable {
         writerID: String,
         writerNickname: String,
         createdAt: Date = .now,
-        category: ArticleCategory,
+        category: ANBDCategory,
         title: String,
         content: String,
         imagePaths: [String] = [],
@@ -64,16 +64,5 @@ public struct Article: Codable, Identifiable {
         self.imagePaths = imagePaths
         self.likeCount = likeCount
         self.commentCount = commentCount
-    }
-    
-    func toDomain() -> UpdatingArticle {
-        return UpdatingArticle(
-            id: self.id,
-            writerID: self.writerID,
-            category: self.category,
-            title: self.title,
-            content: self.content,
-            imageDatas: []
-        )
     }
 }

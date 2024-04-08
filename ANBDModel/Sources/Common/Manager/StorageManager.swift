@@ -15,7 +15,7 @@ public enum StoragePath: String {
     case chat = "Chat"
 }
 
-@available(iOS 13, *)
+@available(iOS 15, *)
 public struct StorageManager {
     let storageRef = Storage.storage().reference()
     private let storageMetadata = StorageMetadata()

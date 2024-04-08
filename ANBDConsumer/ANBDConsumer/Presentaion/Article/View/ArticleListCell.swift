@@ -15,9 +15,9 @@ struct ArticleListCell: View {
         HStack(alignment: .top) {
             Image("DummyImage1")
                 .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 100, height: 100)
+                .scaledToFit()
                 .clipShape(RoundedRectangle(cornerRadius: 10))
+                .frame(width: 110, height: 110)
                 .padding(.trailing, 10)
             
             VStack(alignment: .leading, spacing: 5) {
@@ -26,13 +26,13 @@ struct ArticleListCell: View {
                     .foregroundStyle(.gray900)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
-                
+                    .padding(.top, 15)
+
                 HStack {
                     Text("\(article.writerNickname)")
                     Text("・")
                         .padding(.leading, -5)
-//                    Text("\(article.createdAt)")
-                    Text("23분 전")
+                    Text("\(article.createdAt.relativeTimeNamed)")
                         .padding(.leading, -5)
                     Spacer()
                 }
@@ -67,8 +67,8 @@ struct ArticleListCell: View {
                             .padding(.top, 5)
                         
                     }
-                    .padding(.top, 25)
-                    .padding(.trailing, 15)
+                    .padding(.top)
+//                    .padding(.leading, 0)
                 }
                 
             }

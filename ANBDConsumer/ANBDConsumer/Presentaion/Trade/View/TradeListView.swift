@@ -66,7 +66,7 @@ struct TradeListView: View {
                             }
                         }
                     }
-                    .padding()
+                    .padding(.horizontal)
                 }
             }
         }

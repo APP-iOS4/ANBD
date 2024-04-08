@@ -7,27 +7,27 @@
 
 import SwiftUI
 
-struct UserActivityInformationView: View {
+struct UserActivityInfoView: View {
     var body: some View {
         HStack(spacing: 12) {
-            ActivityInformationComponent(title: "아껴 쓴 개수", count: 5)
+            ActivityInfoComponent(title: "아껴 쓴 개수", count: 5)
             Divider()
                 .frame(height: 60)
             
-            ActivityInformationComponent(title: "나눠 쓴 개수", count: 8)
+            ActivityInfoComponent(title: "나눠 쓴 개수", count: 8)
             Divider()
                 .frame(height: 60)
             
-            ActivityInformationComponent(title: "바꿔 쓴 개수", count: 13)
+            ActivityInfoComponent(title: "바꿔 쓴 개수", count: 13)
             Divider()
                 .frame(height: 60)
             
-            ActivityInformationComponent(title: "다시 쓴 개수", count: 19)
+            ActivityInfoComponent(title: "다시 쓴 개수", count: 19)
         }
     }
     
     @ViewBuilder
-    private func ActivityInformationComponent(title: String, count: Int) -> some View {
+    private func ActivityInfoComponent(title: String, count: Int) -> some View {
         Button(action: {
             
         }, label: {
@@ -45,5 +45,5 @@ struct UserActivityInformationView: View {
 }
 
 #Preview {
-    UserActivityInformationView()
+    UserActivityInfoView()
 }

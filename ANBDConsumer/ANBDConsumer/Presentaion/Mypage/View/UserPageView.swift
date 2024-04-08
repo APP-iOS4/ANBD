@@ -6,15 +6,16 @@
 //
 
 import SwiftUI
+import ANBDModel
 
-struct MyPageView: View {
+struct UserPageView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     
     var body: some View {
         VStack(spacing: 30) {
             UserInfoView()
             
-            UserActivityInformationView()
+            UserActivityInfoView()
             
             OtherSettingsView()
             
@@ -25,6 +26,7 @@ struct MyPageView: View {
 
 #Preview {
     NavigationStack {
-        MyPageView()
+        UserPageView()
+            .environmentObject(MyPageViewModel())
     }
 }

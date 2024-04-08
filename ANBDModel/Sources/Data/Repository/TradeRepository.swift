@@ -22,7 +22,7 @@ final class DefaultTradeRepository: TradeRepository {
     
     // MARK: Create
     func createTrade(trade: Trade) async throws {
-        if trade.category == .baccua {
+        if trade.category == .nanua {
             guard let _ = try? await tradeDB.document(trade.id).setData([
                 "id": trade.id,
                 "writerID": trade.writerID,

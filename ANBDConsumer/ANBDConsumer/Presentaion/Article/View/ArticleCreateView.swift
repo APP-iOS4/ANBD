@@ -7,9 +7,11 @@
 
 import SwiftUI
 import PhotosUI
+import ANBDModel
 
 struct ArticleCreateView: View {
     
+    @EnvironmentObject private var articleViewModel: ArticleViewModel
     @Binding var flag: Category
     @Binding var isShowingCreateView: Bool
 
@@ -126,6 +128,10 @@ struct ArticleCreateView: View {
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
+//                        Task {
+//                            let newArticle = Article(title: $title, content: $content, category: $flag)
+//                            try await articleViewModel.writeArticle(article: newArticle, imageDatas: selectedImageData)
+//                        }
                         isShowingCreateView.toggle()
                     } label: {
                         Text("완료")

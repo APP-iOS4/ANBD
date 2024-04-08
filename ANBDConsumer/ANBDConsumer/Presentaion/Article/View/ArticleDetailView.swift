@@ -26,15 +26,19 @@ struct ArticleDetailView: View {
             HStack {
                 VStack(alignment: .leading) {
                     HStack {
-                        ZStack {
-                            Circle()
-                                .fill(Color.gray100)
-                                .frame(width: 40)
-                            
-                            Text("🐳")
-                                .font(.system(size: 25))
+                        Button {
+                            // 프로필 이동
+                        } label: {
+                            ZStack {
+                                Circle()
+                                    .fill(Color.gray100)
+                                    .frame(width: 40)
+                                
+                                Text("🐳")
+                                    .font(.system(size: 25))
+                            }
+                            .padding(.horizontal, 5)
                         }
-                        .padding(.horizontal, 5)
                         
                         VStack(alignment: .leading) {
                             Text("이름이름")
@@ -98,13 +102,17 @@ struct ArticleDetailView: View {
                     
                     ForEach(comments) { comment in
                         HStack(alignment: .top) {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.gray100)
-                                    .frame(width: 40)
-                                
-                                Text("🐳")
-                                    .font(.system(size: 25))
+                            Button {
+                                // 프로필 이동
+                            } label: {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.gray100)
+                                        .frame(width: 40)
+                                    
+                                    Text("🐳")
+                                        .font(.system(size: 25))
+                                }
                             }
                             
                             VStack(alignment: .leading) {
@@ -120,6 +128,9 @@ struct ArticleDetailView: View {
                                     .font(ANBDFont.Caption3)
                                     .frame(maxHeight: .infinity)
                             }
+                            .foregroundStyle(.gray900)
+                            
+                            
                             Spacer()
                             Button {
                                 isShowingComment.toggle()

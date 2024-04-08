@@ -6,10 +6,11 @@
 //
 
 import SwiftUI
+import ANBDModel
 
 struct TradeListView: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
-    var category: Category = .nanua
+    var category: ANBDCategory = .baccua
     
     @State private var isShowingLocation: Bool = false
     @State private var isShowingItemCategory: Bool = false
@@ -17,27 +18,51 @@ struct TradeListView: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
+                /// 지역 필터링
                 Button(action: {
                     isShowingLocation.toggle()
                 }, label: {
-                    CapsuleButtonView(text: "지역", isForFiltering: true)
+                    if tradeViewModel.selectedLocations.isEmpty {
+                        CapsuleButtonView(text: "지역", isForFiltering: true)
+                    } else {
+                        CapsuleButtonView(text: tradeViewModel.selectedLocations.count > 1 ? "지역 \(tradeViewModel.selectedLocations.count)" : "\(tradeViewModel.selectedLocations.first?.description ?? "Unknown")", isForFiltering: true, buttonColor: .accent, fontColor: .white)
+                    }
                 })
                 
+                /// 카테고리 필터링
                 Button(action: {
                     isShowingItemCategory.toggle()
                 }, label: {
-                    CapsuleButtonView(text: "카테고리", isForFiltering: true)
+                    if tradeViewModel.selectedItemCategories.isEmpty {
+                        CapsuleButtonView(text: "카테고리", isForFiltering: true)
+                    } else {
+                        CapsuleButtonView(text: tradeViewModel.selectedItemCategories.count > 1 ? "카테고리 \(tradeViewModel.selectedItemCategories.count)" : "\(tradeViewModel.selectedItemCategories.first?.labelText ?? "Unknown")", isForFiltering: true, buttonColor: .accent, fontColor: .white)
+                    }
                 })
             }
             .padding(.horizontal)
             
-            ScrollView {
-                LazyVStack {
-                    ForEach(tradeViewModel.mockTradeData) { trade in
-                        TradeListCell(trade: trade)
+            if tradeViewModel.filteredTrades.isEmpty {
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        Text("해당하는 나눔 · 거래 게시글이 없습니다.")
+                            .foregroundStyle(.gray400)
+                            .font(ANBDFont.body1)
+                        Spacer()
                     }
+                    Spacer()
                 }
-                .padding()
+            } else {
+                ScrollView {
+                    LazyVStack {
+                        ForEach(tradeViewModel.filteredTrades) { trade in
+                            TradeListCell(trade: trade)
+                        }
+                    }
+                    .padding()
+                }
             }
         }
         .sheet(isPresented: $isShowingLocation) {
@@ -47,6 +72,15 @@ struct TradeListView: View {
         .sheet(isPresented: $isShowingItemCategory) {
             CategoryBottomSheet(isShowingCategory: $isShowingItemCategory)
                 .presentationDetents([.fraction(0.6)])
+        }
+        .onAppear {
+            tradeViewModel.filteringTrades(category: category)
+        }
+        .onChange(of: tradeViewModel.selectedLocations) {
+            tradeViewModel.filteringTrades(category: category)
+        }
+        .onChange(of: tradeViewModel.selectedItemCategories) {
+            tradeViewModel.filteringTrades(category: category)
         }
     }
 }

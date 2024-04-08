@@ -12,10 +12,12 @@ struct CategoryBottomSheet: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @Binding var isShowingCategory: Bool
     
+    @State private var tmpSelectedItemCategories: Set<ItemCategory> = []
+    
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                CapsuleButtonView(text: "카테고리 \(tradeViewModel.selectedItemCategories.count)", buttonColor: .lightBlue, fontColor: .accent)
+                CapsuleButtonView(text: "카테고리 \(tmpSelectedItemCategories.count)", buttonColor: .lightBlue, fontColor: .accent)
                     .padding(.top)
                     .padding(.leading)
                     .padding(.trailing, 250)
@@ -26,13 +28,13 @@ struct CategoryBottomSheet: View {
             ScrollView {
                 ForEach(ItemCategory.allCases, id: \.self) { item in
                     Button(action: {
-                        if tradeViewModel.selectedItemCategories.contains(item) {
-                            tradeViewModel.selectedItemCategories.remove(item)
+                        if tmpSelectedItemCategories.contains(item) {
+                            tmpSelectedItemCategories.remove(item)
                         } else {
-                            tradeViewModel.selectedItemCategories.insert(item)
+                            tmpSelectedItemCategories.insert(item)
                         }
                     }, label: {
-                        CheckboxView(isChecked: tradeViewModel.selectedItemCategories.contains(item), text: item.labelText)
+                        CheckboxView(isChecked: tmpSelectedItemCategories.contains(item), text: item.labelText)
                     })
                 }
                 .padding(.horizontal)
@@ -42,7 +44,7 @@ struct CategoryBottomSheet: View {
             
             HStack {
                 Button(action: {
-                    tradeViewModel.selectedItemCategories = []
+                    tmpSelectedItemCategories = []
                 }, label: {
                     ZStack {
                         RoundedRectangle(cornerRadius: 10)
@@ -55,6 +57,7 @@ struct CategoryBottomSheet: View {
                 .padding(.trailing, 40)
                 
                 Button(action: {
+                    tradeViewModel.selectedItemCategories = tmpSelectedItemCategories
                     isShowingCategory.toggle()
                 }, label: {
                     ZStack {
@@ -68,6 +71,9 @@ struct CategoryBottomSheet: View {
             }
             .frame(height: 50)
             .padding()
+        }
+        .onAppear {
+            tmpSelectedItemCategories = tradeViewModel.selectedItemCategories
         }
     }
 }

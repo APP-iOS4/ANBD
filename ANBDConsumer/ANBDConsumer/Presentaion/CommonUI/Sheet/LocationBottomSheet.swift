@@ -12,10 +12,12 @@ struct LocationBottomSheet: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @Binding var isShowingLocation: Bool
     
+    @State private var tmpSelectedLocation: Set<Location> = []
+    
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                CapsuleButtonView(text: "지역 \(tradeViewModel.selectedLocations.count)", buttonColor: .lightBlue, fontColor: .accent)
+                CapsuleButtonView(text: "지역 \(tmpSelectedLocation.count)", buttonColor: .lightBlue, fontColor: .accent)
                     .padding(.top)
                     .padding(.leading)
                     .padding(.trailing, 280)
@@ -26,13 +28,13 @@ struct LocationBottomSheet: View {
             ScrollView {
                 ForEach(Location.allCases, id: \.self) { item in
                     Button(action: {
-                        if tradeViewModel.selectedLocations.contains(item) {
-                            tradeViewModel.selectedLocations.remove(item)
+                        if tmpSelectedLocation.contains(item) {
+                            tmpSelectedLocation.remove(item)
                         } else {
-                            tradeViewModel.selectedLocations.insert(item)
+                            tmpSelectedLocation.insert(item)
                         }
                     }, label: {
-                        CheckboxView(isChecked: tradeViewModel.selectedLocations.contains(item), text: item.description)
+                        CheckboxView(isChecked: tmpSelectedLocation.contains(item), text: item.description)
                     })
                 }
                 .padding(.horizontal)
@@ -42,7 +44,7 @@ struct LocationBottomSheet: View {
             
             HStack {
                 Button(action: {
-                    tradeViewModel.selectedLocations = []
+                    tmpSelectedLocation = []
                 }, label: {
                     ZStack {
                         RoundedRectangle(cornerRadius: 10)
@@ -55,6 +57,8 @@ struct LocationBottomSheet: View {
                 .padding(.trailing, 40)
                 
                 Button(action: {
+                    tradeViewModel.selectedLocations = tmpSelectedLocation
+                    
                     isShowingLocation.toggle()
                 }, label: {
                     ZStack {
@@ -68,6 +72,9 @@ struct LocationBottomSheet: View {
             }
             .frame(height: 50)
             .padding()
+        }
+        .onAppear {
+            tmpSelectedLocation = tradeViewModel.selectedLocations
         }
     }
 }

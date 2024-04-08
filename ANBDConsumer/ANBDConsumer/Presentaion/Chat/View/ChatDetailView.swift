@@ -38,7 +38,9 @@ struct ChatDetailView: View {
     @State private var isShowingCustomAlertView: Bool = false
     @State private var isShowingImageDetailView: Bool = false
     @State private var detailImage: String = "DummyPuppy3"
+    @State private var isGoingToReportView: Bool = false
     @Environment(\.dismiss) private var dismiss
+    
     
     /// Product 관련 함수 (추후 삭제 ......)
     @State private var isTrading: Bool = true
@@ -114,7 +116,7 @@ struct ChatDetailView: View {
         }
         .confirmationDialog("", isPresented: $isShowingConfirmSheet) {
             Button("채팅 신고하기", role: .destructive) {
-                // TODO: 채팅 신고하기
+                isGoingToReportView.toggle()
             }
             
             Button("채팅방 나가기", role: .destructive) {
@@ -123,6 +125,9 @@ struct ChatDetailView: View {
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
             ImageDetailView(imageString: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
+        }
+        .navigationDestination(isPresented: $isGoingToReportView) {
+            ReportView(reportViewType: .chat)
         }
         .onAppear {
             messages.sort(by: { $0.createdAt < $1.createdAt })

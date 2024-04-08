@@ -12,19 +12,24 @@ import ANBDModel
 struct ArticleCreateView: View {
     
     @EnvironmentObject private var articleViewModel: ArticleViewModel
-    @Binding var flag: ANBDCategory
     @Binding var isShowingCreateView: Bool
-
+    
+    @State var category: ANBDCategory = .accua
     @State private var title: String = ""
     @State private var content : String = ""
+    @State var placeHolder : String = "ANBD 이용자들을 위해 여러분들의 아껴쓰기 / 다시쓰기 Tip을 전수해주세요!"
+
     @State private var isShowingImageAlert: Bool = false
     @State private var selectedItems: [PhotosPickerItem] = []
     @State private var selectedImageData: [Data] = []
+    
     @State private var selectedMenuText: String = "아껴쓰기"
+    
+    var isNewArticle: Bool
+    var article: Article?
+    
 
-    
-    var placeHolder : String = "ANBD 이용자들을 위해 여러분들의 아껴쓰기 / 다시쓰기 Tip을 전수해주세요!"
-    
+
     var body: some View {
         NavigationStack {
             VStack {
@@ -32,6 +37,13 @@ struct ArticleCreateView: View {
                 
                 VStack {
                     TextField("제목을 입력하세요", text: $title)
+                        .onAppear() {
+                            if !isNewArticle {
+                                if let article = article {
+                                    self.title = article.title
+                                }
+                            }
+                        }
                         .font(ANBDFont.Heading3)
                         .padding(.leading, 20)
                     Divider()
@@ -49,6 +61,13 @@ struct ArticleCreateView: View {
                             .scrollContentBackground(.hidden)
                             .font(ANBDFont.body1)
                             .padding(.leading, 15)
+                            .onAppear() {
+                                if !isNewArticle {
+                                    if let article = article {
+                                        self.content = article.content
+                                    }
+                                }
+                            }
                     }
                     ScrollView(.horizontal) {
                         HStack {
@@ -134,14 +153,14 @@ struct ArticleCreateView: View {
             }
             .toolbarTitleMenu {
                 Button {
-                    flag = .accua
+                    category = .accua
                     selectedMenuText = "아껴쓰기"
                 } label: {
                     Text("아껴쓰기")
                 }
                 
                 Button {
-                    flag = .dasi
+                    category = .dasi
                     selectedMenuText = "다시쓰기"
                 } label: {
                     Text("다시쓰기")
@@ -163,12 +182,13 @@ struct ArticleCreateView: View {
             .alert("이미지는 최대 5장만 가능합니다", isPresented: $isShowingImageAlert) {
                 Button("확인", role: .cancel) { }
             }
-            .navigationTitle(selectedMenuText)
+            .navigationTitle(category == .accua ? "아껴쓰기" : "다시쓰기")
             .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
 
 #Preview {
-    ArticleCreateView(flag: .constant(.accua), isShowingCreateView: .constant(true))
+    ArticleCreateView(isShowingCreateView: .constant(true), category: .accua, isNewArticle: false)
 }
+

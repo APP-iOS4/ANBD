@@ -18,8 +18,7 @@ struct ANBDTabView: View {
             }
             
             NavigationStack {
-                //ADView()
-                    //.environmentObject(adViewModel)
+                ArticleView()
             }
             .tabItem {
                 Label("정보 공유", systemImage: "leaf")

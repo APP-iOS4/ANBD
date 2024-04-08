@@ -6,8 +6,11 @@
 //
 
 import SwiftUI
+import ANBDModel
 
 struct ArticleDetailView: View {
+    
+    var article: Article
     
     @State private var isLiked: Bool = false
     @State private var isShowingComment: Bool = false
@@ -227,5 +230,5 @@ struct ArticleDetailView: View {
     }
 }
 #Preview {
-    ArticleDetailView()
+    ArticleDetailView(article: Article(writerID: "writerID", writerNickname: "닉네임1", category: .accua, title: "제목제목", content: "내용내용"))
 }

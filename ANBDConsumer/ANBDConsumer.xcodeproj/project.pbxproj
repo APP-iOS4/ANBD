@@ -46,6 +46,7 @@
 		D75C3A512BBFD9DB00ED948C /* ArticleCreateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75C3A502BBFD9DB00ED948C /* ArticleCreateView.swift */; };
 		D75C3A532BC1377400ED948C /* ArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75C3A522BC1377400ED948C /* ArticleView.swift */; };
 		D75C3A552BC266F100ED948C /* ArticleEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75C3A542BC266F100ED948C /* ArticleEditView.swift */; };
+		D7E56D702BC39373000AA1BE /* InstructionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E56D6F2BC39373000AA1BE /* InstructionsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -89,6 +90,7 @@
 		D75C3A502BBFD9DB00ED948C /* ArticleCreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleCreateView.swift; sourceTree = "<group>"; };
 		D75C3A522BC1377400ED948C /* ArticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleView.swift; sourceTree = "<group>"; };
 		D75C3A542BC266F100ED948C /* ArticleEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleEditView.swift; sourceTree = "<group>"; };
+		D7E56D6F2BC39373000AA1BE /* InstructionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -245,8 +247,8 @@
 			children = (
 				CB7BEE102BBD563700C0F298 /* CommonUIView.swift */,
 				A83F2F972BBFC07C00E3EB13 /* NormalCarouselView.swift */,
-				A83F2F9A2BBFCD7D00E3EB13 /* SafariWebView.swift */,
 				CB198CF12BBF8FC8000C2709 /* CategoryDividerView.swift */,
+				A83F2F9A2BBFCD7D00E3EB13 /* SafariWebView.swift */,
 				CB198CF52BBFD0A3000C2709 /* WriteButtonView.swift */,
 				A816E5FD2BC1254B00138CFC /* TradeStateChangeView.swift */,
 				A816E5FF2BC162DC00138CFC /* ImageDetailView.swift */,
@@ -346,6 +348,7 @@
 				D75C3A502BBFD9DB00ED948C /* ArticleCreateView.swift */,
 				D75C3A4E2BBFB40200ED948C /* ArticleDetailView.swift */,
 				D75C3A542BC266F100ED948C /* ArticleEditView.swift */,
+				D7E56D6F2BC39373000AA1BE /* InstructionsView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -460,6 +463,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CB7BEE3B2BBD57FD00C0F298 /* HomeViewModel.swift in Sources */,
+				D7E56D702BC39373000AA1BE /* InstructionsView.swift in Sources */,
 				D75C3A4D2BBF8C6900ED948C /* ArticleListCell.swift in Sources */,
 				D75C3A512BBFD9DB00ED948C /* ArticleCreateView.swift in Sources */,
 				A83F2F9B2BBFCD7D00E3EB13 /* SafariWebView.swift in Sources */,

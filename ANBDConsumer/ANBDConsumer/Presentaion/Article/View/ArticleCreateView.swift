@@ -28,22 +28,7 @@ struct ArticleCreateView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                ZStack {
-                    RoundedRectangle(cornerSize: CGSize(width: 10, height: 10))
-                        .foregroundStyle(.accent)
-                        .frame(height: 50)
-                        .opacity(0.8)
-                    
-                    HStack {
-                        Text("안내")
-                            .font(ANBDFont.SubTitle2)
-                        
-                        Text("명예훼손, 광고/홍보 목적의 글은 올리실 수 없어요.")
-                            .font(ANBDFont.body1)
-                    }
-                    .foregroundStyle(.gray50)
-                }
-                .padding(10)
+                InstructionsView()
                 
                 VStack {
                     TextField("제목을 입력하세요", text: $title)

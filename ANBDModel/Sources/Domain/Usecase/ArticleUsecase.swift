@@ -15,12 +15,15 @@ public protocol ArticleUsecase {
     func loadArticleList() async throws -> [Article]
     func loadArticleList(category: ANBDCategory) async throws -> [Article]
     func loadArticleList(writerID: String) async throws -> [Article]
+    func searchArticle(keyword: String) async throws -> [Article]
     func refreshAllArticleList() async throws -> [Article]
     func refreshCategoryArticleList(category: ANBDCategory) async throws -> [Article]
     func refreshWriterIDArticleList(writerID: String) async throws -> [Article]
+    func refreshSearchArticleList(keyword: String) async throws -> [Article]
     func updateArticle(article: Article, imageDatas: [Data]) async throws
     func likeArticle(articleID: String) async throws
     func deleteArticle(article: Article) async throws
+    func resetQuery()
 }
 
 @available(iOS 15, *)
@@ -86,6 +89,15 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     }
     
     
+    /// keyword로 Article을 불러오는 메서드
+    /// - Parameters:
+    ///   - keyword: 검색할 keyword
+    /// - Returns: title, content가 keyword에 해당하는 Article 배열
+    public func searchArticle(keyword: String) async throws -> [Article] {
+        try await articleRepository.readArticleList(keyword: keyword)
+    }
+    
+    
     /// 페이지네이션 Query를 초기화하고 최신 Article 목록 10개를 반환하는 메서드
     ///  - Returns: Article 배열
     public func refreshAllArticleList() async throws -> [Article] {
@@ -108,6 +120,15 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     /// - Returns: writerID가 일치하는 Article 배열
     public func refreshWriterIDArticleList(writerID: String) async throws -> [Article] {
         try await articleRepository.refreshWriterID(writerID: writerID)
+    }
+    
+    
+    /// 페이지네이션 Query를 초기화하고 키워드에 해당하는 최신 Article 목록 10개를 불러오는 메서드
+    /// - Parameters:
+    ///   - keyword: 검색할 Article의 키워드
+    /// - Returns: title, content가 키워드에 해당하는 Article 배열
+    public func refreshSearchArticleList(keyword: String) async throws -> [Article] {
+        try await articleRepository.refreshSearch(keyword: keyword)
     }
     
     
@@ -161,6 +182,14 @@ public struct DefaultArticleUsecase: ArticleUsecase {
         try await storage.deleteImageList(path: .article, containerID: article.id, imagePaths: article.imagePaths)
         try await articleRepository.deleteArticle(article: article)
         try await userRepository.updateUserInfoList(articleID: article.id)
+    }
+    
+    
+    /// 검색 결과 페이지네이션 쿼리를 초기화하는 메서드
+    ///
+    /// 검색 뷰에서 벗어날 때마다 호출해줘야한다.
+    public func resetQuery() {
+        articleRepository.resetQuery()
     }
     
 }

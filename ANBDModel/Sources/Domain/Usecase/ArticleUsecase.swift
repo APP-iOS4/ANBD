@@ -9,19 +9,19 @@ import Foundation
 import FirebaseAuth
 
 @available(iOS 15, *)
-public protocol ArticleUsecaseProtocol {
+public protocol ArticleUsecase {
     func writeArticle(article: Article, imageDatas: [Data]) async throws
     func loadArticle(articleID: String) async throws -> Article
-    func loadUpdatingArticle(articleID: String) async throws -> UpdatingArticle
     func loadArticleList() async throws -> [Article]
+    func loadArticleList(category: ANBDCategory) async throws -> [Article]
     func loadArticleList(writerID: String) async throws -> [Article]
-    func updateArticle(article: Article) async throws
+    func updateArticle(article: Article, imageDatas: [Data]) async throws
     func likeArticle(articleID: String) async throws
     func deleteArticle(article: Article) async throws
 }
 
 @available(iOS 15, *)
-public struct ArticleUsecase: ArticleUsecaseProtocol {
+public struct DefaultArticleUsecase: ArticleUsecase {
     
     let userRepository: UserRepository = DefaultUserRepository()
     let articleRepository: ArticleRepository = DefaultArticleRepository()
@@ -37,18 +37,13 @@ public struct ArticleUsecase: ArticleUsecaseProtocol {
     ///    - article: 작성한 Article
     ///    - imageDatas: 저장할 사진 Data 배열
     public func writeArticle(article: Article, imageDatas: [Data]) async throws {
-        
-        let imagePaths = try await storage.uploadImageList(path: .article, containerID: article.id, imageDatas: imageDatas)
-        let newArticle = Article(
-            id: article.id,
-            writerID: article.writerID,
-            writerNickname: article.writerNickname,
-            createdAt: article.createdAt,
-            category: article.category,
-            title: article.title,
-            content: article.content,
-            imagePaths: imagePaths
+        let imagePaths = try await storage.uploadImageList(
+            path: .article,
+            containerID: article.id,
+            imageDatas: imageDatas
         )
+        var newArticle = article
+        newArticle.imagePaths = imagePaths
         
         try await articleRepository.crateArticle(article: newArticle)
     }
@@ -62,20 +57,6 @@ public struct ArticleUsecase: ArticleUsecaseProtocol {
         try await articleRepository.readArticle(articleID: articleID)
     }
     
-    /// 수정할 특정 ID의 Article을 불러오는 메서드
-    /// - Parameters:
-    ///   - articleID: 불러올 Article의 ID
-    /// - Returns: articleID가 일치하는 Image Data 배열을 포함한 UpdatingArticle
-    public func loadUpdatingArticle(articleID: String) async throws -> UpdatingArticle {
-        let articleInfo = try await articleRepository.readArticle(articleID: articleID)
-        let imageDatas = try await storage.downloadImageList(path: .article, containerID: articleID, imagePaths: articleInfo.imagePaths)
-        
-        var upadatingArticle = articleInfo.toDomain()
-        upadatingArticle.imageDatas = imageDatas
-        
-        return upadatingArticle
-    }
-    
     
     /// 모든 Article을 불러오는 메서드
     /// - Returns: Article 배열
@@ -83,6 +64,14 @@ public struct ArticleUsecase: ArticleUsecaseProtocol {
         try await articleRepository.readArticleList()
     }
 
+    /// 카테고리가 일치하는 모든 Article을 불러오는 메서드
+    /// - Parameters:
+    ///   - category: 불러올 Article의 카테고리
+    /// - Returns: 카테고리가 일치하는 Article 배열
+    public func loadArticleList(category: ANBDCategory) async throws -> [Article] {
+        try await articleRepository.readArticleList(category: category)
+    }
+    
     /// writerID가 일치하는 모든 Article을 불러오는 메서드
     /// - Parameters:
     ///   - writerID: 불러올 Article의 writerID
@@ -94,8 +83,17 @@ public struct ArticleUsecase: ArticleUsecaseProtocol {
     /// Article을 수정하는 메서드
     /// - Parameters:
     ///   - article: 수정할 Article의 정보
-    ///
-    public func updateArticle(article: Article) async throws {
+    ///   - imageDatas: 수정할 이미지 Data 배열
+    public func updateArticle(article: Article, imageDatas: [Data]) async throws {
+        let imagePaths = try await storage.updateImageList(
+            path: .article,
+            containerID: article.id,
+            imagePaths: article.imagePaths,
+            imageDatas: imageDatas
+        )
+        var updatedArticle = article
+        updatedArticle.imagePaths = imagePaths
+        
         try await articleRepository.updateArticle(article: article)
     }
     

@@ -7,6 +7,7 @@
 
 import Foundation
 
+@available(iOS 15, *)
 public protocol UserRepository {
     func createUserInfo(user: User) async throws -> User
     func readUserInfo(userID: String) async throws -> User

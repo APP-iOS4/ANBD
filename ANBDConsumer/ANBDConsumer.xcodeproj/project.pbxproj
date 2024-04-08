@@ -33,14 +33,12 @@
 		A83F2F9B2BBFCD7D00E3EB13 /* SafariWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83F2F9A2BBFCD7D00E3EB13 /* SafariWebView.swift */; };
 		A8640B3A2BC391F800232F9C /* ReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8640B392BC391F800232F9C /* ReportView.swift */; };
 		A8640B3C2BC3C34F00232F9C /* TradeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8640B3B2BC3C34F00232F9C /* TradeListView.swift */; };
+		A8640B3E2BC3DCBE00232F9C /* CapsuleButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8640B3D2BC3DCBE00232F9C /* CapsuleButtonView.swift */; };
 		CB198CF02BBF8E84000C2709 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198CEF2BBF8E84000C2709 /* Category.swift */; };
 		CB198CF22BBF8FC8000C2709 /* CategoryDividerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198CF12BBF8FC8000C2709 /* CategoryDividerView.swift */; };
 		CB198CF62BBFD0A3000C2709 /* WriteButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198CF52BBFD0A3000C2709 /* WriteButtonView.swift */; };
 		CB198D0A2BC38B83000C2709 /* CategoryBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198D092BC38B83000C2709 /* CategoryBottomSheet.swift */; };
 		CB198D102BC38BA0000C2709 /* LocationBottomSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198D0B2BC38BA0000C2709 /* LocationBottomSheet.swift */; };
-		CB198D112BC38BA0000C2709 /* BlueCapsuleButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198D0C2BC38BA0000C2709 /* BlueCapsuleButtonView.swift */; };
-		CB198D122BC38BA0000C2709 /* LightBlueCapsuleButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198D0D2BC38BA0000C2709 /* LightBlueCapsuleButtonView.swift */; };
-		CB198D132BC38BA0000C2709 /* WhiteCapsuleButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198D0E2BC38BA0000C2709 /* WhiteCapsuleButtonView.swift */; };
 		CB198D142BC38BA0000C2709 /* CheckboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198D0F2BC38BA0000C2709 /* CheckboxView.swift */; };
 		CB198D172BC38BFC000C2709 /* TradeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198D152BC38BFC000C2709 /* TradeDetailView.swift */; };
 		CB198D182BC38BFC000C2709 /* TradeListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198D162BC38BFC000C2709 /* TradeListCell.swift */; };
@@ -106,14 +104,12 @@
 		A83F2F9A2BBFCD7D00E3EB13 /* SafariWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebView.swift; sourceTree = "<group>"; };
 		A8640B392BC391F800232F9C /* ReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportView.swift; sourceTree = "<group>"; };
 		A8640B3B2BC3C34F00232F9C /* TradeListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeListView.swift; sourceTree = "<group>"; };
+		A8640B3D2BC3DCBE00232F9C /* CapsuleButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapsuleButtonView.swift; sourceTree = "<group>"; };
 		CB198CEF2BBF8E84000C2709 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		CB198CF12BBF8FC8000C2709 /* CategoryDividerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryDividerView.swift; sourceTree = "<group>"; };
 		CB198CF52BBFD0A3000C2709 /* WriteButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteButtonView.swift; sourceTree = "<group>"; };
 		CB198D092BC38B83000C2709 /* CategoryBottomSheet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoryBottomSheet.swift; sourceTree = "<group>"; };
 		CB198D0B2BC38BA0000C2709 /* LocationBottomSheet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationBottomSheet.swift; sourceTree = "<group>"; };
-		CB198D0C2BC38BA0000C2709 /* BlueCapsuleButtonView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlueCapsuleButtonView.swift; sourceTree = "<group>"; };
-		CB198D0D2BC38BA0000C2709 /* LightBlueCapsuleButtonView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LightBlueCapsuleButtonView.swift; sourceTree = "<group>"; };
-		CB198D0E2BC38BA0000C2709 /* WhiteCapsuleButtonView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WhiteCapsuleButtonView.swift; sourceTree = "<group>"; };
 		CB198D0F2BC38BA0000C2709 /* CheckboxView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckboxView.swift; sourceTree = "<group>"; };
 		CB198D152BC38BFC000C2709 /* TradeDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TradeDetailView.swift; sourceTree = "<group>"; };
 		CB198D162BC38BFC000C2709 /* TradeListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TradeListCell.swift; sourceTree = "<group>"; };
@@ -163,21 +159,11 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		420E29D02BC2389F00DB004B /* DefaultProfileImage */ = {
-			isa = PBXGroup;
-			children = (
-				420E29D12BC23A0D00DB004B /* DefaultUserProfileImage.001.png */,
-			);
-			path = DefaultProfileImage;
-			sourceTree = "<group>";
-		};
 		CB198D232BC3C212000C2709 /* Button */ = {
 			isa = PBXGroup;
 			children = (
 				CB198CF52BBFD0A3000C2709 /* WriteButtonView.swift */,
-				CB198D0C2BC38BA0000C2709 /* BlueCapsuleButtonView.swift */,
-				CB198D0D2BC38BA0000C2709 /* LightBlueCapsuleButtonView.swift */,
-				CB198D0E2BC38BA0000C2709 /* WhiteCapsuleButtonView.swift */,
+				A8640B3D2BC3DCBE00232F9C /* CapsuleButtonView.swift */,
 			);
 			path = Button;
 			sourceTree = "<group>";
@@ -613,15 +599,13 @@
 				CB7BEE332BBD57B500C0F298 /* TradeViewModel.swift in Sources */,
 				42EE634E2BC2BCA100100FF4 /* LocationPickerMenu.swift in Sources */,
 				CB198CF02BBF8E84000C2709 /* Category.swift in Sources */,
-				CB7BEE372BBD57CE00C0F298 /* CommunityViewModel.swift in Sources */,
+				CB7BEE372BBD57CE00C0F298 /* ArticleViewModel.swift in Sources */,
 				424CA0092BC3A79900F83F8D /* SignUpEmailView.swift in Sources */,
 				42C7BBDA2BC2793B00F0805A /* UserInfoEditingView.swift in Sources */,
 				424CA0152BC3C45E00F83F8D /* SignUpComleteView.swift in Sources */,
-				CB7BEE112BBD563700C0F298 /* CommonUIView.swift in Sources */,
 				D75C3A4F2BBFB40200ED948C /* ArticleDetailView.swift in Sources */,
 				CB7BEE372BBD57CE00C0F298 /* ArticleViewModel.swift in Sources */,
 				CB7BEE372BBD57CE00C0F298 /* ArticleViewModel.swift in Sources */,
-				CB198D112BC38BA0000C2709 /* BlueCapsuleButtonView.swift in Sources */,
 				42C7BBDA2BC2793B00F0805A /* UserInfoEditingView.swift in Sources */,
 				CB7BEE192BBD565500C0F298 /* TradeView.swift in Sources */,
 				42EE63502BC2BEEF00100FF4 /* LocationPickerMenuList.swift in Sources */,
@@ -646,14 +630,13 @@
 				424CA0032BC3686500F83F8D /* AnotherUserProfileView.swift in Sources */,
 				CB7BEE232BBD56B900C0F298 /* View+Extension.swift in Sources */,
 				425FD3A92BC2469300143993 /* UserActivityInformationView.swift in Sources */,
+				A8640B3E2BC3DCBE00232F9C /* CapsuleButtonView.swift in Sources */,
 				424CA0132BC3C0E200F83F8D /* TermsView.swift in Sources */,
 				CB7BEDB92BBD4E9D00C0F298 /* ANBDConsumerApp.swift in Sources */,
 				A8640B3A2BC391F800232F9C /* ReportView.swift in Sources */,
 				A83F2F982BBFC07C00E3EB13 /* NormalCarouselView.swift in Sources */,
 				A816E5FC2BC11B7800138CFC /* ChatDetailView.swift in Sources */,
 				CB198D0A2BC38B83000C2709 /* CategoryBottomSheet.swift in Sources */,
-				CB198D122BC38BA0000C2709 /* LightBlueCapsuleButtonView.swift in Sources */,
-				CB198D132BC38BA0000C2709 /* WhiteCapsuleButtonView.swift in Sources */,
 				A816E5FE2BC1254B00138CFC /* TradeStateChangeView.swift in Sources */,
 				424CA00F2BC3B83700F83F8D /* SignUpAgreeView.swift in Sources */,
 				CB7BEE172BBD564E00C0F298 /* ChatView.swift in Sources */,

@@ -15,8 +15,11 @@ struct CategoryBottomSheet: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                LightBlueCapsuleButtonView(text: "카테고리 \(tradeViewModel.selectedItemCategories.count)")
+                CapsuleButtonView(text: "카테고리 \(tradeViewModel.selectedItemCategories.count)", buttonColor: .lightBlue, fontColor: .accent)
+                    .padding(.top)
+                    .padding(.leading)
                     .padding(.trailing, 250)
+                    
                 Spacer()
             }
             

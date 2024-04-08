@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 import ANBDModel
 
 struct ChatDetailView: View {
@@ -15,6 +16,7 @@ struct ChatDetailView: View {
     
     /// 메시지 관련 변수 (추후 ChatViewModel 연결 후 삭제)
     @State private var message: String = ""
+    @State private var selectedImage: [PhotosPickerItem] = []
     @State private var messages: [Message] = [
         Message(userID: "likelion123", userNickname: "줄이", createdAt: Calendar.current.date(byAdding: .day, value: -7, to: .now) ?? .now, content: "7일전메시지내가보냄"),
         Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -7, to: .now) ?? .now, content: "7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄"),
@@ -201,16 +203,25 @@ struct ChatDetailView: View {
     private var messageSendView: some View {
         HStack {
             /// 사진 전송
-            Button(action: {
-                
-            }, label: {
+//            Button(action: {
+//                
+//            }, label: {
+//                Image(systemName: "photo.fill")
+//                    .resizable()
+//                    .scaledToFit()
+//                    .frame(width: 25)
+//                    .foregroundStyle(.gray400)
+//                    .padding(.horizontal, 5)
+//            })
+            PhotosPicker(selection: $selectedImage, maxSelectionCount: 1, matching: .images) {
                 Image(systemName: "photo.fill")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 25)
                     .foregroundStyle(.gray400)
                     .padding(.horizontal, 5)
-            })
+            }
+            
             
             /// 메시지 입력
             ZStack {
@@ -238,6 +249,7 @@ struct ChatDetailView: View {
                     .foregroundStyle(message == "" ? .gray400 : .accentColor)
                     .rotationEffect(.degrees(43))
             })
+            .disabled(message.isEmpty)
         }
     }
 }

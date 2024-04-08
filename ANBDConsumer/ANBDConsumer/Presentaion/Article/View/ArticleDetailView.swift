@@ -11,12 +11,14 @@ import ANBDModel
 struct ArticleDetailView: View {
     
     var article: Article
-    
+    @Binding var category: Category
+
+//    @State private var category: Category = .accua
     @State private var isLiked: Bool = false
     @State private var isShowingComment: Bool = false
     @State private var comments: [Comment] = []
     @State private var commentText: String = ""
-    @State private var isShowingEditView = false
+    @State private var isShowingCreateView = false
     
     struct Comment: Identifiable {
         let id: UUID = UUID()
@@ -44,7 +46,7 @@ struct ArticleDetailView: View {
                         }
                         
                         VStack(alignment: .leading) {
-                            Text("이름이름")
+                            Text("\(article.writerNickname)")
                                 .font(ANBDFont.SubTitle3)
                             
                             Text("5분 전")
@@ -54,11 +56,11 @@ struct ArticleDetailView: View {
                     }
                     .padding(.bottom, 20)
                     
-                    Text("제목제목")
+                    Text("\(article.title)")
                         .font(ANBDFont.Heading3)
                         .padding(.bottom , 10)
                     
-                    Text("내용내용")
+                    Text("\(article.content)")
                         .font(ANBDFont.body1)
                         .padding(.bottom, 10)
                     
@@ -78,7 +80,7 @@ struct ArticleDetailView: View {
                                 .padding(.leading, 10)
                             
                         }
-                        Text("100")
+                        Text("\(article.likeCount)")
                             .font(ANBDFont.body1)
                             .foregroundStyle(.gray900)
                     }
@@ -178,7 +180,7 @@ struct ArticleDetailView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     Button(action: {
-                        
+                        isShowingCreateView.toggle()
                     }, label: {
                         Label("수정하기", systemImage: "square.and.pencil")
                     })
@@ -198,8 +200,8 @@ struct ArticleDetailView: View {
                 }
             }
         }
-        .fullScreenCover(isPresented: $isShowingEditView) {
-            ArticleEditView(isShowingEditView: $isShowingEditView)
+        .fullScreenCover(isPresented: $isShowingCreateView) {
+            ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: category, isNewArticle: false, article: article)
         }
         .navigationTitle("정보 공유")
         .navigationBarTitleDisplayMode(.inline)
@@ -230,5 +232,5 @@ struct ArticleDetailView: View {
     }
 }
 #Preview {
-    ArticleDetailView(article: Article(writerID: "writerID", writerNickname: "닉네임1", category: .accua, title: "제목제목", content: "내용내용"))
+    ArticleDetailView(article: Article(writerID: "writerID", writerNickname: "닉네임1", category: .accua, title: "제목제목", content: "내용내용"), category: .constant(.accua))
 }

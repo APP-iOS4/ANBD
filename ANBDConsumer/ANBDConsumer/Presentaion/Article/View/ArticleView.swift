@@ -69,18 +69,25 @@ struct ArticleView: View {
                                 Label("댓글순", systemImage: sortOption == .comments ? "checkmark" : "")
                             }
                         } label: {
-                            Text(getSortOptionLabel())
-                            Image(systemName: "chevron.down")
+//                            주석들은 chevron 있는 버전...
+//                            Text(getSortOptionLabel())
+//                                .font(ANBDFont.Caption3)
+//                                .foregroundStyle(.black)
+//                            Image(systemName: "chevron.down")
+                            WhiteCapsuleButtonView(text: getSortOptionLabel())
                         }
-                        .foregroundStyle(.gray900)
-                        .padding(10)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 15)
-                                .stroke(Color.gray600, lineWidth: 1)
-                        )
+//                        .font(ANBDFont.Caption3)
+//                        .foregroundStyle(.gray900)
+//
+                        .frame(width: 100)
+//                        .overlay(
+//                            RoundedRectangle(cornerRadius: 25.0)
+//                                .stroke(.gray)
+//                                .frame(height: 35)
+//                                .foregroundStyle(.clear)
+//                        )
                     }
-                    .padding(.leading, 10)
-                    .padding(.top, 10)
+                    .padding()
                     .font(ANBDFont.SubTitle3)
                     
                     TabView(selection: $category) {
@@ -111,8 +118,11 @@ struct ArticleView: View {
         }
         .navigationTitle("정보 공유")
         .toolbarTitleDisplayMode(.inline)
+//        .fullScreenCover(isPresented: $isShowingCreateView, content: {
+//            ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: category, isNewArticle: true)
+//        })
         .fullScreenCover(isPresented: $isShowingCreateView, content: {
-            ArticleCreateView(flag: $category, isShowingCreateView: $isShowingCreateView)
+            ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: category, isNewArticle: true)
         })
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -177,7 +187,7 @@ extension ArticleView {
             }
         }
         .navigationDestination(for: Article.self) { article in
-            ArticleDetailView(article: article)
+            ArticleDetailView(article: article, category: $category)
         }
     }
 }

@@ -22,7 +22,7 @@ struct CategoryBottomSheet: View {
                       Spacer()
                   }
                 ForEach(ItemCategory.allCases, id: \.self) { item in
-                    CheckboxView(isChecked: $tradeViewModel.isSelectedItemCategories[1], text: item.labelText)
+//                    CheckboxView(isChecked: $tradeViewModel.isSelectedItemCategories[1], text: item.labelText)
                 }
                 .padding(.horizontal)
                 Spacer()

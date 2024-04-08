@@ -14,6 +14,9 @@ public protocol ArticleRepository {
     func readArticleList() async throws -> [Article]
     func readArticleList(category: ANBDCategory) async throws -> [Article]
     func readArticleList(writerID: String) async throws -> [Article]
+    func refreshAll() async throws -> [Article]
+    func refreshCategory(category: ANBDCategory) async throws -> [Article]
+    func refreshWriterID(writerID: String) async throws -> [Article]
     func updateArticle(article: Article) async throws
     func deleteArticle(article: Article) async throws
 }

@@ -11,7 +11,7 @@ import ANBDModel
 struct ArticleDetailView: View {
     
     var article: Article
-    @Binding var category: Category
+    @Binding var category: ANBDCategory
 
 //    @State private var category: Category = .accua
     @State private var isLiked: Bool = false

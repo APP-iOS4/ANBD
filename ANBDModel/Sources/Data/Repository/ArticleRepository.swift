@@ -15,8 +15,6 @@ final class DefaultArticleRepository: ArticleRepository {
     let articleDB = Firestore.firestore().collection("ArticleBoard")
     
     private var allQuery: Query?
-    private var accuaQuery: Query?
-    private var dasiQuery: Query?
     private var writerIDQuery: Query?
     private var searchQuery: Query?
     
@@ -51,79 +49,21 @@ final class DefaultArticleRepository: ArticleRepository {
             requestQuery = articleDB
                 .order(by: "createdAt", descending: true)
                 .limit(to: 10)
-        }
-        
-        return try await withCheckedThrowingContinuation { [weak self] continuation in
-            requestQuery.addSnapshotListener { [weak self] snapshot, error in
-                guard let snapshot else {
-                    print(error.debugDescription)
-                    continuation.resume(throwing: DBError.getDocumentError(message: "Article documents를 읽어오는데 실패했습니다."))
-                    return
-                }
-                
-                guard let lastSnapshot = snapshot.documents.last else {
-                    print("end")
-                    return
-                }
-                
-                let next = self?.articleDB
-                    .order(by: "createdAt", descending: true)
-                    .limit(to: 10)
-                    .start(afterDocument: lastSnapshot)
-                
-                self?.allQuery = next
-                
-                let articleList = snapshot.documents.compactMap { try? $0.data(as: Article.self) }
-                continuation.resume(returning: articleList)
+            
+            guard let lastSnapshot = try await requestQuery.getDocuments().documents.last else {
+                print("end")
+                return []
             }
-        }
-    }
-    
-    func readArticleList(category: ANBDCategory) async throws -> [Article] {
-        guard category == .accua || category == .dasi else { return [] }
-        
-        var requestQuery: Query
-        
-        if category == .accua, let accuaQuery {
-            requestQuery = accuaQuery
-        } else if category == .dasi, let dasiQuery {
-            requestQuery = dasiQuery
+            
+            let next = articleDB
+                .order(by: "createdAt", descending: true)
+                .limit(to: 10)
+                .start(afterDocument: lastSnapshot)
+            
+            self.allQuery = next
         }
         
-        requestQuery = articleDB
-            .whereField("category", isEqualTo: category)
-            .order(by: "createdAt", descending: true)
-            .limit(to: 10)
-        
-        return try await withCheckedThrowingContinuation { [weak self] continuation in
-            requestQuery.addSnapshotListener { [weak self] snapshot, error in
-                guard let snapshot else {
-                    print(error.debugDescription)
-                    continuation.resume(throwing: DBError.getDocumentError(message: "category가 일치하는 Article documents를 읽어오는데 실패했습니다."))
-                    return
-                }
-                
-                guard let lastSnapshot = snapshot.documents.last else {
-                    print("end")
-                    return
-                }
-                
-                let next = self?.articleDB
-                    .whereField("category", isEqualTo: category)
-                    .order(by: "createdAt", descending: true)
-                    .limit(to: 10)
-                    .start(afterDocument: lastSnapshot)
-                
-                if category == .accua {
-                    self?.accuaQuery = next
-                } else {
-                    self?.dasiQuery = next
-                }
-                    
-                let articleList = snapshot.documents.compactMap { try? $0.data(as: Article.self) }
-                continuation.resume(returning: articleList)
-            }
-        }
+        return try await requestQuery.getDocuments().documents.compactMap { try $0.data(as: Article.self) }
     }
     
     func readArticleList(writerID: String) async throws -> [Article] {
@@ -136,33 +76,22 @@ final class DefaultArticleRepository: ArticleRepository {
                 .whereField("writerID", isEqualTo: writerID)
                 .order(by: "createdAt", descending: true)
                 .limit(to: 10)
+            
+            guard let lastSnapshot = try await requestQuery.getDocuments().documents.last else {
+                print("end")
+                return []
+            }
+            
+            let next = articleDB
+                .whereField("writerID", isEqualTo: writerID)
+                .order(by: "createdAt", descending: true)
+                .limit(to: 10)
+                .start(afterDocument: lastSnapshot)
+            
+            self.allQuery = next
         }
         
-        return try await withCheckedThrowingContinuation { [weak self] continuation in
-            requestQuery.addSnapshotListener { [weak self] snapshot, error in
-                guard let snapshot else {
-                    print(error.debugDescription)
-                    continuation.resume(throwing: DBError.getDocumentError(message: "writerID가 일치하는 Article documents를 읽어오는데 실패했습니다."))
-                    return
-                }
-                
-                guard let lastSnapshot = snapshot.documents.last else {
-                    print("end")
-                    return
-                }
-                
-                let next = self?.articleDB
-                    .whereField("writerID", isEqualTo: writerID)
-                    .order(by: "createdAt", descending: true)
-                    .limit(to: 10)
-                    .start(afterDocument: lastSnapshot)
-                
-                self?.writerIDQuery = next
-                
-                let articleList = snapshot.documents.compactMap { try? $0.data(as: Article.self) }
-                continuation.resume(returning: articleList)
-            }
-        }
+        return try await requestQuery.getDocuments().documents.compactMap { try $0.data(as: Article.self) }
     }
     
     func readArticleList(keyword: String) async throws -> [Article] {
@@ -189,46 +118,24 @@ final class DefaultArticleRepository: ArticleRepository {
             requestQuery = searchQuery
         } else {
             requestQuery = filteredQuery
+            
+            guard let lastSnapshot = try await requestQuery.getDocuments().documents.last else {
+                print("end")
+                return []
+            }
+            
+            let next = filteredQuery
+                .start(afterDocument: lastSnapshot)
+            
+            searchQuery = next
         }
         
-        return try await withCheckedThrowingContinuation { [weak self] continuation in
-            requestQuery.addSnapshotListener { [weak self] snapshot, error in
-                guard let snapshot else {
-                    print(error.debugDescription)
-                    continuation.resume(throwing: DBError.getDocumentError(message: "keyword에 해당하는 Article documents를 읽어오는데 실패했습니다."))
-                    return
-                }
-                
-                guard let lastSnapshot = snapshot.documents.last else {
-                    print("end")
-                    return
-                }
-                
-                let next = filteredQuery.start(afterDocument: lastSnapshot)
-                
-                self?.searchQuery = next
-                
-                let articleList = snapshot.documents.compactMap { try? $0.data(as: Article.self) }
-                continuation.resume(returning: articleList)
-            }
-        }
+        return try await requestQuery.getDocuments().documents.compactMap { try $0.data(as: Article.self) }
     }
     
     func refreshAll() async throws -> [Article] {
         allQuery = nil
         return try await readArticleList()
-    }
-    
-    func refreshCategory(category: ANBDCategory) async throws -> [Article] {
-        guard category == .accua || category == .dasi else { return [] }
-        
-        if category == .accua {
-            accuaQuery = nil
-        } else {
-            dasiQuery = nil
-        }
-        
-        return try await readArticleList(category: category)
     }
     
     func refreshWriterID(writerID: String) async throws -> [Article] {
@@ -269,8 +176,6 @@ final class DefaultArticleRepository: ArticleRepository {
     
     func resetQuery() {
         allQuery = nil
-        accuaQuery = nil
-        dasiQuery = nil
         writerIDQuery = nil
         searchQuery = nil
     }

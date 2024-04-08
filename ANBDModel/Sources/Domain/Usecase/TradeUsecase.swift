@@ -13,10 +13,10 @@ public protocol TradeUsecase {
     func writeTrade(trade: Trade, imageDatas: [Data]) async throws
     func loadTrade(tradeID: String) async throws -> Trade
     func loadTradeList() async throws -> [Trade]
-    func loadTradeList(category: TradeCategory) async throws -> [Trade]
+    func loadTradeList(category: ANBDCategory) async throws -> [Trade]
     func loadTradeList(tradeState: TradeState) async throws -> [Trade]
     func loadTradeList(writerID: String) async throws -> [Trade]
-    func updateTrade(category: TradeCategory, trade: Trade, imageDatas: [Data]) async throws
+    func updateTrade(trade: Trade, imageDatas: [Data]) async throws
     func updateTradeState(tradeID: String, tradeState: TradeState) async throws
     func likeTrade(tradeID: String) async throws
     func deleteTrade(trade: Trade) async throws
@@ -70,7 +70,7 @@ public struct DefaultTradeUsecase: TradeUsecase {
     /// - Parameters:
     ///   - category: Trade의 카테고리 (나눠쓰기, 바꿔쓰기)
     /// - Returns: 카테고리가 일치하는 Trade 배열
-    public func loadTradeList(category: TradeCategory) async throws -> [Trade] {
+    public func loadTradeList(category: ANBDCategory) async throws -> [Trade] {
         try await tradeRepository.readTradeList(category: category)
     }
     
@@ -98,8 +98,8 @@ public struct DefaultTradeUsecase: TradeUsecase {
     ///   - category: 수정한 Trade의 카테고리
     ///   - trade: 수정한 Trade 정보
     ///   - imageDatas: 수정한 Trade의 이미지 Data 배열
-    public func updateTrade(category: TradeCategory, trade: Trade, imageDatas: [Data]) async throws {
-        if category == .baccua && trade.wantProduct == nil {
+    public func updateTrade(trade: Trade, imageDatas: [Data]) async throws {
+        if trade.category == .baccua && trade.wantProduct == nil {
             throw NSError(domain: "Trade Field Error", code: 4010)
         }
         
@@ -107,7 +107,7 @@ public struct DefaultTradeUsecase: TradeUsecase {
         var updatedTrade = trade
         updatedTrade.imagePaths = imagePaths
         
-        try await tradeRepository.updateTrade(category: category, trade: updatedTrade)
+        try await tradeRepository.updateTrade(trade: updatedTrade)
     }
     
     

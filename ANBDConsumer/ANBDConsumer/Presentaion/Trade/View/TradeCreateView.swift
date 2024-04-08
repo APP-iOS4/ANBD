@@ -1,10 +1,3 @@
-//
-//  TradeCreateView.swift
-//  ANBDConsumer
-//
-//  Created by 최주리 on 4/8/24.
-//
-
 import SwiftUI
 import ANBDModel
 import PhotosUI
@@ -12,11 +5,23 @@ import PhotosUI
 struct TradeCreateView: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @Binding var isShowingCreate: Bool
-    @State var category: Category = .nanua
     @State private var placeHolder: String = ""
+    @State private var finishFlag: Bool = false
+    @State private var isShowingCategoryMenuList: Bool = false
+    @State private var isShowingLocationMenuList: Bool = false
     
     @State private var title: String = ""
     @State private var content: String = ""
+    @State var category: ANBDCategory = .nanua
+    
+    private var mustTextFields: [String] {[
+        title.description,
+        content.description,
+        myProduct.description
+    ]}
+    
+    @State var itemCategory: ItemCategory = .beautyCosmetics
+    @State var location: Location = .seoul
     
     //B
     @State private var myProduct: String = ""
@@ -34,7 +39,7 @@ struct TradeCreateView: View {
         VStack(alignment: .leading) {
             HStack {
                 Button(action: {
-                    
+                    isShowingCreate.toggle()
                 }, label: {
                     Image(systemName: "xmark")
                 })
@@ -77,6 +82,43 @@ struct TradeCreateView: View {
                         )
                         .padding(.bottom, 30)
                     }
+                    .padding(.leading, 20)
+                    
+                    ScrollView(.horizontal) {
+                        HStack {
+                            ForEach(selectedPhotosData, id: \.self) { photoData in
+                                ZStack(alignment:.topTrailing){
+                                    if let image = UIImage(data: photoData) {
+                                        
+                                        Image(uiImage: image)
+                                            .resizable()
+                                            .frame(width : 80 , height: 80)
+                                            .cornerRadius(10)
+                                            .clipped()
+                                            .padding(10)
+                                        
+                                    }
+                                    
+                                    Button {
+                                        if let idx = selectedPhotosData.firstIndex(of: photoData) {
+                                            selectedPhotosData.remove(at: idx)
+                                        }
+                                    } label: {
+                                        Circle()
+                                            .overlay (
+                                                Image(systemName: "xmark.circle.fill")
+                                                    .font(.system(size: 20))
+                                                    .foregroundStyle(.black)
+                                            )
+                                            .foregroundStyle(.white)
+                                            .frame(width: 20, height:20)
+                                    }
+                                }
+                            }
+                        }
+                        .padding(.bottom, 30)
+                    }//Horizontal ScrollView
+                    .padding(.horizontal, 20)
                 }
                 .onChange(of: selectedItems) {
                     for newItem in selectedItems {
@@ -90,43 +132,7 @@ struct TradeCreateView: View {
                         }
                     }
                 }
-                
-                ScrollView(.horizontal) {
-                    HStack {
-                        ForEach(selectedPhotosData, id: \.self) { photoData in
-                            ZStack(alignment:.topTrailing){
-                                if let image = UIImage(data: photoData) {
-                                    
-                                    Image(uiImage: image)
-                                        .resizable()
-                                        .frame(width : 80 , height: 80)
-                                        .cornerRadius(10)
-                                        .clipped()
-                                        .padding(10)
-                                    
-                                }
-                                
-                                Button {
-                                    if let idx = selectedPhotosData.firstIndex(of: photoData) {
-                                        selectedPhotosData.remove(at: idx)
-                                    }
-                                } label: {
-                                    Circle()
-                                        .overlay (
-                                            Image(systemName: "xmark.circle.fill")
-                                                .font(.system(size: 20))
-                                                .foregroundStyle(.black)
-                                        )
-                                        .foregroundStyle(.white)
-                                        .frame(width: 20, height:20)
-                                }
-                            }
-                        }
-                    }
-                    .padding(.bottom, 30)
-                }//Horizontal ScrollView
-                .padding(.horizontal, 20)
-                
+                 
                 //제목
                 VStack(alignment: .leading) {
                     Text("제목")
@@ -172,6 +178,7 @@ struct TradeCreateView: View {
                                         if !isNewProduct {
                                             if let trade = trade {
                                                 self.myProduct = trade.myProduct ?? "Unknown"
+                                                self.myProduct = trade.myProduct
                                             }
                                         }
                                     }
@@ -196,6 +203,7 @@ struct TradeCreateView: View {
                                         if !isNewProduct {
                                             if let trade = trade {
                                                 self.myProduct = trade.myProduct ?? "Unknown"
+                                                self.myProduct = trade.myProduct
                                             }
                                         }
                                     }
@@ -212,12 +220,111 @@ struct TradeCreateView: View {
                                         }
                                     }
                             }
+                            
                         }
                     }
                     .padding(.bottom, 30)
                 }
                 .padding(.horizontal, 20)
+                
+                //카테고리
+                VStack(alignment: .leading) {
+                    Text("카테고리")
+                        .font(.system(size: 18))
+                        .fontWeight(.bold)
+                    
+                    ItemCategoryPickerMenu(isShowingMenuList: $isShowingCategoryMenuList, selectedItem: itemCategory)
+                        .onTapGesture {
+                            self.isShowingLocationMenuList = false
+                        }
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 30)
+                
+                //지역
+                VStack(alignment: .leading) {
+                    Text("지역")
+                        .font(.system(size: 18))
+                        .fontWeight(.bold)
+                    
+                    LocationPickerMenu(isShowingMenuList: $isShowingLocationMenuList, selectedItem: location)
+                        .onTapGesture {
+                            self.isShowingCategoryMenuList = false
+                        }
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 30)
+                
+                //상세설명
+                VStack(alignment: .leading) {
+                    Text("상세설명")
+                        .font(.system(size: 18))
+                        .fontWeight(.bold)
+                    
+                    ZStack(alignment: .topLeading) {
+                        if content.isEmpty {
+                            Text(category == .nanua ? "나누고자 하는 물건에 대한 설명을 작성해주세요.\n(거래 금지 물품은 게시가 제한될 수 있어요.)" : "내 물건에 대한 설명, 원하는 물건에 대한 설명 등\n바꿀 물건에 대한내용을 작성해주세요.\n\n받고 싶은 물건의 후보가 여러가지라면 여기에\n작성해주세요.\n(거래 금지 물품은 게시가 제한될 수 있어요.)")
+                                .foregroundStyle(Color(uiColor: .lightGray))
+                                .font(.system(size: 15))
+                                .padding(.leading , 21)
+                                .padding(.top , 25)
+                        }
+                        
+                        TextEditor(text: $content)
+                            .scrollContentBackground(.hidden)
+                            .font(.system(size: 15))
+                            .frame(maxWidth: .infinity, minHeight: 200)
+                            .padding()
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10.0)
+                                    .stroke(.gray)
+                            )
+                            .onAppear() {
+                                if !isNewProduct {
+                                    if let trade = trade {
+                                        self.content = trade.content
+                                    }
+                                }
+                            }
+                    }
+                }//VStack
+                .padding(.horizontal, 20)
+                .padding(.bottom, 10)
+                
+                //작성완료 버튼
+                BlueSquareButton(title: isNewProduct ? "작성 완료" : "수정 완료", isDisabled: finishFlag) {
+                    if !isNewProduct {
+                        
+                    } else {
+                        
+                    }
+                    self.isShowingCreate.toggle()
+                }
+                .padding(20)
             }//ScrollView
+        }
+        .onTapGesture {
+            withAnimation {
+                self.isShowingCategoryMenuList = false
+                self.isShowingLocationMenuList = false
+            }
+        }
+        .onChange(of: mustTextFields, {
+            if self.selectedPhotosData.count != 0 && self.title != "" && self.myProduct != "" && self.content != "" {
+                self.finishFlag = false
+            } else {
+                self.finishFlag = true
+            }
+        })
+        .onChange(of: selectedPhotosData, {
+            if self.selectedPhotosData.count != 0 && self.title != "" && self.myProduct != "" && self.content != "" {
+                self.finishFlag = false
+            } else {
+                self.finishFlag = true
+            }
+        })
+        .onTapGesture {
+            endTextEditing()
         }
     }
 }

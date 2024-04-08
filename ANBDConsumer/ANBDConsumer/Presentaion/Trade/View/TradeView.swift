@@ -28,6 +28,7 @@ struct TradeView: View {
     @State private var isShowingCategory: Bool = false
     @State var location: [Location] = []
     @State private var isShowingLocation: Bool = false
+    @State private var isShowingCreate: Bool = false
     
     private var trades = DummyTrade().trades
     @State private var filteredTrades: [Trade] = []
@@ -109,7 +110,7 @@ struct TradeView: View {
             }
             
             Button(action: {
-                
+                isShowingCreate.toggle()
             }, label: {
                 WriteButtonView()
             })
@@ -121,6 +122,9 @@ struct TradeView: View {
         .sheet(isPresented: $isShowingLocation) {
             LocationBottomSheet(isShowingLocation: $isShowingLocation)
                 .presentationDetents([.medium])
+        }
+        .fullScreenCover(isPresented: $isShowingCreate) {
+            TradeCreateView(isShowingCreate: $isShowingCreate)
         }
         .navigationTitle("나눔 · 거래")
         .toolbarTitleDisplayMode(.inline)

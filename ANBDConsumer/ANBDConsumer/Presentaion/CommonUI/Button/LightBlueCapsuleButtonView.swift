@@ -13,7 +13,7 @@ struct LightBlueCapsuleButtonView: View {
     var body: some View {
         RoundedRectangle(cornerRadius: 25.0)
             .frame(height: 35)
-            .foregroundStyle(.white) //lightBlue로 바꾸기
+            .foregroundStyle(.lightAccent)
             .overlay(
                 Text("\(text)")
                     .font(ANBDFont.Caption3)

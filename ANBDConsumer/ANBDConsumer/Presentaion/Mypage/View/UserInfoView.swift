@@ -26,7 +26,7 @@ struct UserInfoView: View {
                     .foregroundStyle(Color.gray900)
                     .font(ANBDFont.pretendardBold(24))
                 
-                Text("선호 지역 : \(myPageViewModel.user.favoriteLocation)")
+                Text("선호 지역 : \(myPageViewModel.user.favoriteLocation.rawValue)")
                     .foregroundStyle(Color.gray400)
                     .font(ANBDFont.Caption3)
                 

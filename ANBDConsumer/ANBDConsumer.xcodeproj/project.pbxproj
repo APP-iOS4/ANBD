@@ -8,11 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		420E29D22BC23A0D00DB004B /* DefaultUserProfileImage.001.png in Resources */ = {isa = PBXBuildFile; fileRef = 420E29D12BC23A0D00DB004B /* DefaultUserProfileImage.001.png */; };
+		424CA0032BC3686500F83F8D /* AnotherUserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0022BC3686500F83F8D /* AnotherUserProfileView.swift */; };
 		425FD3A72BC2463000143993 /* UserInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 425FD3A62BC2463000143993 /* UserInfoView.swift */; };
 		425FD3A92BC2469300143993 /* UserActivityInformationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 425FD3A82BC2469300143993 /* UserActivityInformationView.swift */; };
 		425FD3AB2BC246AD00143993 /* OtherSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 425FD3AA2BC246AD00143993 /* OtherSettingsView.swift */; };
 		42C7BBD82BC2518000F0805A /* AccountManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C7BBD72BC2518000F0805A /* AccountManagementView.swift */; };
-		42C7BBDA2BC2793B00F0805A /* UserInfoEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C7BBD92BC2793B00F0805A /* UserInfoEditorView.swift */; };
+		42C7BBDA2BC2793B00F0805A /* UserInfoEditingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C7BBD92BC2793B00F0805A /* UserInfoEditingView.swift */; };
 		42EE634E2BC2BCA100100FF4 /* LocationPickerMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42EE634D2BC2BCA100100FF4 /* LocationPickerMenu.swift */; };
 		42EE63502BC2BEEF00100FF4 /* LocationPickerMenuList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42EE634F2BC2BEEF00100FF4 /* LocationPickerMenuList.swift */; };
 		A816E5FA2BC1056F00138CFC /* ChatListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A816E5F92BC1056F00138CFC /* ChatListCell.swift */; };
@@ -54,11 +55,12 @@
 
 /* Begin PBXFileReference section */
 		420E29D12BC23A0D00DB004B /* DefaultUserProfileImage.001.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DefaultUserProfileImage.001.png; sourceTree = "<group>"; };
+		424CA0022BC3686500F83F8D /* AnotherUserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnotherUserProfileView.swift; sourceTree = "<group>"; };
 		425FD3A62BC2463000143993 /* UserInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoView.swift; sourceTree = "<group>"; };
 		425FD3A82BC2469300143993 /* UserActivityInformationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActivityInformationView.swift; sourceTree = "<group>"; };
 		425FD3AA2BC246AD00143993 /* OtherSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherSettingsView.swift; sourceTree = "<group>"; };
 		42C7BBD72BC2518000F0805A /* AccountManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountManagementView.swift; sourceTree = "<group>"; };
-		42C7BBD92BC2793B00F0805A /* UserInfoEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoEditorView.swift; sourceTree = "<group>"; };
+		42C7BBD92BC2793B00F0805A /* UserInfoEditingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoEditingView.swift; sourceTree = "<group>"; };
 		42EE634D2BC2BCA100100FF4 /* LocationPickerMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPickerMenu.swift; sourceTree = "<group>"; };
 		42EE634F2BC2BEEF00100FF4 /* LocationPickerMenuList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPickerMenuList.swift; sourceTree = "<group>"; };
 		A816E5F92BC1056F00138CFC /* ChatListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListCell.swift; sourceTree = "<group>"; };
@@ -270,6 +272,7 @@
 				A816E5FD2BC1254B00138CFC /* TradeStateChangeView.swift */,
 				A816E5FF2BC162DC00138CFC /* ImageDetailView.swift */,
 				A816E6012BC1706600138CFC /* CustomAlertView.swift */,
+				424CA0022BC3686500F83F8D /* AnotherUserProfileView.swift */,
 			);
 			path = CommonUI;
 			sourceTree = "<group>";
@@ -315,7 +318,7 @@
 				425FD3A62BC2463000143993 /* UserInfoView.swift */,
 				425FD3A82BC2469300143993 /* UserActivityInformationView.swift */,
 				42C7BBD72BC2518000F0805A /* AccountManagementView.swift */,
-				42C7BBD92BC2793B00F0805A /* UserInfoEditorView.swift */,
+				42C7BBD92BC2793B00F0805A /* UserInfoEditingView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -487,7 +490,7 @@
 				A83F2F9B2BBFCD7D00E3EB13 /* SafariWebView.swift in Sources */,
 				425FD3A72BC2463000143993 /* UserInfoView.swift in Sources */,
 				CB7BEE2B2BBD578A00C0F298 /* MyPageViewModel.swift in Sources */,
-				CB7BEE2B2BBD578A00C0F298 /* MypageViewModel.swift in Sources */,
+				CB7BEE2B2BBD578A00C0F298 /* MyPageViewModel.swift in Sources */,
 				A816E6022BC1706600138CFC /* CustomAlertView.swift in Sources */,
 				A816E6002BC162DC00138CFC /* ImageDetailView.swift in Sources */,
 				CB7BEE272BBD575700C0F298 /* AuthenticationViewModel.swift in Sources */,
@@ -496,7 +499,7 @@
 				42EE634E2BC2BCA100100FF4 /* LocationPickerMenu.swift in Sources */,
 				CB198CF02BBF8E84000C2709 /* Category.swift in Sources */,
 				CB7BEE372BBD57CE00C0F298 /* CommunityViewModel.swift in Sources */,
-				42C7BBDA2BC2793B00F0805A /* UserInfoEditorView.swift in Sources */,
+				42C7BBDA2BC2793B00F0805A /* UserInfoEditingView.swift in Sources */,
 				CB7BEE112BBD563700C0F298 /* CommonUIView.swift in Sources */,
 				CB7BEE192BBD565500C0F298 /* TradeView.swift in Sources */,
 				42EE63502BC2BEEF00100FF4 /* LocationPickerMenuList.swift in Sources */,
@@ -507,6 +510,7 @@
 				CB7BEE2F2BBD57A000C0F298 /* ChatViewModel.swift in Sources */,
 				A816E5FA2BC1056F00138CFC /* ChatListCell.swift in Sources */,
 				CB198CF62BBFD0A3000C2709 /* WriteButtonView.swift in Sources */,
+				424CA0032BC3686500F83F8D /* AnotherUserProfileView.swift in Sources */,
 				CB7BEE1B2BBD565C00C0F298 /* CommunityView.swift in Sources */,
 				CB7BEE232BBD56B900C0F298 /* View+Extension.swift in Sources */,
 				425FD3A92BC2469300143993 /* UserActivityInformationView.swift in Sources */,

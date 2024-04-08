@@ -12,10 +12,9 @@ import ANBDModel
 struct ArticleCreateView: View {
     
     @EnvironmentObject private var articleViewModel: ArticleViewModel
-    
     @Binding var isShowingCreateView: Bool
     
-    @State var category: Category = .accua
+    @State var category: ANBDCategory = .accua
     @State private var title: String = ""
     @State private var content : String = ""
     @State var placeHolder : String = "ANBD 이용자들을 위해 여러분들의 아껴쓰기 / 다시쓰기 Tip을 전수해주세요!"

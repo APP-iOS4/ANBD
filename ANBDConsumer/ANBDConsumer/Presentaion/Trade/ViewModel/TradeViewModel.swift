@@ -12,11 +12,12 @@ import ANBDModel
 final class TradeViewModel: ObservableObject {
     
     //ItemCategory
-    @Published private(set) var selectedItemCategories: [ItemCategory] = []
-    @Published var isSelectedItemCategories: [Bool] = Array(repeating: false, count: ItemCategory.allCases.count)
+//    @Published private(set) var selectedItemCategories: [ItemCategory] = []
+//    @Published var isSelectedItemCategories: [Bool] = Array(repeating: false, count: ItemCategory.allCases.count)
     
-    //Location
+    /// 필터링 옵션 : Location · ItemCateogry
     @Published var selectedLocations: Set<Location> = []
+    @Published var selectedItemCategories: Set<ItemCategory> = []
     
     
     @Published private(set) var filteredTrades: [Trade] = []

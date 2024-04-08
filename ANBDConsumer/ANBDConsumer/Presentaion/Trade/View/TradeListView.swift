@@ -42,11 +42,11 @@ struct TradeListView: View {
         }
         .sheet(isPresented: $isShowingLocation) {
             LocationBottomSheet(isShowingLocation: $isShowingLocation)
-                .presentationDetents([.fraction(0.7)])
+                .presentationDetents([.fraction(0.6)])
         }
         .sheet(isPresented: $isShowingItemCategory) {
             CategoryBottomSheet(isShowingCategory: $isShowingItemCategory)
-                .presentationDetents([.medium])
+                .presentationDetents([.fraction(0.6)])
         }
     }
 }

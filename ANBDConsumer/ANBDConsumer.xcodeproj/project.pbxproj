@@ -74,6 +74,7 @@
 		D75C3A512BBFD9DB00ED948C /* ArticleCreateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75C3A502BBFD9DB00ED948C /* ArticleCreateView.swift */; };
 		D75C3A532BC1377400ED948C /* ArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75C3A522BC1377400ED948C /* ArticleView.swift */; };
 		D7E56D702BC39373000AA1BE /* InstructionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E56D6F2BC39373000AA1BE /* InstructionsView.swift */; };
+		D7E56D722BC425AE000AA1BE /* ArticleListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E56D712BC425AE000AA1BE /* ArticleListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -145,6 +146,7 @@
 		D75C3A502BBFD9DB00ED948C /* ArticleCreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleCreateView.swift; sourceTree = "<group>"; };
 		D75C3A522BC1377400ED948C /* ArticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleView.swift; sourceTree = "<group>"; };
 		D7E56D6F2BC39373000AA1BE /* InstructionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionsView.swift; sourceTree = "<group>"; };
+		D7E56D712BC425AE000AA1BE /* ArticleListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -462,6 +464,7 @@
 				D75C3A502BBFD9DB00ED948C /* ArticleCreateView.swift */,
 				D75C3A4E2BBFB40200ED948C /* ArticleDetailView.swift */,
 				D7E56D6F2BC39373000AA1BE /* InstructionsView.swift */,
+				D7E56D712BC425AE000AA1BE /* ArticleListView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -576,6 +579,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				42C7BBD82BC2518000F0805A /* AccountManagementView.swift in Sources */,
+				D7E56D722BC425AE000AA1BE /* ArticleListView.swift in Sources */,
 				424CA0072BC39C7C00F83F8D /* BlueSquareButton.swift in Sources */,
 				CB7BEE3B2BBD57FD00C0F298 /* HomeViewModel.swift in Sources */,
 				D7E56D702BC39373000AA1BE /* InstructionsView.swift in Sources */,

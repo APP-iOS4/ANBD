@@ -88,7 +88,7 @@ struct TradeView: View {
             tradeViewModel.selectedItemCategories = []
         }
         .navigationDestination(isPresented: $isGoingToSearchView) {
-            SearchView()
+            SearchView(category: category)
         }
     }
 }

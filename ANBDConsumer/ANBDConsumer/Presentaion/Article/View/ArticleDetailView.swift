@@ -11,9 +11,7 @@ import ANBDModel
 struct ArticleDetailView: View {
     
     var article: Article
-    @Binding var category: ANBDCategory
 
-//    @State private var category: Category = .accua
     @State private var isLiked: Bool = false
     @State private var isShowingComment: Bool = false
     @State private var comments: [Comment] = []
@@ -72,6 +70,11 @@ struct ArticleDetailView: View {
                     HStack {
                         Button {
                             isLiked.toggle()
+                            if isLiked {
+                                
+                            }else {
+                                
+                            }
                         } label: {
                             Image(systemName: isLiked ? "hand.thumbsup.fill" : "hand.thumbsup")
                                 .resizable()
@@ -201,7 +204,7 @@ struct ArticleDetailView: View {
             }
         }
         .fullScreenCover(isPresented: $isShowingCreateView) {
-            ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: category, isNewArticle: false, article: article)
+            ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, isNewArticle: false, article: article)
         }
         .navigationTitle("정보 공유")
         .navigationBarTitleDisplayMode(.inline)
@@ -231,6 +234,7 @@ struct ArticleDetailView: View {
         .toolbar(.hidden, for: .tabBar)
     }
 }
+
 #Preview {
-    ArticleDetailView(article: Article(writerID: "writerID", writerNickname: "닉네임1", category: .accua, title: "제목제목", content: "내용내용"), category: .constant(.accua))
+    ArticleDetailView(article: Article(writerID: "IDID", writerNickname: "닉네임", category: .accua, title: "제목제목", content: "내용"))
 }

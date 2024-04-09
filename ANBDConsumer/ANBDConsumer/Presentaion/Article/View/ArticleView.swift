@@ -30,6 +30,7 @@ class DummyArticle {
 struct ArticleView: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     
+    @State private var isGoingToSearchView: Bool = false
     @State private var isShowingCreateView: Bool = false
     @State var category: ANBDCategory = .accua
     
@@ -61,8 +62,18 @@ struct ArticleView: View {
         })
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Image(systemName: "magnifyingglass")
+                Button(action: {
+                    isGoingToSearchView.toggle()
+                }, label: {
+                    Image(systemName: "magnifyingglass")
+                        .resizable()
+                        .frame(width: 20)
+                        .foregroundStyle(.gray900)
+                })
             }
+        }
+        .navigationDestination(isPresented: $isGoingToSearchView) {
+            SearchView()
         }
     }
 }

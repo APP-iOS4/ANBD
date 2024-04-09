@@ -54,7 +54,7 @@ struct ArticleView: View {
             }
         }
         .navigationDestination(isPresented: $isGoingToSearchView) {
-            SearchView()
+            SearchView(category: category)
         }
     }
 }

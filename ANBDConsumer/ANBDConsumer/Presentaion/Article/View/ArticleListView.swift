@@ -13,6 +13,7 @@ struct ArticleListView: View {
     
     @State var category: ANBDCategory = .accua
     var isFromHomeView: Bool = false
+    var searchText: String? = nil
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -78,19 +79,28 @@ struct ArticleListView: View {
                 }
             }
         }
-        .navigationTitle(isFromHomeView ? "\(category.description)" : "정보 공유")
+        .navigationTitle(navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar(isFromHomeView ? .hidden : .automatic, for: .tabBar)
+        .toolbar(isFromHomeView ? .hidden : .visible, for: .tabBar)
         .onAppear {
             articleViewModel.updateArticles(category: category)
         }
         .onChange(of: category) {
             articleViewModel.updateArticles(category: category)
         }
-        
     }
-    
+}
 
+extension ArticleListView {
+    private var navigationTitle: String {
+        if let searchText = searchText {
+            return searchText
+        } else if isFromHomeView {
+            return category.description
+        } else {
+            return "정보 공유"
+        }
+    }
 }
 
 

@@ -161,8 +161,9 @@ struct TradeCreateView: View {
                         //나눠쓰기
                         if category == .nanua {
                             HStack {
-                                BlueCapsuleButtonView(text: "나눠쓰기")
-                                WhiteCapsuleButtonView(text: "바꿔쓰기")
+                                CapsuleButtonView(text: "나눠쓰기", buttonColor: .accent, fontColor: .white)
+                                
+                                CapsuleButtonView(text: "바꿔쓰기")
                                     .onTapGesture {
                                         self.category = .baccua
                                     }
@@ -186,11 +187,13 @@ struct TradeCreateView: View {
                         } else {
                             //바꿔쓰기
                             HStack {
-                                WhiteCapsuleButtonView(text: "나눠쓰기")
+                                CapsuleButtonView(text: "나눠쓰기")
                                     .onTapGesture {
                                         self.category = .nanua
                                     }
-                                BlueCapsuleButtonView(text: "바꿔쓰기")
+                                
+                                CapsuleButtonView(text: "바꿔쓰기", buttonColor: .accent, fontColor: .white)
+                                
                                 Rectangle()
                                     .frame(width: 100, height: 0)
                             }

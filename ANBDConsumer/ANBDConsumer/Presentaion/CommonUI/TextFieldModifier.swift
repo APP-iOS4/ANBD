@@ -13,7 +13,7 @@ struct TextFieldModifier: ViewModifier {
         content
             .font(.system(size: 15))
             .foregroundStyle(.black)
-            .padding(15)
+            .padding(12)
             .textInputAutocapitalization(.never) // 처음 문자 자동으로 대문자로 바꿔주는 기능 막기
             .overlay(
                 RoundedRectangle(cornerRadius: 10.0)

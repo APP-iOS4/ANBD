@@ -9,8 +9,8 @@ import SwiftUI
 import ANBDModel
 
 struct SearchResultView: View {
+    @State var category: ANBDCategory = .accua
     var searchText: String
-    @State private  var category: ANBDCategory = .accua
     
     var body: some View {
         VStack {
@@ -19,16 +19,16 @@ struct SearchResultView: View {
                 .padding()
             
             TabView(selection: $category) {
-                ArticleListView(category: .accua)
+                ArticleListView(category: .accua, searchText: searchText)
                     .tag(ANBDCategory.accua)
                 
-                TradeListView(category: .nanua)
+                TradeListView(category: .nanua, searchText: searchText)
                     .tag(ANBDCategory.nanua)
                 
-                TradeListView(category: .baccua)
+                TradeListView(category: .baccua, searchText: searchText)
                     .tag(ANBDCategory.baccua)
                 
-                ArticleListView(category: .dasi)
+                ArticleListView(category: .dasi, searchText: searchText)
                     .tag(ANBDCategory.dasi)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))

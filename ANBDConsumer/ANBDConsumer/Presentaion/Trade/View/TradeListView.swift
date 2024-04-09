@@ -11,6 +11,8 @@ import ANBDModel
 struct TradeListView: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     var category: ANBDCategory = .baccua
+    var isFromHomeView: Bool = false
+    var searchText: String? = nil
     
     @State private var isShowingLocation: Bool = false
     @State private var isShowingItemCategory: Bool = false
@@ -58,18 +60,26 @@ struct TradeListView: View {
                 ScrollView {
                     LazyVStack {
                         ForEach(tradeViewModel.filteredTrades) { trade in
-                            if trade == tradeViewModel.filteredTrades.last {
-                                TradeListCell(trade: trade)
-                                    .padding(.bottom, 70)
-                            } else {
-                                TradeListCell(trade: trade)
+                            NavigationLink(value: trade) {
+                                if trade == tradeViewModel.filteredTrades.last {
+                                    TradeListCell(trade: trade)
+                                        .padding(.bottom, 70)
+                                } else {
+                                    TradeListCell(trade: trade)
+                                }
                             }
                         }
                     }
                     .padding(.horizontal)
                 }
+                .navigationDestination(for: Trade.self) { item in
+                    TradeDetailView(trade: item)
+                }
             }
         }
+        .navigationTitle(navigationTitle)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(isFromHomeView ? .hidden : .visible, for: .tabBar)
         .sheet(isPresented: $isShowingLocation) {
             LocationBottomSheet(isShowingLocation: $isShowingLocation)
                 .presentationDetents([.fraction(0.6)])
@@ -86,6 +96,18 @@ struct TradeListView: View {
         }
         .onChange(of: tradeViewModel.selectedItemCategories) {
             tradeViewModel.filteringTrades(category: category)
+        }
+    }
+}
+
+extension TradeListView {
+    private var navigationTitle: String {
+        if let searchText = searchText {
+            return searchText
+        } else if isFromHomeView {
+            return category.description
+        } else {
+            return "나눔 · 거래"
         }
     }
 }

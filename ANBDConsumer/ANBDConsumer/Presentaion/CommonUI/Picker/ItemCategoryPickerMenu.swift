@@ -1,19 +1,17 @@
 //
-//  PickerMenu.swift
+//  ItemCategoryPickerMenu.swift
 //  ANBDConsumer
 //
-//  Created by 김성민 on 4/7/24.
+//  Created by 최주리 on 4/8/24.
 //
 
 import SwiftUI
 import ANBDModel
 
-struct LocationPickerMenu: View {
+struct ItemCategoryPickerMenu: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
-    @EnvironmentObject private var myPageViewModel: MyPageViewModel
-    
     @Binding var isShowingMenuList: Bool
-    @State var selectedItem: Location = .seoul
+    @State var selectedItem: ItemCategory = .digital
     
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -24,7 +22,7 @@ struct LocationPickerMenu: View {
                     }
                 }, label: {
                     HStack {
-                        Text("\(selectedItem.description)")
+                        Text("\(selectedItem.rawValue)")
                             .font(ANBDFont.SubTitle2)
                             .foregroundStyle(Color.gray900)
                         
@@ -49,19 +47,20 @@ struct LocationPickerMenu: View {
         }
     }
     
+    //MARK: - picker view
+    
     @ViewBuilder
-    func pickerListView(_ selectedItem: Location) -> some View {
+    func pickerListView(_ selectedItem: ItemCategory) -> some View {
         ScrollView {
-            LazyVStack {
-                ForEach(Location.allCases, id: \.self) { item in
+            LazyVStack(alignment: .trailing) {
+                ForEach(ItemCategory.allCases, id: \.self) { item in
                     VStack {
                         Button(action: {
                             self.selectedItem = item
-                            tradeViewModel.selectedLocation = item
-                            myPageViewModel.tempUserFavoriteLocation = item
+                            tradeViewModel.selectedItemCategory = item
                             isShowingMenuList.toggle()
                         }, label: {
-                            Text(item.description)
+                            Text(item.rawValue)
                                 .font(ANBDFont.body1)
                                 .foregroundStyle(Color.gray900)
                                 .padding(.vertical, 5)
@@ -87,8 +86,4 @@ struct LocationPickerMenu: View {
         }
         .shadow(radius: 10)
     }
-}
-
-#Preview {
-    LocationPickerMenu(isShowingMenuList: .constant(false), selectedItem: .seoul)
 }

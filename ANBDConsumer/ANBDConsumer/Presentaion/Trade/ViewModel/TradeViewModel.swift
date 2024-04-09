@@ -21,13 +21,13 @@ final class TradeViewModel: ObservableObject {
     @Published var selectedLocation: Location = .seoul
     
     let mockTradeData: [Trade] = [
-        .init(writerID: "likelion123", writerNickname: "줄이줄이", category: .nanua, itemCategory: .beautyCosmetics, location: .busan, title: "나눠요나눠", content: "나눕니다용~~", myProduct: "내꺼 너꺼 내꺼 너꺼", imagePaths: []),
+        .init(writerID: "likelion123", writerNickname: "줄이줄이", category: .nanua, itemCategory: .beautyCosmetics, location: .busan, title: "나눠요나눠", content: "나눕니다용~~", myProduct: "내꺼 너꺼 내꺼 너꺼", imagePaths: ["DummyImage1"]),
         
-        .init(writerID: "likelion123", writerNickname: "줄이줄이", category: .baccua, itemCategory: .sportsLeisure, location: .jeju, title: "바꿉니다용", content: "바꿉니다용~~", myProduct: "내꺼 너꺼 내꺼 너꺼", imagePaths: []),
+        .init(writerID: "likelion123", writerNickname: "줄이줄이", category: .baccua, itemCategory: .sportsLeisure, location: .jeju, title: "바꿉니다용", content: "바꿉니다용~~", myProduct: "내꺼 너꺼 내꺼 너꺼", imagePaths: ["DummyPuppy1"]),
         
-        .init(writerID: "likelion123", writerNickname: "줄이줄이", category: .nanua, itemCategory: .digital, location: .seoul, title: "나눠요나눠", content: "나눕니다용~~", myProduct: "내꺼 너꺼 내꺼 너꺼", imagePaths: []),
+        .init(writerID: "likelion123", writerNickname: "줄이줄이", category: .nanua, itemCategory: .digital, location: .seoul, title: "나눠요나눠", content: "나눕니다용~~", myProduct: "내꺼 너꺼 내꺼 너꺼", imagePaths: ["DummyPuppy2"]),
         
-        .init(writerID: "likelion123", writerNickname: "줄이줄이", category: .baccua, itemCategory: .digital, location: .seoul, title: "바꿉니다용", content: "바꿉니다용~~", myProduct: "내꺼 너꺼 내꺼 너꺼", imagePaths: []),
+        .init(writerID: "likelion123", writerNickname: "줄이줄이", category: .baccua, itemCategory: .digital, location: .seoul, title: "바꿉니다용", content: "바꿉니다용~~", myProduct: "내꺼 너꺼 내꺼 너꺼", imagePaths: ["DummyPuppy3"]),
         
         .init(writerID: "likelion123", writerNickname: "줄이줄이", category: .baccua, itemCategory: .digital, location: .seoul, title: "나눠요나눠", content: "바꿉니다용~~", myProduct: "내꺼 너꺼 내꺼 너꺼", imagePaths: []),
         

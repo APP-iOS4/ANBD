@@ -25,7 +25,7 @@ struct TradeListCell: View {
 //            })
 //            .padding(.trailing, 10)
             
-            Image(.dummyImage1)
+            Image("\(trade.imagePaths.first ?? "DummyImage1")")
                 .resizable()
                 .scaledToFit()
                 .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -90,6 +90,7 @@ struct TradeListCell: View {
                         .foregroundStyle(isLiked ? .heartRed : .gray200)
                         .padding(.leading, 10)
                 })
+                .padding(.bottom)
             }
         }
     }

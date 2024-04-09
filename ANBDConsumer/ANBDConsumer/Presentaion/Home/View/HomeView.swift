@@ -63,17 +63,11 @@ struct HomeView: View {
         }
         .navigationDestination(for: ANBDCategory.self) { category in
             switch category {
-            case .accua:
-                ArticleView(category: .accua)
+            case .accua, .dasi:
+                ArticleListView(category: category, isFromHomeView: true)
                 
-            case .nanua:
-                TradeView(category: .nanua)
-                
-            case .baccua:
-                TradeView(category: .baccua)
-                
-            case .dasi:
-                ArticleView(category: .dasi)
+            case .nanua, .baccua:
+                TradeListView(category: category, isFromHomeView: true)
             }
         }
         .navigationDestination(for: Article.self) { article in

@@ -28,7 +28,7 @@ struct TradeListCell: View {
             Image(.dummyImage1)
                 .resizable()
                 .scaledToFit()
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
                 .frame(width: 110, height: 110)
                 .padding(.trailing, 10)
             
@@ -38,7 +38,7 @@ struct TradeListCell: View {
                     .foregroundStyle(.gray900)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
-                    .padding(.bottom, 10)
+                    .padding(.top, 15)
                 
                 HStack {
                     Text("\(trade.writerNickname)")

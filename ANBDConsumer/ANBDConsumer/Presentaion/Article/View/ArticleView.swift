@@ -28,99 +28,34 @@ class DummyArticle {
 }
 
 struct ArticleView: View {
+    @EnvironmentObject private var articleViewModel: ArticleViewModel
     
     @State private var isShowingCreateView: Bool = false
     @State var category: ANBDCategory = .accua
-    @State private var sortOption: SortOption = .time
-    private var articles = DummyArticle().articles
-    @State private var filteredArticles: [Article] = []
-    
-    enum SortOption {
-        case time, likes, comments
-    }
     
     var body: some View {
-        NavigationStack {
-            ZStack(alignment: .bottomTrailing) {
-                VStack(alignment: .leading) {
-                    CategoryDividerView(category: $category)
-                        .frame(height: 45)
-                    
-                    VStack {
-                        Menu {
-                            Button {
-                                sortOption = .time
-                                updateArticles()
-                            } label: {
-                                Label("최신순", systemImage: sortOption == .time ? "checkmark" : "")
-                            }
-                            
-                            Button {
-                                sortOption = .likes
-                                updateArticles()
-                            } label: {
-                                Label("좋아요순", systemImage: sortOption == .likes ? "checkmark" : "")
-                            }
-                            
-                            Button {
-                                sortOption = .comments
-                                updateArticles()
-                            } label: {
-                                Label("댓글순", systemImage: sortOption == .comments ? "checkmark" : "")
-                            }
-                        } label: {
-//                            주석들은 chevron 있는 버전...
-//                            Text(getSortOptionLabel())
-//                                .font(ANBDFont.Caption3)
-//                                .foregroundStyle(.black)
-//                            Image(systemName: "chevron.down")
-                            CapsuleButtonView(text: getSortOptionLabel(), isForFiltering: true)
-                        }
-//                        .font(ANBDFont.Caption3)
-//                        .foregroundStyle(.gray900)
-//
-                        .frame(width: 100)
-//                        .overlay(
-//                            RoundedRectangle(cornerRadius: 25.0)
-//                                .stroke(.gray)
-//                                .frame(height: 35)
-//                                .foregroundStyle(.clear)
-//                        )
-                    }
-                    .padding()
-                    .font(ANBDFont.SubTitle3)
-                    
-                    TabView(selection: $category) {
-                        articleListView
-                            .tag(Category.accua)
-                        
-                        articleListView
-                            .tag(Category.dasi)
-                        
-                    }
-                    .tabViewStyle(.page(indexDisplayMode: .never))
-                    .ignoresSafeArea()
-                }
-                .onAppear {
-                    updateArticles()
-                }
-                .onChange(of: category) {
-                    updateArticles()
-                }
+        ZStack(alignment: .bottomTrailing) {
+            VStack(alignment: .leading) {
+                CategoryDividerView(category: $category)
+                    .frame(height: 45)
                 
-                Button {
-                    self.isShowingCreateView.toggle()
-                } label: {
-                    WriteButtonView()
-                        .padding(10)
+                TabView(selection: $category) {
+                    ArticleListView(category: .accua)
+                        .tag(ANBDCategory.accua)
+                    ArticleListView(category: .dasi)
+                        .tag(ANBDCategory.dasi)
                 }
+                .tabViewStyle(.page(indexDisplayMode: .never))
+            }
+            
+            Button {
+                self.isShowingCreateView.toggle()
+            } label: {
+                WriteButtonView()
             }
         }
         .navigationTitle("정보 공유")
         .toolbarTitleDisplayMode(.inline)
-//        .fullScreenCover(isPresented: $isShowingCreateView, content: {
-//            ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: category, isNewArticle: true)
-//        })
         .fullScreenCover(isPresented: $isShowingCreateView, content: {
             ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: category, isNewArticle: true)
         })
@@ -130,70 +65,11 @@ struct ArticleView: View {
             }
         }
     }
-    private func updateArticles() {
-        switch sortOption {
-        case .time:
-            if category == .accua {
-                filteredArticles = articles.filter { $0.category == .accua }
-            } else if category == .dasi {
-                filteredArticles = articles.filter { $0.category == .dasi }
-            }
-            break
-        case .likes:
-            // 좋아요순 정렬
-            if category == .accua {
-                filteredArticles = articles.filter { $0.category == .accua }
-            } else if category == .dasi {
-                filteredArticles = articles.filter { $0.category == .dasi }
-            }
-            filteredArticles.sort(by: { $0.likeCount > $1.likeCount })
-            break
-        case .comments:
-            // 댓글순 정렬
-            if category == .accua {
-                filteredArticles = articles.filter { $0.category == .accua }
-            } else if category == .dasi {
-                filteredArticles = articles.filter { $0.category == .dasi }
-            }
-            filteredArticles.sort(by: { $0.commentCount > $1.commentCount })
-            break
-        }
-    }
-    
-    private func getSortOptionLabel() -> String {
-        switch sortOption {
-        case .time:
-            return "최신순"
-        case .likes:
-            return "좋아요순"
-        case .comments:
-            return "댓글순"
-        }
-    }
-}
-
-extension ArticleView {
-    var articleListView: some View {
-        ScrollView {
-            LazyVStack {
-                ForEach(filteredArticles, id: \.self) { article in
-                    NavigationLink(value: article) {
-                        ArticleListCell(article: article)
-                            .padding(10)
-                    }
-                    Divider()
-                        .padding(.horizontal, 20)
-                }
-            }
-        }
-        .navigationDestination(for: Article.self) { article in
-            ArticleDetailView(article: article, category: $category)
-        }
-    }
 }
 
 
-//#Preview {
-//    ArticleView(articles: DummyArticle().articles)
-//}
+#Preview {
+    ArticleView(category: .accua)
+        .environmentObject(ArticleViewModel())
+}
 

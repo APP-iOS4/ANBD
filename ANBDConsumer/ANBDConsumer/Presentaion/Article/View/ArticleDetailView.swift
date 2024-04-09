@@ -19,6 +19,7 @@ struct ArticleDetailView: View {
     @State private var commentText: String = ""
     @State private var isShowingCreateView = false
     @State private var isGoingToReportView: Bool = false
+    @State private var isGoingToProfileView: Bool = false
 
     
     struct Comment: Identifiable {
@@ -33,7 +34,7 @@ struct ArticleDetailView: View {
                 VStack(alignment: .leading) {
                     HStack {
                         Button {
-                            // 프로필 이동
+                            isGoingToProfileView.toggle()
                         } label: {
                             ZStack {
                                 Circle()
@@ -54,6 +55,9 @@ struct ArticleDetailView: View {
                                 .font(ANBDFont.Caption1)
                                 .foregroundStyle(.gray400)
                         }
+                    }
+                    .navigationDestination(isPresented: $isGoingToProfileView) {
+                        UserPageView(isSignedInUser: false)
                     }
                     .padding(.bottom, 20)
                     
@@ -114,7 +118,7 @@ struct ArticleDetailView: View {
                     ForEach(comments) { comment in
                         HStack(alignment: .top) {
                             Button {
-                                // 프로필 이동
+//                                isGoingToProfileView.toggle()
                             } label: {
                                 ZStack {
                                     Circle()
@@ -179,6 +183,9 @@ struct ArticleDetailView: View {
                                 ReportView(reportViewType: .user)
                             }
                             
+                        }
+                        .navigationDestination(isPresented: $isGoingToProfileView) {
+                            UserPageView(isSignedInUser: false)
                         }
                         .padding(.horizontal, 10)
                         .padding(.bottom, 20)

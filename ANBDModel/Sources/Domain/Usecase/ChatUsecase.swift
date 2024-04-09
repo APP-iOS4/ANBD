@@ -12,20 +12,20 @@ import UIKit
 @available(iOS 15, *)
 public protocol ChatUsecaseProtocol {
     func createChannel(channel : Channel) async throws -> String
-    func loadChannelList(userID : String) async throws -> [Channel]
+    func loadChannelList(userID: String, completion : @escaping (_ channels: [Channel]) -> Void)
     func loadChannelID(tradeID : String , userID: String) async throws -> String?
     func loadTradeInChannel(channelID: String)  async throws -> Trade?
     func loadOtherUserNickname(userNicknames: [String], userNickname : String) -> String
-    func loadMessageList(channelID: String, userID: String) async throws -> [Message]
+    func loadMessageList(channelID: String, userID: String ) async throws -> [Message]
+    func listenNewMessage(channelID: String , completion: @escaping ((Message) -> Void))
     func sendMessage(message: Message , channelID: String) async throws
     func sendImageMessage(message: Message, imageData: Data ,channelID:String) async throws
     func updateUnreadCount(channelID: String , userID: String) async throws
     func leaveChatRoom(channelID: String , userID: String) async throws
+    func resetMessageData()
 }
 
 @available(iOS 15, *)
-
-
 public struct ChatUsecase : ChatUsecaseProtocol {
     
     let chatRepository: ChatRepository = DefaultChatRepository()
@@ -50,18 +50,10 @@ public struct ChatUsecase : ChatUsecaseProtocol {
     /// - Parameters:
     ///   - userID: 현재 내 ID
     /// - Returns: 내 ID로 생성된 채널 List
-    public func loadChannelList(userID: String) async throws -> [Channel] {
-        try await chatRepository.readChannelList(userID: userID)
-    }
-    
-    //채팅방 들어가면 보이는 채팅 목록들 불러오기
-    ///
-    /// - Parameters:
-    ///   - channelID: 현재 들어온 채널 ID
-    ///   - userID : 내 ID
-    /// - Returns: 채널 ID에 해당하는 채팅방 메시지 목록들
-    public func loadMessageList(channelID: String, userID: String) async throws -> [Message] {
-        try await messageRepository.readMessageList(channelID: channelID, userID: userID)
+    public func loadChannelList(userID: String, completion : @escaping (_ channels: [Channel]) -> Void) {
+        chatRepository.readChannelList(userID: userID) { channels in
+            completion(channels)
+        }
     }
     
     //이미 채팅 내역이 있는 게시글에서 다시 채팅하기 버튼을 눌렀을 경우 채팅 목록이 불러오기 위해 채널 ID를 불러오는 메소드
@@ -87,6 +79,19 @@ public struct ChatUsecase : ChatUsecaseProtocol {
             return "상대방을 찾을수 없습니다"
         }
         return userNicknames[(index+1) % 2]
+    }
+    
+    //채팅방 리스트에서 상대방 id를 얻는법 (프로필 이미지 얻기 위해서?)
+    ///
+    /// - Parameters:
+    ///   - users: 현재 채널의 유저들
+    ///   - userID: 내 ID
+    /// - Returns: 상대방 ID
+    public func loadOtherUserNickname(users: [String], userID: String) -> String {
+        guard let index = users.firstIndex(of: userID) else {
+            return "상대방을 찾을수 없습니다"
+        }
+        return users[(index+1) % 2]
     }
     
     //채팅방 리스트에서 채팅방을 들어갔을때 채팅방 상단에 게시글의 정보가 보여야하기 때문에 채널 ID로 Trade 정보를 얻는 메소드
@@ -143,8 +148,39 @@ public struct ChatUsecase : ChatUsecaseProtocol {
         
         if try await chatRepository.readLeftBothUser(channelID: channelID) {
             try await chatRepository.deleteChannel(channelID: channelID)
+            try await messageRepository.deleteMessageList(channelId: channelID)
+        }
+    }
+}
+
+// MARK: - 메시지 관련 메소드
+@available(iOS 15, *)
+extension ChatUsecase {
+    //최초로 채팅방 들어가면 보이는 채팅 목록들 불러오기
+    ///
+    /// - Parameters:
+    ///   - channelID: 현재 들어온 채널 ID
+    ///   - userID : 내 ID
+    /// - Returns: 채널 ID에 해당하는 채팅방 메시지 목록들
+    ///
+    public func loadMessageList(channelID: String, userID: String) async throws -> [Message] {
+        try await messageRepository.readMessageList(channelID: channelID, userID: userID)
+    }
+    
+    //최초로 채팅방 들어가면 새롭게 추가되는 채팅들에 대한 Listner
+    ///
+    /// - Parameters:
+    ///   - channelID: 현재 들어온 채널 ID
+    /// - Returns: 새롭게 추가된 메세지
+    ///
+    public func listenNewMessage(channelID: String, completion: @escaping ((Message) -> Void)) {
+        messageRepository.updateNewMessage(channelID: channelID) { message in
+            completion(message)
         }
     }
     
-    
+    //채팅방에 나갈때(Disappear) 할때 사용해야하는 메소드
+    public func resetMessageData() {
+        messageRepository.resetData()
+    }
 }

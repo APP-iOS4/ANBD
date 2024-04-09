@@ -14,10 +14,16 @@ public protocol TradeUsecase {
     func loadTrade(tradeID: String) async throws -> Trade
     func loadTradeList() async throws -> [Trade]
     func loadTradeList(writerID: String) async throws -> [Trade]
+    func loadFilteredTradeList(category: ANBDCategory,
+                               location: Location?,
+                               itemCategory: ItemCategory?) async throws -> [Trade]
     func loadRecentTradeList(category: ANBDCategory) async throws -> [Trade]
     func searchTrade(keyword: String) async throws -> [Trade]
     func refreshAllTradeList() async throws -> [Trade]
     func refreshWriterIDTradeList(writerID: String) async throws -> [Trade]
+    func refreshFilteredTradeList(category: ANBDCategory,
+                                  location: Location?,
+                                  itemCategory: ItemCategory?) async throws -> [Trade]
     func refreshSearchTradeList(keyword: String) async throws -> [Trade]
     func updateTrade(trade: Trade, imageDatas: [Data]) async throws
     func updateTradeState(tradeID: String, tradeState: TradeState) async throws
@@ -79,6 +85,25 @@ public struct DefaultTradeUsecase: TradeUsecase {
     }
     
     
+    /// 적용된 필터에 해당되는 Trade 배열을 불러오는 메서드
+    /// - Parameters:
+    ///   - category: Trade의 카테고리 (1: 나눠쓰기, 2: 바꿔쓰기)
+    ///   - location: Trade의 설정된 지역
+    ///   - itemCategory: Trade의 물건 카테고리
+    /// - Returns: 적용된 필터에 해당되는 Trade 배열
+    public func loadFilteredTradeList(
+        category: ANBDCategory,
+        location: Location?,
+        itemCategory: ItemCategory?
+    ) async throws -> [Trade] {
+        try await tradeRepository.readTradeList(
+            category: category,
+            location: location,
+            itemCategory: itemCategory
+        )
+    }
+    
+    
     /// 카테고리가 일치하는 최신 Trade 배열을 불러오는 메서드
     /// - Parameters:
     ///   - category: Trade의 카테고리
@@ -110,6 +135,25 @@ public struct DefaultTradeUsecase: TradeUsecase {
     /// - Returns: writerID가 일치하는 Trade 배열
     public func refreshWriterIDTradeList(writerID: String) async throws -> [Trade] {
         try await tradeRepository.refreshWriterID(writerID: writerID)
+    }
+    
+    
+    /// 페이지네이션 Query를 초기화하고 필터에 해당하는 Trade 목록 10개를 불러오는 메서드
+    /// - Parameters:
+    ///   - category: Trade의 카테고리 (1: 나눠쓰기, 2: 바꿔쓰기)
+    ///   - location: Trade의 설정된 지역
+    ///   - itemCategory: Trade의 물건 카테고리
+    /// - Returns: 적용된 필터에 해당되는 Trade 배열
+    public func refreshFilteredTradeList(
+        category: ANBDCategory,
+        location: Location?,
+        itemCategory: ItemCategory?
+    ) async throws -> [Trade] {
+        try await tradeRepository.refreshFilter(
+            category: category,
+            location: location,
+            itemCategory: itemCategory
+        )
     }
     
     

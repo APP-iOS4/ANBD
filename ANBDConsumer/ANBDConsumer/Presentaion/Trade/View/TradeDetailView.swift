@@ -94,6 +94,7 @@ struct TradeDetailView: View {
             bottomView
             
         }//VStack
+        .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {

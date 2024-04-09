@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SignUpComleteView: View {
+struct SignUpCompleteView: View {
     @EnvironmentObject private var authenticationViewModel: AuthenticationViewModel
     
     @State private var showTitleAnimation: CGFloat = .zero
@@ -37,7 +37,7 @@ struct SignUpComleteView: View {
             Spacer()
             
             BlueSquareButton(title: "시작하기") {
-                
+                authenticationViewModel.submitSignUp()
             }
             .opacity(showExplainAnimation)
         }
@@ -56,6 +56,6 @@ struct SignUpComleteView: View {
 }
 
 #Preview {
-    SignUpComleteView()
+    SignUpCompleteView()
         .environmentObject(AuthenticationViewModel())
 }

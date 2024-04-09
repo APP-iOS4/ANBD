@@ -22,6 +22,8 @@ struct LocationPickerMenu: View {
                     withAnimation {
                         isShowingMenuList.toggle()
                     }
+                    
+                    downKeyboard()
                 }, label: {
                     HStack {
                         Text("\(selectedItem.description)")
@@ -86,6 +88,12 @@ struct LocationPickerMenu: View {
                 .stroke(Color.gray100, lineWidth: 1)
         }
         .shadow(radius: 10)
+    }
+}
+
+extension LocationPickerMenu {
+    private func downKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }
 

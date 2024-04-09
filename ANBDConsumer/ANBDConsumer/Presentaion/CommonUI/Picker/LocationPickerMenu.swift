@@ -10,6 +10,8 @@ import ANBDModel
 
 struct LocationPickerMenu: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
+    @EnvironmentObject private var myPageViewModel: MyPageViewModel
+    
     @Binding var isShowingMenuList: Bool
     @State var selectedItem: Location = .seoul
     
@@ -56,6 +58,7 @@ struct LocationPickerMenu: View {
                         Button(action: {
                             self.selectedItem = item
                             tradeViewModel.selectedLocation = item
+                            myPageViewModel.tempUserFavoriteLocation = item
                             isShowingMenuList.toggle()
                         }, label: {
                             Text(item.description)

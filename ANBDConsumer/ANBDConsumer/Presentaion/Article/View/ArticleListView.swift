@@ -12,7 +12,8 @@ struct ArticleListView: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     
     @State var category: ANBDCategory = .accua
-
+    var isFromHomeView: Bool = false
+    
     var body: some View {
         VStack(alignment: .leading) {
             Menu {
@@ -77,6 +78,9 @@ struct ArticleListView: View {
                 }
             }
         }
+        .navigationTitle(isFromHomeView ? "\(category.description)" : "정보 공유")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(isFromHomeView ? .hidden : .automatic, for: .tabBar)
         .onAppear {
             articleViewModel.updateArticles(category: category)
         }

@@ -50,4 +50,8 @@ struct ANBDTabView: View {
 
 #Preview {
     ANBDTabView()
+        .environmentObject(HomeViewModel())
+        .environmentObject(TradeViewModel())
+        .environmentObject(ArticleViewModel())
+        .environmentObject(MyPageViewModel())
 }

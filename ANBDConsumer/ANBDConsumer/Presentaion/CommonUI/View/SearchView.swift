@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import ANBDModel
 
 struct SearchView: View {
+    var category: ANBDCategory = .accua
     @State private var searchText: String = ""
     @State private var isGoingToSearchResultView: Bool = false
     
@@ -25,13 +27,13 @@ struct SearchView: View {
             }
         }
         .navigationDestination(isPresented: $isGoingToSearchResultView) {
-            SearchResultView(searchText: searchText)
+            SearchResultView(category: category, searchText: searchText)
         }
     }
 }
 
 #Preview {
     NavigationStack {
-        SearchView()
+        SearchView(category: .accua)
     }
 }

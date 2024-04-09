@@ -12,6 +12,7 @@ struct TradeListView: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     var category: ANBDCategory = .baccua
     var isFromHomeView: Bool = false
+    var searchText: String? = nil
     
     @State private var isShowingLocation: Bool = false
     @State private var isShowingItemCategory: Bool = false
@@ -76,9 +77,9 @@ struct TradeListView: View {
                 }
             }
         }
-        .navigationTitle(isFromHomeView ? "\(category.description)" : "나눔 · 거래")
+        .navigationTitle(navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar(isFromHomeView ? .hidden : .automatic, for: .tabBar)
+        .toolbar(isFromHomeView ? .hidden : .visible, for: .tabBar)
         .sheet(isPresented: $isShowingLocation) {
             LocationBottomSheet(isShowingLocation: $isShowingLocation)
                 .presentationDetents([.fraction(0.6)])
@@ -95,6 +96,18 @@ struct TradeListView: View {
         }
         .onChange(of: tradeViewModel.selectedItemCategories) {
             tradeViewModel.filteringTrades(category: category)
+        }
+    }
+}
+
+extension TradeListView {
+    private var navigationTitle: String {
+        if let searchText = searchText {
+            return searchText
+        } else if isFromHomeView {
+            return category.description
+        } else {
+            return "나눔 · 거래"
         }
     }
 }

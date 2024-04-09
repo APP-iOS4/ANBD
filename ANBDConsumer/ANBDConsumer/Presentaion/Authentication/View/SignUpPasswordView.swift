@@ -48,13 +48,16 @@ struct SignUpPasswordView: View {
                 nextButtonAction()
             }
             
-            if !authenticationViewModel.errorMessage.isEmpty {
-                Text(authenticationViewModel.errorMessage)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 8)
-                    .font(ANBDFont.Caption1)
-                    .foregroundStyle(Color.heartRed)
-            }
+            // 프로토타입을 위한 임시 주석
+            /*
+             if !authenticationViewModel.errorMessage.isEmpty {
+             Text(authenticationViewModel.errorMessage)
+             .frame(maxWidth: .infinity, alignment: .leading)
+             .padding(.top, 8)
+             .font(ANBDFont.Caption1)
+             .foregroundStyle(Color.heartRed)
+             }
+             */
             
             Spacer()
             
@@ -64,7 +67,7 @@ struct SignUpPasswordView: View {
         }
         .padding()
         .navigationDestination(isPresented: $navigate) {
-            SignUpPasswordView()
+            SignUpUserInfoView()
         }
         
         .onAppear {

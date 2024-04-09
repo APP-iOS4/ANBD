@@ -315,4 +315,5 @@ struct TradeCreateView: View {
 
 #Preview {
     TradeCreateView(isShowingCreate: .constant(true), isNewProduct: true)
+        .environmentObject(TradeViewModel())
 }

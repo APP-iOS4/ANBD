@@ -36,15 +36,19 @@ struct ANBDConsumerApp: App {
     @StateObject private var tradeViewModel = TradeViewModel()
     @StateObject private var myPageViewModel = MyPageViewModel()
     @StateObject private var articleViewModel = ArticleViewModel()
+    @StateObject private var authenticationViewModel = AuthenticationViewModel()
+    
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
     var body: some Scene {
         WindowGroup {
-            ANBDTabView()
+            // ANBDTabView()
+            AuthenticationView()
         }
         .environmentObject(homeViewModel)
         .environmentObject(tradeViewModel)
         .environmentObject(myPageViewModel)
         .environmentObject(articleViewModel)
+        .environmentObject(authenticationViewModel)
     }
 }

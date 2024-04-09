@@ -19,10 +19,15 @@ public struct Channel: Identifiable , Codable {
     public let tradeId: String
     public var leaveUsers : [String]
     
-    public var lastDateString : String {
+    private static var dateFormatter : DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM월 dd일"
-        return dateFormatter.string(from: lastSendDate)
+        dateFormatter.locale = Locale(identifier: "ko_KR")
+        return dateFormatter
+    }()
+    
+    public var lastDateString: String {
+        return Channel.dateFormatter.string(from: lastSendDate)
     }
     
     public init(participants: [String], participantNicknames: [String], lastMessage: String, lastSendDate: Date, lastSendId: String, unreadCount: Int, tradeId: String) {

@@ -58,6 +58,7 @@ struct LocationPickerMenu: View {
                         Button(action: {
                             self.selectedItem = item
                             tradeViewModel.selectedLocation = item
+                            myPageViewModel.tempUserFavoriteLocation = item
                             isShowingMenuList.toggle()
                         }, label: {
                             Text(item.description)

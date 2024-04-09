@@ -129,7 +129,7 @@ struct UserInfoEditingView: View {
                     }, label: {
                         Text("완료")
                     })
-                    .disabled(myPageViewModel.validateEditing())
+                    //.disabled(myPageViewModel.validateEditing())
                 }
             }
             

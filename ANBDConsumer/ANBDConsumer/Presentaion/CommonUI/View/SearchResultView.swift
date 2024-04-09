@@ -15,7 +15,7 @@ struct SearchResultView: View {
     var body: some View {
         VStack {
             CategoryDividerView(category: $category, isFromSearchView: true)
-                .frame(height: 45)
+                .frame(height: 40)
                 .padding()
             
             TabView(selection: $category) {

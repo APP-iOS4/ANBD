@@ -12,7 +12,9 @@ struct ArticleListView: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     
     @State var category: ANBDCategory = .accua
-
+    var isFromHomeView: Bool = false
+    var searchText: String? = nil
+    
     var body: some View {
         VStack(alignment: .leading) {
             Menu {
@@ -77,16 +79,28 @@ struct ArticleListView: View {
                 }
             }
         }
+        .navigationTitle(navigationTitle)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(isFromHomeView ? .hidden : .visible, for: .tabBar)
         .onAppear {
             articleViewModel.updateArticles(category: category)
         }
         .onChange(of: category) {
             articleViewModel.updateArticles(category: category)
         }
-        
     }
-    
+}
 
+extension ArticleListView {
+    private var navigationTitle: String {
+        if let searchText = searchText {
+            return searchText
+        } else if isFromHomeView {
+            return category.description
+        } else {
+            return "정보 공유"
+        }
+    }
 }
 
 

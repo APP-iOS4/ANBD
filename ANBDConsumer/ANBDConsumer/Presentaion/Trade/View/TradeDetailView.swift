@@ -11,10 +11,13 @@ import ANBDModel
 struct TradeDetailView: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @State var trade: Trade
+    @State private var isGoingToReportView: Bool = false
+    @State private var isShowingDeleteAlert: Bool = false
+    @State private var isShowingCreat: Bool = false
     
     //임시..
     @State private var isLiked: Bool = false
-    @State private var isWriter: Bool = false
+    @State private var isWriter: Bool = true
     @State private var isTraiding: Bool = true
     
     var body: some View {
@@ -74,6 +77,9 @@ struct TradeDetailView: View {
                             .font(ANBDFont.Heading3)
                             .foregroundStyle(.gray900)
                             .fontWeight(.bold)
+                        Text("\(trade.itemCategory.rawValue) · \(trade.location.description)")
+                            .font(ANBDFont.body1)
+                            .foregroundStyle(.gray500)
                             .padding(.bottom)
                         
                         Text("\(trade.content)")
@@ -88,23 +94,26 @@ struct TradeDetailView: View {
             bottomView
             
         }//VStack
+        .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     if isWriter {
                         Button(action: {
-                            //isShowingCreate.toggle()
+                            isShowingCreat.toggle()
+                            tradeViewModel.selectedLocation = trade.location
+                            tradeViewModel.selectedItemCategory = trade.itemCategory
                         }, label: {
                             Label("수정하기", systemImage: "square.and.pencil")
                         })
                         Button(role: .destructive) {
-                            //showingDeleteAlert.toggle()
+                            isShowingDeleteAlert.toggle()
                         } label: {
                             Label("삭제하기", systemImage: "trash")
                         }
                     } else {
                         Button(role: .destructive, action: {
-                            //isShowingCreate.toggle()
+                            isGoingToReportView.toggle()
                         }, label: {
                             Label("신고하기", systemImage: "exclamationmark.bubble")
                         })}
@@ -116,6 +125,23 @@ struct TradeDetailView: View {
                         .rotationEffect(.degrees(90))
                         .foregroundStyle(.black)
                 }
+            }
+        }
+        .fullScreenCover(isPresented: $isShowingCreat, onDismiss: {
+            tradeViewModel.selectedLocation = .seoul
+            tradeViewModel.selectedItemCategory = .digital
+        }) {
+            TradeCreateView(isShowingCreate: $isShowingCreat, isNewProduct: false, trade: trade)
+        }
+        .navigationDestination(isPresented: $isGoingToReportView) {
+            ReportView(reportViewType: .trade)
+        }
+        .alert("\(trade.tradeState.description)인 상품을 삭제하시겠습니까?", isPresented: $isShowingDeleteAlert) {
+            Button("삭제", role: .destructive) {
+                
+            }
+            Button("취소", role: .cancel) {
+                
             }
         }
     }

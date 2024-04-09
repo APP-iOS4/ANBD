@@ -34,6 +34,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct ANBDConsumerApp: App {
     @StateObject private var homeViewModel = HomeViewModel()
     @StateObject private var tradeViewModel = TradeViewModel()
+    @StateObject private var myPageViewModel = MyPageViewModel()
     @StateObject private var articleViewModel = ArticleViewModel()
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
@@ -43,6 +44,7 @@ struct ANBDConsumerApp: App {
         }
         .environmentObject(homeViewModel)
         .environmentObject(tradeViewModel)
+        .environmentObject(myPageViewModel)
         .environmentObject(articleViewModel)
     }
 }

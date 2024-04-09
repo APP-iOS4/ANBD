@@ -22,6 +22,16 @@ class DummyTrade {
 }
 
 struct TradeView: View {
+
+    @State var itemCategory: [ItemCategory] = []
+    @State private var isShowingCategory: Bool = false
+    @State var location: [Location] = []
+    @State private var isShowingLocation: Bool = false
+    @State private var isShowingCreate: Bool = false
+    
+    private var trades = DummyTrade().trades
+    @State private var filteredTrades: [Trade] = []
+
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @State var category: ANBDCategory = .nanua
     @State private var isGoingToSearchView: Bool = false
@@ -43,11 +53,22 @@ struct TradeView: View {
             }
             
             Button(action: {
-                
+                isShowingCreate.toggle()
             }, label: {
                 WriteButtonView()
             })
         }//ZStack
+        .sheet(isPresented: $isShowingCategory) {
+            CategoryBottomSheet(isShowingCategory: $isShowingCategory)
+                .presentationDetents([.medium])
+        }
+        .sheet(isPresented: $isShowingLocation) {
+            LocationBottomSheet(isShowingLocation: $isShowingLocation)
+                .presentationDetents([.medium])
+        }
+        .fullScreenCover(isPresented: $isShowingCreate) {
+            TradeCreateView(isShowingCreate: $isShowingCreate)
+        }
         .navigationTitle("나눔 · 거래")
         .toolbarTitleDisplayMode(.inline)
         .toolbar {
@@ -67,12 +88,11 @@ struct TradeView: View {
             tradeViewModel.selectedItemCategories = []
         }
         .navigationDestination(isPresented: $isGoingToSearchView) {
-            SearchView()
+            SearchView(category: category)
         }
     }
 }
 
 #Preview {
-    TradeView(category: .nanua)
-        .environmentObject(TradeViewModel())
+    TradeView()
 }

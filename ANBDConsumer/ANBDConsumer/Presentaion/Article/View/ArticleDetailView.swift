@@ -13,6 +13,7 @@ struct ArticleDetailView: View {
     var article: Article
 
     @State private var isLiked: Bool = false
+    @State private var isWriter: Bool = true
     @State private var isShowingComment: Bool = false
     @State private var comments: [Comment] = []
     @State private var commentText: String = ""
@@ -151,23 +152,25 @@ struct ArticleDetailView: View {
                                     .foregroundStyle(.gray500)
                             }
                             .confirmationDialog("", isPresented: $isShowingComment) {
-                                Button {
+                                if isWriter {
+                                    // 본인 댓글 = 수정,삭제 | 다른 사람 댓글 = 신고
+                                    Button {
+                                        
+                                    } label: {
+                                        Text("수정하기")
+                                    }
                                     
-                                } label: {
-                                    Text("수정하기")
-                                }
-                                
-                                Button(role: .destructive) {
-                                    
-                                } label: {
-                                    Text("삭제하기")
-                                }
-                                
-                                // 본인 댓글 = 수정,삭제 | 다른 사람 댓글 = 신고
-                                Button(role: .destructive) {
-                                    
-                                } label: {
-                                    Text("신고하기")
+                                    Button(role: .destructive) {
+                                        
+                                    } label: {
+                                        Text("삭제하기")
+                                    }
+                                } else {
+                                    Button(role: .destructive) {
+                                        
+                                    } label: {
+                                        Text("신고하기")
+                                    }
                                 }
                             }
                             
@@ -182,17 +185,28 @@ struct ArticleDetailView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
-                    Button(action: {
-                        isShowingCreateView.toggle()
-                    }, label: {
-                        Label("수정하기", systemImage: "square.and.pencil")
-                    })
-                    Button(role: .destructive) {
+                    if isWriter {
+                        // 본인 게시물 = 수정,삭제 | 다른 사람 게시물 = 신고
+
+                        Button {
+                            isShowingCreateView.toggle()
+                        } label: {
+                            Label("수정하기", systemImage: "square.and.pencil")
+                        }
                         
-                    } label: {
-                        Label("삭제하기", systemImage: "trash")
+                        Button(role: .destructive) {
+                            
+                        } label: {
+                            Label("삭제하기", systemImage: "trash")
+                        }
+                    } else {
+                        Button(role: .destructive) {
+                            
+                        } label: {
+                            Label("신고하기", systemImage: "exclamationmark.bubble")
+
+                        }
                     }
-                    
                 } label: {
                     Image(systemName: "ellipsis")
                         .resizable()
@@ -217,12 +231,16 @@ struct ArticleDetailView: View {
                     .foregroundStyle(.gray50)
                 TextField("댓글을 입력해주세요.", text: $commentText)
                     .font(ANBDFont.Caption1)
-                    .padding(15)
+                    .padding(20)
             }
             Button {
-                let newComment = Comment(userName: "김기표", content: commentText)
-                comments.append(newComment)
-                commentText = ""
+                if commentText.isEmpty {
+                   print("댓글 입력 안함")
+                } else {
+                    let newComment = Comment(userName: "김기표", content: commentText)
+                    comments.append(newComment)
+                    commentText = ""
+                }
             } label: {
                 Image(systemName: "paperplane.fill")
                     .font(ANBDFont.pretendardSemiBold(28))

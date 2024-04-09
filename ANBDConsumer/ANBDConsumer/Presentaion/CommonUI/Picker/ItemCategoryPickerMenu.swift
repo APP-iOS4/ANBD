@@ -20,6 +20,8 @@ struct ItemCategoryPickerMenu: View {
                     withAnimation {
                         isShowingMenuList.toggle()
                     }
+                    
+                    downKeyboard()
                 }, label: {
                     HStack {
                         Text("\(selectedItem.rawValue)")
@@ -64,7 +66,7 @@ struct ItemCategoryPickerMenu: View {
                                 .font(ANBDFont.body1)
                                 .foregroundStyle(Color.gray900)
                                 .padding(.vertical, 5)
-                                .frame(width: 100)
+                                .frame(width: 200)
                                 .overlay(alignment: .leading) {
                                     if selectedItem == item {
                                         Image(systemName: "checkmark")
@@ -85,5 +87,15 @@ struct ItemCategoryPickerMenu: View {
                 .stroke(Color.gray100, lineWidth: 1)
         }
         .shadow(radius: 10)
+    }
+}
+
+#Preview {
+    ItemCategoryPickerMenu(isShowingMenuList: .constant(false), selectedItem: .beautyCosmetics)
+}
+
+extension ItemCategoryPickerMenu {
+    private func downKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }

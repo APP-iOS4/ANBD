@@ -68,7 +68,7 @@ struct SignUpAgreeView: View {
             Spacer()
             
             BlueSquareButton(title: "회원가입 완료", isDisabled: !authenticationViewModel.isEssentialAgree()) {
-                
+                authenticationViewModel.isValidSignUp = true
             }
         }
         .padding()
@@ -77,7 +77,7 @@ struct SignUpAgreeView: View {
             TermsView()
         }
         .navigationDestination(isPresented: $authenticationViewModel.isValidSignUp) {
-            SignUpPasswordView()
+            SignUpCompleteView()
         }
     }
 }

@@ -11,6 +11,7 @@ import Foundation
 public protocol ArticleRepository {
     func crateArticle(article: Article) async throws
     func readArticle(articleID: String) async throws -> Article
+    func readRecentArticle(category: ANBDCategory) async throws -> Article
     func readArticleList() async throws -> [Article]
     func readArticleList(writerID: String) async throws -> [Article]
     func readArticleList(keyword: String) async throws -> [Article]

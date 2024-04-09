@@ -33,7 +33,7 @@ struct CapsuleButtonView: View {
             RoundedRectangle(cornerRadius: 25.0)
                 .fill(buttonColor)
                 .stroke(buttonColor == .clear ? .gray400 : buttonColor)
-                .frame(height: 35)
+                .frame(height: 30)
         )
     }
 }

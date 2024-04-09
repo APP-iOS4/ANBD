@@ -162,6 +162,7 @@
 		CB198D232BC3C212000C2709 /* Button */ = {
 			isa = PBXGroup;
 			children = (
+				424CA0062BC39C7C00F83F8D /* BlueSquareButton.swift */,
 				CB198CF52BBFD0A3000C2709 /* WriteButtonView.swift */,
 				A8640B3D2BC3DCBE00232F9C /* CapsuleButtonView.swift */,
 			);
@@ -201,6 +202,15 @@
 				CB198D272BC3D069000C2709 /* ItemCategoryPickerMenu.swift */,
 			);
 			path = Picker;
+			sourceTree = "<group>";
+		};
+		CB198D2B2BC5A0C7000C2709 /* TextField */ = {
+			isa = PBXGroup;
+			children = (
+				CB198D1D2BC3A7BC000C2709 /* TextFieldModifier.swift */,
+				424CA0042BC397A600F83F8D /* TextFieldWithTitle.swift */,
+			);
+			path = TextField;
 			sourceTree = "<group>";
 		};
 		CB7BEDAC2BBD4E9D00C0F298 = {
@@ -343,14 +353,12 @@
 		CB7BEE0F2BBD561700C0F298 /* CommonUI */ = {
 			isa = PBXGroup;
 			children = (
+				CB198D2B2BC5A0C7000C2709 /* TextField */,
 				CB198D262BC3C2A2000C2709 /* Picker */,
 				CB198D252BC3C257000C2709 /* Sheet */,
 				CB198D242BC3C22E000C2709 /* View */,
 				CB198D232BC3C212000C2709 /* Button */,
-				CB198D1D2BC3A7BC000C2709 /* TextFieldModifier.swift */,
 				424CA0022BC3686500F83F8D /* AnotherUserProfileView.swift */,
-				424CA0042BC397A600F83F8D /* TextFieldWithTitle.swift */,
-				424CA0062BC39C7C00F83F8D /* BlueSquareButton.swift */,
 			);
 			path = CommonUI;
 			sourceTree = "<group>";

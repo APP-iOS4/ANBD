@@ -36,12 +36,18 @@ struct TradeDetailView: View {
                         //                        }, placeholder: {
                         //                            ProgressView()
                         //                        })
-                        ForEach(0..<3) { _ in
-                            Image(.dummyImage1)
-                                .resizable()
-                                .scaledToFill()
-                                .containerRelativeFrame(.horizontal)
-                        }
+                        Image(.dummyImage1)
+                            .resizable()
+                            .scaledToFill()
+                            .containerRelativeFrame(.horizontal)
+                        Image(.dummyPuppy1)
+                            .resizable()
+                            .scaledToFill()
+                            .containerRelativeFrame(.horizontal)
+                        Image(.dummyPuppy2)
+                            .resizable()
+                            .scaledToFill()
+                            .containerRelativeFrame(.horizontal)
                     }
                     .frame(height: 300)
                     .tabViewStyle(PageTabViewStyle())

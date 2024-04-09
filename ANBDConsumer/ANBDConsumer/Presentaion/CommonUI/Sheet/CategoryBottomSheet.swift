@@ -36,6 +36,7 @@ struct CategoryBottomSheet: View {
                     }, label: {
                         CheckboxView(isChecked: tmpSelectedItemCategories.contains(item), text: item.rawValue)
                     })
+                    .padding(.vertical, 5)
                 }
                 .padding(.horizontal)
                 

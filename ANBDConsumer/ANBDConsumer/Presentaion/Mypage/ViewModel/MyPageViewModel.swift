@@ -29,7 +29,7 @@ final class MyPageViewModel: ObservableObject {
     @Published var tempUserFavoriteLocation: Location = .seoul
     
     func validateEditing() -> Bool {
-        if (editedUserNickname.isEmpty || editedUserNickname == self.user.nickname) && (tempUserFavoriteLocation == self.user.favoriteLocation) {
+        if (editedUserNickname.isEmpty || editedUserNickname == self.user.nickname) && (tempUserFavoriteLocation != self.user.favoriteLocation) {
             return true
         } else {
             return false

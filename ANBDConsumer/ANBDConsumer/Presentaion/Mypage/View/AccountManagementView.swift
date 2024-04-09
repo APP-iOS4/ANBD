@@ -62,6 +62,7 @@ struct AccountManagementView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
+                        myPageViewModel.tempUserFavoriteLocation = myPageViewModel.user.favoriteLocation
                         isShowingEditorView.toggle()
                     }, label: {
                         Text("수정")

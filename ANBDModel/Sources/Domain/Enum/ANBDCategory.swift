@@ -18,7 +18,7 @@ public enum ANBDCategory: Int, CaseIterable, Codable {
         case .accua: "아껴쓰기"
         case .nanua: "나눠쓰기"
         case .baccua: "바꿔쓰기"
-        case .dasi: "바꿔쓰기"
+        case .dasi: "다시쓰기"
         }
     }
     

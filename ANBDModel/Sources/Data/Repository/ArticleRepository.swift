@@ -43,6 +43,7 @@ final class DefaultArticleRepository: ArticleRepository {
     func readRecentArticle(category: ANBDCategory) async throws -> Article {
         guard category == .accua || category == .dasi else {
             throw NSError(domain: "Recent Article Category Error", code: 4011)
+            
         }
         
         let query = articleDB

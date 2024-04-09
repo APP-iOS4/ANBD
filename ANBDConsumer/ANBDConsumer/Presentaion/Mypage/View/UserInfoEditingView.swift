@@ -15,6 +15,7 @@ struct UserInfoEditingView: View {
     
     @State private var isShowingProfileImageEditingDialog = false
     @State private var isShowingPhotosPicker = false
+    @State private var isShowingMenuList: Bool = false
     
     @State private var photosPickerItem: PhotosPickerItem?
     
@@ -136,7 +137,7 @@ struct UserInfoEditingView: View {
                 .padding(.bottom, 5)
                 .frame(maxWidth: .infinity, alignment: .leading)
             
-            LocationPickerMenu(selectedItem: $myPageViewModel.tempUserFavoriteLocation)
+            LocationPickerMenu(isShowingMenuList: $isShowingMenuList, selectedItem: myPageViewModel.tempUserFavoriteLocation)
                 .frame(width: 170)
         }
         .padding(.horizontal, 20)

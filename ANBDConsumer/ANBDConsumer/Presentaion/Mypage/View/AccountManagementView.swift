@@ -11,60 +11,81 @@ struct AccountManagementView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     
     @State private var isShowingEditorView = false
+    @State private var isShowingSignOutAlertView = false
+    @State private var isShowingWithdrawalAlertView = false
     
     var body: some View {
-        VStack(spacing: 40) {
-            DetailInfoComponentView(title: "가입한 계정", content: "sjybext@naver.com")
+        ZStack {
+            VStack(spacing: 40) {
+                DetailInfoComponentView(title: "가입한 계정",
+                                        content: "anbd@anbd.co.kr")
                 .padding(.top, 30)
-            
-            DetailInfoComponentView(title: "닉네임", content: myPageViewModel.user.nickname)
-            
-            DetailInfoComponentView(title: "선호하는 거래 지역", content: myPageViewModel.user.favoriteLocation.description)
-            
-            VStack {
-                Rectangle()
-                    .fill(Color.gray50)
-                    .frame(height: 100)
                 
-                Button(action: {
-                    // MARK: 로그아웃 Alert
-                }, label: {
-                    Text("로그아웃")
-                        .modifier(WarningTextModifier())
-                })
+                DetailInfoComponentView(title: "닉네임",
+                                        content: myPageViewModel.user.nickname)
                 
-                Rectangle()
-                    .fill(Color.gray50)
-                    .frame(height: 40)
+                DetailInfoComponentView(title: "선호하는 거래 지역",
+                                        content: myPageViewModel.user.favoriteLocation.description)
                 
-                Button(action: {
-                    // MARK: 회원탈퇴 Alert
-                }, label: {
-                    Text("회원탈퇴")
-                        .modifier(WarningTextModifier())
-                })
-                
-                Rectangle()
-                    .fill(Color.gray50)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .ignoresSafeArea()
+                VStack {
+                    Rectangle()
+                        .fill(Color.gray50)
+                        .frame(height: 100)
+                    
+                    Button(action: {
+                        isShowingSignOutAlertView.toggle()
+                    }, label: {
+                        Text("로그아웃")
+                            .modifier(WarningTextModifier())
+                    })
+                    
+                    Rectangle()
+                        .fill(Color.gray50)
+                        .frame(height: 40)
+                    
+                    Button(action: {
+                        isShowingWithdrawalAlertView.toggle()
+                    }, label: {
+                        Text("회원탈퇴")
+                            .modifier(WarningTextModifier())
+                    })
+                    
+                    Rectangle()
+                        .fill(Color.gray50)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .ignoresSafeArea()
+                }
             }
-        }
-        .navigationTitle("내 정보")
-        .navigationBarTitleDisplayMode(.inline)
-        
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    isShowingEditorView.toggle()
-                }, label: {
-                    Text("수정")
-                })
+            .navigationTitle("내 정보")
+            .navigationBarTitleDisplayMode(.inline)
+            
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        isShowingEditorView.toggle()
+                    }, label: {
+                        Text("수정")
+                    })
+                }
             }
-        }
-        
-        .fullScreenCover(isPresented: $isShowingEditorView) {
-            UserInfoEditingView()
+            
+            .fullScreenCover(isPresented: $isShowingEditorView) {
+                UserInfoEditingView()
+            }
+            
+            if isShowingSignOutAlertView {
+                CustomAlertView(isShowingCustomAlert: $isShowingSignOutAlertView, viewType: .signOut) {
+                    // 로그아웃 메서드 넣기
+                    print("Sign Out")
+                }
+            }
+            
+            if isShowingWithdrawalAlertView {
+                CustomAlertView(isShowingCustomAlert: $isShowingWithdrawalAlertView, viewType: .withdrawal) {
+                    // 회원 탈퇴 메서드 넣기
+                    print("Withdrawal")
+                }
+            }
         }
     }
     
@@ -84,18 +105,18 @@ struct AccountManagementView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        AccountManagementView()
-            .environmentObject(MyPageViewModel())
-    }
-}
-
 private struct WarningTextModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(ANBDFont.SubTitle1)
             .foregroundStyle(Color.heartRed)
             .frame(maxWidth: .infinity, minHeight: 45)
+    }
+}
+
+#Preview {
+    NavigationStack {
+        AccountManagementView()
+            .environmentObject(MyPageViewModel())
     }
 }

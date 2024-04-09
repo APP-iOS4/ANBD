@@ -13,12 +13,16 @@ struct UserPageView: View {
     
     @State private var isShowingAccountManagementView = false
     @State private var isShowingPolicyView = false
+    @State private var isShowingReportDialog = false
+    
+    // 임시 분기처리를 위한 프로퍼티
+    var isSignedInUser: Bool
     
     var body: some View {
         VStack(spacing: 20) {
             Group {
                 HStack {
-                    Image(uiImage: myPageViewModel.userProfileImage)
+                    Image(uiImage: isSignedInUser ? myPageViewModel.userProfileImage : UIImage(named: "DefaultUserProfileImage")!)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 90, height: 90)
@@ -26,27 +30,30 @@ struct UserPageView: View {
                         .padding(.horizontal)
                     
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("\(myPageViewModel.user.nickname) 님")
+                        Text(isSignedInUser ? "\(myPageViewModel.user.nickname) 님" : "불량마루")
                             .foregroundStyle(Color.gray900)
                             .font(ANBDFont.pretendardBold(24))
                         
                         Text("선호 지역 : \(myPageViewModel.user.favoriteLocation.description)")
                             .foregroundStyle(Color.gray400)
                             .font(ANBDFont.Caption3)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        HStack {
-                            Text(verbatim: "sjybext@naver.com")
-                                .foregroundStyle(Color.gray400)
-                            
-                            Spacer()
-                            
-                            Button(action: {
-                                isShowingAccountManagementView.toggle()
-                            }, label: {
-                                Text("계정관리")
-                            })
+                        if isSignedInUser {
+                            HStack {
+                                Text(verbatim: "sjybext@naver.com")
+                                    .foregroundStyle(Color.gray400)
+                                
+                                Spacer()
+                                
+                                Button(action: {
+                                    isShowingAccountManagementView.toggle()
+                                }, label: {
+                                    Text("계정관리")
+                                })
+                            }
+                            .font(ANBDFont.Caption3)
                         }
-                        .font(ANBDFont.Caption3)
                     }
                 }
                 .padding()
@@ -77,39 +84,70 @@ struct UserPageView: View {
                 }
             }
             
-            Group {
-                VStack(alignment: .leading) {
-                    Divider()
-                    
-                    Button(action: {
-                        // 각 리스트로 이동할 뷰
-                    }, label: {
-                        Text("내가 찜한 나눔 ・ 거래 보기")
-                            .foregroundStyle(Color.gray900)
-                            .font(ANBDFont.SubTitle2)
-                            .padding()
-                    })
-                    
-                    Divider()
-                    
-                    Button(action: {
-                        isShowingPolicyView.toggle()
-                    }, label: {
+            if isSignedInUser {
+                Group {
+                    VStack(alignment: .leading) {
+                        Divider()
+                        
+                        Button(action: {
+                            // 각 리스트로 이동할 뷰
+                        }, label: {
+                            Text("내가 찜한 나눔 ・ 거래 보기")
+                                .foregroundStyle(Color.gray900)
+                                .font(ANBDFont.SubTitle2)
+                                .padding()
+                        })
+                        
+                        Divider()
+                        
+                        Button(action: {
+                            isShowingPolicyView.toggle()
+                        }, label: {
+                            Text("약관 및 정책")
+                                .foregroundStyle(Color.gray900)
+                                .font(ANBDFont.SubTitle2)
+                                .padding()
+                        })
+                        
+                        Divider()
+                    }
+                    .navigationDestination(isPresented: $isShowingPolicyView) {
                         Text("약관 및 정책")
-                            .foregroundStyle(Color.gray900)
-                            .font(ANBDFont.SubTitle2)
-                            .padding()
-                    })
-                    
-                    Divider()
-                }
-                .navigationDestination(isPresented: $isShowingPolicyView) {
-                    Text("약관 및 정책")
-                        .toolbar(.hidden, for: .tabBar)
+                            .toolbar(.hidden, for: .tabBar)
+                    }
                 }
             }
             
-            Spacer()
+            if isSignedInUser {
+                Spacer()
+            } else {
+                Rectangle()
+                    .fill(Color.gray50)
+                    .ignoresSafeArea()
+            }
+        }
+        .toolbar {
+            if !isSignedInUser {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        isShowingReportDialog.toggle()
+                    }, label: {
+                        Image(systemName: "ellipsis")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 15)
+                            .rotationEffect(.degrees(90))
+                            .foregroundStyle(.gray900)
+                    })
+                }
+            }
+        }
+        
+        .confirmationDialog("유저 신고하기", isPresented: $isShowingReportDialog) {
+            Button("신고하기", role: .destructive) {
+                // 유저 신고하기 메서드
+                print("유저 신고하기")
+            }
         }
     }
     
@@ -133,7 +171,7 @@ struct UserPageView: View {
 
 #Preview {
     NavigationStack {
-        UserPageView()
+        UserPageView(isSignedInUser: true)
             .environmentObject(MyPageViewModel())
     }
 }

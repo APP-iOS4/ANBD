@@ -9,6 +9,7 @@ import SwiftUI
 import ANBDModel
 
 struct LocationPickerMenu: View {
+    @EnvironmentObject private var tradeViewModel: TradeViewModel
     @Binding var isShowingMenuList: Bool
     @State var selectedItem: Location = .seoul
     
@@ -54,6 +55,7 @@ struct LocationPickerMenu: View {
                     VStack {
                         Button(action: {
                             self.selectedItem = item
+                            tradeViewModel.selectedLocation = item
                             isShowingMenuList.toggle()
                         }, label: {
                             Text(item.description)

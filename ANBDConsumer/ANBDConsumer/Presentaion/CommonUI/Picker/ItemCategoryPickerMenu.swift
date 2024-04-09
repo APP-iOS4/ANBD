@@ -9,8 +9,9 @@ import SwiftUI
 import ANBDModel
 
 struct ItemCategoryPickerMenu: View {
+    @EnvironmentObject private var tradeViewModel: TradeViewModel
     @Binding var isShowingMenuList: Bool
-    @State var selectedItem: ItemCategory = .beautyCosmetics
+    @State var selectedItem: ItemCategory = .digital
     
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -56,6 +57,7 @@ struct ItemCategoryPickerMenu: View {
                     VStack {
                         Button(action: {
                             self.selectedItem = item
+                            tradeViewModel.selectedItemCategory = item
                             isShowingMenuList.toggle()
                         }, label: {
                             Text(item.labelText)

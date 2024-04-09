@@ -14,13 +14,7 @@ struct TradeCreateView: View {
     @State private var content: String = ""
     @State var category: ANBDCategory = .nanua
     
-    private var mustTextFields: [String] {[
-        title.description,
-        content.description,
-        myProduct.description
-    ]}
-    
-    @State var itemCategory: ItemCategory = .beautyCosmetics
+    @State var itemCategory: ItemCategory = .digital
     @State var location: Location = .seoul
     
     //B
@@ -30,6 +24,13 @@ struct TradeCreateView: View {
     //photo
     @State private var selectedItems: [PhotosPickerItem] = []
     @State private var selectedPhotosData: [Data] = []
+    
+    //@State private var itemCategory
+    private var mustTextFields: [String] {[
+        title.description,
+        content.description,
+        myProduct.description
+    ]}
     
     //update
     var isNewProduct: Bool = true
@@ -141,13 +142,6 @@ struct TradeCreateView: View {
                     
                     TextField("제목", text: $title)
                         .modifier(TextFieldModifier())
-                        .onAppear() {
-                            if !isNewProduct {
-                                if let trade = trade {
-                                    self.title = trade.title
-                                }
-                            }
-                        }
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 30)
@@ -157,7 +151,7 @@ struct TradeCreateView: View {
                     Text("거래 방식")
                         .font(.system(size: 18))
                         .fontWeight(.bold)
-                    VStack {
+                    VStack(alignment: .leading) {
                         //나눠쓰기
                         if category == .nanua {
                             HStack {
@@ -167,22 +161,12 @@ struct TradeCreateView: View {
                                     .onTapGesture {
                                         self.category = .baccua
                                     }
-                                Rectangle()
-                                    .frame(width: 100, height: 0)
                             }
                             .padding(.bottom, 10)
                             
                             HStack {
                                 TextField("나눌 물건", text: $myProduct)
                                     .modifier(TextFieldModifier())
-                                    .onAppear() {
-                                        if !isNewProduct {
-                                            if let trade = trade {
-                                                self.myProduct = trade.myProduct ?? "Unknown"
-                                                self.myProduct = trade.myProduct
-                                            }
-                                        }
-                                    }
                             }
                         } else {
                             //바꿔쓰기
@@ -202,14 +186,7 @@ struct TradeCreateView: View {
                             HStack {
                                 TextField("바꿀 물건", text: $myProduct)
                                     .modifier(TextFieldModifier())
-                                    .onAppear() {
-                                        if !isNewProduct {
-                                            if let trade = trade {
-                                                self.myProduct = trade.myProduct ?? "Unknown"
-                                                self.myProduct = trade.myProduct
-                                            }
-                                        }
-                                    }
+                                    
                                 Image(systemName: "arrow.left.and.right")
                                 TextField("받고 싶은 물건", text: $wantProduct)
                                     .modifier(TextFieldModifier())
@@ -236,7 +213,7 @@ struct TradeCreateView: View {
                         .font(.system(size: 18))
                         .fontWeight(.bold)
                     
-                    ItemCategoryPickerMenu(isShowingMenuList: $isShowingCategoryMenuList, selectedItem: itemCategory)
+                    ItemCategoryPickerMenu(isShowingMenuList: $isShowingCategoryMenuList, selectedItem: tradeViewModel.selectedItemCategory)
                         .onTapGesture {
                             self.isShowingLocationMenuList = false
                         }
@@ -250,7 +227,7 @@ struct TradeCreateView: View {
                         .font(.system(size: 18))
                         .fontWeight(.bold)
                     
-                    LocationPickerMenu(isShowingMenuList: $isShowingLocationMenuList, selectedItem: location)
+                    LocationPickerMenu(isShowingMenuList: $isShowingLocationMenuList, selectedItem: tradeViewModel.selectedLocation)
                         .onTapGesture {
                             self.isShowingCategoryMenuList = false
                         }
@@ -282,13 +259,6 @@ struct TradeCreateView: View {
                                 RoundedRectangle(cornerRadius: 10.0)
                                     .stroke(.gray)
                             )
-                            .onAppear() {
-                                if !isNewProduct {
-                                    if let trade = trade {
-                                        self.content = trade.content
-                                    }
-                                }
-                            }
                     }
                 }//VStack
                 .padding(.horizontal, 20)
@@ -305,6 +275,17 @@ struct TradeCreateView: View {
                 }
                 .padding(20)
             }//ScrollView
+        }
+        .onAppear {
+            if !isNewProduct {
+                if let trade = trade {
+                    self.title = trade.title
+                    self.myProduct = trade.myProduct
+                    self.category = trade.category
+                    self.wantProduct = trade.wantProduct ?? ""
+                    self.content = trade.content
+                }
+            }
         }
         .onTapGesture {
             withAnimation {

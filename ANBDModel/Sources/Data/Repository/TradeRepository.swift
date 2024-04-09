@@ -167,6 +167,28 @@ final class DefaultTradeRepository: TradeRepository {
         return try await requestQuery.getDocuments().documents.compactMap { try $0.data(as: Trade.self) }
     }
     
+    func readRecentTradeList(category: ANBDCategory) async throws -> [Trade] {
+        guard category == .nanua || category == .baccua else {
+            throw NSError(domain: "Recent Trade Category Error", code: 4012)
+        }
+        
+        let query = tradeDB
+            .whereField("category", isEqualTo: category)
+            .order(by: "createdAt", descending: true)
+            .limit(to: category == .nanua ? 4 : 2)
+        
+        guard let snapshot = try? await query
+            .getDocuments()
+            .documents
+        else {
+            throw DBError.getDocumentError(message: "최근 \(category.description) Trade 목록을 읽어오는데 실패했습니다.")
+        }
+                
+        let tradeList = snapshot.compactMap { try? $0.data(as: Trade.self) }
+    
+        return tradeList
+    }
+    
     func refreshAll() async throws -> [Trade] {
         allQuery = nil
         return try await readTradeList()

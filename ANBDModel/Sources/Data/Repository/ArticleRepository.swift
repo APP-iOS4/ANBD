@@ -39,6 +39,29 @@ final class DefaultArticleRepository: ArticleRepository {
         
         return article
     }
+    
+    func readRecentArticle(category: ANBDCategory) async throws -> Article {
+        guard category == .accua || category == .dasi else {
+            throw NSError(domain: "Recent Article Category Error", code: 4011)
+            
+        }
+        
+        let query = articleDB
+            .whereField("category", isEqualTo: category.rawValue)
+            .order(by: "createdAt", descending: true)
+            .limit(to: 1)
+        
+        guard let article = try? await query
+            .getDocuments()
+            .documents
+            .first?
+            .data(as: Article.self)
+        else {
+            throw DBError.getDocumentError(message: "최근 Article을 읽어오는데 실패했습니다.")
+        }
+        
+        return article
+    }
         
     func readArticleList() async throws -> [Article] {
         var requestQuery: Query

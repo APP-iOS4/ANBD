@@ -17,6 +17,7 @@ public protocol TradeRepository {
     func readTradeList() async throws -> [Trade]
     func readTradeList(writerID: String) async throws -> [Trade]
     func readTradeList(keyword: String) async throws -> [Trade]
+    func readRecentTradeList(category: ANBDCategory) async throws -> [Trade]
     func refreshAll() async throws -> [Trade]
     func refreshWriterID(writerID: String) async throws -> [Trade]
     func refreshSearch(keyword: String) async throws -> [Trade]

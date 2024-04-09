@@ -12,6 +12,7 @@ import FirebaseAuth
 public protocol ArticleUsecase {
     func writeArticle(article: Article, imageDatas: [Data]) async throws
     func loadArticle(articleID: String) async throws -> Article
+    func loadRecentArticle(category: ANBDCategory) async throws -> Article
     func loadArticleList() async throws -> [Article]
     func loadArticleList(writerID: String) async throws -> [Article]
     func searchArticle(keyword: String) async throws -> [Article]
@@ -59,6 +60,15 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     /// - Returns: articleID가 일치하는 Article
     public func loadArticle(articleID: String) async throws -> Article {
         try await articleRepository.readArticle(articleID: articleID)
+    }
+    
+    
+    /// 해당하는 카테고리의 최신 Article을 불러오는 메서드
+    /// - Parameters:
+    ///   - category: 불러올 최신 Article의 카테고리
+    /// - Returns: 카테고리가 일치하는 최신 Article
+    public func loadRecentArticle(category: ANBDCategory) async throws -> Article {
+        try await articleRepository.readRecentArticle(category: category)
     }
     
     

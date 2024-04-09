@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject private var homeViewModel: HomeViewModel
+    @State private var isGoingToSearchView: Bool = false
     
     var body: some View {
         GeometryReader { geometry in
@@ -45,12 +46,14 @@ struct HomeView: View {
             }
             
             ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink(value: "검색하기 뷰") {
+                Button(action: {
+                    isGoingToSearchView.toggle()
+                }, label: {
                     Image(systemName: "magnifyingglass")
                         .resizable()
                         .frame(width: 20)
                         .foregroundStyle(.gray900)
-                }
+                })
             }
         }
         .fullScreenCover(isPresented: $homeViewModel.isShowingWebView) {
@@ -58,6 +61,9 @@ struct HomeView: View {
         }
         .navigationDestination(for: String.self) { text in
             Text(text)
+        }
+        .navigationDestination(isPresented: $isGoingToSearchView) {
+            SearchView()
         }
     }
     

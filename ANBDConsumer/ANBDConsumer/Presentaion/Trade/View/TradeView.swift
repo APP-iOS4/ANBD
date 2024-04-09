@@ -24,6 +24,7 @@ class DummyTrade {
 struct TradeView: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @State var category: ANBDCategory = .nanua
+    @State private var isGoingToSearchView: Bool = false
     
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
@@ -51,12 +52,22 @@ struct TradeView: View {
         .toolbarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Image(systemName: "magnifyingglass")
+                Button(action: {
+                    isGoingToSearchView.toggle()
+                }, label: {
+                    Image(systemName: "magnifyingglass")
+                        .resizable()
+                        .frame(width: 20)
+                        .foregroundStyle(.gray900)
+                })
             }
         }
         .onDisappear {
             tradeViewModel.selectedLocations = []
             tradeViewModel.selectedItemCategories = []
+        }
+        .navigationDestination(isPresented: $isGoingToSearchView) {
+            SearchView()
         }
     }
 }

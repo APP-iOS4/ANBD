@@ -19,7 +19,7 @@ struct TradeDetailView: View {
     
     //임시..
     @State private var isLiked: Bool = false
-    @State private var isWriter: Bool = false
+    @State private var isWriter: Bool = true
     @State private var isTraiding: Bool = true
     
     var body: some View {
@@ -76,7 +76,7 @@ struct TradeDetailView: View {
                     
                     VStack(alignment: .leading) {
                         if isWriter {
-                            TradeStateChangeView(isTrading: $isTraiding)
+                            TradeStateChangeView(tradeState: $trade.tradeState)
                         }
                         Text("\(trade.title)")
                             .font(ANBDFont.Heading3)

@@ -15,12 +15,15 @@ final class TradeViewModel: ObservableObject {
     @Published var selectedLocations: Set<Location> = []
     @Published var selectedItemCategories: Set<ItemCategory> = []
     
-    
     @Published private(set) var filteredTrades: [Trade] = []
+    
+    @Published var selectedItemCategory: ItemCategory = .digital
+    @Published var selectedLocation: Location = .seoul
+    
     let mockTradeData: [Trade] = [
-        .init(writerID: "likelion123", writerNickname: "줄이줄이", category: .nanua, itemCategory: .digital, location: .seoul, title: "나눠요나눠", content: "나눕니다용~~", myProduct: "내꺼 너꺼 내꺼 너꺼", imagePaths: []),
+        .init(writerID: "likelion123", writerNickname: "줄이줄이", category: .nanua, itemCategory: .beautyCosmetics, location: .busan, title: "나눠요나눠", content: "나눕니다용~~", myProduct: "내꺼 너꺼 내꺼 너꺼", imagePaths: []),
         
-        .init(writerID: "likelion123", writerNickname: "줄이줄이", category: .baccua, itemCategory: .digital, location: .busan, title: "바꿉니다용", content: "바꿉니다용~~", myProduct: "내꺼 너꺼 내꺼 너꺼", imagePaths: []),
+        .init(writerID: "likelion123", writerNickname: "줄이줄이", category: .baccua, itemCategory: .sportsLeisure, location: .jeju, title: "바꿉니다용", content: "바꿉니다용~~", myProduct: "내꺼 너꺼 내꺼 너꺼", imagePaths: []),
         
         .init(writerID: "likelion123", writerNickname: "줄이줄이", category: .nanua, itemCategory: .digital, location: .seoul, title: "나눠요나눠", content: "나눕니다용~~", myProduct: "내꺼 너꺼 내꺼 너꺼", imagePaths: []),
         
@@ -56,5 +59,13 @@ final class TradeViewModel: ObservableObject {
         } else {
             filteredTrades = filteredTrades.filter({ selectedItemCategories.contains($0.itemCategory) ||  selectedLocations.contains($0.location) })
         }
+    }
+    
+    func pickerItemCategory(itemCategory: ItemCategory) {
+        self.selectedItemCategory = itemCategory
+    }
+    
+    func pickerLocation(location: Location) {
+        self.selectedLocation = location
     }
 }

@@ -144,7 +144,7 @@
 		D75C3A502BBFD9DB00ED948C /* ArticleCreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleCreateView.swift; sourceTree = "<group>"; };
 		D75C3A522BC1377400ED948C /* ArticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleView.swift; sourceTree = "<group>"; };
 		D7E56D6F2BC39373000AA1BE /* InstructionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionsView.swift; sourceTree = "<group>"; };
-		D7E56D712BC425AE000AA1BE /* ArticleListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArticleListView.swift; path = "../../../../../../../Library/Mobile Documents/.Trash/ANBD/ANBDConsumer/ANBDConsumer/Presentaion/Article/View/ArticleListView.swift"; sourceTree = "<group>"; };
+		D7E56D712BC425AE000AA1BE /* ArticleListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */

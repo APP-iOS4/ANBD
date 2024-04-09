@@ -11,13 +11,12 @@ import FirebaseStorage
 
 @available(iOS 15, *)
 struct DefaultChatRepository: ChatRepository {
-    
-    
-    
+
     private var db = Firestore.firestore()
     let chatDB = Firestore.firestore().collection("ChatRoom")
     
     func createChannel(channel: Channel) async throws -> String {
+        
         guard let _ = try? chatDB.document(channel.id).setData(from: channel)
         else {
             throw DBError.setDocumentError(message: "ChatRoom document를 추가하는데 실패했습니다.")
@@ -25,17 +24,41 @@ struct DefaultChatRepository: ChatRepository {
         return channel.id
     }
     
-    func readChannelList(userID: String) async throws -> [Channel] {
-        guard let snapshot = try? await chatDB .whereField("users", arrayContains: userID).getDocuments().documents else {
-            throw DBError.getDocumentError(message: "ChatRoom documents를 읽어오는데 실패했습니다.")
+    func readChannelList(userID: String, completion : @escaping (_ channels: [Channel]) -> Void){
+        
+        chatDB
+            .whereField("users", arrayContains: userID)
+            .addSnapshotListener { snapshot, error in
+                guard let document = snapshot else {
+                    print("채널리스트 업데이트 에러 : \(error!)")
+                    return
+                }
+                var channels =  document.documents.compactMap { try? $0.data(as: Channel.self) }.filter{!$0.leaveUsers.contains(userID)}
+                channels = sortedChannel(channels: channels)
+                completion(channels)
         }
-        return snapshot
-            .compactMap { try? $0.data(as: Channel.self)}
-            .filter{ !$0.leaveUsers.contains(userID)}
-            .sorted(by: {$0.lastSendDate < $1.lastSendDate})
+    }
+    
+    private func sortedChannel(channels : [Channel]) -> [Channel] {
+        
+        return channels.sorted(by: {
+            if $0.lastSendDate != $1.lastSendDate {
+                if $0.unreadCount > 0 && $1.unreadCount > 0 {
+                    return $0.lastSendDate > $1.lastSendDate
+                }
+                else if $0.unreadCount == 0 && $1.unreadCount == 0 {
+                    return $0.lastSendDate > $1.lastSendDate
+                }
+                else {
+                    return $0.unreadCount > $01.unreadCount
+                }
+            }
+            return true
+        })
     }
     
     func readChannelID(tradeID: String, userID: String) async throws -> String? {
+        
         guard let querySnapshot = try? await chatDB
             .whereField("users", arrayContains: userID)
             .whereField("tradeId", isEqualTo: tradeID)
@@ -82,8 +105,8 @@ struct DefaultChatRepository: ChatRepository {
         var lastMessage : String
         
         //만약 사진일 경우
-        if message.content != nil {
-            lastMessage = message.content ?? ""
+        if let content = message.content {
+            lastMessage = content
         } else {
             lastMessage = "사진을 보냈습니다"
         }

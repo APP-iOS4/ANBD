@@ -14,10 +14,12 @@ struct TradeDetailView: View {
     @State private var isGoingToReportView: Bool = false
     @State private var isShowingDeleteAlert: Bool = false
     @State private var isShowingCreat: Bool = false
+    @State private var isGoingToChatView: Bool = false
+    @State private var isGoingToProfileView: Bool = false
     
     //임시..
     @State private var isLiked: Bool = false
-    @State private var isWriter: Bool = true
+    @State private var isWriter: Bool = false
     @State private var isTraiding: Bool = true
     
     var body: some View {
@@ -49,6 +51,7 @@ struct TradeDetailView: View {
                     HStack {
                         Button(action: {
                             //프로필탭으로 이동
+                            isGoingToProfileView.toggle()
                         }, label: {
                             Image(.dummyImage1) // UserViewModel과 연결해야함
                                 .resizable()
@@ -72,7 +75,9 @@ struct TradeDetailView: View {
                     Divider()
                     
                     VStack(alignment: .leading) {
-                        TradeStateChangeView(isTrading: $isTraiding)
+                        if isWriter {
+                            TradeStateChangeView(isTrading: $isTraiding)
+                        }
                         Text("\(trade.title)")
                             .font(ANBDFont.Heading3)
                             .foregroundStyle(.gray900)
@@ -136,7 +141,10 @@ struct TradeDetailView: View {
         .navigationDestination(isPresented: $isGoingToReportView) {
             ReportView(reportViewType: .trade)
         }
-        .alert("\(trade.tradeState.description)인 상품을 삭제하시겠습니까?", isPresented: $isShowingDeleteAlert) {
+        .navigationDestination(isPresented: $isGoingToProfileView) {
+            UserPageView(isSignedInUser: false)
+        }
+        .alert("상품을 삭제하시겠습니까?", isPresented: $isShowingDeleteAlert) {
             Button("삭제", role: .destructive) {
                 
             }
@@ -190,6 +198,16 @@ extension TradeDetailView {
             
             Spacer()
             
+            if !isWriter {
+                BlueSquareButton(height: 45, title: "채팅하기") {
+                    isGoingToChatView.toggle()
+                }
+                .frame(width: 100)
+                .padding()
+                .navigationDestination(isPresented: $isGoingToChatView) {
+                    ChatDetailView()
+                }
+            }
         }
     }
 }

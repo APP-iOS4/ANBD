@@ -11,6 +11,7 @@ import ANBDModel
 struct TradeListView: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     var category: ANBDCategory = .baccua
+    var isFromHomeView: Bool = false
     
     @State private var isShowingLocation: Bool = false
     @State private var isShowingItemCategory: Bool = false
@@ -75,6 +76,9 @@ struct TradeListView: View {
                 }
             }
         }
+        .navigationTitle(isFromHomeView ? "\(category.description)" : "나눔 · 거래")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(isFromHomeView ? .hidden : .automatic, for: .tabBar)
         .sheet(isPresented: $isShowingLocation) {
             LocationBottomSheet(isShowingLocation: $isShowingLocation)
                 .presentationDetents([.fraction(0.6)])

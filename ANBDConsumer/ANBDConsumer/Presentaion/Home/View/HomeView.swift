@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import ANBDModel
 
 struct HomeView: View {
     @EnvironmentObject private var homeViewModel: HomeViewModel
     @State private var isGoingToSearchView: Bool = false
+    @State private var category: ANBDCategory = .accua
     
     var body: some View {
         GeometryReader { geometry in
@@ -59,8 +61,20 @@ struct HomeView: View {
         .fullScreenCover(isPresented: $homeViewModel.isShowingWebView) {
             SafariWebView(url: URL(string: homeViewModel.blogURL) ?? URL(string: "www.naver.com")!)
         }
-        .navigationDestination(for: String.self) { text in
-            Text(text)
+        .navigationDestination(for: ANBDCategory.self) { category in
+            switch category {
+            case .accua, .dasi:
+                ArticleListView(category: category, isFromHomeView: true)
+                
+            case .nanua, .baccua:
+                TradeListView(category: category, isFromHomeView: true)
+            }
+        }
+        .navigationDestination(for: Article.self) { article in
+            ArticleDetailView(article: article)
+        }
+        .navigationDestination(for: Trade.self) { trade in
+            TradeDetailView(trade: trade)
         }
         .navigationDestination(isPresented: $isGoingToSearchView) {
             SearchView()
@@ -90,8 +104,10 @@ struct HomeView: View {
         VStack {
             SectionHeaderView(.accua)
             
-            CommunityCellView(.accua)
-                .frame(width: geo.size.width * 0.9, height: 130)
+            NavigationLink(value: homeViewModel.accuaArticle) {
+                ArticleCellView(homeViewModel.accuaArticle)
+                    .frame(width: geo.size.width * 0.9, height: 130)
+            }
         }
     }
     
@@ -102,10 +118,12 @@ struct HomeView: View {
             
             ScrollView(.horizontal) {
                 LazyHStack {
-                    ForEach(0..<4) { _ in
-                        NanuaCellView()
-                            .frame(width: 140, height: 140)
-                            .padding(.horizontal, 1)
+                    ForEach(homeViewModel.nanuaTrades) { trade in
+                        NavigationLink(value: trade) {
+                            NanuaCellView(trade)
+                                .frame(width: 140, height: 140)
+                                .padding(.horizontal, 1)
+                        }
                     }
                 }
             }
@@ -118,10 +136,11 @@ struct HomeView: View {
         VStack(alignment: .leading) {
             SectionHeaderView(.baccua)
             
-            // TODO: TradeCell 풀 받을 시 체인지
-            baccuaCell
-            
-            baccuaCell
+            ForEach(homeViewModel.baccuaTrades) { trade in
+                NavigationLink(value: trade) {
+                    TradeListCell(trade: trade)
+                }
+            }
         }
     }
     
@@ -131,35 +150,16 @@ struct HomeView: View {
         VStack {
             SectionHeaderView(.dasi)
             
-            CommunityCellView(.dasi)
-                .frame(width: geo.size.width * 0.9, height: 130)
-        }
-    }
-    
-    // TODO: TradeCell 풀 받을 시 체인지
-    private var baccuaCell: some View {
-        HStack(alignment: .top) {
-            Image("DummyImage1")
-                .resizable()
-                .frame(width: 130, height: 130)
-                .scaledToFit()
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-            
-            VStack(alignment: .leading) {
-                Text("바꿔쓰기 제목")
-                    .font(ANBDFont.pretendardRegular(20))
-                Text("8분전")
-                    .foregroundStyle(.gray400)
-                Text("물물교환")
-                    .font(ANBDFont.pretendardBold(15))
+            NavigationLink(value: homeViewModel.dasiArticle) {
+                ArticleCellView(homeViewModel.dasiArticle)
+                    .frame(width: geo.size.width * 0.9, height: 130)
             }
         }
-        .foregroundStyle(.gray900)
     }
     
     // MARK: - ANBD 각 섹션 헤더 View
     @ViewBuilder
-    private func SectionHeaderView(_ category: Category) -> some View {
+    private func SectionHeaderView(_ category: ANBDCategory) -> some View {
         VStack(alignment: .leading) {
             HStack {
                 switch category {
@@ -179,7 +179,7 @@ struct HomeView: View {
                 
                 Spacer()
                 
-                NavigationLink(value: "\(category.description)") {
+                NavigationLink(value: category) {
                     HStack {
                         Text("더보기")
                         
@@ -210,11 +210,10 @@ struct HomeView: View {
     }
     
     // MARK: - 아껴쓰기 · 다시쓰기 Cell View
-    // TODO: 추후 파라미터 category -> community 값으루 변경
     @ViewBuilder
-    private func CommunityCellView(_ category: Category) -> some View {
+    private func ArticleCellView(_ article: Article) -> some View {
         ZStack(alignment: .bottomLeading) {
-            Image("DummyImage1")
+            Image(article.imagePaths.first ?? "DummyImage1")
                 .resizable()
                 .scaledToFill()
                 .frame(height: 130)
@@ -225,7 +224,7 @@ struct HomeView: View {
                 endPoint: .bottom
             )
             
-            Text("ㅋㅋㅋㅋ 마루가 마루임 마루는 마루임 관리자가 해라 ~~ 딥해서 ~ 통일한대루 니네맘대루 해라")
+            Text(article.title)
                 .multilineTextAlignment(.leading)
                 .lineLimit(2)
                 .padding(10)
@@ -238,11 +237,10 @@ struct HomeView: View {
     }
     
     // MARK: - 나눠쓰기 Cell View
-    // TODO: 추후 파라미터 trade 값 받아야 함
     @ViewBuilder
-    private func NanuaCellView() -> some View {
+    private func NanuaCellView(_ trade: Trade) -> some View {
         ZStack(alignment: .bottomLeading) {
-            Image("DummyImage1")
+            Image(trade.imagePaths.first ?? "DummyImage1")
                 .resizable()
                 .frame(width: 140, height: 140)
                 .scaledToFit()
@@ -253,7 +251,7 @@ struct HomeView: View {
                 endPoint: .bottom
             )
             
-            Text("나눠쓰기나눠쓰기나눠쓰기나눠쓰기나눠쓰기")
+            Text(trade.title)
                 .lineLimit(1)
                 .padding(10)
                 .padding(.trailing, 20)

@@ -73,7 +73,7 @@ struct ArticleListView: View {
                     .padding(.horizontal)
                 }
                 .navigationDestination(for: Article.self) { article in
-                    ArticleDetailView(article: article, category: $category)
+                    ArticleDetailView(article: article)
                 }
             }
         }

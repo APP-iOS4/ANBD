@@ -6,7 +6,7 @@ struct TradeCreateView: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @Binding var isShowingCreate: Bool
     @State private var placeHolder: String = ""
-    @State private var finishFlag: Bool = false
+    @State private var finishFlag: Bool = true
     @State private var isShowingCategoryMenuList: Bool = false
     @State private var isShowingLocationMenuList: Bool = false
     

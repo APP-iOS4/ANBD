@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import ANBDModel
 
 struct HomeView: View {
     @EnvironmentObject private var homeViewModel: HomeViewModel
     @State private var isGoingToSearchView: Bool = false
+    @State private var category: ANBDCategory = .accua
     
     var body: some View {
         GeometryReader { geometry in
@@ -59,8 +61,26 @@ struct HomeView: View {
         .fullScreenCover(isPresented: $homeViewModel.isShowingWebView) {
             SafariWebView(url: URL(string: homeViewModel.blogURL) ?? URL(string: "www.naver.com")!)
         }
-        .navigationDestination(for: String.self) { text in
-            Text(text)
+        .navigationDestination(for: ANBDCategory.self) { category in
+            switch category {
+            case .accua:
+                ArticleView(category: .accua)
+                
+            case .nanua:
+                TradeView(category: .nanua)
+                
+            case .baccua:
+                TradeView(category: .baccua)
+                
+            case .dasi:
+                ArticleView(category: .dasi)
+            }
+        }
+        .navigationDestination(for: Article.self) { article in
+//            ArticleDetailView(article: article)
+        }
+        .navigationDestination(for: Trade.self) { trade in
+            TradeDetailView(trade: trade)
         }
         .navigationDestination(isPresented: $isGoingToSearchView) {
             SearchView()
@@ -159,7 +179,7 @@ struct HomeView: View {
     
     // MARK: - ANBD 각 섹션 헤더 View
     @ViewBuilder
-    private func SectionHeaderView(_ category: Category) -> some View {
+    private func SectionHeaderView(_ category: ANBDCategory) -> some View {
         VStack(alignment: .leading) {
             HStack {
                 switch category {
@@ -179,7 +199,7 @@ struct HomeView: View {
                 
                 Spacer()
                 
-                NavigationLink(value: "\(category.description)") {
+                NavigationLink(value: category) {
                     HStack {
                         Text("더보기")
                         
@@ -212,7 +232,7 @@ struct HomeView: View {
     // MARK: - 아껴쓰기 · 다시쓰기 Cell View
     // TODO: 추후 파라미터 category -> community 값으루 변경
     @ViewBuilder
-    private func CommunityCellView(_ category: Category) -> some View {
+    private func CommunityCellView(_ category: ANBDCategory) -> some View {
         ZStack(alignment: .bottomLeading) {
             Image("DummyImage1")
                 .resizable()

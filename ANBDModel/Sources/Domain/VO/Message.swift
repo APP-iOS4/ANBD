@@ -20,17 +20,27 @@ public struct Message: Identifiable , Codable {
     
     public var leaveUsers : [String]
     
-    public var dateString : String {
+    private static var timeDateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "a hh:mm"
-        dateFormatter.locale = Locale(identifier:"ko_KR")
-        return dateFormatter.string(from: createdAt)
+        dateFormatter.locale = Locale(identifier: "ko_KR")
+        return dateFormatter
+    }()
+    
+    private static var dateWithYearDateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy년 MM월 dd일 (E)"
+        dateFormatter.locale = Locale(identifier: "ko_KR")
+        return dateFormatter
+    }()
+    
+    public var dateString: String {
+        return Message.timeDateFormatter.string(from: createdAt)
     }
+    
+    
     public var dateStringWithYear: String {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy년 MM월 dd일 (E)"
-            dateFormatter.locale = Locale(identifier:"ko_KR")
-            return dateFormatter.string(from: createdAt)
+        return Message.dateWithYearDateFormatter.string(from: createdAt)
     }
     
     public init(userID: String, userNickname: String, content: String? = nil, image: String? = nil) {

@@ -36,7 +36,7 @@ struct TradeListView: View {
                     if tradeViewModel.selectedItemCategories.isEmpty {
                         CapsuleButtonView(text: "카테고리", isForFiltering: true)
                     } else {
-                        CapsuleButtonView(text: tradeViewModel.selectedItemCategories.count > 1 ? "카테고리 \(tradeViewModel.selectedItemCategories.count)" : "\(tradeViewModel.selectedItemCategories.first?.labelText ?? "Unknown")", isForFiltering: true, buttonColor: .accent, fontColor: .white)
+                        CapsuleButtonView(text: tradeViewModel.selectedItemCategories.count > 1 ? "카테고리 \(tradeViewModel.selectedItemCategories.count)" : "\(tradeViewModel.selectedItemCategories.first?.rawValue ?? "Unknown")", isForFiltering: true, buttonColor: .accent, fontColor: .white)
                     }
                 })
             }

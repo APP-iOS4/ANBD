@@ -11,7 +11,7 @@ import ANBDModel
 struct ArticleListView: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     
-    var category: ANBDCategory = .accua
+    @State var category: ANBDCategory = .accua
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -59,14 +59,21 @@ struct ArticleListView: View {
                     LazyVStack {
                         ForEach(articleViewModel.filteredArticles) { article in
                             if article == articleViewModel.filteredArticles.last {
-                                ArticleListCell(article: article)
-                                    .padding(.bottom, 70)
+                                NavigationLink(value: article) {
+                                    ArticleListCell(article: article)
+                                        .padding(.bottom, 70)
+                                }
                             } else {
-                                ArticleListCell(article: article)
+                                NavigationLink(value: article) {
+                                    ArticleListCell(article: article)
+                                }
                             }
                         }
                     }
                     .padding(.horizontal)
+                }
+                .navigationDestination(for: Article.self) { article in
+                    ArticleDetailView(article: article, category: $category)
                 }
             }
         }
@@ -81,6 +88,7 @@ struct ArticleListView: View {
     
 
 }
+
 
 #Preview {
     ArticleListView()

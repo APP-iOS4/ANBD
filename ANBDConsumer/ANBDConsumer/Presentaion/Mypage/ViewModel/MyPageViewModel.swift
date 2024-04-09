@@ -14,7 +14,7 @@ final class MyPageViewModel: ObservableObject {
     
     @Published var user = User(id: "abcd1234",
                                nickname: "김마루",
-                               profileImage: "DefaultUserProfileImage.001.png",
+                               profileImage: "DefaultUserProfileImage",
                                email: "sjybext@naver.com",
                                favoriteLocation: .jeju,
                                userLevel: .consumer,
@@ -29,7 +29,7 @@ final class MyPageViewModel: ObservableObject {
     @Published var tempUserFavoriteLocation: Location = .seoul
     
     func validateEditing() -> Bool {
-        if (editedUserNickname.isEmpty || editedUserNickname == self.user.nickname) && (tempUserFavoriteLocation == self.user.favoriteLocation) {
+        if (editedUserNickname.isEmpty || editedUserNickname == self.user.nickname) && (tempUserFavoriteLocation != self.user.favoriteLocation) {
             return true
         } else {
             return false

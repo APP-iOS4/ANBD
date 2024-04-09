@@ -39,7 +39,7 @@ struct ANBDTabView: View {
             }
             
             NavigationStack {
-                UserPageView()
+                UserPageView(isSignedInUser: true)
             }
             .tabItem {
                 Label("내 정보", systemImage: "person.fill")

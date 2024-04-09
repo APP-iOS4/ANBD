@@ -22,7 +22,7 @@ struct ItemCategoryPickerMenu: View {
                     }
                 }, label: {
                     HStack {
-                        Text("\(selectedItem.labelText)")
+                        Text("\(selectedItem.rawValue)")
                             .font(ANBDFont.SubTitle2)
                             .foregroundStyle(Color.gray900)
                         
@@ -41,7 +41,7 @@ struct ItemCategoryPickerMenu: View {
                 }
                 
                 if isShowingMenuList {
-                    pickerListView(selectedItem)
+                    //pickerListView(selectedItem)
                 }
             }
         }
@@ -49,41 +49,41 @@ struct ItemCategoryPickerMenu: View {
     
     //MARK: - picker view
     
-    @ViewBuilder
-    func pickerListView(_ selectedItem: ItemCategory) -> some View {
-        ScrollView {
-            LazyVStack(alignment: .trailing) {
-                ForEach(ItemCategory.allCases, id: \.self) { item in
-                    VStack {
-                        Button(action: {
-                            self.selectedItem = item
-                            tradeViewModel.selectedItemCategory = item
-                            isShowingMenuList.toggle()
-                        }, label: {
-                            Text(item.labelText)
-                                .font(ANBDFont.body1)
-                                .foregroundStyle(Color.gray900)
-                                .padding(.vertical, 5)
-                                .frame(width: 100)
-                                .overlay(alignment: .leading) {
-                                    if selectedItem == item {
-                                        Image(systemName: "checkmark")
-                                            .foregroundStyle(Color.gray900)
-                                    }
-                                }
-                                .frame(maxWidth: .infinity)
-                        })
-                    }
-                }
-            }
-            .padding(.vertical)
-        }
-        //.frame(width: 250, height: 300)
-        .background {
-            RoundedRectangle(cornerRadius: 10)
-                .fill(.white)
-                .stroke(Color.gray100, lineWidth: 1)
-        }
-        .shadow(radius: 10)
-    }
+//    @ViewBuilder
+//    func pickerListView(_ selectedItem: ItemCategory) -> some View {
+//        ScrollView {
+//            LazyVStack(alignment: .trailing) {
+//                ForEach(ItemCategory.allCases, id: \.self) { item in
+//                    VStack {
+//                        Button(action: {
+//                            self.selectedItem = item
+//                            tradeViewModel.selectedItemCategory = item
+//                            isShowingMenuList.toggle()
+//                        }, label: {
+//                            Text(item.labelText)
+//                                .font(ANBDFont.body1)
+//                                .foregroundStyle(Color.gray900)
+//                                .padding(.vertical, 5)
+//                                .frame(width: 100)
+//                                .overlay(alignment: .leading) {
+//                                    if selectedItem == item {
+//                                        Image(systemName: "checkmark")
+//                                            .foregroundStyle(Color.gray900)
+//                                    }
+//                                }
+//                                .frame(maxWidth: .infinity)
+//                        })
+//                    }
+//                }
+//            }
+//            .padding(.vertical)
+//        }
+//        //.frame(width: 250, height: 300)
+//        .background {
+//            RoundedRectangle(cornerRadius: 10)
+//                .fill(.white)
+//                .stroke(Color.gray100, lineWidth: 1)
+//        }
+//        .shadow(radius: 10)
+//    }
 }

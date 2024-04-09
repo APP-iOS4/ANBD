@@ -14,7 +14,7 @@ public protocol TradeUsecase {
     func loadTrade(tradeID: String) async throws -> Trade
     func loadTradeList() async throws -> [Trade]
     func loadTradeList(writerID: String) async throws -> [Trade]
-    func loadTradeList(category: ANBDCategory) async throws -> [Trade]
+    func loadRecentTradeList(category: ANBDCategory) async throws -> [Trade]
     func searchTrade(keyword: String) async throws -> [Trade]
     func refreshAllTradeList() async throws -> [Trade]
     func refreshWriterIDTradeList(writerID: String) async throws -> [Trade]
@@ -83,7 +83,7 @@ public struct DefaultTradeUsecase: TradeUsecase {
     /// - Parameters:
     ///   - category: Trade의 카테고리
     /// - Returns: 카테고리가 일치하는 최신 Trade 배열
-    public func loadTradeList(category: ANBDCategory) async throws -> [Trade] {
+    public func loadRecentTradeList(category: ANBDCategory) async throws -> [Trade] {
         try await tradeRepository.readRecentTradeList(category: category)
     }
     

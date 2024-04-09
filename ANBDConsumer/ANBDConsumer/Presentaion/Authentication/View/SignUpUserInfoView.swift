@@ -19,6 +19,7 @@ struct SignUpUserInfoView: View {
     
     @State private var navigate = false
     @State private var selectedLocation: Location = .seoul
+    @State private var isShowingMenuList: Bool = false
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -54,7 +55,7 @@ struct SignUpUserInfoView: View {
                 .foregroundStyle(Color.gray900)
                 .frame(maxWidth: .infinity, alignment: .leading)
             
-            LocationPickerMenu(selectedItem: $selectedLocation)
+            LocationPickerMenu(isShowingMenuList: $isShowingMenuList, selectedItem: selectedLocation)
                 .frame(width: 170)
             
             Spacer()

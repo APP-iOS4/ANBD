@@ -15,6 +15,7 @@ struct UserInfoEditingView: View {
     
     @State private var isShowingProfileImageEditingDialog = false
     @State private var isShowingPhotosPicker = false
+    @State private var isShowingMenuList: Bool = false
     
     @State private var photosPickerItem: PhotosPickerItem?
     
@@ -93,13 +94,10 @@ struct UserInfoEditingView: View {
                         .padding(.bottom, 5)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    LocationPickerMenu(selectedItem: $myPageViewModel.tempUserFavoriteLocation)
+                    LocationPickerMenu(isShowingMenuList: $isShowingMenuList, selectedItem: myPageViewModel.tempUserFavoriteLocation)
                         .frame(width: 170)
                 }
                 .padding(.horizontal, 20)
-                .onAppear {
-                    myPageViewModel.tempUserFavoriteLocation = myPageViewModel.user.favoriteLocation
-                }
                 
                 Spacer()
             }
@@ -139,9 +137,7 @@ struct UserInfoEditingView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
     }
-}
 
-extension UserInfoEditingView {
     private func TextFieldUIKit(placeholder: String, text: Binding<String>) -> some View {
         UITextField.appearance().clearButtonMode = .whileEditing
         
@@ -156,4 +152,5 @@ extension UserInfoEditingView {
 #Preview {
     UserInfoEditingView()
         .environmentObject(MyPageViewModel())
+        .environmentObject(TradeViewModel())
 }

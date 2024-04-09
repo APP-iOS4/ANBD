@@ -36,6 +36,7 @@ struct LocationBottomSheet: View {
                     }, label: {
                         CheckboxView(isChecked: tmpSelectedLocation.contains(item), text: item.description)
                     })
+                    .padding(.vertical, 5)
                 }
                 .padding(.horizontal)
                 

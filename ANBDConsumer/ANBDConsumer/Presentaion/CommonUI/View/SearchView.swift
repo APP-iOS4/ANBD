@@ -25,7 +25,7 @@ struct SearchView: View {
             }
         }
         .navigationDestination(isPresented: $isGoingToSearchResultView) {
-//            SearchResultView(searchText: searchText)
+            SearchResultView(searchText: searchText)
         }
     }
 }

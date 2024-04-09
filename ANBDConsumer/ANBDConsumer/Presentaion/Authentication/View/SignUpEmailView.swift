@@ -40,13 +40,16 @@ struct SignUpEmailView: View {
                 nextButtonAction()
             }
             
-            if !authenticationViewModel.errorMessage.isEmpty {
-                Text(authenticationViewModel.errorMessage)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 8)
-                    .font(ANBDFont.Caption1)
-                    .foregroundStyle(Color.heartRed)
-            }
+            // 프로토타입을 위한 임시 주석
+            /*
+             if !authenticationViewModel.errorMessage.isEmpty {
+             Text(authenticationViewModel.errorMessage)
+             .frame(maxWidth: .infinity, alignment: .leading)
+             .padding(.top, 8)
+             .font(ANBDFont.Caption1)
+             .foregroundStyle(Color.heartRed)
+             }
+             */
             
             HStack {
                 Text("이미 계정이 있으신가요?")
@@ -55,7 +58,7 @@ struct SignUpEmailView: View {
                 Button("로그인") {
                     dismiss()
                 }
-                .foregroundStyle(.primary)
+                .foregroundStyle(.accent)
             }
             .font(ANBDFont.body2)
             .padding(.top, 22)

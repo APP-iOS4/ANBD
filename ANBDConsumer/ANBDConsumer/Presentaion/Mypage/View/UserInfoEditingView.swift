@@ -95,7 +95,6 @@ struct UserInfoEditingView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
                     LocationPickerMenu(isShowingMenuList: $isShowingMenuList, selectedItem: myPageViewModel.tempUserFavoriteLocation)
-                        .frame(width: 170)
                 }
                 .padding(.horizontal, 20)
                 

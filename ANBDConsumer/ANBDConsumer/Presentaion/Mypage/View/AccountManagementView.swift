@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AccountManagementView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
+    @EnvironmentObject private var authenticationViewModel: AuthenticationViewModel
     
     @State private var isShowingEditorView = false
     @State private var isShowingSignOutAlertView = false
@@ -77,6 +78,7 @@ struct AccountManagementView: View {
             if isShowingSignOutAlertView {
                 CustomAlertView(isShowingCustomAlert: $isShowingSignOutAlertView, viewType: .signOut) {
                     // 로그아웃 메서드 넣기
+                    authenticationViewModel.authState = false
                     print("Sign Out")
                 }
             }
@@ -84,6 +86,7 @@ struct AccountManagementView: View {
             if isShowingWithdrawalAlertView {
                 CustomAlertView(isShowingCustomAlert: $isShowingWithdrawalAlertView, viewType: .withdrawal) {
                     // 회원 탈퇴 메서드 넣기
+                    authenticationViewModel.authState = false
                     print("Withdrawal")
                 }
             }
@@ -119,5 +122,6 @@ private struct WarningTextModifier: ViewModifier {
     NavigationStack {
         AccountManagementView()
             .environmentObject(MyPageViewModel())
+            .environmentObject(AuthenticationViewModel())
     }
 }

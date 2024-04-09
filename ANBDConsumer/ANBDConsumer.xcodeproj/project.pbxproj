@@ -16,7 +16,7 @@
 		424CA00F2BC3B83700F83F8D /* SignUpAgreeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA00E2BC3B83700F83F8D /* SignUpAgreeView.swift */; };
 		424CA0112BC3B8AA00F83F8D /* CheckAgreeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0102BC3B8AA00F83F8D /* CheckAgreeView.swift */; };
 		424CA0132BC3C0E200F83F8D /* TermsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0122BC3C0E200F83F8D /* TermsView.swift */; };
-		424CA0152BC3C45E00F83F8D /* SignUpComleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0142BC3C45E00F83F8D /* SignUpComleteView.swift */; };
+		424CA0152BC3C45E00F83F8D /* SignUpCompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0142BC3C45E00F83F8D /* SignUpCompleteView.swift */; };
 		42C7BBD82BC2518000F0805A /* AccountManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C7BBD72BC2518000F0805A /* AccountManagementView.swift */; };
 		42C7BBDA2BC2793B00F0805A /* UserInfoEditingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C7BBD92BC2793B00F0805A /* UserInfoEditingView.swift */; };
 		42EE634E2BC2BCA100100FF4 /* LocationPickerMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42EE634D2BC2BCA100100FF4 /* LocationPickerMenu.swift */; };
@@ -85,7 +85,7 @@
 		424CA00E2BC3B83700F83F8D /* SignUpAgreeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpAgreeView.swift; sourceTree = "<group>"; };
 		424CA0102BC3B8AA00F83F8D /* CheckAgreeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckAgreeView.swift; sourceTree = "<group>"; };
 		424CA0122BC3C0E200F83F8D /* TermsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsView.swift; sourceTree = "<group>"; };
-		424CA0142BC3C45E00F83F8D /* SignUpComleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpComleteView.swift; sourceTree = "<group>"; };
+		424CA0142BC3C45E00F83F8D /* SignUpCompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpCompleteView.swift; sourceTree = "<group>"; };
 		42C7BBD72BC2518000F0805A /* AccountManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountManagementView.swift; sourceTree = "<group>"; };
 		42C7BBD92BC2793B00F0805A /* UserInfoEditingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoEditingView.swift; sourceTree = "<group>"; };
 		42EE634D2BC2BCA100100FF4 /* LocationPickerMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPickerMenu.swift; sourceTree = "<group>"; };
@@ -377,7 +377,7 @@
 				CB7BEE122BBD564100C0F298 /* AuthenticationView.swift */,
 				424CA0082BC3A79900F83F8D /* SignUpEmailView.swift */,
 				424CA00A2BC3AB7800F83F8D /* SignUpPasswordView.swift */,
-				424CA0142BC3C45E00F83F8D /* SignUpComleteView.swift */,
+				424CA0142BC3C45E00F83F8D /* SignUpCompleteView.swift */,
 				424CA00C2BC3B4CE00F83F8D /* SignUpUserInfoView.swift */,
 				424CA00E2BC3B83700F83F8D /* SignUpAgreeView.swift */,
 				424CA0102BC3B8AA00F83F8D /* CheckAgreeView.swift */,
@@ -600,13 +600,13 @@
 				CB7BEE372BBD57CE00C0F298 /* ArticleViewModel.swift in Sources */,
 				424CA0092BC3A79900F83F8D /* SignUpEmailView.swift in Sources */,
 				42C7BBDA2BC2793B00F0805A /* UserInfoEditingView.swift in Sources */,
-				424CA0152BC3C45E00F83F8D /* SignUpComleteView.swift in Sources */,
+				424CA0152BC3C45E00F83F8D /* SignUpCompleteView.swift in Sources */,
 				D75C3A4F2BBFB40200ED948C /* ArticleDetailView.swift in Sources */,
 				CB7BEE372BBD57CE00C0F298 /* ArticleViewModel.swift in Sources */,
 				CB7BEE372BBD57CE00C0F298 /* ArticleViewModel.swift in Sources */,
 				424CA0092BC3A79900F83F8D /* SignUpEmailView.swift in Sources */,
 				42C7BBDA2BC2793B00F0805A /* UserInfoEditingView.swift in Sources */,
-				424CA0152BC3C45E00F83F8D /* SignUpComleteView.swift in Sources */,
+				424CA0152BC3C45E00F83F8D /* SignUpCompleteView.swift in Sources */,
 				D75C3A4F2BBFB40200ED948C /* ArticleDetailView.swift in Sources */,
 				CB7BEE372BBD57CE00C0F298 /* ArticleViewModel.swift in Sources */,
 				CB7BEE372BBD57CE00C0F298 /* ArticleViewModel.swift in Sources */,

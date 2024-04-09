@@ -42,13 +42,16 @@ struct SignUpUserInfoView: View {
             }
             .padding(.bottom)
             
-            if !authenticationViewModel.errorMessage.isEmpty {
-                Text(authenticationViewModel.errorMessage)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.bottom)
-                    .font(ANBDFont.Caption1)
-                    .foregroundStyle(Color.heartRed)
-            }
+            // 프로토타입을 위한 임시 주석
+            /*
+             if !authenticationViewModel.errorMessage.isEmpty {
+             Text(authenticationViewModel.errorMessage)
+             .frame(maxWidth: .infinity, alignment: .leading)
+             .padding(.bottom)
+             .font(ANBDFont.Caption1)
+             .foregroundStyle(Color.heartRed)
+             }
+             */
             
             Text("선호하는 거래 지역")
                 .font(ANBDFont.SubTitle3)
@@ -56,7 +59,6 @@ struct SignUpUserInfoView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             
             LocationPickerMenu(isShowingMenuList: $isShowingMenuList, selectedItem: selectedLocation)
-                .frame(width: 170)
             
             Spacer()
             
@@ -66,7 +68,7 @@ struct SignUpUserInfoView: View {
         }
         .padding()
         .navigationDestination(isPresented: $navigate) {
-            SignUpPasswordView()
+            SignUpAgreeView()
         }
         
         .onAppear {

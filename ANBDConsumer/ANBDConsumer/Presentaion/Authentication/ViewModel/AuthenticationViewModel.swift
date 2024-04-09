@@ -18,6 +18,8 @@ enum AgreeType {
 
 final class AuthenticationViewModel: ObservableObject {
     
+    @Published var authState: Bool = false
+    
     // MARK: Login Field
     @Published var loginEmailString: String = ""
     @Published private(set) var loginEmailStringDebounced: String = ""
@@ -164,7 +166,11 @@ extension AuthenticationViewModel {
             errorMessage = ""
         }
         
-        return (!email.isEmpty && email.isValidateEmail()) && (!password.isEmpty && password.isValidatePassword())
+        // 프로토타입을 위한 임시 주석
+        // return (!email.isEmpty && email.isValidateEmail()) && (!password.isEmpty && password.isValidatePassword())
+        
+        // 프로토타입을 위한 임시 반환값
+        return (!email.isEmpty) && (!password.isEmpty)
     }
     
     func validateSignUpEmail(email: String) -> Bool {
@@ -174,7 +180,11 @@ extension AuthenticationViewModel {
             errorMessage = ""
         }
         
-        return !email.isEmpty && email.isValidateEmail()
+        // 프로토타입을 위한 임시 주석
+        // return !email.isEmpty && email.isValidateEmail()
+        
+        // 프로토타입을 위한 임시 반환값
+        return !email.isEmpty
     }
     
     func validateSignUpPassword(password: String, passwordCheck: String) -> Bool {
@@ -186,7 +196,11 @@ extension AuthenticationViewModel {
             errorMessage = ""
         }
         
-        return (!password.isEmpty && password.isValidatePassword()) && (!passwordCheck.isEmpty && password == passwordCheck)
+        // 프로토타입을 위한 임시 주석
+        // return (!password.isEmpty && password.isValidatePassword()) && (!passwordCheck.isEmpty && password == passwordCheck)
+        
+        // 프로토타입을 위한 임시 반환값
+        return !password.isEmpty && !passwordCheck.isEmpty
     }
     
     func validateSignUpNickname(nickname: String) -> Bool {
@@ -196,7 +210,11 @@ extension AuthenticationViewModel {
             errorMessage = ""
         }
         
-        return !nickname.isEmpty && nickname.isValidateNickname()
+        // 프로토타입을 위한 임시 주석
+        // return !nickname.isEmpty && nickname.isValidateNickname()
+        
+        // 프로토타입을 위한 임시 반환값
+        return !nickname.isEmpty
     }
     
 }
@@ -204,11 +222,9 @@ extension AuthenticationViewModel {
 // MARK: Sign Up Method
 extension AuthenticationViewModel {
     
-    /*
     func submitSignUp() {
         authState = true
     }
-     */
     
     func toggleAllAgree() {
         if !isAllAgree() {
@@ -249,59 +265,64 @@ extension AuthenticationViewModel {
     }
     
     /*
-    func signUpWithEmailPassword() async {
-        do {
-            let signUpResult = try await Auth.auth().createUser(
-                withEmail: signUpEmailString,
-                password: signUpPasswordString
-            )
-            let firebaseUser = signUpResult.user
-            let accessToken = firebaseUser.uid
-            
-            let serviceUser = User(
-                userNickname: signUpNicknameString,
-                email: signUpEmailString,
-                accessToken: accessToken,
-                isOlderThanFourteen: isOlderThanFourteen,
-                isAgreeService: isAgreeService,
-                isAgreeCollectInfo: isAgreeCollectInfo,
-                isAgreeMarketing: isAgreeMarketing
-            )
-            
-            try await userStore.saveUserInfo(userInfo: serviceUser)
-            isValidSignUp = true
-            UserDefaultsManager.shared.userInfo = serviceUser
-        } catch {
-            print(error)
-            errorMessage = error.localizedDescription
-        }
-    }
-    
-    func signUpWithGoogle() async {
-        do {
-            guard let user = Auth.auth().currentUser
-            else {
-                throw AuthError.tokenError(message: "잘못된 액세스 토큰입니다.")
-            }
-            
-            let serviceUser = User(
-                userNickname: signUpNicknameString,
-                email: user.email ?? "",
-                accessToken: user.uid,
-                isOlderThanFourteen: isOlderThanFourteen,
-                isAgreeService: isAgreeService,
-                isAgreeCollectInfo: isAgreeCollectInfo,
-                isAgreeMarketing: isAgreeMarketing
-            )
-            
-            try await userStore.saveUserInfo(userInfo: serviceUser)
-            isValidSignUp = true
-            UserDefaultsManager.shared.userInfo = serviceUser
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-    }
+     func signUpWithEmailPassword() async {
+     do {
+     let signUpResult = try await Auth.auth().createUser(
+     withEmail: signUpEmailString,
+     password: signUpPasswordString
+     )
+     let firebaseUser = signUpResult.user
+     let accessToken = firebaseUser.uid
+     
+     let serviceUser = User(
+     userNickname: signUpNicknameString,
+     email: signUpEmailString,
+     accessToken: accessToken,
+     isOlderThanFourteen: isOlderThanFourteen,
+     isAgreeService: isAgreeService,
+     isAgreeCollectInfo: isAgreeCollectInfo,
+     isAgreeMarketing: isAgreeMarketing
+     )
+     
+     try await userStore.saveUserInfo(userInfo: serviceUser)
+     isValidSignUp = true
+     UserDefaultsManager.shared.userInfo = serviceUser
+     } catch {
+     print(error)
+     errorMessage = error.localizedDescription
+     }
+     }
+     
+     func signUpWithGoogle() async {
+     do {
+     guard let user = Auth.auth().currentUser
+     else {
+     throw AuthError.tokenError(message: "잘못된 액세스 토큰입니다.")
+     }
+     
+     let serviceUser = User(
+     userNickname: signUpNicknameString,
+     email: user.email ?? "",
+     accessToken: user.uid,
+     isOlderThanFourteen: isOlderThanFourteen,
+     isAgreeService: isAgreeService,
+     isAgreeCollectInfo: isAgreeCollectInfo,
+     isAgreeMarketing: isAgreeMarketing
+     )
+     
+     try await userStore.saveUserInfo(userInfo: serviceUser)
+     isValidSignUp = true
+     UserDefaultsManager.shared.userInfo = serviceUser
+     } catch {
+     errorMessage = error.localizedDescription
+     }
+     }
      */
+    
+    func clearAccount() {
+        loginEmailString = ""
+        loginPasswordString = ""
+    }
     
 }
 

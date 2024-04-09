@@ -95,6 +95,7 @@ struct UserPageView: View {
                             Text("내가 찜한 나눔 ・ 거래 보기")
                                 .foregroundStyle(Color.gray900)
                                 .font(ANBDFont.SubTitle2)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding()
                         })
                         
@@ -106,6 +107,7 @@ struct UserPageView: View {
                             Text("약관 및 정책")
                                 .foregroundStyle(Color.gray900)
                                 .font(ANBDFont.SubTitle2)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding()
                         })
                         

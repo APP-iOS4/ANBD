@@ -43,7 +43,8 @@ struct ChatDetailView: View {
     
     
     /// Product 관련 함수 (추후 삭제 ......)
-    @State private var isTrading: Bool = true
+    //@State private var isTrading: Bool = true
+    @State private var tradeState: TradeState = .trading
     @State private var isDeleted: Bool = false
     
     var body: some View {
@@ -169,7 +170,7 @@ struct ChatDetailView: View {
             
             if !isDeleted {
                 VStack(alignment: .leading) {
-                    TradeStateChangeView(isTrading: $isTrading)
+                    TradeStateChangeView(tradeState: $tradeState)
                     
                     Spacer()
                 }

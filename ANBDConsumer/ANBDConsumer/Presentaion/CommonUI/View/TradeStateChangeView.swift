@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import ANBDModel
 
 struct TradeStateChangeView: View {
-    @Binding var isTrading: Bool
+    //@Binding var isTrading: Bool
+    @Binding var tradeState: TradeState
     @State private var isShowingConfirm: Bool = false
     @State private var isShowingAlert: Bool = false
     
@@ -17,7 +19,7 @@ struct TradeStateChangeView: View {
             isShowingConfirm.toggle()
         }, label: {
             HStack {
-                Text(isTrading ? "거래 중" : "거래 완료")
+                Text("\(tradeState.description)")
                     .font(ANBDFont.SubTitle3)
                 
                 Image(systemName: "chevron.down")
@@ -29,22 +31,26 @@ struct TradeStateChangeView: View {
         })
         .confirmationDialog("", isPresented: $isShowingConfirm) {
             Button("거래 중") {
-                if !isTrading {
+                if tradeState == .finish {
                     isShowingAlert.toggle()
                 }
             }
             
             Button("거래 완료") {
-                if isTrading {
+                if tradeState == .trading {
                     isShowingAlert.toggle()
                 }
             }
         } message: {
             Text("상태변경")
         }
-        .alert("해당 게시글의 상태를 \(isTrading ? "거래 완료" : "거래 중으")로 변경하시겠습니까?", isPresented: $isShowingAlert) {
+        .alert("해당 게시글의 상태를 \(tradeState == .finish ? "거래 중으" : "거래 완료")로 변경하시겠습니까?", isPresented: $isShowingAlert) {
             Button("변경") {
-                isTrading.toggle()
+                if tradeState == .trading {
+                    tradeState = .finish
+                } else {
+                    tradeState = .trading
+                }
             }
             
             Button("취소", role: .cancel) {}
@@ -53,5 +59,5 @@ struct TradeStateChangeView: View {
 }
 
 #Preview {
-    TradeStateChangeView(isTrading: .constant(true))
+    TradeStateChangeView(tradeState: .constant(.trading))
 }

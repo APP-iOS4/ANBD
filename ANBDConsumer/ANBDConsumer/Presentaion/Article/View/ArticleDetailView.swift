@@ -13,10 +13,14 @@ struct ArticleDetailView: View {
     var article: Article
 
     @State private var isLiked: Bool = false
+    @State private var isWriter: Bool = true
     @State private var isShowingComment: Bool = false
     @State private var comments: [Comment] = []
     @State private var commentText: String = ""
     @State private var isShowingCreateView = false
+    @State private var isGoingToReportView: Bool = false
+    @State private var isGoingToProfileView: Bool = false
+
     
     struct Comment: Identifiable {
         let id: UUID = UUID()
@@ -30,7 +34,7 @@ struct ArticleDetailView: View {
                 VStack(alignment: .leading) {
                     HStack {
                         Button {
-                            // 프로필 이동
+                            isGoingToProfileView.toggle()
                         } label: {
                             ZStack {
                                 Circle()
@@ -51,6 +55,9 @@ struct ArticleDetailView: View {
                                 .font(ANBDFont.Caption1)
                                 .foregroundStyle(.gray400)
                         }
+                    }
+                    .navigationDestination(isPresented: $isGoingToProfileView) {
+                        UserPageView(isSignedInUser: false)
                     }
                     .padding(.bottom, 20)
                     
@@ -111,7 +118,7 @@ struct ArticleDetailView: View {
                     ForEach(comments) { comment in
                         HStack(alignment: .top) {
                             Button {
-                                // 프로필 이동
+//                                isGoingToProfileView.toggle()
                             } label: {
                                 ZStack {
                                     Circle()
@@ -151,26 +158,34 @@ struct ArticleDetailView: View {
                                     .foregroundStyle(.gray500)
                             }
                             .confirmationDialog("", isPresented: $isShowingComment) {
-                                Button {
+                                if isWriter {
+                                    // 본인 댓글 = 수정,삭제 | 다른 사람 댓글 = 신고
+                                    Button {
+                                        
+                                    } label: {
+                                        Text("수정하기")
+                                    }
                                     
-                                } label: {
-                                    Text("수정하기")
-                                }
-                                
-                                Button(role: .destructive) {
-                                    
-                                } label: {
-                                    Text("삭제하기")
-                                }
-                                
-                                // 본인 댓글 = 수정,삭제 | 다른 사람 댓글 = 신고
-                                Button(role: .destructive) {
-                                    
-                                } label: {
-                                    Text("신고하기")
+                                    Button(role: .destructive) {
+
+                                    } label: {
+                                        Text("삭제하기")
+                                    }
+                                } else {
+                                    Button(role: .destructive) {
+                                        isGoingToReportView.toggle()
+                                    } label: {
+                                        Text("신고하기")
+                                    }
                                 }
                             }
+                            .navigationDestination(isPresented: $isGoingToReportView) {
+                                ReportView(reportViewType: .user)
+                            }
                             
+                        }
+                        .navigationDestination(isPresented: $isGoingToProfileView) {
+                            UserPageView(isSignedInUser: false)
                         }
                         .padding(.horizontal, 10)
                         .padding(.bottom, 20)
@@ -182,17 +197,28 @@ struct ArticleDetailView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
-                    Button(action: {
-                        isShowingCreateView.toggle()
-                    }, label: {
-                        Label("수정하기", systemImage: "square.and.pencil")
-                    })
-                    Button(role: .destructive) {
+                    if isWriter {
+                        // 본인 게시물 = 수정,삭제 | 다른 사람 게시물 = 신고
+
+                        Button {
+                            isShowingCreateView.toggle()
+                        } label: {
+                            Label("수정하기", systemImage: "square.and.pencil")
+                        }
                         
-                    } label: {
-                        Label("삭제하기", systemImage: "trash")
+                        Button(role: .destructive) {
+
+                        } label: {
+                            Label("삭제하기", systemImage: "trash")
+                        }
+                    } else {
+                        Button(role: .destructive) {
+                            isGoingToReportView.toggle()
+                        } label: {
+                            Label("신고하기", systemImage: "exclamationmark.bubble")
+
+                        }
                     }
-                    
                 } label: {
                     Image(systemName: "ellipsis")
                         .resizable()
@@ -206,6 +232,9 @@ struct ArticleDetailView: View {
         .fullScreenCover(isPresented: $isShowingCreateView) {
             ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, isNewArticle: false, article: article)
         }
+        .navigationDestination(isPresented: $isGoingToReportView) {
+            ReportView(reportViewType: .article)
+        }
         .navigationTitle("정보 공유")
         .navigationBarTitleDisplayMode(.inline)
         
@@ -217,12 +246,16 @@ struct ArticleDetailView: View {
                     .foregroundStyle(.gray50)
                 TextField("댓글을 입력해주세요.", text: $commentText)
                     .font(ANBDFont.Caption1)
-                    .padding(15)
+                    .padding(20)
             }
             Button {
-                let newComment = Comment(userName: "김기표", content: commentText)
-                comments.append(newComment)
-                commentText = ""
+                if commentText.isEmpty {
+                   print("댓글 입력 안함")
+                } else {
+                    let newComment = Comment(userName: "김기표", content: commentText)
+                    comments.append(newComment)
+                    commentText = ""
+                }
             } label: {
                 Image(systemName: "paperplane.fill")
                     .font(ANBDFont.pretendardSemiBold(28))

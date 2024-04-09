@@ -18,6 +18,8 @@ struct ArticleDetailView: View {
     @State private var comments: [Comment] = []
     @State private var commentText: String = ""
     @State private var isShowingCreateView = false
+    @State private var isGoingToReportView: Bool = false
+
     
     struct Comment: Identifiable {
         let id: UUID = UUID()
@@ -161,17 +163,20 @@ struct ArticleDetailView: View {
                                     }
                                     
                                     Button(role: .destructive) {
-                                        
+
                                     } label: {
                                         Text("삭제하기")
                                     }
                                 } else {
                                     Button(role: .destructive) {
-                                        
+                                        isGoingToReportView.toggle()
                                     } label: {
                                         Text("신고하기")
                                     }
                                 }
+                            }
+                            .navigationDestination(isPresented: $isGoingToReportView) {
+                                ReportView(reportViewType: .user)
                             }
                             
                         }
@@ -195,13 +200,13 @@ struct ArticleDetailView: View {
                         }
                         
                         Button(role: .destructive) {
-                            
+
                         } label: {
                             Label("삭제하기", systemImage: "trash")
                         }
                     } else {
                         Button(role: .destructive) {
-                            
+                            isGoingToReportView.toggle()
                         } label: {
                             Label("신고하기", systemImage: "exclamationmark.bubble")
 
@@ -219,6 +224,9 @@ struct ArticleDetailView: View {
         }
         .fullScreenCover(isPresented: $isShowingCreateView) {
             ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, isNewArticle: false, article: article)
+        }
+        .navigationDestination(isPresented: $isGoingToReportView) {
+            ReportView(reportViewType: .article)
         }
         .navigationTitle("정보 공유")
         .navigationBarTitleDisplayMode(.inline)

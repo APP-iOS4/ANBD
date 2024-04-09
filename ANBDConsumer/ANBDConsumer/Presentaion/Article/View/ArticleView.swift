@@ -28,91 +28,36 @@ class DummyArticle {
 }
 
 struct ArticleView: View {
+    @EnvironmentObject private var articleViewModel: ArticleViewModel
     
     @State private var isShowingCreateView: Bool = false
-    @State var category: Category = .accua
-    @State private var sortOption: SortOption = .time
-    private var articles = DummyArticle().articles
-    @State private var filteredArticles: [Article] = []
-    
-    enum SortOption {
-        case time, likes, comments
-    }
+    @State var category: ANBDCategory = .accua
     
     var body: some View {
-        NavigationStack {
-            ZStack(alignment: .bottomTrailing) {
-                VStack(alignment: .leading) {
-                    CategoryDividerView(category: $category)
-                        .frame(height: 45)
-                    
-                    VStack {
-                        Menu {
-                            Button {
-                                sortOption = .time
-                                updateArticles()
-                            } label: {
-                                Label("최신순", systemImage: sortOption == .time ? "checkmark" : "")
-                            }
-                            
-                            Button {
-                                sortOption = .likes
-                                updateArticles()
-                            } label: {
-                                Label("좋아요순", systemImage: sortOption == .likes ? "checkmark" : "")
-                            }
-                            
-                            Button {
-                                sortOption = .comments
-                                updateArticles()
-                            } label: {
-                                Label("댓글순", systemImage: sortOption == .comments ? "checkmark" : "")
-                            }
-                        } label: {
-                            Text(getSortOptionLabel())
-                            Image(systemName: "chevron.down")
-                        }
-                        .foregroundStyle(.gray900)
-                        .padding(10)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 15)
-                                .stroke(Color.gray600, lineWidth: 1)
-                        )
-                    }
-                    .padding(.leading, 10)
-                    .padding(.top, 10)
-                    .font(ANBDFont.SubTitle3)
-                    
-                    TabView(selection: $category) {
-                        articleListView
-                            .tag(Category.accua)
-                        
-                        articleListView
-                            .tag(Category.dasi)
-                        
-                    }
-                    .tabViewStyle(.page(indexDisplayMode: .never))
-                    .ignoresSafeArea()
-                }
-                .onAppear {
-                    updateArticles()
-                }
-                .onChange(of: category) {
-                    updateArticles()
-                }
+        ZStack(alignment: .bottomTrailing) {
+            VStack(alignment: .leading) {
+                CategoryDividerView(category: $category)
+                    .frame(height: 45)
                 
-                Button {
-                    self.isShowingCreateView.toggle()
-                } label: {
-                    WriteButtonView()
-                        .padding(10)
+                TabView(selection: $category) {
+                    ArticleListView(category: .accua)
+                        .tag(ANBDCategory.accua)
+                    ArticleListView(category: .dasi)
+                        .tag(ANBDCategory.dasi)
                 }
+                .tabViewStyle(.page(indexDisplayMode: .never))
+            }
+            
+            Button {
+                self.isShowingCreateView.toggle()
+            } label: {
+                WriteButtonView()
             }
         }
         .navigationTitle("정보 공유")
         .toolbarTitleDisplayMode(.inline)
         .fullScreenCover(isPresented: $isShowingCreateView, content: {
-            ArticleCreateView(flag: $category, isShowingCreateView: $isShowingCreateView)
+            ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: category, isNewArticle: true)
         })
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -120,70 +65,11 @@ struct ArticleView: View {
             }
         }
     }
-    private func updateArticles() {
-        switch sortOption {
-        case .time:
-            if category == .accua {
-                filteredArticles = articles.filter { $0.category == .accua }
-            } else if category == .dasi {
-                filteredArticles = articles.filter { $0.category == .dasi }
-            }
-            break
-        case .likes:
-            // 좋아요순 정렬
-            if category == .accua {
-                filteredArticles = articles.filter { $0.category == .accua }
-            } else if category == .dasi {
-                filteredArticles = articles.filter { $0.category == .dasi }
-            }
-            filteredArticles.sort(by: { $0.likeCount > $1.likeCount })
-            break
-        case .comments:
-            // 댓글순 정렬
-            if category == .accua {
-                filteredArticles = articles.filter { $0.category == .accua }
-            } else if category == .dasi {
-                filteredArticles = articles.filter { $0.category == .dasi }
-            }
-            filteredArticles.sort(by: { $0.commentCount > $1.commentCount })
-            break
-        }
-    }
-    
-    private func getSortOptionLabel() -> String {
-        switch sortOption {
-        case .time:
-            return "최신순"
-        case .likes:
-            return "좋아요순"
-        case .comments:
-            return "댓글순"
-        }
-    }
-}
-
-extension ArticleView {
-    var articleListView: some View {
-        ScrollView {
-            LazyVStack {
-                ForEach(filteredArticles, id: \.self) { article in
-                    NavigationLink(value: article) {
-                        ArticleListCell(article: article)
-                            .padding(10)
-                    }
-                    Divider()
-                        .padding(.horizontal, 20)
-                }
-            }
-        }
-        .navigationDestination(for: Article.self) { article in
-            ArticleDetailView(article: article)
-        }
-    }
 }
 
 
-//#Preview {
-//    ArticleView(articles: DummyArticle().articles)
-//}
+#Preview {
+    ArticleView(category: .accua)
+        .environmentObject(ArticleViewModel())
+}
 

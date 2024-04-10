@@ -194,6 +194,9 @@ struct ArticleDetailView: View {
             }
             .padding()
         }
+        .onTapGesture {
+            endTextEditing()
+        }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {

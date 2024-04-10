@@ -276,6 +276,9 @@ struct TradeCreateView: View {
                 .padding(20)
             }//ScrollView
         }
+        .onTapGesture {
+            endTextEditing()
+        }
         .onAppear {
             if !isNewProduct {
                 if let trade = trade {

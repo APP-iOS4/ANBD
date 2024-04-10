@@ -67,22 +67,9 @@ struct ChatDetailView: View {
                         }
                         
                         /// 이미지 · 텍스트
-                        if messages[i].imageURL != nil {
-                            Button(action: {
-                                if let imageURL = messages[i].imageURL {
-                                    detailImage = imageURL
-                                    isShowingImageDetailView.toggle()
-                                }
-                            }, label: {
-                                MessageCell(message: messages[i])
-                                    .padding(.vertical, 1)
-                                    .padding(.horizontal, 20)
-                            })
-                        } else {
-                            MessageCell(message: messages[i])
-                                .padding(.vertical, 1)
-                                .padding(.horizontal, 20)
-                        }
+                        MessageCell(message: messages[i])
+                            .padding(.vertical, 1)
+                            .padding(.horizontal, 20)
                     }
                 }
                 .defaultScrollAnchor(.bottom)
@@ -97,6 +84,9 @@ struct ChatDetailView: View {
                     dismiss()
                 }
             }
+        }
+        .onTapGesture {
+            endTextEditing()
         }
         .navigationTitle(userNickname)
         .navigationBarTitleDisplayMode(.inline)
@@ -209,16 +199,6 @@ struct ChatDetailView: View {
     private var messageSendView: some View {
         HStack {
             /// 사진 전송
-//            Button(action: {
-//                
-//            }, label: {
-//                Image(systemName: "photo.fill")
-//                    .resizable()
-//                    .scaledToFit()
-//                    .frame(width: 25)
-//                    .foregroundStyle(.gray400)
-//                    .padding(.horizontal, 5)
-//            })
             PhotosPicker(selection: $selectedImage, maxSelectionCount: 1, matching: .images) {
                 Image(systemName: "photo.fill")
                     .resizable()
@@ -227,7 +207,6 @@ struct ChatDetailView: View {
                     .foregroundStyle(.gray400)
                     .padding(.horizontal, 5)
             }
-            
             
             /// 메시지 입력
             ZStack {
@@ -245,7 +224,7 @@ struct ChatDetailView: View {
             /// 메시지 전송
             Button(action: {
                 if !message.isEmpty {
-                    // TODO: 메시지 전송 액션
+                    message = ""
                 }
             }, label: {
                 Image(systemName: "paperplane.fill")
@@ -287,11 +266,16 @@ extension ChatDetailView {
             
             // 이미지
             if let imageURL = message.imageURL {
-                Image(imageURL)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 150)
-                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                Button(action: {
+                    detailImage = imageURL
+                    isShowingImageDetailView.toggle()
+                }, label: {
+                    Image(imageURL)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 150)
+                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                })
             }
             
             if !isMine {

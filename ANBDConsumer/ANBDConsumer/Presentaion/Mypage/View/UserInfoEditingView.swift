@@ -100,7 +100,6 @@ struct UserInfoEditingView: View {
                 
                 Spacer()
             }
-            
             .toolbar {
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()

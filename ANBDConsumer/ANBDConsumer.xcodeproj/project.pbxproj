@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		424CA0032BC3686500F83F8D /* AnotherUserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0022BC3686500F83F8D /* AnotherUserProfileView.swift */; };
 		424CA0052BC397A600F83F8D /* TextFieldWithTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0042BC397A600F83F8D /* TextFieldWithTitle.swift */; };
 		424CA0072BC39C7C00F83F8D /* BlueSquareButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0062BC39C7C00F83F8D /* BlueSquareButton.swift */; };
 		424CA0092BC3A79900F83F8D /* SignUpEmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0082BC3A79900F83F8D /* SignUpEmailView.swift */; };
@@ -77,7 +76,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		424CA0022BC3686500F83F8D /* AnotherUserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnotherUserProfileView.swift; sourceTree = "<group>"; };
 		424CA0042BC397A600F83F8D /* TextFieldWithTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldWithTitle.swift; sourceTree = "<group>"; };
 		424CA0062BC39C7C00F83F8D /* BlueSquareButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueSquareButton.swift; sourceTree = "<group>"; };
 		424CA0082BC3A79900F83F8D /* SignUpEmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpEmailView.swift; sourceTree = "<group>"; };
@@ -358,7 +356,6 @@
 				CB198D252BC3C257000C2709 /* Sheet */,
 				CB198D242BC3C22E000C2709 /* View */,
 				CB198D232BC3C212000C2709 /* Button */,
-				424CA0022BC3686500F83F8D /* AnotherUserProfileView.swift */,
 			);
 			path = CommonUI;
 			sourceTree = "<group>";
@@ -641,7 +638,6 @@
 				CB198D102BC38BA0000C2709 /* LocationBottomSheet.swift in Sources */,
 				CB7BEE232BBD56B900C0F298 /* View+Extension.swift in Sources */,
 				CB198D1E2BC3A7BC000C2709 /* TextFieldModifier.swift in Sources */,
-				424CA0032BC3686500F83F8D /* AnotherUserProfileView.swift in Sources */,
 				CB7BEE232BBD56B900C0F298 /* View+Extension.swift in Sources */,
 				A8640B3E2BC3DCBE00232F9C /* CapsuleButtonView.swift in Sources */,
 				424CA0132BC3C0E200F83F8D /* TermsView.swift in Sources */,

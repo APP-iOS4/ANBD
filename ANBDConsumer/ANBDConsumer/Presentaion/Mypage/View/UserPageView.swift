@@ -15,6 +15,8 @@ struct UserPageView: View {
     @State private var isShowingPolicyView = false
     @State private var isShowingReportDialog = false
     
+    @State private var category: Category = .accua
+    
     // 임시 분기처리를 위한 프로퍼티
     var isSignedInUser: Bool
     
@@ -135,8 +137,8 @@ struct UserPageView: View {
                         isShowingReportDialog.toggle()
                     }, label: {
                         Image(systemName: "ellipsis")
+                            .font(.system(size: 13))
                             .rotationEffect(.degrees(90))
-                            .frame(width: 30)
                             .foregroundStyle(.gray900)
                     })
                 }

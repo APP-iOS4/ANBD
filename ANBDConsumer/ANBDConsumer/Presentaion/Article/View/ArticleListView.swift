@@ -63,20 +63,27 @@ struct ArticleListView: View {
                             if article == articleViewModel.filteredArticles.last {
                                 NavigationLink(value: article) {
                                     ArticleListCell(article: article)
-                                        .padding(.bottom, 70)
+                                        .padding(.bottom, 5)
+                                        
                                 }
                             } else {
                                 NavigationLink(value: article) {
                                     ArticleListCell(article: article)
                                 }
+                                .padding(.vertical, 5)
                             }
+                            Divider()
                         }
+                        .padding(.horizontal)
+
                     }
-                    .padding(.horizontal)
+                    .background(.white)
+                    .padding(.bottom, 80)
                 }
                 .navigationDestination(for: Article.self) { article in
                     ArticleDetailView(article: article)
                 }
+                .background(.gray50)
             }
         }
         .navigationTitle(navigationTitle)

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4204F32F2BC7C60700C56DB8 /* UserActivityListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4204F32E2BC7C60700C56DB8 /* UserActivityListView.swift */; };
 		424CA0052BC397A600F83F8D /* TextFieldWithTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0042BC397A600F83F8D /* TextFieldWithTitle.swift */; };
 		424CA0072BC39C7C00F83F8D /* BlueSquareButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0062BC39C7C00F83F8D /* BlueSquareButton.swift */; };
 		424CA0092BC3A79900F83F8D /* SignUpEmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0082BC3A79900F83F8D /* SignUpEmailView.swift */; };
@@ -76,6 +77,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4204F32E2BC7C60700C56DB8 /* UserActivityListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActivityListView.swift; sourceTree = "<group>"; };
 		424CA0042BC397A600F83F8D /* TextFieldWithTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldWithTitle.swift; sourceTree = "<group>"; };
 		424CA0062BC39C7C00F83F8D /* BlueSquareButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueSquareButton.swift; sourceTree = "<group>"; };
 		424CA0082BC3A79900F83F8D /* SignUpEmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpEmailView.swift; sourceTree = "<group>"; };
@@ -407,6 +409,7 @@
 				CB7BEE142BBD564800C0F298 /* UserPageView.swift */,
 				42C7BBD72BC2518000F0805A /* AccountManagementView.swift */,
 				42C7BBD92BC2793B00F0805A /* UserInfoEditingView.swift */,
+				4204F32E2BC7C60700C56DB8 /* UserActivityListView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -624,6 +627,7 @@
 				424CA0052BC397A600F83F8D /* TextFieldWithTitle.swift in Sources */,
 				CB7BEDBB2BBD4E9D00C0F298 /* ANBDTabView.swift in Sources */,
 				CB198D182BC38BFC000C2709 /* TradeListCell.swift in Sources */,
+				4204F32F2BC7C60700C56DB8 /* UserActivityListView.swift in Sources */,
 				CB198D1A2BC38CB9000C2709 /* Date+Extension.swift in Sources */,
 				A8640B3C2BC3C34F00232F9C /* TradeListView.swift in Sources */,
 				CB7BEE132BBD564100C0F298 /* AuthenticationView.swift in Sources */,

@@ -20,7 +20,7 @@ struct ArticleDetailView: View {
     @State private var isShowingCreateView = false
     @State private var isGoingToReportView: Bool = false
     @State private var isGoingToProfileView: Bool = false
-    
+    @State private var isShowingArticleConfirmSheet: Bool = false
     
     struct Comment: Identifiable {
         let id: UUID = UUID()
@@ -197,34 +197,37 @@ struct ArticleDetailView: View {
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    if isWriter {
-                        // 본인 게시물 = 수정,삭제 | 다른 사람 게시물 = 신고
-                        
-                        Button {
-                            isShowingCreateView.toggle()
-                        } label: {
-                            Label("수정하기", systemImage: "square.and.pencil")
-                        }
-                        
-                        Button(role: .destructive) {
-                            
-                        } label: {
-                            Label("삭제하기", systemImage: "trash")
-                        }
-                    } else {
-                        Button(role: .destructive) {
-                            isGoingToReportView.toggle()
-                        } label: {
-                            Label("신고하기", systemImage: "exclamationmark.bubble")
-                            
-                        }
-                    }
+                Button {
+                    isShowingArticleConfirmSheet.toggle()
                 } label: {
                     Image(systemName: "ellipsis")
                         .font(.system(size: 13))
                         .rotationEffect(.degrees(90))
                         .foregroundStyle(.gray900)
+                }
+            }
+        }
+        .confirmationDialog("", isPresented: $isShowingArticleConfirmSheet) {
+            if isWriter {
+                // 본인 게시물 = 수정,삭제 | 다른 사람 게시물 = 신고
+                
+                Button {
+                    isShowingCreateView.toggle()
+                } label: {
+                    Label("수정하기", systemImage: "square.and.pencil")
+                }
+                
+                Button(role: .destructive) {
+                    
+                } label: {
+                    Label("삭제하기", systemImage: "trash")
+                }
+            } else {
+                Button(role: .destructive) {
+                    isGoingToReportView.toggle()
+                } label: {
+                    Label("신고하기", systemImage: "exclamationmark.bubble")
+                    
                 }
             }
         }

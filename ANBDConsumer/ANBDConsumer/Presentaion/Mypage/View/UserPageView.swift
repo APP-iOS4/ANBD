@@ -11,11 +11,13 @@ import ANBDModel
 struct UserPageView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     
+    private let userUseCase: UserUsecase = DefaultUserUsecase()
+    
     @State private var isShowingAccountManagementView = false
     @State private var isShowingPolicyView = false
     @State private var isShowingReportDialog = false
     
-    @State private var category: Category = .accua
+    @State private var category: ANBDCategory = .accua
     
     // 임시 분기처리를 위한 프로퍼티
     var isSignedInUser: Bool
@@ -70,19 +72,19 @@ struct UserPageView: View {
             
             Group {
                 HStack(spacing: 12) {
-                    ActivityInfoComponent(title: "아껴 쓴 개수", count: 5)
+                    ActivityInfoComponent(title: "아껴 쓴 개수", count: 5, category: .accua)
                     Divider()
                         .frame(height: 60)
                     
-                    ActivityInfoComponent(title: "나눠 쓴 개수", count: 8)
+                    ActivityInfoComponent(title: "나눠 쓴 개수", count: 8, category: .nanua)
                     Divider()
                         .frame(height: 60)
                     
-                    ActivityInfoComponent(title: "바꿔 쓴 개수", count: 13)
+                    ActivityInfoComponent(title: "바꿔 쓴 개수", count: 13, category: .baccua)
                     Divider()
                         .frame(height: 60)
                     
-                    ActivityInfoComponent(title: "다시 쓴 개수", count: 19)
+                    ActivityInfoComponent(title: "다시 쓴 개수", count: 19, category: .dasi)
                 }
             }
             
@@ -154,10 +156,17 @@ struct UserPageView: View {
     }
     
     @ViewBuilder
-    private func ActivityInfoComponent(title: String, count: Int) -> some View {
-        Button(action: {
-            
-        }, label: {
+    private func ActivityInfoComponent(title: String, count: Int, category: ANBDCategory) -> some View {
+        NavigationLink {
+            if isSignedInUser {
+                UserActivityListView(category: category,
+                                     user: myPageViewModel.user)
+                .toolbarRole(.editor)
+            } else {
+                UserActivityListView(category: category,
+                                     user: myPageViewModel.user)
+            }
+        } label: {
             VStack(alignment: .center, spacing: 5) {
                 
                 Text("\(title)")
@@ -167,7 +176,8 @@ struct UserPageView: View {
                 Text("\(count)")
                     .font(ANBDFont.pretendardSemiBold(22))
             }
-        })
+        }
+        
     }
 }
 

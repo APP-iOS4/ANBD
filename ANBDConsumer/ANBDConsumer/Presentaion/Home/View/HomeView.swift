@@ -22,17 +22,20 @@ struct HomeView: View {
                     AccuaView(geo: geometry)
                     
                     Divider()
-                        .padding(.vertical, 20)
+                        .padding(.top, 12)
+                        .padding(.bottom, 7)
                     
                     nanuaView
                     
                     Divider()
-                        .padding(.vertical, 20)
+                        .padding(.top, 12)
+                        .padding(.bottom, 7)
                     
                     baccuaView
                     
                     Divider()
-                        .padding(.vertical, 20)
+                        .padding(.top, 12)
+                        .padding(.bottom, 7)
                     
                     DasiView(geo: geometry)
                 }
@@ -94,7 +97,7 @@ struct HomeView: View {
             }
         }
         .clipShape(RoundedRectangle(cornerRadius: 12))
-        .padding(.bottom, 36)
+        .padding(.bottom, 20)
     }
     
     

@@ -135,10 +135,8 @@ struct UserPageView: View {
                         isShowingReportDialog.toggle()
                     }, label: {
                         Image(systemName: "ellipsis")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 15)
                             .rotationEffect(.degrees(90))
+                            .frame(width: 30)
                             .foregroundStyle(.gray900)
                     })
                 }

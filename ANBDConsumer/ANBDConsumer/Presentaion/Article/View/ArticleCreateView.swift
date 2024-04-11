@@ -44,7 +44,7 @@ struct ArticleCreateView: View {
                                 }
                             }
                         }
-                        .font(ANBDFont.Heading3)
+                        .font(ANBDFont.pretendardBold(24))
                         .padding(.leading, 20)
                     Divider()
                         .padding(.horizontal, 20)

@@ -130,11 +130,9 @@ struct TradeDetailView: View {
                         })}
                 } label: {
                     Image(systemName: "ellipsis")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 15)
+                        .font(.system(size: 13))
                         .rotationEffect(.degrees(90))
-                        .foregroundStyle(.black)
+                        .foregroundStyle(.gray900)
                 }
             }
         }

@@ -37,6 +37,7 @@ struct ANBDConsumerApp: App {
     @StateObject private var myPageViewModel = MyPageViewModel()
     @StateObject private var articleViewModel = ArticleViewModel()
     @StateObject private var authenticationViewModel = AuthenticationViewModel()
+    @StateObject private var searchViewModel = SearchViewModel()
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
@@ -50,5 +51,6 @@ struct ANBDConsumerApp: App {
         .environmentObject(myPageViewModel)
         .environmentObject(articleViewModel)
         .environmentObject(authenticationViewModel)
+        .environmentObject(searchViewModel)
     }
 }

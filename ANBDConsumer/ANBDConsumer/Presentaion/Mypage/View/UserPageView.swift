@@ -113,9 +113,9 @@ struct UserPageView: View {
                         
                         Divider()
                     }
-                    .navigationDestination(isPresented: $isShowingPolicyView) {
-                        Text("약관 및 정책")
-                            .toolbar(.hidden, for: .tabBar)
+                    .fullScreenCover(isPresented: $isShowingPolicyView) {
+                        SafariWebView(url: URL(string: "https://maru-study-note.tistory.com/")!)
+                            .ignoresSafeArea(edges: .bottom)
                     }
                 }
             }

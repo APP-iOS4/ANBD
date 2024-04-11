@@ -11,7 +11,7 @@ import ANBDModel
 struct ArticleDetailView: View {
     
     var article: Article
-
+    
     @State private var isLiked: Bool = false
     @State private var isWriter: Bool = true
     @State private var isShowingComment: Bool = false
@@ -20,7 +20,7 @@ struct ArticleDetailView: View {
     @State private var isShowingCreateView = false
     @State private var isGoingToReportView: Bool = false
     @State private var isGoingToProfileView: Bool = false
-
+    @State private var isShowingArticleConfirmSheet: Bool = false
     
     struct Comment: Identifiable {
         let id: UUID = UUID()
@@ -62,7 +62,7 @@ struct ArticleDetailView: View {
                     .padding(.bottom, 20)
                     
                     Text("\(article.title)")
-                        .font(ANBDFont.Heading3)
+                        .font(ANBDFont.pretendardBold(24))
                         .padding(.bottom , 10)
                     
                     Text("\(article.content)")
@@ -85,14 +85,16 @@ struct ArticleDetailView: View {
                         } label: {
                             Image(systemName: isLiked ? "hand.thumbsup.fill" : "hand.thumbsup")
                                 .resizable()
-                                .frame(width: 25, height: 23)
+                                .frame(width: 16, height: 16)
                                 .foregroundStyle(isLiked ? .accent : .gray900)
                                 .padding(.leading, 10)
                             
                         }
                         Text("\(article.likeCount)")
-                            .font(ANBDFont.body1)
                             .foregroundStyle(.gray900)
+                            .font(.system(size: 12))
+                            .padding(.trailing, 10)
+                            .padding(.top, 2)
                     }
                     .padding(.vertical)
                 }
@@ -118,7 +120,7 @@ struct ArticleDetailView: View {
                     ForEach(comments) { comment in
                         HStack(alignment: .top) {
                             Button {
-//                                isGoingToProfileView.toggle()
+                                //                                isGoingToProfileView.toggle()
                             } label: {
                                 ZStack {
                                     Circle()
@@ -136,7 +138,7 @@ struct ArticleDetailView: View {
                                         .font(ANBDFont.SubTitle3)
                                     
                                     Text("5분 전")
-                                        .font(ANBDFont.Caption2)
+                                        .font(ANBDFont.Caption1)
                                         .foregroundStyle(.gray400)
                                 }
                                 Text("\(comment.content)")
@@ -151,11 +153,9 @@ struct ArticleDetailView: View {
                                 isShowingComment.toggle()
                             } label: {
                                 Image(systemName: "ellipsis")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 13)
+                                    .font(.system(size: 13))
                                     .rotationEffect(.degrees(90))
-                                    .foregroundStyle(.gray500)
+                                    .foregroundStyle(.gray900)
                             }
                             .confirmationDialog("", isPresented: $isShowingComment) {
                                 if isWriter {
@@ -167,7 +167,7 @@ struct ArticleDetailView: View {
                                     }
                                     
                                     Button(role: .destructive) {
-
+                                        
                                     } label: {
                                         Text("삭제하기")
                                     }
@@ -199,36 +199,37 @@ struct ArticleDetailView: View {
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    if isWriter {
-                        // 본인 게시물 = 수정,삭제 | 다른 사람 게시물 = 신고
-
-                        Button {
-                            isShowingCreateView.toggle()
-                        } label: {
-                            Label("수정하기", systemImage: "square.and.pencil")
-                        }
-                        
-                        Button(role: .destructive) {
-
-                        } label: {
-                            Label("삭제하기", systemImage: "trash")
-                        }
-                    } else {
-                        Button(role: .destructive) {
-                            isGoingToReportView.toggle()
-                        } label: {
-                            Label("신고하기", systemImage: "exclamationmark.bubble")
-
-                        }
-                    }
+                Button {
+                    isShowingArticleConfirmSheet.toggle()
                 } label: {
                     Image(systemName: "ellipsis")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 15)
+                        .font(.system(size: 13))
                         .rotationEffect(.degrees(90))
                         .foregroundStyle(.gray900)
+                }
+            }
+        }
+        .confirmationDialog("", isPresented: $isShowingArticleConfirmSheet) {
+            if isWriter {
+                // 본인 게시물 = 수정,삭제 | 다른 사람 게시물 = 신고
+                
+                Button {
+                    isShowingCreateView.toggle()
+                } label: {
+                    Label("수정하기", systemImage: "square.and.pencil")
+                }
+                
+                Button(role: .destructive) {
+                    
+                } label: {
+                    Label("삭제하기", systemImage: "trash")
+                }
+            } else {
+                Button(role: .destructive) {
+                    isGoingToReportView.toggle()
+                } label: {
+                    Label("신고하기", systemImage: "exclamationmark.bubble")
+                    
                 }
             }
         }
@@ -248,23 +249,20 @@ struct ArticleDetailView: View {
                     .frame(height: 43)
                     .foregroundStyle(.gray50)
                 TextField("댓글을 입력해주세요.", text: $commentText)
-                    .font(ANBDFont.Caption1)
+                    .font(ANBDFont.Caption3)
                     .padding(20)
             }
             Button {
-                if commentText.isEmpty {
-                   print("댓글 입력 안함")
-                } else {
-                    let newComment = Comment(userName: "김기표", content: commentText)
-                    comments.append(newComment)
-                    commentText = ""
-                }
+                let newComment = Comment(userName: "김기표", content: commentText)
+                comments.append(newComment)
+                commentText = ""
             } label: {
                 Image(systemName: "paperplane.fill")
                     .font(ANBDFont.pretendardSemiBold(28))
                     .rotationEffect(.degrees(45))
                     .foregroundStyle(commentText.isEmpty ? .gray300 : .accent)
             }
+            .disabled(commentText.isEmpty)
         }
         .padding(.horizontal, 10)
         .toolbar(.hidden, for: .tabBar)

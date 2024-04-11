@@ -11,6 +11,7 @@ import ANBDModel
 struct CategoryDividerView: View {
     @Binding var category: ANBDCategory
     var isFromSearchView: Bool = false
+    @Namespace private var namespace
     
     var body: some View {
         GeometryReader { geometry in
@@ -18,57 +19,36 @@ struct CategoryDividerView: View {
                 HStack {
                     //아,나,바,다 모든 카테고리 divider
                     if isFromSearchView {
-                        Button(action: {
-                            category = .accua
-                        }, label: {
-                            categoryText(.accua, geometry)
-                        })
-                        
-                        Button(action: {
-                            category = .nanua
-                        }, label: {
-                            categoryText(.nanua, geometry)
-                        })
-                        
-                        Button(action: {
-                            category = .baccua
-                        }, label: {
-                            categoryText(.baccua, geometry)
-                        })
-                        
-                        Button(action: {
-                            category = .dasi
-                        }, label: {
-                            categoryText(.dasi, geometry)
-                        })
-                        
+                        ForEach(ANBDCategory.allCases, id: \.self) { cate in
+                            categoryText(cate, geometry)
+                                .padding(.horizontal, 20)
+                                .onTapGesture {
+                                    category = cate
+                                }
+                        }
                     } else {
                         if category == .accua || category == .dasi {
-                            Button(action: {
-                                category = .accua
-                            }, label: {
-                                categoryText(.accua, geometry)
-                            })
-                            
-                            Button(action: {
-                                category = .dasi
-                            }, label: {
-                                categoryText(.dasi, geometry)
-                            })
+                            categoryText(.accua, geometry)
+                                .onTapGesture {
+                                    category = .accua
+                                }
+                            categoryText(.dasi, geometry)
+                                .onTapGesture {
+                                    category = .dasi
+                                }
                         } else {
-                            Button(action: {
-                                category = .nanua
-                            }, label: {
-                                categoryText(.nanua, geometry)
-                            })
-                            Button(action: {
-                                category = .baccua
-                            }, label: {
-                                categoryText(.baccua, geometry)
-                            })
+                            categoryText(.nanua, geometry)
+                                .onTapGesture {
+                                    category = .nanua
+                                }
+                            categoryText(.baccua, geometry)
+                                .onTapGesture {
+                                    category = .baccua
+                                }
                         }
                     }
                 }//HStack
+                .frame(maxWidth: .infinity)
             }//VStack
         }
     }
@@ -81,12 +61,10 @@ struct CategoryDividerView: View {
                 .fontWeight(.semibold)
                 .foregroundStyle(category == cate ? .gray900 : .gray400)
             Rectangle()
-                .fill(.clear)
-                .frame(height: 2)
-            Rectangle()
                 .fill(category == cate ? .accent : .clear)
                 .frame(width: (isFromSearchView ? geo.size.width/5 : geo.size.width/3), height: 2)
         }
+        .padding(.horizontal, isFromSearchView ? -15 : 20)
     }
 }
 

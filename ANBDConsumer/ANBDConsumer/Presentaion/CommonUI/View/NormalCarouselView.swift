@@ -45,7 +45,6 @@ struct NormalCarouselView<Content: View>: View {
                                 content(items[index])
                                     .containerRelativeFrame(.horizontal)
                                     .frame(height: 130)
-                                    .foregroundStyle(.gray200)
                                 
                                 LinearGradient(
                                     gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.4)]),

@@ -59,6 +59,7 @@ struct CustomAlertView: View {
                                 
                                 Text(confirmMessage)
                                     .foregroundStyle(.white)
+                                    .fontWeight(textWeight)
                             }
                         })
                         .padding(.trailing, 15)
@@ -121,6 +122,17 @@ extension CustomAlertView {
             return .heartRed
         case .withdrawal:
             return .heartRed
+        }
+    }
+    
+    private var textWeight: Font.Weight {
+        switch viewType {
+        case .leaveChatRoom:
+            return .medium
+        case .signOut:
+            return .medium
+        case .withdrawal:
+            return .heavy
         }
     }
 }

@@ -59,19 +59,22 @@ struct TradeListView: View {
             } else {
                 ScrollView {
                     LazyVStack {
+                        
                         ForEach(tradeViewModel.filteredTrades) { trade in
-                            NavigationLink(value: trade) {
-                                if trade == tradeViewModel.filteredTrades.last {
+                            VStack {
+                                NavigationLink(value: trade) {
                                     TradeListCell(trade: trade)
-                                        .padding(.bottom, 70)
-                                } else {
-                                    TradeListCell(trade: trade)
+                                        .padding(.top, 5)
                                 }
+                                Divider()
                             }
+                            .padding(.horizontal, 20)
                         }
                     }
-                    .padding(.horizontal)
+                    .background(.white)
+                    .padding(.bottom, 80)
                 }
+                .background(.gray50)
                 .navigationDestination(for: Trade.self) { item in
                     TradeDetailView(trade: item)
                 }

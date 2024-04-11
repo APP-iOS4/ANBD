@@ -10,29 +10,35 @@ import ANBDModel
 
 struct HomeView: View {
     @EnvironmentObject private var homeViewModel: HomeViewModel
+    
     @State private var isGoingToSearchView: Bool = false
-    @State private var category: ANBDCategory = .accua
+    @State private var isShowingWebView: Bool = false
+    @State private var blogURL: String = HomeViewModel().bannerItemList.first!.url
     
     var body: some View {
         GeometryReader { geometry in
             ScrollView {
                 LazyVStack {
                     adView
+                        .padding(.bottom, 20)
                     
                     AccuaView(geo: geometry)
                     
                     Divider()
-                        .padding(.vertical, 20)
+                        .padding(.top, 10)
+                        .padding(.bottom, 5)
                     
                     nanuaView
                     
                     Divider()
-                        .padding(.vertical, 20)
+                        .padding(.top, 10)
+                        .padding(.bottom, 5)
                     
                     baccuaView
                     
                     Divider()
-                        .padding(.vertical, 20)
+                        .padding(.top, 10)
+                        .padding(.bottom, 5)
                     
                     DasiView(geo: geometry)
                 }
@@ -58,8 +64,9 @@ struct HomeView: View {
                 })
             }
         }
-        .fullScreenCover(isPresented: $homeViewModel.isShowingWebView) {
-            SafariWebView(url: URL(string: homeViewModel.blogURL) ?? URL(string: "www.naver.com")!)
+        .fullScreenCover(isPresented: $isShowingWebView) {
+            SafariWebView(url: URL(string: blogURL) ?? URL(string: "www.naver.com")!)
+                .ignoresSafeArea(edges: .bottom)
         }
         .navigationDestination(for: ANBDCategory.self) { category in
             switch category {
@@ -84,19 +91,37 @@ struct HomeView: View {
     
     // MARK: - 광고 배너
     private var adView: some View {
-        NormalCarouselView(homeViewModel.bannerItemList) { item in
-            AsyncImage(url: URL(string: item.imageStirng)) { img in
-                img
-                    .resizable()
-                    .scaledToFill()
-            } placeholder: {
-                ProgressView()
+        TabView() {
+            ForEach(homeViewModel.bannerItemList.indices, id:\.self) { idx in
+                Button(action: {
+                    blogURL = homeViewModel.bannerItemList[idx].url
+                    isShowingWebView.toggle()
+                }, label: {
+                    ZStack {
+                        AsyncImage(url: URL(string: homeViewModel.bannerItemList[idx].imageStirng)) { img in
+                            img
+                                .resizable()
+                                .scaledToFill()
+                                .containerRelativeFrame(.horizontal)
+                            
+                        } placeholder: {
+                            ProgressView()
+                        }
+                        
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.4)]),
+                            startPoint: .center,
+                            endPoint: .bottom
+                        )
+                    }
+                })
             }
         }
+        .frame(height: 130)
         .clipShape(RoundedRectangle(cornerRadius: 12))
-        .padding(.bottom, 36)
+        .tabViewStyle(PageTabViewStyle())
+        .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .automatic))
     }
-    
     
     // MARK: - 아껴쓰기 Section
     @ViewBuilder
@@ -165,16 +190,16 @@ struct HomeView: View {
                 switch category {
                 case .accua:
                     Text("아껴쓰기")
-                        .font(ANBDFont.Heading3)
+                        .font(ANBDFont.pretendardBold(24))
                 case .nanua:
                     Text("나눠쓰기")
-                        .font(ANBDFont.Heading3)
+                        .font(ANBDFont.pretendardBold(24))
                 case .baccua:
                     Text("바꿔쓰기")
-                        .font(ANBDFont.Heading3)
+                        .font(ANBDFont.pretendardBold(24))
                 case .dasi:
                     Text("다시쓰기")
-                        .font(ANBDFont.Heading3)
+                        .font(ANBDFont.pretendardBold(24))
                 }
                 
                 Spacer()

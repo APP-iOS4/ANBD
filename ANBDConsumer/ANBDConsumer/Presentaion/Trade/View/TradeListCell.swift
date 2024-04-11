@@ -14,7 +14,7 @@ struct TradeListCell: View {
     var trade: Trade
     
     var body: some View {
-        HStack(alignment: .top) {
+        HStack() {
 //            AsyncImage(url: URL(string: trade.imagePaths.first ?? "DummyImage1"), content: { img in
 //                img.resizable()
 //                    .scaledToFit()
@@ -27,9 +27,9 @@ struct TradeListCell: View {
             
             Image("\(trade.imagePaths.first ?? "DummyImage1")")
                 .resizable()
-                .scaledToFit()
+                .frame(width: 100, height: 100)
+                .aspectRatio(contentMode: .fill)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
-                .frame(width: 110, height: 110)
                 .padding(.trailing, 10)
             
             VStack(alignment: .leading, spacing: 5) {
@@ -38,7 +38,6 @@ struct TradeListCell: View {
                     .foregroundStyle(.gray900)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
-                    .padding(.top, 15)
                 
                 HStack {
                     Text("\(trade.writerNickname)")
@@ -90,7 +89,6 @@ struct TradeListCell: View {
                         .foregroundStyle(isLiked ? .heartRed : .gray200)
                         .padding(.leading, 10)
                 })
-                .padding(.bottom)
             }
         }
     }

@@ -11,7 +11,7 @@ import ANBDModel
 struct ArticleDetailView: View {
     
     var article: Article
-
+    
     @State private var isLiked: Bool = false
     @State private var isWriter: Bool = true
     @State private var isShowingComment: Bool = false
@@ -20,7 +20,7 @@ struct ArticleDetailView: View {
     @State private var isShowingCreateView = false
     @State private var isGoingToReportView: Bool = false
     @State private var isGoingToProfileView: Bool = false
-
+    
     
     struct Comment: Identifiable {
         let id: UUID = UUID()
@@ -118,7 +118,7 @@ struct ArticleDetailView: View {
                     ForEach(comments) { comment in
                         HStack(alignment: .top) {
                             Button {
-//                                isGoingToProfileView.toggle()
+                                //                                isGoingToProfileView.toggle()
                             } label: {
                                 ZStack {
                                     Circle()
@@ -151,11 +151,9 @@ struct ArticleDetailView: View {
                                 isShowingComment.toggle()
                             } label: {
                                 Image(systemName: "ellipsis")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 13)
+                                    .font(.system(size: 13))
                                     .rotationEffect(.degrees(90))
-                                    .foregroundStyle(.gray500)
+                                    .foregroundStyle(.gray900)
                             }
                             .confirmationDialog("", isPresented: $isShowingComment) {
                                 if isWriter {
@@ -167,7 +165,7 @@ struct ArticleDetailView: View {
                                     }
                                     
                                     Button(role: .destructive) {
-
+                                        
                                     } label: {
                                         Text("삭제하기")
                                     }
@@ -202,7 +200,7 @@ struct ArticleDetailView: View {
                 Menu {
                     if isWriter {
                         // 본인 게시물 = 수정,삭제 | 다른 사람 게시물 = 신고
-
+                        
                         Button {
                             isShowingCreateView.toggle()
                         } label: {
@@ -210,7 +208,7 @@ struct ArticleDetailView: View {
                         }
                         
                         Button(role: .destructive) {
-
+                            
                         } label: {
                             Label("삭제하기", systemImage: "trash")
                         }
@@ -219,14 +217,12 @@ struct ArticleDetailView: View {
                             isGoingToReportView.toggle()
                         } label: {
                             Label("신고하기", systemImage: "exclamationmark.bubble")
-
+                            
                         }
                     }
                 } label: {
                     Image(systemName: "ellipsis")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 15)
+                        .font(.system(size: 13))
                         .rotationEffect(.degrees(90))
                         .foregroundStyle(.gray900)
                 }
@@ -253,7 +249,7 @@ struct ArticleDetailView: View {
             }
             Button {
                 if commentText.isEmpty {
-                   print("댓글 입력 안함")
+                    print("댓글 입력 안함")
                 } else {
                     let newComment = Comment(userName: "김기표", content: commentText)
                     comments.append(newComment)

@@ -62,7 +62,7 @@ struct ArticleDetailView: View {
                     .padding(.bottom, 20)
                     
                     Text("\(article.title)")
-                        .font(ANBDFont.Heading3)
+                        .font(ANBDFont.pretendardBold(24))
                         .padding(.bottom , 10)
                     
                     Text("\(article.content)")
@@ -85,14 +85,16 @@ struct ArticleDetailView: View {
                         } label: {
                             Image(systemName: isLiked ? "hand.thumbsup.fill" : "hand.thumbsup")
                                 .resizable()
-                                .frame(width: 25, height: 23)
+                                .frame(width: 16, height: 16)
                                 .foregroundStyle(isLiked ? .accent : .gray900)
                                 .padding(.leading, 10)
                             
                         }
                         Text("\(article.likeCount)")
-                            .font(ANBDFont.body1)
                             .foregroundStyle(.gray900)
+                            .font(.system(size: 12))
+                            .padding(.trailing, 10)
+                            .padding(.top, 2)
                     }
                     .padding(.vertical)
                 }
@@ -136,7 +138,7 @@ struct ArticleDetailView: View {
                                         .font(ANBDFont.SubTitle3)
                                     
                                     Text("5분 전")
-                                        .font(ANBDFont.Caption2)
+                                        .font(ANBDFont.Caption1)
                                         .foregroundStyle(.gray400)
                                 }
                                 Text("\(comment.content)")
@@ -247,23 +249,20 @@ struct ArticleDetailView: View {
                     .frame(height: 43)
                     .foregroundStyle(.gray50)
                 TextField("댓글을 입력해주세요.", text: $commentText)
-                    .font(ANBDFont.Caption1)
+                    .font(ANBDFont.Caption3)
                     .padding(20)
             }
             Button {
-                if commentText.isEmpty {
-                    print("댓글 입력 안함")
-                } else {
-                    let newComment = Comment(userName: "김기표", content: commentText)
-                    comments.append(newComment)
-                    commentText = ""
-                }
+                let newComment = Comment(userName: "김기표", content: commentText)
+                comments.append(newComment)
+                commentText = ""
             } label: {
                 Image(systemName: "paperplane.fill")
                     .font(ANBDFont.pretendardSemiBold(28))
                     .rotationEffect(.degrees(45))
                     .foregroundStyle(commentText.isEmpty ? .gray300 : .accent)
             }
+            .disabled(commentText.isEmpty)
         }
         .padding(.horizontal, 10)
         .toolbar(.hidden, for: .tabBar)

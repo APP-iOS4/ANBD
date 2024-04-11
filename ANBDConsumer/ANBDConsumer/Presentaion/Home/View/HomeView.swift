@@ -165,16 +165,16 @@ struct HomeView: View {
                 switch category {
                 case .accua:
                     Text("아껴쓰기")
-                        .font(ANBDFont.Heading3)
+                        .font(ANBDFont.pretendardBold(24))
                 case .nanua:
                     Text("나눠쓰기")
-                        .font(ANBDFont.Heading3)
+                        .font(ANBDFont.pretendardBold(24))
                 case .baccua:
                     Text("바꿔쓰기")
-                        .font(ANBDFont.Heading3)
+                        .font(ANBDFont.pretendardBold(24))
                 case .dasi:
                     Text("다시쓰기")
-                        .font(ANBDFont.Heading3)
+                        .font(ANBDFont.pretendardBold(24))
                 }
                 
                 Spacer()

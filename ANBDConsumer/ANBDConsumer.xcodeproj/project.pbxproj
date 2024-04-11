@@ -24,6 +24,7 @@
 		A816E5FE2BC1254B00138CFC /* TradeStateChangeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A816E5FD2BC1254B00138CFC /* TradeStateChangeView.swift */; };
 		A816E6002BC162DC00138CFC /* ImageDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A816E5FF2BC162DC00138CFC /* ImageDetailView.swift */; };
 		A816E6022BC1706600138CFC /* CustomAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A816E6012BC1706600138CFC /* CustomAlertView.swift */; };
+		A83983EE2BC7D4BD00868E4C /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83983ED2BC7D4BD00868E4C /* SearchViewModel.swift */; };
 		A83F2F982BBFC07C00E3EB13 /* NormalCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83F2F972BBFC07C00E3EB13 /* NormalCarouselView.swift */; };
 		A83F2F9B2BBFCD7D00E3EB13 /* SafariWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83F2F9A2BBFCD7D00E3EB13 /* SafariWebView.swift */; };
 		A8640B3A2BC391F800232F9C /* ReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8640B392BC391F800232F9C /* ReportView.swift */; };
@@ -93,6 +94,7 @@
 		A816E5FD2BC1254B00138CFC /* TradeStateChangeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeStateChangeView.swift; sourceTree = "<group>"; };
 		A816E5FF2BC162DC00138CFC /* ImageDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDetailView.swift; sourceTree = "<group>"; };
 		A816E6012BC1706600138CFC /* CustomAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlertView.swift; sourceTree = "<group>"; };
+		A83983ED2BC7D4BD00868E4C /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		A83F2F962BBF951E00E3EB13 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A83F2F972BBFC07C00E3EB13 /* NormalCarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalCarouselView.swift; sourceTree = "<group>"; };
 		A83F2F9A2BBFCD7D00E3EB13 /* SafariWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebView.swift; sourceTree = "<group>"; };
@@ -157,6 +159,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A83983EA2BC7D40900868E4C /* Search */ = {
+			isa = PBXGroup;
+			children = (
+				A83983EC2BC7D42C00868E4C /* ViewModel */,
+				A83983EB2BC7D42700868E4C /* View */,
+			);
+			path = Search;
+			sourceTree = "<group>";
+		};
+		A83983EB2BC7D42700868E4C /* View */ = {
+			isa = PBXGroup;
+			children = (
+				A87E89F22BC4370500F5331B /* SearchView.swift */,
+				A87E89F42BC43B5500F5331B /* SearchResultView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		A83983EC2BC7D42C00868E4C /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				A83983ED2BC7D4BD00868E4C /* SearchViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
 		CB198D232BC3C212000C2709 /* Button */ = {
 			isa = PBXGroup;
 			children = (
@@ -178,8 +206,6 @@
 				A816E6012BC1706600138CFC /* CustomAlertView.swift */,
 				CB198D0F2BC38BA0000C2709 /* CheckboxView.swift */,
 				A8640B392BC391F800232F9C /* ReportView.swift */,
-				A87E89F22BC4370500F5331B /* SearchView.swift */,
-				A87E89F42BC43B5500F5331B /* SearchResultView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -270,6 +296,7 @@
 				CB7BEE0B2BBD55ED00C0F298 /* Trade */,
 				CB7BEE0A2BBD55CD00C0F298 /* Article */,
 				CB7BEE092BBD55C700C0F298 /* Home */,
+				A83983EA2BC7D40900868E4C /* Search */,
 			);
 			path = Presentaion;
 			sourceTree = "<group>";
@@ -622,6 +649,7 @@
 				42C7BBDA2BC2793B00F0805A /* UserInfoEditingView.swift in Sources */,
 				CB7BEE192BBD565500C0F298 /* TradeView.swift in Sources */,
 				424CA0052BC397A600F83F8D /* TextFieldWithTitle.swift in Sources */,
+				A83983EE2BC7D4BD00868E4C /* SearchViewModel.swift in Sources */,
 				CB7BEDBB2BBD4E9D00C0F298 /* ANBDTabView.swift in Sources */,
 				CB198D182BC38BFC000C2709 /* TradeListCell.swift in Sources */,
 				CB198D1A2BC38CB9000C2709 /* Date+Extension.swift in Sources */,

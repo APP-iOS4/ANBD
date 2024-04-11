@@ -20,7 +20,7 @@ final class ArticleViewModel: ObservableObject {
 
     @Published private(set) var filteredArticles: [Article] = []
     let mockArticleData: [Article] = [
-        .init(writerID: "writerID", writerNickname: "닉네임닉네임닉네임닉네임닉네임닉네임닉네임", category: .accua, title: "아껴제목1", content: "내용내용5", likeCount: 30, commentCount: 50),
+        .init(writerID: "writerID", writerNickname: "닉네임1", category: .accua, title: "아껴제목1", content: "내용내용5", likeCount: 30, commentCount: 50),
         .init(writerID: "writerID", writerNickname: "닉네임", category: .accua, title: "아껴제목2", content: "내용내용4", likeCount: 50, commentCount: 40),
         .init(writerID: "writerID", writerNickname: "김기표", category: .accua, title: "아껴제목3", content: "내용내용3", likeCount: 10, commentCount: 30),
         .init(writerID: "writerID", writerNickname: "닉네임4", category: .accua, title: "아껴제목4", content: "내용내용2", likeCount: 40, commentCount: 20),

@@ -142,6 +142,7 @@ struct TradeCreateView: View {
                     
                     TextField("제목", text: $title)
                         .modifier(TextFieldModifier())
+                        
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 30)
@@ -280,6 +281,8 @@ struct TradeCreateView: View {
             endTextEditing()
         }
         .onAppear {
+            UITextField.appearance().clearButtonMode = .never
+            
             if !isNewProduct {
                 if let trade = trade {
                     self.title = trade.title

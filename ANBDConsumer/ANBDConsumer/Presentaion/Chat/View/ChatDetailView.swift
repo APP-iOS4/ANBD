@@ -174,7 +174,7 @@ struct ChatDetailView: View {
                     
                     Spacer()
                 }
-                .padding(.vertical, 5)
+                .padding(.vertical, 8)
             }
         }
         .frame(height: 70)

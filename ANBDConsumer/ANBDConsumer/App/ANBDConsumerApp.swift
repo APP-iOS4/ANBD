@@ -32,12 +32,25 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 @main
 struct ANBDConsumerApp: App {
+    @StateObject private var homeViewModel = HomeViewModel()
+    @StateObject private var tradeViewModel = TradeViewModel()
+    @StateObject private var myPageViewModel = MyPageViewModel()
+    @StateObject private var articleViewModel = ArticleViewModel()
+    @StateObject private var authenticationViewModel = AuthenticationViewModel()
+    @StateObject private var searchViewModel = SearchViewModel()
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
     var body: some Scene {
         WindowGroup {
-            ANBDTabView()
+            // ANBDTabView()
+            AuthenticationView()
         }
+        .environmentObject(homeViewModel)
+        .environmentObject(tradeViewModel)
+        .environmentObject(myPageViewModel)
+        .environmentObject(articleViewModel)
+        .environmentObject(authenticationViewModel)
+        .environmentObject(searchViewModel)
     }
 }

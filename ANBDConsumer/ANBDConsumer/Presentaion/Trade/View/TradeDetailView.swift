@@ -169,6 +169,9 @@ struct TradeDetailView: View {
         .navigationDestination(isPresented: $isGoingToProfileView) {
             UserPageView(isSignedInUser: false)
         }
+        .navigationTitle("나눔 · 거래")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarRole(.editor)
         .confirmationDialog("", isPresented: $isShowingConfirm) {
             if isWriter {
                 Button("수정하기") {

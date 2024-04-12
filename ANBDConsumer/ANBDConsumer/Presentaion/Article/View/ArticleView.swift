@@ -14,7 +14,8 @@ struct ArticleView: View {
     @State private var isGoingToSearchView: Bool = false
     @State private var isShowingCreateView: Bool = false
     @State var category: ANBDCategory = .accua
-    
+    @State private var currentTab: ANBDCategory = .accua
+
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             VStack(alignment: .leading) {
@@ -28,6 +29,11 @@ struct ArticleView: View {
                         .tag(ANBDCategory.dasi)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
+//                .onChange(of: currentTab) { oldValue, newCategory in
+//                    if category != newCategory {
+//                        category = newCategory
+//                    }
+//                }
             }
             
             Button {

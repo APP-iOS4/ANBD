@@ -17,7 +17,7 @@ struct ArticleCreateView: View {
     @State var category: ANBDCategory = .accua
     @State private var title: String = ""
     @State private var content : String = ""
-    @State var placeHolder : String = "ANBD 이용자들을 위해 여러분들의 아껴쓰기 / 다시쓰기 Tip을 전수해주세요!"
+    @State var placeHolder : String = "ANBD 이용자들을 위해 여러분들의 아껴쓰기/다시쓰기 Tip을 전수해주세요!"
     
     @State private var isShowingImageAlert: Bool = false
     @State private var selectedItems: [PhotosPickerItem] = []
@@ -25,7 +25,7 @@ struct ArticleCreateView: View {
     
     @State private var selectedMenuText: String = "아껴쓰기"
     
-    @State private var isShowingEditAlert: Bool = false
+    @State private var isShowingCustomAlert: Bool = false
     
     @Environment(\.dismiss) private var dismiss
     
@@ -42,7 +42,9 @@ struct ArticleCreateView: View {
                     
                     VStack {
                         TextField("제목을 입력하세요", text: $title)
-                            .onAppear() {
+
+                            .onAppear {
+                                UITextField.appearance().clearButtonMode = .never
                                 if !isNewArticle {
                                     if let article = article {
                                         self.title = article.title
@@ -59,14 +61,14 @@ struct ArticleCreateView: View {
                                 Text(placeHolder)
                                     .foregroundStyle(.gray400)
                                     .font(ANBDFont.body1)
-                                    .padding(.leading , 20)
+                                    .padding(.horizontal, 20)
                                     .padding(.top , 8)
                             }
                             TextEditor(text: $content)
                                 .scrollContentBackground(.hidden)
                                 .font(ANBDFont.body1)
-                                .padding(.leading, 15)
-                                .onAppear() {
+                                .padding(.horizontal, 20)
+                                .onAppear {
                                     if !isNewArticle {
                                         if let article = article {
                                             self.content = article.content
@@ -174,7 +176,7 @@ struct ArticleCreateView: View {
                                     
                                     // 변경이 있다면 수정 경고 표시
                                     if hasTitleChanged || hasContentChanged {
-                                        isShowingEditAlert.toggle()
+                                        isShowingCustomAlert.toggle()
                                     } else {
                                         // 변경이 없다면 뷰 닫기
                                         isShowingCreateView.toggle()
@@ -223,8 +225,8 @@ struct ArticleCreateView: View {
                 .navigationTitle(category == .accua ? "아껴쓰기" : "다시쓰기")
                 .navigationBarTitleDisplayMode(.inline)
             }
-            if isShowingEditAlert {
-                CustomAlertView(isShowingCustomAlert: $isShowingEditAlert, viewType: .leaveChatRoom) {
+            if isShowingCustomAlert {
+                CustomAlertView(isShowingCustomAlert: $isShowingCustomAlert, viewType: .leaveChatRoom) {
                     dismiss()
                 }
                 .zIndex(1)

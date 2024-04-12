@@ -82,6 +82,7 @@ extension CustomAlertView {
         //trade
         case changeState
         case tradeDelete
+        case writingCancel
     }
     
     private var title: String {
@@ -96,6 +97,8 @@ extension CustomAlertView {
             return "거래 상태 변경"
         case .tradeDelete:
             return "삭제"
+        case .writingCancel:
+            return "작성 취소"
         }
     }
     
@@ -110,7 +113,9 @@ extension CustomAlertView {
         case .changeState:
             return "거래 상태를 변경하시겠습니까?"
         case .tradeDelete:
-            return "상품을 삭제하시겠습니까?\n삭제 시 상품 정보는 복구되지 않습니다."
+            return "상품을 삭제하시겠습니까?\n삭제 시 상품 정보는 \n복구되지 않습니다."
+        case .writingCancel:
+            return "작성하던 내용을 삭제하고\n돌아가시겠습니까?"
         }
     }
     
@@ -124,7 +129,7 @@ extension CustomAlertView {
             return "탈퇴하기"
         case .changeState:
             return "변경하기"
-        case .tradeDelete:
+        case .tradeDelete, .writingCancel:
             return "삭제하기"
         }
     }
@@ -139,7 +144,7 @@ extension CustomAlertView {
             return .heartRed
         case .changeState:
             return .accent
-        case .tradeDelete:
+        case .tradeDelete, .writingCancel:
             return .heartRed
         }
     }
@@ -154,7 +159,7 @@ extension CustomAlertView {
             return .heavy
         case .changeState:
             return .medium
-        case .tradeDelete:
+        case .tradeDelete, .writingCancel:
             return .medium
         }
     }

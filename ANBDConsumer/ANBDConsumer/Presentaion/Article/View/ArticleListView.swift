@@ -81,12 +81,6 @@ struct ArticleListView: View {
         .navigationTitle(navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(isFromHomeView ? .hidden : .visible, for: .tabBar)
-        .onAppear {
-            articleViewModel.updateArticles(category: category)
-        }
-        .onChange(of: category) {
-            articleViewModel.updateArticles(category: category)
-        }
     }
 }
 

@@ -42,6 +42,12 @@ struct ArticleView: View {
                 WriteButtonView()
             }
         }
+        .onAppear {
+            articleViewModel.updateArticles(category: category)
+        }
+        .onChange(of: category) {
+            articleViewModel.updateArticles(category: category)
+        }
         .navigationTitle("정보 공유")
         .toolbarTitleDisplayMode(.inline)
         .fullScreenCover(isPresented: $isShowingCreateView, content: {

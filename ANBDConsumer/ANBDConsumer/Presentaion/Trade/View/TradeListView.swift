@@ -91,6 +91,12 @@ struct TradeListView: View {
             CategoryBottomSheet(isShowingCategory: $isShowingItemCategory)
                 .presentationDetents([.fraction(0.6)])
         }
+        .onChange(of: tradeViewModel.selectedLocations) {
+            tradeViewModel.filteringTrades(category: category)
+        }
+        .onChange(of: tradeViewModel.selectedItemCategories) {
+            tradeViewModel.filteringTrades(category: category)
+        }
     }
 }
 

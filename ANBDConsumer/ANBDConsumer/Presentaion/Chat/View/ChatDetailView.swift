@@ -109,9 +109,7 @@ struct ChatDetailView: View {
                     isShowingConfirmSheet.toggle()
                 }, label: {
                     Image(systemName: "ellipsis")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 15)
+                        .font(.system(size: 13))
                         .rotationEffect(.degrees(90))
                         .foregroundStyle(.gray900)
                 })

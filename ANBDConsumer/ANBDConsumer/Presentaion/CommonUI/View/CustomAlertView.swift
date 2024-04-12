@@ -109,7 +109,7 @@ extension CustomAlertView {
         case .changeState:
             return "거래 상태를 변경하시겠습니까?"
         case .tradeDelete:
-            return "상품을 삭제하시겠습니까?"
+            return "상품을 삭제하시겠습니까?\n삭제 시 상품 정보는 복구되지 않습니다."
         }
     }
     

@@ -68,7 +68,7 @@ struct TradeListView: View {
                                 }
                                 Divider()
                             }
-                            .padding(.horizontal, 20)
+                            .padding(.horizontal, 15)
                         }
                     }
                     .background(.white)

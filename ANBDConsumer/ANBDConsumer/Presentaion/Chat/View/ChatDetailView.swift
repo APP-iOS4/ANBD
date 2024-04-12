@@ -41,7 +41,7 @@ struct ChatDetailView: View {
     @State private var isGoingToReportView: Bool = false
     @State private var isShowingStateChangeCustomAlert: Bool = false
     @Environment(\.dismiss) private var dismiss
-    
+    @Environment(\.colorScheme) private var colorScheme: ColorScheme
     
     /// Product 관련 함수 (추후 삭제 ......)
     //@State private var isTrading: Bool = true
@@ -268,7 +268,7 @@ extension ChatDetailView {
             if let content = message.content {
                 Text(content)
                     .padding(15)
-                    .foregroundStyle(isMine ? .white : .gray900)
+                    .foregroundStyle(isMine ? .white : (colorScheme == .dark ? Color(red: 13/255, green: 15/255, blue: 20/255) : .gray900))
                     .font(ANBDFont.Caption3)
                     .background(isMine ? Color.accentColor : .gray50)
                     .clipShape(RoundedRectangle(cornerRadius: 15))

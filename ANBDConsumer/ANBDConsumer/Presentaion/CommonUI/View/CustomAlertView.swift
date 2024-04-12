@@ -82,6 +82,9 @@ extension CustomAlertView {
         //trade
         case changeState
         case tradeDelete
+        case articleEdit
+        case articleDelete
+        case commentDelete
     }
     
     private var title: String {
@@ -96,6 +99,12 @@ extension CustomAlertView {
             return "거래 상태 변경"
         case .tradeDelete:
             return "삭제"
+        case .articleEdit:
+            return "수정 취소"
+        case .articleDelete:
+            return "게시글 삭제"
+        case .commentDelete:
+            return "댓글 삭제"
         }
     }
     
@@ -111,6 +120,12 @@ extension CustomAlertView {
             return "거래 상태를 변경하시겠습니까?"
         case .tradeDelete:
             return "상품을 삭제하시겠습니까?\n삭제 시 상품 정보는 복구되지 않습니다."
+        case .articleEdit:
+            return "게시글 수정을 취소하시겠습니까?\n취소한 수정사항은 복구되지 않습니다."
+        case .articleDelete:
+            return "해당 게시글을 삭제하시겠습니까?\n삭제한 게시글은 복구되지 않습니다."
+        case .commentDelete:
+            return "해딩 댓글을 삭제하시겠습니까?\n삭제한 댓글은 복구되지 않습니다."
         }
     }
     
@@ -125,6 +140,12 @@ extension CustomAlertView {
         case .changeState:
             return "변경하기"
         case .tradeDelete:
+            return "삭제하기"
+        case .articleEdit:
+            return "취소하기"
+        case .articleDelete:
+            return "삭제하기"
+        case .commentDelete:
             return "삭제하기"
         }
     }
@@ -141,6 +162,12 @@ extension CustomAlertView {
             return .accent
         case .tradeDelete:
             return .heartRed
+        case .articleEdit:
+            return .heartRed
+        case .articleDelete:
+            return .heartRed
+        case .commentDelete:
+            return .heartRed
         }
     }
     
@@ -155,6 +182,12 @@ extension CustomAlertView {
         case .changeState:
             return .medium
         case .tradeDelete:
+            return .medium
+        case .articleEdit:
+            return .medium
+        case .articleDelete:
+            return .medium
+        case .commentDelete:
             return .medium
         }
     }

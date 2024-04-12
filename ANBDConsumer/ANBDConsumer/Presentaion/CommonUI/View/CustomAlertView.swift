@@ -152,6 +152,10 @@ extension CustomAlertView {
             return .medium
         case .withdrawal:
             return .heavy
+        case .changeState:
+            return .medium
+        case .tradeDelete:
+            return .medium
         }
     }
 }

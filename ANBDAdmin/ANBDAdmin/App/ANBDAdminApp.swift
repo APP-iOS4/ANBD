@@ -37,7 +37,7 @@ struct ANBDAdminApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            AdminHomeView()
         }
     }
 }

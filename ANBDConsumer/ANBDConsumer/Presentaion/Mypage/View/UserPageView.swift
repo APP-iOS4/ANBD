@@ -11,16 +11,22 @@ import ANBDModel
 struct UserPageView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     
+    private let userUseCase: UserUsecase = DefaultUserUsecase()
+    
     @State private var isShowingAccountManagementView = false
     @State private var isShowingPolicyView = false
     @State private var isShowingReportDialog = false
+    @State private var isShowingHeartTrades = false
+    @State private var isShowingLikedArticles = false
+    
+    @State private var category: ANBDCategory = .accua
     
     // 임시 분기처리를 위한 프로퍼티
     var isSignedInUser: Bool
     
     var body: some View {
         VStack(spacing: 20) {
-            Group {
+            Group {  // UserInfo
                 HStack {
                     Image(uiImage: isSignedInUser ? myPageViewModel.userProfileImage : UIImage(named: "DefaultUserProfileImage")!)
                         .resizable()
@@ -66,33 +72,46 @@ struct UserPageView: View {
                 }
             }
             
-            Group {
+            Group {  // User Activities
                 HStack(spacing: 12) {
-                    ActivityInfoComponent(title: "아껴 쓴 개수", count: 5)
+                    ActivityInfoComponent(title: "아껴 쓴 개수", count: 5, category: .accua)
                     Divider()
                         .frame(height: 60)
                     
-                    ActivityInfoComponent(title: "나눠 쓴 개수", count: 8)
+                    ActivityInfoComponent(title: "나눠 쓴 개수", count: 8, category: .nanua)
                     Divider()
                         .frame(height: 60)
                     
-                    ActivityInfoComponent(title: "바꿔 쓴 개수", count: 13)
+                    ActivityInfoComponent(title: "바꿔 쓴 개수", count: 13, category: .baccua)
                     Divider()
                         .frame(height: 60)
                     
-                    ActivityInfoComponent(title: "다시 쓴 개수", count: 19)
+                    ActivityInfoComponent(title: "다시 쓴 개수", count: 19, category: .dasi)
                 }
             }
             
             if isSignedInUser {
-                Group {
+                Group {  // Another Functions
                     VStack(alignment: .leading) {
                         Divider()
                         
                         Button(action: {
                             // 각 리스트로 이동할 뷰
+                            isShowingHeartTrades.toggle()
                         }, label: {
-                            Text("내가 찜한 나눔 ・ 거래 보기")
+                            Text("내가 찜한 나눔・거래 보기")
+                                .foregroundStyle(Color.gray900)
+                                .font(ANBDFont.SubTitle2)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding()
+                        })
+                        
+                        Divider()
+                        
+                        Button(action: {
+                            isShowingLikedArticles.toggle()
+                        }, label: {
+                            Text("내가 좋아요한 게시글 보기")
                                 .foregroundStyle(Color.gray900)
                                 .font(ANBDFont.SubTitle2)
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -117,6 +136,17 @@ struct UserPageView: View {
                         SafariWebView(url: URL(string: "https://maru-study-note.tistory.com/")!)
                             .ignoresSafeArea(edges: .bottom)
                     }
+                    
+                    .navigationDestination(isPresented: $isShowingHeartTrades) {
+                        UserLikedContentsView(category: .nanua)
+                            .toolbarRole(.editor)
+                            .toolbar(.hidden, for: .tabBar)
+                    }
+                    .navigationDestination(isPresented: $isShowingLikedArticles) {
+                        UserLikedContentsView(category: .accua)
+                            .toolbarRole(.editor)
+                            .toolbar(.hidden, for: .tabBar)
+                    }
                 }
             }
             
@@ -135,9 +165,7 @@ struct UserPageView: View {
                         isShowingReportDialog.toggle()
                     }, label: {
                         Image(systemName: "ellipsis")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 15)
+                            .font(.system(size: 13))
                             .rotationEffect(.degrees(90))
                             .foregroundStyle(.gray900)
                     })
@@ -154,10 +182,17 @@ struct UserPageView: View {
     }
     
     @ViewBuilder
-    private func ActivityInfoComponent(title: String, count: Int) -> some View {
-        Button(action: {
-            
-        }, label: {
+    private func ActivityInfoComponent(title: String, count: Int, category: ANBDCategory) -> some View {
+        NavigationLink {
+            if isSignedInUser {
+                UserActivityListView(category: category,
+                                     user: myPageViewModel.user)
+                .toolbarRole(.editor)
+            } else {
+                UserActivityListView(category: category,
+                                     user: myPageViewModel.user)
+            }
+        } label: {
             VStack(alignment: .center, spacing: 5) {
                 
                 Text("\(title)")
@@ -167,7 +202,8 @@ struct UserPageView: View {
                 Text("\(count)")
                     .font(ANBDFont.pretendardSemiBold(22))
             }
-        })
+        }
+        
     }
 }
 

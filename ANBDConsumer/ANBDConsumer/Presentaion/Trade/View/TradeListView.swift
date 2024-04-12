@@ -64,7 +64,7 @@ struct TradeListView: View {
                             VStack {
                                 NavigationLink(value: trade) {
                                     TradeListCell(trade: trade)
-                                        .padding(.top, 5)
+                                        .padding(.vertical, 5)
                                 }
                                 Divider()
                             }
@@ -90,15 +90,6 @@ struct TradeListView: View {
         .sheet(isPresented: $isShowingItemCategory) {
             CategoryBottomSheet(isShowingCategory: $isShowingItemCategory)
                 .presentationDetents([.fraction(0.6)])
-        }
-        .onAppear {
-            tradeViewModel.filteringTrades(category: category)
-        }
-        .onChange(of: tradeViewModel.selectedLocations) {
-            tradeViewModel.filteringTrades(category: category)
-        }
-        .onChange(of: tradeViewModel.selectedItemCategories) {
-            tradeViewModel.filteringTrades(category: category)
         }
     }
 }

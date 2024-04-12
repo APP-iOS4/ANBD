@@ -9,56 +9,54 @@ import SwiftUI
 import ANBDModel
 
 struct ArticleListView: View {
-    @State private var articleList: [Article] = []
-    @State private var deletedArticleID: String? // 삭제 상태 변수
-    let articleUsecase = DefaultArticleUsecase()
+    @StateObject private var articleListViewModel = ArticleListViewModel()
+    @State private var searchArticleText = "" // 검색 텍스트 추적하는 변수
     
     var body: some View {
-        List {
-            ForEach(articleList, id: \.id) { article in
-                NavigationLink(destination: ArticleListDetailView(article: article, deletedArticleID: $deletedArticleID)) {
-                    HStack{
-                        VStack(alignment: .leading) {
-                            Text("제목")
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
-                            Text("\(article.title)")
-                                .font(.title3)
+        VStack {
+            TextField("검색...", text: $searchArticleText)
+                .padding(7)
+                .background(Color(.systemGray6))
+                .cornerRadius(8)
+                .padding(.horizontal, 10)
+            List {
+                ForEach(articleListViewModel.articleList.filter({ searchArticleText.isEmpty ? true : $0.title.contains(searchArticleText) }), id: \.id) { article in
+                    NavigationLink(destination: ArticleListDetailView(article: article, deletedArticleID: $articleListViewModel.deletedArticleID)) {
+                        HStack{
+                            VStack(alignment: .leading) {
+                                Text("제목")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                Text("\(article.title)")
+                                    .font(.title3)
+                            }
+                            .frame(minWidth: 0, maxWidth: 250, alignment: .leading)
+                            Spacer()
+                            VStack(alignment: .leading) {
+                                Text("작성자 닉네임")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                Text("\(article.writerNickname)")
+                            }
+                            .frame(minWidth: 0, maxWidth: 250, alignment: .leading)
+                            Spacer()
+                            VStack(alignment: .leading) {
+                                Text("생성일자")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                Text("\(dateFormatter(article.createdAt))")
+                            }
+                            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                            Spacer()
                         }
-                        .frame(minWidth: 0, maxWidth: 250, alignment: .leading)
-                        Spacer()
-                        VStack(alignment: .leading) {
-                            Text("작성자 닉네임")
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
-                            Text("\(article.writerNickname)")
-                        }
-                        .frame(minWidth: 0, maxWidth: 250, alignment: .leading)
-                        Spacer()
-                        VStack(alignment: .leading) {
-                            Text("생성일자")
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
-                            Text("\(dateFormatter(article.createdAt))")
-                        }
-                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                        Spacer()
                     }
                 }
             }
-        }
-
-        .onAppear {
-            if articleList.isEmpty || articleList.contains(where: { $0.id == deletedArticleID })  {
-                Task {
-                    do {
-                        self.articleList = try await articleUsecase.loadArticleList()
-                    } catch {
-                        print("게시물 목록을 가져오는데 실패했습니다: \(error)")
-                    }
-                }
+            
+            .onAppear {
+                articleListViewModel.loadArticles()
             }
+            .navigationBarTitle("게시물 목록")
         }
-        .navigationBarTitle("게시물 목록")
     }
 }

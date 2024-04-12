@@ -19,6 +19,8 @@
 		820741BB2BC8EF0700CB4584 /* UserListDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820741AE2BC8EF0600CB4584 /* UserListDetailView.swift */; };
 		820741BC2BC8EF0700CB4584 /* UserListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820741AF2BC8EF0600CB4584 /* UserListView.swift */; };
 		820741BD2BC8EF0700CB4584 /* AdminHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820741B12BC8EF0600CB4584 /* AdminHomeView.swift */; };
+		820741BF2BC9000900CB4584 /* ArticleListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820741BE2BC9000900CB4584 /* ArticleListViewModel.swift */; };
+		820741C12BC9014200CB4584 /* TradeListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820741C02BC9014200CB4584 /* TradeListViewModel.swift */; };
 		CB7BEDD32BBD4EE300C0F298 /* ANBDAdminApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7BEDD22BBD4EE300C0F298 /* ANBDAdminApp.swift */; };
 		CB7BEDD72BBD4EE500C0F298 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB7BEDD62BBD4EE500C0F298 /* Assets.xcassets */; };
 		CB7BEDED2BBD537A00C0F298 /* Pretendard-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CB7BEDE82BBD537A00C0F298 /* Pretendard-Bold.otf */; };
@@ -43,6 +45,8 @@
 		820741AE2BC8EF0600CB4584 /* UserListDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserListDetailView.swift; sourceTree = "<group>"; };
 		820741AF2BC8EF0600CB4584 /* UserListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserListView.swift; sourceTree = "<group>"; };
 		820741B12BC8EF0600CB4584 /* AdminHomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdminHomeView.swift; sourceTree = "<group>"; };
+		820741BE2BC9000900CB4584 /* ArticleListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleListViewModel.swift; sourceTree = "<group>"; };
+		820741C02BC9014200CB4584 /* TradeListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeListViewModel.swift; sourceTree = "<group>"; };
 		CB7BEDCF2BBD4EE300C0F298 /* ANBDAdmin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ANBDAdmin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB7BEDD22BBD4EE300C0F298 /* ANBDAdminApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ANBDAdminApp.swift; sourceTree = "<group>"; };
 		CB7BEDD62BBD4EE500C0F298 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -69,8 +73,9 @@
 		820741A42BC8EF0600CB4584 /* ANBDArticle */ = {
 			isa = PBXGroup;
 			children = (
-				820741A22BC8EF0600CB4584 /* ArticleListDetailView.swift */,
 				820741A32BC8EF0600CB4584 /* ArticleListView.swift */,
+				820741BE2BC9000900CB4584 /* ArticleListViewModel.swift */,
+				820741A22BC8EF0600CB4584 /* ArticleListDetailView.swift */,
 			);
 			path = ANBDArticle;
 			sourceTree = "<group>";
@@ -78,8 +83,9 @@
 		820741A72BC8EF0600CB4584 /* ANBDTrade */ = {
 			isa = PBXGroup;
 			children = (
-				820741A52BC8EF0600CB4584 /* TradeListDetailView.swift */,
 				820741A62BC8EF0600CB4584 /* TradeListView.swift */,
+				820741C02BC9014200CB4584 /* TradeListViewModel.swift */,
+				820741A52BC8EF0600CB4584 /* TradeListDetailView.swift */,
 			);
 			path = ANBDTrade;
 			sourceTree = "<group>";
@@ -288,6 +294,8 @@
 				820741BB2BC8EF0700CB4584 /* UserListDetailView.swift in Sources */,
 				820741B42BC8EF0700CB4584 /* ArticleListView.swift in Sources */,
 				820741BA2BC8EF0700CB4584 /* ReportedCommentListView.swift in Sources */,
+				820741C12BC9014200CB4584 /* TradeListViewModel.swift in Sources */,
+				820741BF2BC9000900CB4584 /* ArticleListViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

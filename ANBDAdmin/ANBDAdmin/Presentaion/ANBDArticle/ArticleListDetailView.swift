@@ -9,10 +9,11 @@ import SwiftUI
 import ANBDModel
 
 struct ArticleListDetailView: View {
-    @Environment(\.presentationMode) var articlepresentationMode
+    @Environment(\.presentationMode) var articlePresentationMode
     let article: Article
     let articleUsecase = DefaultArticleUsecase()
     @Binding var deletedArticleID: String?
+    @State private var articleDeleteShowingAlert = false // 경고 표시 상태를 추적 변수
 
     
     var body: some View {
@@ -30,18 +31,28 @@ struct ArticleListDetailView: View {
         }
         .navigationBarTitle(article.title)
         .toolbar {
-            Button("Delete") {
-                Task {
-                    do {
-                        try await articleUsecase.deleteArticle(article: article)
-                        deletedArticleID = article.id
-                        articlepresentationMode.wrappedValue.dismiss()
-                    } catch {
-                        print("게시물을 삭제하는데 실패했습니다: \(error)")
+                    Button("Delete") {
+                        articleDeleteShowingAlert = true // 경고를 표시
                     }
                 }
-            }
-        }
+                .alert(isPresented: $articleDeleteShowingAlert) { // 경고를 표시
+                    Alert(
+                        title: Text("Delete"),
+                        message: Text("Are you sure you want to delete this trade?"),
+                        primaryButton: .destructive(Text("Delete")) {
+                            Task {
+                                do {
+                                    try await articleUsecase.deleteArticle(article: article)
+                                    deletedArticleID = article.id
+                                    articlePresentationMode.wrappedValue.dismiss()
+                                } catch {
+                                    print("게시물을 삭제하는데 실패했습니다: \(error)")
+                                }
+                            }
+                        },
+                        secondaryButton: .cancel()
+                    )
+                }
     }
 }
 

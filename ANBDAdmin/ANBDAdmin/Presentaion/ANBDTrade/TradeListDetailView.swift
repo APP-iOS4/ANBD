@@ -13,7 +13,8 @@ struct TradeListDetailView: View {
     let trade: Trade
     let tradeUsecase = DefaultTradeUsecase()
     @Binding var deletedTradeID: String?
-    
+    @State private var tradeDeleteShowingAlert = false // 경고 표시 상태를 추적 변수
+
     var body: some View {
         List {
             Text("제목:").foregroundColor(.gray) + Text(" \(trade.title)")
@@ -29,18 +30,28 @@ struct TradeListDetailView: View {
         }
         .navigationBarTitle(trade.title)
         .toolbar {
-            Button("Delete") {
-                Task {
-                    do {
-                        try await tradeUsecase.deleteTrade(trade: trade)
-                        deletedTradeID = trade.id
-                        tradepresentationMode.wrappedValue.dismiss()
-                    } catch {
-                        print("게시물을 삭제하는데 실패했습니다: \(error)")
+                    Button("Delete") {
+                        tradeDeleteShowingAlert = true // 경고를 표시
                     }
                 }
-            }
-        }
+                .alert(isPresented: $tradeDeleteShowingAlert) { // 경고를 표시
+                    Alert(
+                        title: Text("Delete"),
+                        message: Text("Are you sure you want to delete this trade?"),
+                        primaryButton: .destructive(Text("Delete")) {
+                            Task {
+                                do {
+                                    try await tradeUsecase.deleteTrade(trade: trade)
+                                    deletedTradeID = trade.id
+                                    tradepresentationMode.wrappedValue.dismiss()
+                                } catch {
+                                    print("게시물을 삭제하는데 실패했습니다: \(error)")
+                                }
+                            }
+                        },
+                        secondaryButton: .cancel()
+                    )
+                }
     }
 }
 

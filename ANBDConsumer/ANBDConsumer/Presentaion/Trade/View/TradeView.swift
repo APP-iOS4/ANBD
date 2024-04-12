@@ -38,10 +38,11 @@ struct TradeView: View {
             })
         }//ZStack
         .fullScreenCover(isPresented: $isShowingCreate) {
-            TradeCreateView(isShowingCreate: $isShowingCreate)
+            TradeCreateView(isShowingCreate: $isShowingCreate, category: category)
         }
         .navigationTitle("나눔 · 거래")
         .toolbarTitleDisplayMode(.inline)
+        .toolbarRole(.editor)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {

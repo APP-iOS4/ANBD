@@ -16,6 +16,7 @@ final class DefaultArticleRepository: ArticleRepository {
     
     private var allQuery: Query?
     private var writerIDQuery: Query?
+    private var orderQuery: Query?
     private var searchQuery: Query?
     
     init() { }
@@ -35,6 +36,29 @@ final class DefaultArticleRepository: ArticleRepository {
         guard let article = try? await articleDB.document(articleID).getDocument(as: Article.self)
         else {
             throw DBError.getDocumentError(message: "ID가 일치하는 Article document를 읽어오는데 실패했습니다.")
+        }
+        
+        return article
+    }
+    
+    func readRecentArticle(category: ANBDCategory) async throws -> Article {
+        guard category == .accua || category == .dasi else {
+            throw NSError(domain: "Recent Article Category Error", code: 4011)
+            
+        }
+        
+        let query = articleDB
+            .whereField("category", isEqualTo: category.rawValue)
+            .order(by: "createdAt", descending: true)
+            .limit(to: 1)
+        
+        guard let article = try? await query
+            .getDocuments()
+            .documents
+            .first?
+            .data(as: Article.self)
+        else {
+            throw DBError.getDocumentError(message: "최근 Article을 읽어오는데 실패했습니다.")
         }
         
         return article
@@ -94,6 +118,42 @@ final class DefaultArticleRepository: ArticleRepository {
         return try await requestQuery.getDocuments().documents.compactMap { try $0.data(as: Article.self) }
     }
     
+    func readArticleList(by order: ArticleOrder) async throws -> [Article] {
+        var requestQuery: Query
+        
+        if let orderQuery {
+            requestQuery = orderQuery
+        } else {
+            requestQuery = switch order {
+            case .latest:
+                articleDB
+                    .order(by: "createdAt", descending: true)
+                    .limit(to: 10)
+            case .mostLike:
+                articleDB
+                    .order(by: "likeCount", descending: true)
+                    .order(by: "createdAt", descending: true)
+                    .limit(to: 10)
+            case .mostComment:
+                articleDB
+                    .order(by: "commentCount", descending: true)
+                    .order(by: "createdAt", descending: true)
+                    .limit(to: 10)
+            }
+            
+            guard let lastSnapshot = try await requestQuery.getDocuments().documents.last else {
+                print("end")
+                return []
+            }
+            
+            let next = requestQuery.start(afterDocument: lastSnapshot)
+            orderQuery = next
+        }
+        
+        let articleList = try await requestQuery.getDocuments().documents.compactMap { try $0.data(as: Article.self) }
+        return articleList
+    }
+    
     func readArticleList(keyword: String) async throws -> [Article] {
         guard !keyword.isEmpty else { return [] }
         
@@ -141,6 +201,11 @@ final class DefaultArticleRepository: ArticleRepository {
     func refreshWriterID(writerID: String) async throws -> [Article] {
         writerIDQuery = nil
         return try await readArticleList(writerID: writerID)
+    }
+    
+    func refreshOrder(by order: ArticleOrder) async throws -> [Article] {
+        orderQuery = nil
+        return try await readArticleList(by: order)
     }
     
     func refreshSearch(keyword: String) async throws -> [Article] {

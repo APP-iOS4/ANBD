@@ -75,9 +75,15 @@ struct HomeView: View {
             switch category {
             case .accua, .dasi:
                 ArticleListView(category: category, isFromHomeView: true)
+                    .onAppear {
+                        articleViewModel.updateArticles(category: category)
+                    }
                 
             case .nanua, .baccua:
                 TradeListView(category: category, isFromHomeView: true)
+                    .onAppear {
+                        tradeViewModel.filteringTrades(category: category)
+                    }
             }
         }
         .navigationDestination(for: Article.self) { article in

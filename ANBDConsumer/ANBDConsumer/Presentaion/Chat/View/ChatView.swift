@@ -101,7 +101,7 @@ struct SwipeAction<Content: View>: View {
             }
             .scrollIndicators(.hidden)
             .scrollTargetBehavior(.viewAligned)
-            .background(.white)
+//            .background(.white)
         }
     }
     

@@ -16,11 +16,14 @@ struct TradeDetailView: View {
     @State private var isShowingCreat: Bool = false
     @State private var isGoingToChatView: Bool = false
     @State private var isGoingToProfileView: Bool = false
+    @State private var isShowingConfirm: Bool = false
+    @State private var isShowingImageDetailView: Bool = false
     
     //임시..
     @State private var isLiked: Bool = false
     @State private var isWriter: Bool = true
     @State private var isTraiding: Bool = true
+    @State private var detailImage: String = "DummpyPuppy1"
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -40,14 +43,26 @@ struct TradeDetailView: View {
                             .resizable()
                             .scaledToFill()
                             .containerRelativeFrame(.horizontal)
+                            .onTapGesture {
+                                detailImage = "DummyImage1"
+                                isShowingImageDetailView.toggle()
+                            }
                         Image(.dummyPuppy1)
                             .resizable()
                             .scaledToFill()
                             .containerRelativeFrame(.horizontal)
+                            .onTapGesture {
+                                detailImage = "DummyPuppy1"
+                                isShowingImageDetailView.toggle()
+                            }
                         Image(.dummyPuppy2)
                             .resizable()
                             .scaledToFill()
                             .containerRelativeFrame(.horizontal)
+                            .onTapGesture {
+                                detailImage = "DummyPuppy2"
+                                isShowingImageDetailView.toggle()
+                            }
                     }
                     .frame(height: 300)
                     .tabViewStyle(PageTabViewStyle())
@@ -61,33 +76,35 @@ struct TradeDetailView: View {
                         }, label: {
                             Image(.dummyImage1) // UserViewModel과 연결해야함
                                 .resizable()
+                                .frame(width: 40, height: 40)
                                 .scaledToFill()
                                 .clipShape(Circle())
-                                .frame(width: 40, height: 40)
                         })
-                        
-                        Text("\(trade.writerNickname)")
-                            .font(ANBDFont.SubTitle1)
-                            .foregroundStyle(.gray900)
+                        VStack(alignment: .leading) {
+                            Text("\(trade.writerNickname)")
+                                .font(ANBDFont.SubTitle1)
+                                .foregroundStyle(.gray900)
+                            
+                            Text("\(trade.createdAt.relativeTimeNamed)")
+                                .font(ANBDFont.body2)
+                                .foregroundStyle(.gray600)
+                        }
                         
                         Spacer()
                         
-                        Text("\(trade.createdAt.relativeTimeNamed)")
-                            .font(ANBDFont.SubTitle1)
-                            .foregroundStyle(.gray600)
+                        TradeStateChangeView(tradeState: $trade.tradeState, fontSize: 17)
                     }//HStack
-                    .padding(10)
+                    .padding(5)
+                    .padding(.horizontal, 5)
                     
                     Divider()
                     
                     VStack(alignment: .leading) {
-                        if isWriter {
-                            TradeStateChangeView(tradeState: $trade.tradeState)
-                        }
                         Text("\(trade.title)")
                             .font(ANBDFont.Heading3)
                             .foregroundStyle(.gray900)
                             .fontWeight(.bold)
+                            .padding(.bottom, 1)
                         Text("\(trade.itemCategory.rawValue) · \(trade.location.description)")
                             .font(ANBDFont.body1)
                             .foregroundStyle(.gray500)
@@ -108,27 +125,9 @@ struct TradeDetailView: View {
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    if isWriter {
-                        Button(action: {
-                            isShowingCreat.toggle()
-                            tradeViewModel.selectedLocation = trade.location
-                            tradeViewModel.selectedItemCategory = trade.itemCategory
-                        }, label: {
-                            Label("수정하기", systemImage: "square.and.pencil")
-                        })
-                        Button(role: .destructive) {
-                            isShowingDeleteAlert.toggle()
-                        } label: {
-                            Label("삭제하기", systemImage: "trash")
-                        }
-                    } else {
-                        Button(role: .destructive, action: {
-                            isGoingToReportView.toggle()
-                        }, label: {
-                            Label("신고하기", systemImage: "exclamationmark.bubble")
-                        })}
-                } label: {
+                Button(action: {
+                    isShowingConfirm.toggle()
+                }) {
                     Image(systemName: "ellipsis")
                         .font(.system(size: 13))
                         .rotationEffect(.degrees(90))
@@ -142,11 +141,31 @@ struct TradeDetailView: View {
         }) {
             TradeCreateView(isShowingCreate: $isShowingCreat, isNewProduct: false, trade: trade)
         }
+        .fullScreenCover(isPresented: $isShowingImageDetailView) {
+            ImageDetailView(imageString: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
+        }
         .navigationDestination(isPresented: $isGoingToReportView) {
             ReportView(reportViewType: .trade)
         }
         .navigationDestination(isPresented: $isGoingToProfileView) {
             UserPageView(isSignedInUser: false)
+        }
+        .confirmationDialog("", isPresented: $isShowingConfirm) {
+            if isWriter {
+                Button("수정하기") {
+                    isShowingCreat.toggle()
+                    tradeViewModel.selectedLocation = trade.location
+                    tradeViewModel.selectedItemCategory = trade.itemCategory
+                }
+                
+                Button("삭제하기", role: .destructive) {
+                    isShowingDeleteAlert.toggle()
+                }
+            } else {
+                Button("신고하기", role: .destructive) {
+                    isGoingToReportView.toggle()
+                }
+            }
         }
         .alert("상품을 삭제하시겠습니까?", isPresented: $isShowingDeleteAlert) {
             Button("삭제", role: .destructive) {
@@ -164,13 +183,14 @@ extension TradeDetailView {
         HStack {
             Image(systemName: isLiked ? "heart": "heart.fill")
                 .contentTransition(.symbolEffect(.replace))
-                .font(.system(size: 20))
+                .font(.system(size: 30))
                 .foregroundStyle(isLiked ? .gray200 : .heartRed)
                 .padding(.leading, 15)
                 .onTapGesture {
                     isLiked.toggle()
                 }
                 .padding()
+                .padding(.leading, -10)
             
             VStack(alignment: .leading) {
                 
@@ -199,6 +219,7 @@ extension TradeDetailView {
                     EmptyView()
                 }
             }
+            .padding(.leading, -10)
             
             Spacer()
             

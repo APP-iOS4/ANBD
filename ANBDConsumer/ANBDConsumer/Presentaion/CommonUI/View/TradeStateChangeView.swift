@@ -13,6 +13,7 @@ struct TradeStateChangeView: View {
     @Binding var tradeState: TradeState
     @State private var isShowingConfirm: Bool = false
     @State private var isShowingAlert: Bool = false
+    var fontSize: CGFloat = 14
     
     var body: some View {
         Button(action: {
@@ -20,7 +21,8 @@ struct TradeStateChangeView: View {
         }, label: {
             HStack {
                 Text("\(tradeState.description)")
-                    .font(ANBDFont.SubTitle3)
+                    .font(ANBDFont.pretendardSemiBold(fontSize))
+//                    .font(ANBDFont.SubTitle3)
                 
                 Image(systemName: "chevron.down")
                     .resizable()

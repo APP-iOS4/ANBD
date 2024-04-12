@@ -15,9 +15,11 @@ public protocol ArticleUsecase {
     func loadRecentArticle(category: ANBDCategory) async throws -> Article
     func loadArticleList() async throws -> [Article]
     func loadArticleList(writerID: String) async throws -> [Article]
+    func loadArticleList(by order: ArticleOrder) async throws -> [Article]
     func searchArticle(keyword: String) async throws -> [Article]
     func refreshAllArticleList() async throws -> [Article]
     func refreshWriterIDArticleList(writerID: String) async throws -> [Article]
+    func refreshSortedArticleList(by order: ArticleOrder) async throws -> [Article]
     func refreshSearchArticleList(keyword: String) async throws -> [Article]
     func updateArticle(article: Article, imageDatas: [Data]) async throws
     func likeArticle(articleID: String) async throws
@@ -88,6 +90,15 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     }
     
     
+    /// 정렬 방식에 따라 정렬된 모든 Article을 불러오는 메서드
+    /// - Parameters:
+    ///   - filter: 불러올 Article의 정렬 방식
+    /// - Returns: 정렬된 Article 배열
+    public func loadArticleList(by order: ArticleOrder) async throws -> [Article] {
+        try await articleRepository.readArticleList(by: order)
+    }
+    
+    
     /// keyword로 Article을 불러오는 메서드
     /// - Parameters:
     ///   - keyword: 검색할 keyword
@@ -110,6 +121,15 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     /// - Returns: writerID가 일치하는 Article 배열
     public func refreshWriterIDArticleList(writerID: String) async throws -> [Article] {
         try await articleRepository.refreshWriterID(writerID: writerID)
+    }
+    
+    
+    /// 페이지네이션 Query를 초기화하고 정렬 방식에 따라 정렬된 Article 목록 10개를 불러오는 메서드
+    /// - Parameters:
+    ///   - filter: 불러올 Article의 정렬 방식
+    /// - Returns: 정렬된 Article 배열
+    public func refreshSortedArticleList(by order: ArticleOrder) async throws -> [Article] {
+        try await articleRepository.refreshOrder(by: order)
     }
     
     

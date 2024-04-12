@@ -80,7 +80,7 @@ struct DefaultUserRepository: UserRepository {
     
     /// 좋아요한 게시글이 삭제됐을 때 User의 좋아요한 배열에서 삭제하는 메서드
     func updateUserInfoList(articleID: String) async throws {
-        guard let snapshot = try? await userDB.whereField("likedArticles", arrayContains: articleID).getDocuments().documents
+        guard let snapshot = try? await userDB.whereField("likeArticles", arrayContains: articleID).getDocuments().documents
         else {
             throw DBError.getDocumentError(message: "articleID를 좋아요한 User documents를 읽어오는데 실패했습니다.")
         }

@@ -15,6 +15,7 @@ final class DefaultTradeRepository: TradeRepository {
     
     private var allQuery: Query?
     private var writerIDQuery: Query?
+    private var filterQuery: Query?
     private var searchQuery: Query?
     
     init() { }
@@ -127,6 +128,67 @@ final class DefaultTradeRepository: TradeRepository {
         return try await requestQuery.getDocuments().documents.compactMap { try $0.data(as: Trade.self) }
     }
     
+    func readTradeList(
+        category: ANBDCategory,
+        location: Location?,
+        itemCategory: ItemCategory?
+    ) async throws -> [Trade] {
+        guard category == .nanua || category == .baccua else {
+            throw NSError(domain: "Recent Trade Category Error", code: 4012)
+        }
+        
+        var requestQuery: Query
+        var query = tradeDB
+            .whereField("category", isEqualTo: category.rawValue)
+        
+        if let location, let itemCategory {
+            query = query.whereFilter(
+                .andFilter([
+                    .whereField("location", isEqualTo: location.rawValue),
+                    .whereField("itemCategory", isEqualTo: itemCategory.rawValue)
+                ])
+            )
+        } else if let location {
+            query = tradeDB
+                .whereField("location", isEqualTo: location.rawValue)
+        } else if let itemCategory {
+            query = tradeDB
+                .whereField("itemCategory", isEqualTo: itemCategory.rawValue)
+        }
+        
+        query = query
+            .order(by: "createdAt", descending: true)
+            .limit(to: 10)
+        
+        if let filterQuery {
+            requestQuery = filterQuery
+        } else {
+            requestQuery = query
+            
+            guard let lastSnapshot = try await requestQuery
+                .getDocuments()
+                .documents
+                .last
+            else {
+                print("end")
+                return []
+            }
+            
+            let next = query.start(afterDocument: lastSnapshot)
+            
+            filterQuery = next
+        }
+        
+        guard let snapshot = try? await requestQuery.getDocuments().documents
+        else {
+            throw DBError.getDocumentError(message: "필터링 된 Trade List를 불러오는데 실패했습니다.")
+        }
+        
+        let tradeList = snapshot.compactMap { try? $0.data(as: Trade.self) }
+        
+        return tradeList
+    }
+    
     func readTradeList(keyword: String) async throws -> [Trade] {
         guard !keyword.isEmpty else { return [] }
         
@@ -167,6 +229,28 @@ final class DefaultTradeRepository: TradeRepository {
         return try await requestQuery.getDocuments().documents.compactMap { try $0.data(as: Trade.self) }
     }
     
+    func readRecentTradeList(category: ANBDCategory) async throws -> [Trade] {
+        guard category == .nanua || category == .baccua else {
+            throw NSError(domain: "Recent Trade Category Error", code: 4012)
+        }
+        
+        let query = tradeDB
+            .whereField("category", isEqualTo: category)
+            .order(by: "createdAt", descending: true)
+            .limit(to: category == .nanua ? 4 : 2)
+        
+        guard let snapshot = try? await query
+            .getDocuments()
+            .documents
+        else {
+            throw DBError.getDocumentError(message: "최근 \(category.description) Trade 목록을 읽어오는데 실패했습니다.")
+        }
+                
+        let tradeList = snapshot.compactMap { try? $0.data(as: Trade.self) }
+    
+        return tradeList
+    }
+    
     func refreshAll() async throws -> [Trade] {
         allQuery = nil
         return try await readTradeList()
@@ -175,6 +259,24 @@ final class DefaultTradeRepository: TradeRepository {
     func refreshWriterID(writerID: String) async throws -> [Trade] {
         writerIDQuery = nil
         return try await readTradeList(writerID: writerID)
+    }
+    
+    func refreshFilter(
+        category: ANBDCategory,
+        location: Location?,
+        itemCategory: ItemCategory?
+    ) async throws -> [Trade] {
+        guard category == .nanua || category == .baccua else {
+            throw NSError(domain: "Recent Trade Category Error", code: 4012)
+        }
+        
+        filterQuery = nil
+        
+        return try await readTradeList(
+            category: category,
+            location: location,
+            itemCategory: itemCategory
+        )
     }
     
     func refreshSearch(keyword: String) async throws -> [Trade] {

@@ -38,6 +38,14 @@ struct SearchResultView: View {
             .tabViewStyle(.page(indexDisplayMode: .never))
             .ignoresSafeArea(edges: .bottom)
         }
+        .onAppear {
+            tradeViewModel.filteringTrades(category: category)
+            articleViewModel.updateArticles(category: category)
+        }
+        .onChange(of: category) {
+            tradeViewModel.filteringTrades(category: category)
+            articleViewModel.updateArticles(category: category)
+        }
         .navigationTitle(searchText)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)

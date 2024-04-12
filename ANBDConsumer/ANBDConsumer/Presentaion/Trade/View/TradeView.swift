@@ -37,6 +37,12 @@ struct TradeView: View {
                 WriteButtonView()
             })
         }//ZStack
+        .onChange(of: category) {
+            tradeViewModel.filteringTrades(category: category)
+        }
+        .onAppear {
+            tradeViewModel.filteringTrades(category: category)
+        }
         .fullScreenCover(isPresented: $isShowingCreate) {
             TradeCreateView(isShowingCreate: $isShowingCreate, category: category)
         }
@@ -61,15 +67,6 @@ struct TradeView: View {
         }
         .navigationDestination(isPresented: $isGoingToSearchView) {
             SearchView(category: category)
-        }
-        .onAppear {
-            tradeViewModel.filteringTrades(category: category)
-        }
-        .onChange(of: tradeViewModel.selectedLocations) {
-            tradeViewModel.filteringTrades(category: category)
-        }
-        .onChange(of: tradeViewModel.selectedItemCategories) {
-            tradeViewModel.filteringTrades(category: category)
         }
     }
 }

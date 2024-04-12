@@ -32,8 +32,6 @@ struct ArticleCreateView: View {
     var isNewArticle: Bool
     var article: Article?
     
-    
-    
     var body: some View {
         ZStack {
             NavigationStack {
@@ -42,7 +40,7 @@ struct ArticleCreateView: View {
                     
                     VStack {
                         TextField("제목을 입력하세요", text: $title)
-
+                        
                             .onAppear {
                                 UITextField.appearance().clearButtonMode = .never
                                 if !isNewArticle {
@@ -140,50 +138,25 @@ struct ArticleCreateView: View {
                 .toolbar {
                     ToolbarItem(placement: .primaryAction) {
                         Button {
-                            //                        Task {
-                            //                            let newArticle = Article(title: $title, content: $content, category: $flag)
-                            //                            try await articleViewModel.writeArticle(article: newArticle, imageDatas: selectedImageData)
-                            //                        }
                             isShowingCreateView.toggle()
                         } label: {
                             Text("완료")
                         }
                         .disabled(title.isEmpty || content.isEmpty)
                     }
-                    
-                    //                    ToolbarItem(placement: .cancellationAction) {
-                    //                        Button {
-                    //                            if !isNewArticle {
-                    //                                if let article = article {
-                    //                                    isShowingEditAlert.toggle()
-                    //                                    print("변경함")
-                    //                                }
-                    //
-                    //                            } else {
-                    //                                isShowingCreateView.toggle()
-                    //                            }
-                    //                        } label: {
-                    //                            Text("취소")
-                    //                        }
-                    //                    }
                     ToolbarItem(placement: .cancellationAction) {
                         Button {
                             if !isNewArticle {
                                 if let article = article {
-                                    // 이전 값과 새로운 값 비교
                                     let hasTitleChanged = title != article.title
                                     let hasContentChanged = content != article.content
-                                    
-                                    // 변경이 있다면 수정 경고 표시
                                     if hasTitleChanged || hasContentChanged {
                                         isShowingCustomAlert.toggle()
                                     } else {
-                                        // 변경이 없다면 뷰 닫기
                                         isShowingCreateView.toggle()
                                     }
                                 }
                             } else {
-                                // 새 게시물인 경우 뷰 닫기
                                 isShowingCreateView.toggle()
                             }
                         } label: {
@@ -226,7 +199,7 @@ struct ArticleCreateView: View {
                 .navigationBarTitleDisplayMode(.inline)
             }
             if isShowingCustomAlert {
-                CustomAlertView(isShowingCustomAlert: $isShowingCustomAlert, viewType: .leaveChatRoom) {
+                CustomAlertView(isShowingCustomAlert: $isShowingCustomAlert, viewType: .articleEdit) {
                     dismiss()
                 }
                 .zIndex(1)

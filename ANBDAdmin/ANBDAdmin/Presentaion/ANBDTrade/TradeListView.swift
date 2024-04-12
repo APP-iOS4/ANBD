@@ -15,6 +15,7 @@ struct TradeListView: View {
     var body: some View {
         VStack {
             TextField("검색...", text: $searchTradeText)
+                .textCase(.lowercase)
                 .padding(7)
                 .background(Color(.systemGray6))
                 .cornerRadius(8)

@@ -21,6 +21,7 @@
 		820741BD2BC8EF0700CB4584 /* AdminHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820741B12BC8EF0600CB4584 /* AdminHomeView.swift */; };
 		820741BF2BC9000900CB4584 /* ArticleListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820741BE2BC9000900CB4584 /* ArticleListViewModel.swift */; };
 		820741C12BC9014200CB4584 /* TradeListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820741C02BC9014200CB4584 /* TradeListViewModel.swift */; };
+		820741C32BC9034400CB4584 /* UserListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820741C22BC9034400CB4584 /* UserListViewModel.swift */; };
 		CB7BEDD32BBD4EE300C0F298 /* ANBDAdminApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7BEDD22BBD4EE300C0F298 /* ANBDAdminApp.swift */; };
 		CB7BEDD72BBD4EE500C0F298 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB7BEDD62BBD4EE500C0F298 /* Assets.xcassets */; };
 		CB7BEDED2BBD537A00C0F298 /* Pretendard-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CB7BEDE82BBD537A00C0F298 /* Pretendard-Bold.otf */; };
@@ -47,6 +48,7 @@
 		820741B12BC8EF0600CB4584 /* AdminHomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdminHomeView.swift; sourceTree = "<group>"; };
 		820741BE2BC9000900CB4584 /* ArticleListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleListViewModel.swift; sourceTree = "<group>"; };
 		820741C02BC9014200CB4584 /* TradeListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeListViewModel.swift; sourceTree = "<group>"; };
+		820741C22BC9034400CB4584 /* UserListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListViewModel.swift; sourceTree = "<group>"; };
 		CB7BEDCF2BBD4EE300C0F298 /* ANBDAdmin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ANBDAdmin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB7BEDD22BBD4EE300C0F298 /* ANBDAdminApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ANBDAdminApp.swift; sourceTree = "<group>"; };
 		CB7BEDD62BBD4EE500C0F298 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -93,8 +95,8 @@
 		820741AA2BC8EF0600CB4584 /* ReportedArticle */ = {
 			isa = PBXGroup;
 			children = (
-				820741A82BC8EF0600CB4584 /* ReportedArticleListDetailView.swift */,
 				820741A92BC8EF0600CB4584 /* ReportedArticleListView.swift */,
+				820741A82BC8EF0600CB4584 /* ReportedArticleListDetailView.swift */,
 			);
 			path = ReportedArticle;
 			sourceTree = "<group>";
@@ -102,8 +104,8 @@
 		820741AD2BC8EF0600CB4584 /* ReportedComment */ = {
 			isa = PBXGroup;
 			children = (
-				820741AB2BC8EF0600CB4584 /* ReportedCommentListDetailView.swift */,
 				820741AC2BC8EF0600CB4584 /* ReportedCommentListView.swift */,
+				820741AB2BC8EF0600CB4584 /* ReportedCommentListDetailView.swift */,
 			);
 			path = ReportedComment;
 			sourceTree = "<group>";
@@ -111,8 +113,9 @@
 		820741B02BC8EF0600CB4584 /* UserList */ = {
 			isa = PBXGroup;
 			children = (
-				820741AE2BC8EF0600CB4584 /* UserListDetailView.swift */,
 				820741AF2BC8EF0600CB4584 /* UserListView.swift */,
+				820741C22BC9034400CB4584 /* UserListViewModel.swift */,
+				820741AE2BC8EF0600CB4584 /* UserListDetailView.swift */,
 			);
 			path = UserList;
 			sourceTree = "<group>";
@@ -290,6 +293,7 @@
 				820741B62BC8EF0700CB4584 /* TradeListView.swift in Sources */,
 				820741BD2BC8EF0700CB4584 /* AdminHomeView.swift in Sources */,
 				820741BC2BC8EF0700CB4584 /* UserListView.swift in Sources */,
+				820741C32BC9034400CB4584 /* UserListViewModel.swift in Sources */,
 				820741B32BC8EF0700CB4584 /* ArticleListDetailView.swift in Sources */,
 				820741BB2BC8EF0700CB4584 /* UserListDetailView.swift in Sources */,
 				820741B42BC8EF0700CB4584 /* ArticleListView.swift in Sources */,

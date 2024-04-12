@@ -15,6 +15,7 @@ struct ArticleListView: View {
     var body: some View {
         VStack {
             TextField("검색...", text: $searchArticleText)
+                .textCase(.lowercase)
                 .padding(7)
                 .background(Color(.systemGray6))
                 .cornerRadius(8)

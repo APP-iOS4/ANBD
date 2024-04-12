@@ -9,71 +9,73 @@ import SwiftUI
 import ANBDModel
 
 struct UserListView: View {
-    @State private var userList: [User] = []
-    let userUsecase = DefaultUserUsecase()
+    @StateObject private var userListViewModel = UserListViewModel()
+    @State private var searchUserText = "" // 검색 텍스트 추적하는 변수
     
     var body: some View {
-        List {
-            ForEach(userList, id: \.id) { user in
-                NavigationLink(destination: UserListDetailView(user: user)) {
-                    HStack{
-                        VStack(alignment: .leading) {
-                            Text("닉네임")
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
-                            Text("\(user.nickname)")
-                                .font(.title2)
-                        }
-                        .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
-                        Spacer()
-                        VStack(alignment: .leading) {
-                            Text("이메일")
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
-                            Text("\(user.email)")
-                        }
-                        .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
-                        Spacer()
-                        VStack(alignment: .leading) {
-                            Text("유저 권한")
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
-                            Text("\(user.userLevel)")
-                        }
-                        .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
-                        Spacer()
-                        VStack(alignment: .leading) {
-                            if let imageUrl = URL(string: user.profileImage) {
-                                AsyncImage(url: imageUrl) { phase in
-                                    switch phase {
-                                    case .empty:
-                                        ProgressView()
-                                    case .success(let image):
-                                        image.resizable().frame(width: 40, height: 40)
-                                    case .failure:
-                                        Text("Failed to load image")
-                                    @unknown default:
-                                        EmptyView()
+        VStack {
+            TextField("검색...", text: $searchUserText)
+                .textCase(.lowercase)
+                .padding(7)
+                .background(Color(.systemGray6))
+                .cornerRadius(8)
+                .padding(.horizontal, 10)
+            List {
+                ForEach(userListViewModel.userList.filter({ searchUserText.isEmpty ? true : $0.nickname.contains(searchUserText) }), id: \.id) { user in
+                    NavigationLink(destination: UserListDetailView(user: user)) {
+                        HStack{
+                            VStack(alignment: .leading) {
+                                Text("닉네임")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                Text("\(user.nickname)")
+                                    .font(.title2)
+                            }
+                            .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
+                            Spacer()
+                            VStack(alignment: .leading) {
+                                Text("이메일")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                Text("\(user.email)")
+                            }
+                            .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
+                            Spacer()
+                            VStack(alignment: .leading) {
+                                Text("유저 권한")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                Text("\(user.userLevel)")
+                            }
+                            .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
+                            Spacer()
+                            VStack(alignment: .leading) {
+                                if let imageUrl = URL(string: user.profileImage) {
+                                    AsyncImage(url: imageUrl) { phase in
+                                        switch phase {
+                                        case .empty:
+                                            ProgressView()
+                                        case .success(let image):
+                                            image.resizable().frame(width: 40, height: 40)
+                                        case .failure:
+                                            Text("Failed to load image")
+                                        @unknown default:
+                                            EmptyView()
+                                        }
                                     }
                                 }
                             }
+                            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                            Spacer()
                         }
-                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                        Spacer()
                     }
                 }
             }
-        }
-
-        .onAppear {
-            Task {
-                do {
-                    self.userList = try await userUsecase.getUserInfoList()
-                } catch {
-                    print("사용자 목록을 가져오는데 실패했습니다: \(error)")
-                }
+            
+            .onAppear {
+                userListViewModel.loadUsers()
             }
+            .navigationBarTitle("유저 목록")
         }
-        .navigationBarTitle("유저 목록")
     }
 }

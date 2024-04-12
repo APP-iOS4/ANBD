@@ -65,7 +65,7 @@ struct ArticleDetailView: View {
                                 }
                             }
                             .navigationDestination(isPresented: $isGoingToProfileView) {
-                                UserPageView(isSignedInUser: false)
+//                                UserPageView(isSignedInUser: false)
                             }
                             .padding(.bottom, 20)
                             

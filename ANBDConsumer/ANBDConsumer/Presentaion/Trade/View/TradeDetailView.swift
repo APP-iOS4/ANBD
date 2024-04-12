@@ -167,7 +167,7 @@ struct TradeDetailView: View {
             ReportView(reportViewType: .trade)
         }
         .navigationDestination(isPresented: $isGoingToProfileView) {
-            UserPageView(isSignedInUser: false)
+//            UserPageView(isSignedInUser: false)
         }
         .navigationTitle("나눔 · 거래")
         .navigationBarTitleDisplayMode(.inline)

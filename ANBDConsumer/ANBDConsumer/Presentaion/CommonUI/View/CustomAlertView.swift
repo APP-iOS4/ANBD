@@ -128,8 +128,7 @@ extension CustomAlertView {
         case .articleDelete:
             return "해당 게시글을 삭제하시겠습니까?\n삭제한 게시글은 복구되지 않습니다."
         case .commentDelete:
-            return "해딩 댓글을 삭제하시겠습니까?\n삭제한 댓글은 복구되지 않습니다."
-            return "상품을 삭제하시겠습니까?\n삭제 시 상품 정보는 \n복구되지 않습니다."
+            return "해당 댓글을 삭제하시겠습니까?\n삭제한 댓글은 복구되지 않습니다." 
         case .writingCancel:
             return "작성하던 내용을 삭제하고\n돌아가시겠습니까?"
         }

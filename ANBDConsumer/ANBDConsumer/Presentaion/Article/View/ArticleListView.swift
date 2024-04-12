@@ -60,22 +60,14 @@ struct ArticleListView: View {
                 ScrollView {
                     LazyVStack {
                         ForEach(articleViewModel.filteredArticles) { article in
-                            if article == articleViewModel.filteredArticles.last {
-                                NavigationLink(value: article) {
-                                    ArticleListCell(article: article)
-                                        .padding(.bottom, 5)
-                                        
-                                }
-                            } else {
-                                NavigationLink(value: article) {
-                                    ArticleListCell(article: article)
-                                }
-                                .padding(.vertical, 5)
+                            NavigationLink(value: article) {
+                                ArticleListCell(article: article)
                             }
+                            .padding(.vertical, 5)
                             Divider()
                         }
                         .padding(.horizontal)
-
+                        
                     }
                     .background(.white)
                     .padding(.bottom, 80)

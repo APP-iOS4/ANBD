@@ -31,7 +31,6 @@ struct ChatListCell: View {
                 Text(userNickname)
                     .foregroundStyle(Color.gray900)
                     .font(ANBDFont.SubTitle2)
-                    .padding(.vertical, 2)
                 
                 Spacer()
                 
@@ -40,7 +39,7 @@ struct ChatListCell: View {
                     .foregroundStyle(Color.gray400)
                     .font(ANBDFont.body2)
             }
-            .padding(.vertical, 9)
+            .padding(.vertical, 12)
             
             Spacer()
             

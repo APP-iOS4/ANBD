@@ -12,7 +12,8 @@ struct TradeStateChangeView: View {
     //@Binding var isTrading: Bool
     @Binding var tradeState: TradeState
     @State private var isShowingConfirm: Bool = false
-    @State private var isShowingAlert: Bool = false
+    @Binding var isShowingCustomAlert: Bool
+    var fontSize: CGFloat = 14
     
     var body: some View {
         Button(action: {
@@ -20,7 +21,8 @@ struct TradeStateChangeView: View {
         }, label: {
             HStack {
                 Text("\(tradeState.description)")
-                    .font(ANBDFont.SubTitle3)
+                    .font(ANBDFont.pretendardSemiBold(fontSize))
+//                    .font(ANBDFont.SubTitle3)
                 
                 Image(systemName: "chevron.down")
                     .resizable()
@@ -32,32 +34,21 @@ struct TradeStateChangeView: View {
         .confirmationDialog("", isPresented: $isShowingConfirm) {
             Button("거래 중") {
                 if tradeState == .finish {
-                    isShowingAlert.toggle()
+                    isShowingCustomAlert.toggle()
                 }
             }
             
             Button("거래 완료") {
                 if tradeState == .trading {
-                    isShowingAlert.toggle()
+                    isShowingCustomAlert.toggle()
                 }
             }
         } message: {
             Text("상태변경")
         }
-        .alert("해당 게시글의 상태를 \(tradeState == .finish ? "거래 중으" : "거래 완료")로 변경하시겠습니까?", isPresented: $isShowingAlert) {
-            Button("변경") {
-                if tradeState == .trading {
-                    tradeState = .finish
-                } else {
-                    tradeState = .trading
-                }
-            }
-            
-            Button("취소", role: .cancel) {}
-        }
     }
 }
 
 #Preview {
-    TradeStateChangeView(tradeState: .constant(.trading))
+    TradeStateChangeView(tradeState: .constant(.trading), isShowingCustomAlert: .constant(false))
 }

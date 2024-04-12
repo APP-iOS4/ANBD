@@ -10,6 +10,9 @@ import ANBDModel
 
 struct HomeView: View {
     @EnvironmentObject private var homeViewModel: HomeViewModel
+    @EnvironmentObject private var tradeViewModel: TradeViewModel
+    @EnvironmentObject private var articleViewModel: ArticleViewModel
+    
     
     @State private var isGoingToSearchView: Bool = false
     @State private var isShowingWebView: Bool = false
@@ -86,6 +89,7 @@ struct HomeView: View {
         .navigationDestination(isPresented: $isGoingToSearchView) {
             SearchView()
         }
+        
     }
     
     

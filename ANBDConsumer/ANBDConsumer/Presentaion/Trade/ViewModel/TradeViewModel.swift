@@ -45,7 +45,7 @@ final class TradeViewModel: ObservableObject {
     ]
     
     init() {
-        
+        filteredTrades = mockTradeData
     }
     
     

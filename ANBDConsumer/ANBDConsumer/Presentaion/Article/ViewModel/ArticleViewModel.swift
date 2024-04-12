@@ -33,8 +33,7 @@ final class ArticleViewModel: ObservableObject {
     ]
     
     init() {
-
-        
+        filteredArticles = mockArticleData
     }
     
     enum SortOption {

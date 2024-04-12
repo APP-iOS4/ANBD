@@ -65,7 +65,7 @@ struct ArticleCreateView: View {
                             TextEditor(text: $content)
                                 .scrollContentBackground(.hidden)
                                 .font(ANBDFont.body1)
-                                .padding(.horizontal, 20)
+                                .padding(.horizontal, 15)
                                 .onAppear {
                                     if !isNewArticle {
                                         if let article = article {

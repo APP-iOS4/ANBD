@@ -9,8 +9,12 @@ import SwiftUI
 import ANBDModel
 
 struct SearchResultView: View {
+    
     @State var category: ANBDCategory = .accua
     var searchText: String
+    
+    @EnvironmentObject var articleViewModel: ArticleViewModel
+    @EnvironmentObject var tradeViewModel: TradeViewModel
     
     var body: some View {
         VStack {
@@ -32,6 +36,7 @@ struct SearchResultView: View {
                     .tag(ANBDCategory.dasi)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
+            .ignoresSafeArea(edges: .bottom)
         }
         .navigationTitle(searchText)
         .navigationBarTitleDisplayMode(.inline)

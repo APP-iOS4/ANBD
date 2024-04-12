@@ -36,16 +36,44 @@ struct SearchView: View {
             .padding(.top, 10)
             
             ForEach(searchViewModel.recentSearch, id: \.self) { recent in
-                NavigationLink(value: recent) {
+//                NavigationLink(value: recent) {
+//                    HStack {
+//                        Image(systemName: "clock.arrow.circlepath")
+//                            .foregroundStyle(.gray400)
+//                            .padding(.trailing, 5)
+//                        
+//                        Text(recent)
+//                        
+//                        Spacer()
+//                        
+//                        Image(systemName: "xmark")
+//                            .foregroundStyle(.gray400)
+//                            .font(.system(size: 13))
+//                            .onTapGesture {
+//                                if let idx = searchViewModel.recentSearch.firstIndex(of: recent) {
+//                                    searchViewModel.recentSearch.remove(at: idx)
+//                                }
+//                            }
+//                    }
+//                    .font(ANBDFont.body1)
+//                    .foregroundStyle(.gray900)
+//                    .padding(.horizontal)
+//                    .padding(.vertical, 3)
+//                }
+//            
+                
+                NavigationLink {
+                    SearchResultView(category: category, searchText: recent)
+                } label: {
                     HStack {
                         Image(systemName: "clock.arrow.circlepath")
                             .foregroundStyle(.gray400)
                             .padding(.trailing, 5)
-                            
+
                         Text(recent)
-                        
+
                         Spacer()
-                        
+
                         Image(systemName: "xmark")
                             .foregroundStyle(.gray400)
                             .font(.system(size: 13))
@@ -55,11 +83,37 @@ struct SearchView: View {
                                 }
                             }
                     }
+                    .font(ANBDFont.body1)
+                    .foregroundStyle(.gray900)
+                    .padding(.horizontal)
+                    .padding(.vertical, 3)
                 }
-                .font(ANBDFont.body1)
-                .foregroundStyle(.gray900)
-                .padding(.horizontal)
-                .padding(.vertical, 3)
+
+                
+//                NavigationLink(destination: SearchResultView(category: category, searchText: recent)) {
+//                    HStack {
+//                        Image(systemName: "clock.arrow.circlepath")
+//                            .foregroundStyle(.gray400)
+//                            .padding(.trailing, 5)
+//                            
+//                        Text(recent)
+//                        
+//                        Spacer()
+//                        
+//                        Image(systemName: "xmark")
+//                            .foregroundStyle(.gray400)
+//                            .font(.system(size: 13))
+//                            .onTapGesture {
+//                                if let idx = searchViewModel.recentSearch.firstIndex(of: recent) {
+//                                    searchViewModel.recentSearch.remove(at: idx)
+//                                }
+//                            }
+//                    }
+//                    .font(ANBDFont.body1)
+//                    .foregroundStyle(.gray900)
+//                    .padding(.horizontal)
+//                    .padding(.vertical, 3)
+//                }
             }
             
             Spacer()

@@ -16,6 +16,8 @@ struct UserPageView: View {
     @State private var isShowingAccountManagementView = false
     @State private var isShowingPolicyView = false
     @State private var isShowingReportDialog = false
+    @State private var isShowingHeartTrades = false
+    @State private var isShowingLikedArticles = false
     
     @State private var category: ANBDCategory = .accua
     
@@ -24,7 +26,7 @@ struct UserPageView: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            Group {
+            Group {  // UserInfo
                 HStack {
                     Image(uiImage: isSignedInUser ? myPageViewModel.userProfileImage : UIImage(named: "DefaultUserProfileImage")!)
                         .resizable()
@@ -70,7 +72,7 @@ struct UserPageView: View {
                 }
             }
             
-            Group {
+            Group {  // User Activities
                 HStack(spacing: 12) {
                     ActivityInfoComponent(title: "아껴 쓴 개수", count: 5, category: .accua)
                     Divider()
@@ -89,14 +91,27 @@ struct UserPageView: View {
             }
             
             if isSignedInUser {
-                Group {
+                Group {  // Another Functions
                     VStack(alignment: .leading) {
                         Divider()
                         
                         Button(action: {
                             // 각 리스트로 이동할 뷰
+                            isShowingHeartTrades.toggle()
                         }, label: {
-                            Text("내가 찜한 나눔 ・ 거래 보기")
+                            Text("내가 찜한 나눔・거래 보기")
+                                .foregroundStyle(Color.gray900)
+                                .font(ANBDFont.SubTitle2)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding()
+                        })
+                        
+                        Divider()
+                        
+                        Button(action: {
+                            isShowingLikedArticles.toggle()
+                        }, label: {
+                            Text("내가 좋아요한 게시글 보기")
                                 .foregroundStyle(Color.gray900)
                                 .font(ANBDFont.SubTitle2)
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -120,6 +135,17 @@ struct UserPageView: View {
                     .fullScreenCover(isPresented: $isShowingPolicyView) {
                         SafariWebView(url: URL(string: "https://maru-study-note.tistory.com/")!)
                             .ignoresSafeArea(edges: .bottom)
+                    }
+                    
+                    .navigationDestination(isPresented: $isShowingHeartTrades) {
+                        UserLikedContentsView(category: .nanua)
+                            .toolbarRole(.editor)
+                            .toolbar(.hidden, for: .tabBar)
+                    }
+                    .navigationDestination(isPresented: $isShowingLikedArticles) {
+                        UserLikedContentsView(category: .accua)
+                            .toolbarRole(.editor)
+                            .toolbar(.hidden, for: .tabBar)
                     }
                 }
             }

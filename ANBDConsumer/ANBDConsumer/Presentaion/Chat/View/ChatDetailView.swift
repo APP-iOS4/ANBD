@@ -39,6 +39,7 @@ struct ChatDetailView: View {
     @State private var isShowingImageDetailView: Bool = false
     @State private var detailImage: String = "DummyPuppy3"
     @State private var isGoingToReportView: Bool = false
+    @State private var isShowingStateChangeCustomAlert: Bool = false
     @Environment(\.dismiss) private var dismiss
     
     
@@ -76,6 +77,17 @@ struct ChatDetailView: View {
                 
                 messageSendView
                     .padding()
+            }
+            
+            if isShowingStateChangeCustomAlert {
+                CustomAlertView(isShowingCustomAlert: $isShowingStateChangeCustomAlert, viewType: .changeState) {
+                    //task로 변경해주기~
+                    if tradeState == .trading {
+                        tradeState = .finish
+                    } else {
+                        tradeState = .trading
+                    }
+                }
             }
             
             if isShowingCustomAlertView {
@@ -160,7 +172,7 @@ struct ChatDetailView: View {
             
             if !isDeleted {
                 VStack(alignment: .leading) {
-                    TradeStateChangeView(tradeState: $tradeState)
+                    TradeStateChangeView(tradeState: $tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert)
                     
                     Spacer()
                 }

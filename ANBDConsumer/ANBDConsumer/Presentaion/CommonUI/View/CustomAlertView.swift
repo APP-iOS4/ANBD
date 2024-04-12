@@ -59,6 +59,7 @@ struct CustomAlertView: View {
                                 
                                 Text(confirmMessage)
                                     .foregroundStyle(.white)
+                                    .fontWeight(textWeight)
                             }
                         })
                         .padding(.trailing, 15)
@@ -78,6 +79,9 @@ extension CustomAlertView {
         case leaveChatRoom
         case signOut
         case withdrawal
+        //trade
+        case changeState
+        case tradeDelete
     }
     
     private var title: String {
@@ -88,6 +92,10 @@ extension CustomAlertView {
             return "로그아웃"
         case .withdrawal:
             return "회원 탈퇴"
+        case .changeState:
+            return "거래 상태 변경"
+        case .tradeDelete:
+            return "삭제"
         }
     }
     
@@ -99,6 +107,10 @@ extension CustomAlertView {
             return "정말 로그아웃 하시겠습니까?"
         case .withdrawal:
             return "정말 ANBD 회원에서 탈퇴하시겠습니까?\n회원 탈퇴 시 회원 정보가\n복구되지 않습니다."
+        case .changeState:
+            return "거래 상태를 변경하시겠습니까?"
+        case .tradeDelete:
+            return "상품을 삭제하시겠습니까?\n삭제 시 상품 정보는 복구되지 않습니다."
         }
     }
     
@@ -110,6 +122,10 @@ extension CustomAlertView {
             return "로그아웃하기"
         case .withdrawal:
             return "탈퇴하기"
+        case .changeState:
+            return "변경하기"
+        case .tradeDelete:
+            return "삭제하기"
         }
     }
     
@@ -121,6 +137,25 @@ extension CustomAlertView {
             return .heartRed
         case .withdrawal:
             return .heartRed
+        case .changeState:
+            return .accent
+        case .tradeDelete:
+            return .heartRed
+        }
+    }
+    
+    private var textWeight: Font.Weight {
+        switch viewType {
+        case .leaveChatRoom:
+            return .medium
+        case .signOut:
+            return .medium
+        case .withdrawal:
+            return .heavy
+        case .changeState:
+            return .medium
+        case .tradeDelete:
+            return .medium
         }
     }
 }

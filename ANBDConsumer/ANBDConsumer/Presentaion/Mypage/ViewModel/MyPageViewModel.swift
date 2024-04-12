@@ -41,6 +41,9 @@ final class MyPageViewModel: ObservableObject {
     @Published private(set) var userArticles: [Article] = []
     @Published private(set) var userTrades: [Trade] = []
     
+    @Published private(set) var userLikedArticles: [Article] = []
+    @Published private(set) var userHeartTrades: [Trade] = []
+    
     let mockArticleData: [Article] = [
         .init(writerID: "writerID", writerNickname: "닉네임닉네임닉네임닉네임닉네임닉네임닉네임", category: .accua, title: "아껴제목1", content: "내용내용5", likeCount: 30, commentCount: 50),
         .init(writerID: "writerID", writerNickname: "닉네임", category: .accua, title: "아껴제목2", content: "내용내용4", likeCount: 50, commentCount: 40),

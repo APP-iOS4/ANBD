@@ -15,11 +15,11 @@ public protocol ArticleUsecase {
     func loadRecentArticle(category: ANBDCategory) async throws -> Article
     func loadArticleList() async throws -> [Article]
     func loadArticleList(writerID: String) async throws -> [Article]
-    func loadArticleList(by order: ArticleOrder) async throws -> [Article]
+    func loadArticleList(category: ANBDCategory, by order: ArticleOrder) async throws -> [Article]
     func searchArticle(keyword: String) async throws -> [Article]
     func refreshAllArticleList() async throws -> [Article]
     func refreshWriterIDArticleList(writerID: String) async throws -> [Article]
-    func refreshSortedArticleList(by order: ArticleOrder) async throws -> [Article]
+    func refreshSortedArticleList(category: ANBDCategory, by order: ArticleOrder) async throws -> [Article]
     func refreshSearchArticleList(keyword: String) async throws -> [Article]
     func updateArticle(article: Article, imageDatas: [Data]) async throws
     func likeArticle(articleID: String) async throws
@@ -94,8 +94,8 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     /// - Parameters:
     ///   - filter: 불러올 Article의 정렬 방식
     /// - Returns: 정렬된 Article 배열
-    public func loadArticleList(by order: ArticleOrder) async throws -> [Article] {
-        try await articleRepository.readArticleList(by: order)
+    public func loadArticleList(category: ANBDCategory, by order: ArticleOrder) async throws -> [Article] {
+        try await articleRepository.readArticleList(category: category, by: order)
     }
     
     
@@ -128,8 +128,8 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     /// - Parameters:
     ///   - filter: 불러올 Article의 정렬 방식
     /// - Returns: 정렬된 Article 배열
-    public func refreshSortedArticleList(by order: ArticleOrder) async throws -> [Article] {
-        try await articleRepository.refreshOrder(by: order)
+    public func refreshSortedArticleList(category: ANBDCategory, by order: ArticleOrder) async throws -> [Article] {
+        try await articleRepository.refreshOrder(category: category, by: order)
     }
     
     

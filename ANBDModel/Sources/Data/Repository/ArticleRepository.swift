@@ -118,24 +118,29 @@ final class DefaultArticleRepository: ArticleRepository {
         return try await requestQuery.getDocuments().documents.compactMap { try $0.data(as: Article.self) }
     }
     
-    func readArticleList(by order: ArticleOrder) async throws -> [Article] {
-        var requestQuery: Query
+    func readArticleList(category: ANBDCategory, by order: ArticleOrder) async throws -> [Article] {
+        guard category == .accua || category == .dasi else {
+            throw NSError(domain: "Article Category Error", code: 4011)
+        }
+        
+        var requestQuery: Query = articleDB
+            .whereField("category", isEqualTo: category.rawValue)
         
         if let orderQuery {
             requestQuery = orderQuery
         } else {
             requestQuery = switch order {
             case .latest:
-                articleDB
+                requestQuery
                     .order(by: "createdAt", descending: true)
                     .limit(to: 10)
             case .mostLike:
-                articleDB
+                requestQuery
                     .order(by: "likeCount", descending: true)
                     .order(by: "createdAt", descending: true)
                     .limit(to: 10)
             case .mostComment:
-                articleDB
+                requestQuery
                     .order(by: "commentCount", descending: true)
                     .order(by: "createdAt", descending: true)
                     .limit(to: 10)
@@ -203,9 +208,13 @@ final class DefaultArticleRepository: ArticleRepository {
         return try await readArticleList(writerID: writerID)
     }
     
-    func refreshOrder(by order: ArticleOrder) async throws -> [Article] {
+    func refreshOrder(category: ANBDCategory, by order: ArticleOrder) async throws -> [Article] {
+        guard category == .accua || category == .dasi else {
+            throw NSError(domain: "Article Category Error", code: 4011)
+        }
+        
         orderQuery = nil
-        return try await readArticleList(by: order)
+        return try await readArticleList(category: category, by: order)
     }
     
     func refreshSearch(keyword: String) async throws -> [Article] {

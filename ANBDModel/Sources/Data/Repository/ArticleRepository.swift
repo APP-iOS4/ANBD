@@ -14,18 +14,18 @@ final class DefaultArticleRepository: ArticleRepository {
     
     private let articleDataSource: ArticleDataSource
     private let commentDataSource: CommentDataSource
-    
-    // DataSource 분리 전 임시 값
-    private let userDataSource = DefaultUserRepository()
+    private let userDataSource: UserDataSource
     
     private let storage = StorageManager.shared
     
     init(
         articleDataSource: ArticleDataSource = DefaultArticleDataSource(),
-        commentDataSource: CommentDataSource = DefaultCommentDataSource()
+        commentDataSource: CommentDataSource = DefaultCommentDataSource(),
+        userDataSource: UserDataSource = DefaultUserDataSource()
     ) {
         self.articleDataSource = articleDataSource
         self.commentDataSource = commentDataSource
+        self.userDataSource = userDataSource
     }
     
 }

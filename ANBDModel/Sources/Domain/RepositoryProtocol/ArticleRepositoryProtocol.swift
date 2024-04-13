@@ -9,7 +9,7 @@ import Foundation
 
 @available(iOS 15, *)
 public protocol ArticleRepository {
-    func crateArticle(article: Article) async throws
+    func createArticle(article: Article, imageDatas: [Data]) async throws
     func readArticle(articleID: String) async throws -> Article
     func readRecentArticle(category: ANBDCategory) async throws -> Article
     func readArticleList() async throws -> [Article]
@@ -20,7 +20,8 @@ public protocol ArticleRepository {
     func refreshWriterID(writerID: String) async throws -> [Article]
     func refreshOrder(category: ANBDCategory, by order: ArticleOrder) async throws -> [Article]
     func refreshSearch(keyword: String) async throws -> [Article]
-    func updateArticle(article: Article) async throws
+    func updateArticle(article: Article, imageDatas: [Data]) async throws
+    func likeArticle(articleID: String) async throws
     func deleteArticle(article: Article) async throws
     func resetQuery()
 }

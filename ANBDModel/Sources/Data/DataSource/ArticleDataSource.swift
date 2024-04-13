@@ -36,7 +36,13 @@ final class DefaultArticleDataSource: ArticleDataSource {
     private var orderQuery: Query?
     private var searchQuery: Query?
     
-    init() { }
+    init() { 
+        print("Article DataSource init")
+    }
+    
+    deinit {
+        print("Article DataSource deinit")
+    }
     
     
     // MARK: Create

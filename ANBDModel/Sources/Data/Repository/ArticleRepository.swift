@@ -12,15 +12,21 @@ import FirebaseAuth
 @available(iOS 15, *)
 final class DefaultArticleRepository: ArticleRepository {
     
-    private let articleDataSource: ArticleDataSource = DefaultArticleDataSource()
+    private let articleDataSource: ArticleDataSource
+    private let commentDataSource: CommentDataSource
     
     // DataSource 분리 전 임시 값
     private let userDataSource = DefaultUserRepository()
-    private let commentDataSource = DefaultCommentRepository()
     
     private let storage = StorageManager.shared
     
-    init() { }
+    init(
+        articleDataSource: ArticleDataSource = DefaultArticleDataSource(),
+        commentDataSource: CommentDataSource = DefaultCommentDataSource()
+    ) {
+        self.articleDataSource = articleDataSource
+        self.commentDataSource = commentDataSource
+    }
     
 }
 
@@ -40,8 +46,8 @@ extension DefaultArticleRepository {
             newArticle.imagePaths = imagePaths
             
             try await articleDataSource.createArticle(article: newArticle)
-        } catch DBError.getDocumentError {
-            throw ArticleError.createArticleError(code: 4011, message: "Article을 추가 실패했습니다.")
+        } catch DBError.setDocumentError {
+            throw ArticleError.createArticleError(code: 4011, message: "Article을 추가하는데 실패했습니다.")
         }
     }
 }

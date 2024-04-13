@@ -10,7 +10,7 @@ import Foundation
 @available(iOS 15, *)
 public protocol TradeRepository {
     // MARK: Create
-    func createTrade(trade: Trade) async throws
+    func createTrade(trade: Trade, imageDatas: [Data]) async throws
     
     // MARK: Read
     func readTrade(tradeID: String) async throws -> Trade
@@ -29,10 +29,11 @@ public protocol TradeRepository {
     func refreshSearch(keyword: String) async throws -> [Trade]
     
     // MARK: Update
-    func updateTrade(trade: Trade) async throws
+    func updateTrade(trade: Trade, imageDatas: [Data]) async throws
     func updateTrade(tradeID: String, tradeState: TradeState) async throws
+    func likeTrade(tradeID: String) async throws
     
     // MARK: Delete
-    func deleteTrade(tradeID: String) async throws
+    func deleteTrade(trade: Trade) async throws
     func resetQuery()
 }

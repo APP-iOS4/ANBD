@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import FirebaseAuth
 
 @available(iOS 15, *)
 public protocol TradeUsecase {
@@ -35,10 +34,8 @@ public protocol TradeUsecase {
 @available(iOS 15, *)
 public struct DefaultTradeUsecase: TradeUsecase {
     
-    let userRepository: UserRepository = DefaultUserRepository()
     let tradeRepository: TradeRepository = DefaultTradeRepository()
     
-    let storage = StorageManager.shared
     
     public init() { }
     
@@ -48,15 +45,7 @@ public struct DefaultTradeUsecase: TradeUsecase {
     ///    - trade: 작성한 Trade
     ///    - imageDatas: 저장할 사진 Data 배열
     public func writeTrade(trade: Trade, imageDatas: [Data]) async throws {
-        let imagePaths = try await storage.uploadImageList(
-            path: .trade,
-            containerID: trade.id,
-            imageDatas: imageDatas
-        )
-        var newTrade = trade
-        newTrade.imagePaths = imagePaths
-        
-        try await tradeRepository.createTrade(trade: newTrade)
+        try await tradeRepository.createTrade(trade: trade, imageDatas: imageDatas)
     }
     
     
@@ -176,11 +165,7 @@ public struct DefaultTradeUsecase: TradeUsecase {
             throw NSError(domain: "Trade Field Error", code: 4010)
         }
         
-        let imagePaths = try await storage.updateImageList(path: .trade, containerID: trade.id, imagePaths: trade.imagePaths, imageDatas: imageDatas)
-        var updatedTrade = trade
-        updatedTrade.imagePaths = imagePaths
-        
-        try await tradeRepository.updateTrade(trade: updatedTrade)
+        try await tradeRepository.updateTrade(trade: trade, imageDatas: imageDatas)
     }
     
     
@@ -197,16 +182,7 @@ public struct DefaultTradeUsecase: TradeUsecase {
     /// - Parameters:
     ///   - tradeID: 찜할 Trade의 ID
     public func likeTrade(tradeID: String) async throws {
-        guard let userID = Auth.auth().currentUser?.uid else { return }
-        var userInfo = try await userRepository.readUserInfo(userID: userID)
-        
-        if userInfo.likeTrades.contains(tradeID) {
-            userInfo.likeTrades = userInfo.likeTrades.filter { $0 != tradeID }
-        } else {
-            userInfo.likeTrades.append(tradeID)
-        }
-        
-        try await userRepository.updateUserInfo(user: userInfo)
+        try await tradeRepository.likeTrade(tradeID: tradeID)
     }
     
     
@@ -214,9 +190,7 @@ public struct DefaultTradeUsecase: TradeUsecase {
     /// - Parameters:
     ///   - trade: 삭제하려는 trade의 정보
     public func deleteTrade(trade: Trade) async throws {
-        try await storage.deleteImageList(path: .trade, containerID: trade.id, imagePaths: trade.imagePaths)
-        try await tradeRepository.deleteTrade(tradeID: trade.id)
-        try await userRepository.updateUserInfoList(tradeID: trade.id)
+        try await tradeRepository.deleteTrade(trade: trade)
     }
     
     /// 검색 결과 페이지네이션 쿼리를 초기화하는 메서드

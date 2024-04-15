@@ -10,19 +10,9 @@ import ANBDModel
 
 struct ArticleListCell: View {
 
-    // enum 부터 protocol까지 따로 빼고싶은데 어떻게 빼야할지 모르겠어서 일단 ListCell에 둠,,,,
     enum ListCellValue {
         case article(Article)
         case trade(Trade)
-    }
-
-    protocol ListableItem {
-        var title: String { get }
-        var writerNickname: String { get }
-        var createdAt: String { get }
-        var imagePath: String { get }
-        var likeCount: Int? { get }
-        var commentCount: Int? { get }
     }
     
     @State private var isLiked: Bool = false

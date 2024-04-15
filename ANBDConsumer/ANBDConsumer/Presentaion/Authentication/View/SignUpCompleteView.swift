@@ -44,13 +44,26 @@ struct SignUpCompleteView: View {
         .padding(.horizontal, 20)
         .toolbar(.hidden, for: .navigationBar)
         .onAppear {
-//            withAnimation(.easeOut(duration: 1)) {
-//                showTitleAnimation = 1
-//            } completion: {
-//                withAnimation(.easeOut(duration: 2)) {
-//                    showExplainAnimation = 1
-//                }
-//            }
+            if #available(iOS 17.0, *) {
+                withAnimation(.easeOut(duration: 1)) {
+                    showTitleAnimation = 1
+                } completion: {
+                    withAnimation(.easeOut(duration: 2)) {
+                        showExplainAnimation = 1
+                    }
+                }
+            } else {
+                Task {
+                    withAnimation(.easeOut(duration: 2)) {
+                        showTitleAnimation = 1
+                    }
+                    try await Task.sleep(nanoseconds: 800_000_000)
+                    
+                    withAnimation(.easeOut(duration: 2)) {
+                        showExplainAnimation = 1
+                    }
+                }
+            }
         }
     }
 }

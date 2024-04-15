@@ -25,7 +25,7 @@ struct HomeView: View {
                     adView
                         .padding(.bottom, 20)
                     
-                    AccuaView(geo: geometry)
+                    accuaView(geo: geometry)
                     
                     Divider()
                         .padding(.top, 10)
@@ -43,7 +43,7 @@ struct HomeView: View {
                         .padding(.top, 10)
                         .padding(.bottom, 5)
                     
-                    DasiView(geo: geometry)
+                    dasiView(geo: geometry)
                 }
                 .padding()
             }
@@ -134,12 +134,12 @@ struct HomeView: View {
     
     // MARK: - 아껴쓰기 Section
     @ViewBuilder
-    private func AccuaView(geo: GeometryProxy) -> some View {
+    private func accuaView(geo: GeometryProxy) -> some View {
         VStack {
-            SectionHeaderView(.accua)
+            sectionHeaderView(.accua)
             
             NavigationLink(value: homeViewModel.accuaArticle) {
-                ArticleCellView(homeViewModel.accuaArticle)
+                articleCellView(homeViewModel.accuaArticle)
                     .frame(width: geo.size.width * 0.9, height: 130)
             }
         }
@@ -148,13 +148,13 @@ struct HomeView: View {
     // MARK: - 나눠쓰기 Section
     private var nanuaView: some View {
         VStack(alignment: .leading) {
-            SectionHeaderView(.nanua)
+            sectionHeaderView(.nanua)
             
             ScrollView(.horizontal) {
                 LazyHStack {
                     ForEach(homeViewModel.nanuaTrades) { trade in
                         NavigationLink(value: trade) {
-                            NanuaCellView(trade)
+                            nanuaCellView(trade)
                                 .frame(width: 140, height: 140)
                                 .padding(.horizontal, 1)
                         }
@@ -168,7 +168,7 @@ struct HomeView: View {
     // MARK: - 바꿔쓰기 Section
     private var baccuaView: some View {
         VStack(alignment: .leading) {
-            SectionHeaderView(.baccua)
+            sectionHeaderView(.baccua)
             
             ForEach(homeViewModel.baccuaTrades) { trade in
                 NavigationLink(value: trade) {
@@ -180,12 +180,12 @@ struct HomeView: View {
     
     // MARK: - 다시쓰기 Section
     @ViewBuilder
-    private func DasiView(geo: GeometryProxy) -> some View {
+    private func dasiView(geo: GeometryProxy) -> some View {
         VStack {
-            SectionHeaderView(.dasi)
+            sectionHeaderView(.dasi)
             
             NavigationLink(value: homeViewModel.dasiArticle) {
-                ArticleCellView(homeViewModel.dasiArticle)
+                articleCellView(homeViewModel.dasiArticle)
                     .frame(width: geo.size.width * 0.9, height: 130)
             }
         }
@@ -193,7 +193,7 @@ struct HomeView: View {
     
     // MARK: - ANBD 각 섹션 헤더 View
     @ViewBuilder
-    private func SectionHeaderView(_ category: ANBDCategory) -> some View {
+    private func sectionHeaderView(_ category: ANBDCategory) -> some View {
         VStack(alignment: .leading) {
             HStack {
                 switch category {
@@ -245,7 +245,7 @@ struct HomeView: View {
     
     // MARK: - 아껴쓰기 · 다시쓰기 Cell View
     @ViewBuilder
-    private func ArticleCellView(_ article: Article) -> some View {
+    private func articleCellView(_ article: Article) -> some View {
         ZStack(alignment: .bottomLeading) {
             Image(article.imagePaths.first ?? "DummyImage1")
                 .resizable()
@@ -272,7 +272,7 @@ struct HomeView: View {
     
     // MARK: - 나눠쓰기 Cell View
     @ViewBuilder
-    private func NanuaCellView(_ trade: Trade) -> some View {
+    private func nanuaCellView(_ trade: Trade) -> some View {
         ZStack(alignment: .bottomLeading) {
             Image(trade.imagePaths.first ?? "DummyImage1")
                 .resizable()

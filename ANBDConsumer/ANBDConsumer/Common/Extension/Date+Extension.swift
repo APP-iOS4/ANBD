@@ -12,6 +12,11 @@ extension Date {
         let formatter = RelativeDateTimeFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.dateTimeStyle = .named
-        return formatter.localizedString(for: self, relativeTo: Date())
+        
+        if Int(Date().timeIntervalSince(self)) < 60 {
+            return "방금"
+        } else {
+            return formatter.localizedString(for: self, relativeTo: Date())
+        }
     }
 }

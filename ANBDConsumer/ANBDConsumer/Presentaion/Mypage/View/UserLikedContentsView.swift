@@ -45,15 +45,6 @@ struct UserLikedContentsView: View {
         }
         .navigationTitle("\(navigationTitile)")
         .navigationBarTitleDisplayMode(.inline)
-        
-        .navigationDestination(for: Article.self) { article in
-            ArticleDetailView(article: article)
-                .toolbarRole(.editor)
-        }
-        .navigationDestination(for: Trade.self) { trade in
-            TradeDetailView(trade: trade)
-                .toolbarRole(.editor)
-        }
     }
     
     @ViewBuilder

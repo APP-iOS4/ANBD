@@ -143,27 +143,6 @@ struct UserPageView: View {
         .navigationTitle("마이페이지")
         .navigationBarTitleDisplayMode(.inline)
         
-        .navigationDestination(for: ANBDCategory.self) { category in
-            UserActivityListView(category: category, user: myPageViewModel.user)
-                .toolbarRole(.editor)
-        }
-        .navigationDestination(for: MyPageViewModel.MyPageNaviPaths.self) { path in
-            switch path {
-            case .userLikedArticleList:
-                UserLikedContentsView(category: .accua)
-                    .toolbarRole(.editor)
-                    .toolbar(.hidden, for: .tabBar)
-            case .userHeartedTradeList:
-                UserLikedContentsView(category: .nanua)
-                    .toolbarRole(.editor)
-                    .toolbar(.hidden, for: .tabBar)
-            case .accountManagement:
-                AccountManagementView()
-                    .toolbarRole(.editor)
-                    .toolbar(.hidden, for: .tabBar)
-            }
-        }
-        
         .confirmationDialog("유저 신고하기", isPresented: $isShowingReportDialog) {
             Button("신고하기", role: .destructive) {
                 // 유저 신고하기 메서드

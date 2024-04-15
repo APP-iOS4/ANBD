@@ -85,6 +85,34 @@ struct ANBDTabView: View {
             /// Mypage
             NavigationStack(path: $myPageViewModel.myPageNaviPath) {
                 UserPageView(isSignedInUser: true)
+                    .navigationDestination(for: Article.self) { article in
+                        ArticleDetailView(article: article)
+                            .toolbarRole(.editor)
+                    }
+                    .navigationDestination(for: Trade.self) { trade in
+                        TradeDetailView(trade: trade)
+                            .toolbarRole(.editor)
+                    }
+                    .navigationDestination(for: ANBDCategory.self) { category in
+                        UserActivityListView(category: category, user: myPageViewModel.user)
+                            .toolbarRole(.editor)
+                    }
+                    .navigationDestination(for: MyPageViewModel.MyPageNaviPaths.self) { path in
+                        switch path {
+                        case .userLikedArticleList:
+                            UserLikedContentsView(category: .accua)
+                                .toolbarRole(.editor)
+                                .toolbar(.hidden, for: .tabBar)
+                        case .userHeartedTradeList:
+                            UserLikedContentsView(category: .nanua)
+                                .toolbarRole(.editor)
+                                .toolbar(.hidden, for: .tabBar)
+                        case .accountManagement:
+                            AccountManagementView()
+                                .toolbarRole(.editor)
+                                .toolbar(.hidden, for: .tabBar)
+                        }
+                    }
             }
             .tabItem {
                 Label("내 정보", systemImage: "person.fill")

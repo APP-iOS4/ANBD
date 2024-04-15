@@ -56,17 +56,18 @@ struct TradeListCell: View {
                 HStack {
                     Spacer()
                     
-                    Button(action: {
-                        isLiked.toggle()
-                    }, label: {
-                        Image(systemName: isLiked ? "heart.fill" : "heart")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .contentTransition(.symbolEffect(.replace))
-                            .frame(width: 20)
-                            .foregroundStyle(isLiked ? .heartRed : .gray800)
-                            .padding(.leading, 10)
-                    })
+                    Image(systemName: isLiked ? "heart.fill" : "heart")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 20)
+                        .foregroundStyle(isLiked ? .heartRed : .gray800)
+                        .onTapGesture {
+                            withAnimation {
+                                isLiked.toggle()
+                            }
+                        }
+                        .padding(.leading, 10)
+                    
                 }
                 .foregroundStyle(.gray800)
             }

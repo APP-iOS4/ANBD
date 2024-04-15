@@ -42,7 +42,7 @@ struct SearchResultView: View {
         VStack {
             CategoryDividerView(category: $category, isFromSearchView: true)
                 .frame(height: 40)
-                .padding()
+                .padding(.horizontal)
             
             TabView(selection: $category) {
                 ArticleListView(category: .accua, searchText: searchText)

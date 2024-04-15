@@ -6,9 +6,8 @@ struct TradeCreateView: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @Binding var isShowingCreate: Bool
     @State private var placeHolder: String = ""
-    @State private var isFinish: Bool = true
+    @State private var isFinished: Bool = true
     @State private var isCancelable: Bool = true
-    @State private var isChanged: Bool = false
     @State private var isShowingCategoryMenuList: Bool = false
     @State private var isShowingLocationMenuList: Bool = false
     @State private var isShowingBackAlert: Bool = false
@@ -45,38 +44,38 @@ struct TradeCreateView: View {
             wholeView
                 .onChange(of: mustTextFields, {
                     if self.selectedPhotosData.count != 0 && self.title != "" && self.myProduct != "" && self.content != "" {
-                        self.isFinish = false
+                        self.isFinished = false
                     } else {
-                        self.isFinish = true
+                        self.isFinished = true
                     }
                 })
                 .onChange(of: selectedPhotosData, {
                     if self.selectedPhotosData.count != 0 && self.title != "" && self.myProduct != "" && self.content != "" {
-                        self.isFinish = false
+                        self.isFinished = false
                     } else {
-                        self.isFinish = true
+                        self.isFinished = true
                     }
                     
-                    isChanged = true
+                    isCancelable = false
                 })
                 
         } else {
             wholeView
                 .onChange(of: mustTextFields) { _ in
                     if self.selectedPhotosData.count != 0 && self.title != "" && self.myProduct != "" && self.content != "" {
-                        self.isFinish = false
+                        self.isFinished = false
                     } else {
-                        self.isFinish = true
+                        self.isFinished = true
                     }
                 }
                 .onChange(of: selectedPhotosData) { _ in
                     if self.selectedPhotosData.count != 0 && self.title != "" && self.myProduct != "" && self.content != "" {
-                        self.isFinish = false
+                        self.isFinished = false
                     } else {
-                        self.isFinish = true
+                        self.isFinished = true
                     }
                     
-                    isChanged = true
+                    isCancelable = false
                 }
         }
     }
@@ -153,19 +152,14 @@ extension TradeCreateView {
                         // 수정: 바뀐 정보가 없다면 backAlert X
                         if let trade = trade {
                             if title != trade.title || content != trade.content || category != trade.category || myProduct != trade.myProduct || self.itemCategory != trade.itemCategory || self.location != trade.location {
-                                isChanged = true
-                            }
-                        } else {
-                            // 새로 작성: 텍스트가 하나라도 채워져 있다면 backAlert
-                            for item in mustTextFields {
-                                if item != "" {
-                                    isCancelable = false
-                                }
+                                isCancelable = false
                             }
                         }
                         
-                        if isChanged {
-                            isCancelable = false
+                        for item in mustTextFields {
+                            if item != "" {
+                                isCancelable = false
+                            }
                         }
                         
                         if isCancelable {
@@ -358,7 +352,7 @@ extension TradeCreateView {
                     .padding(.bottom, 10)
                     
                     //작성완료 버튼
-                    BlueSquareButton(title: isNewProduct ? "작성 완료" : "수정 완료", isDisabled: isFinish) {
+                    BlueSquareButton(title: isNewProduct ? "작성 완료" : "수정 완료", isDisabled: isFinished) {
                         if !isNewProduct {
                             
                         } else {

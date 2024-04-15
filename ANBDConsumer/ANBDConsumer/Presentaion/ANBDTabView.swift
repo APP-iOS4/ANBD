@@ -13,6 +13,8 @@ struct ANBDTabView: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     
+    @State private var category: ANBDCategory = .accua
+    
     var body: some View {
         TabView {
             /// Home
@@ -53,9 +55,16 @@ struct ANBDTabView: View {
             
             /// Article (정보 공유)
             NavigationStack {
-                ArticleView()
+                ArticleView(category: $category)
                     .navigationDestination(for: Article.self) { article in
                         ArticleDetailView(article: article)
+                    }
+                    .navigationDestination(for: String.self) { str in
+                        if str == "" {
+                            SearchView()
+                        } else {
+                            SearchResultView(category: category, searchText: str)
+                        }
                     }
             }
             .tabItem {
@@ -64,9 +73,16 @@ struct ANBDTabView: View {
             
             /// Trade (나눔 · 거래)
             NavigationStack {
-                TradeView()
+                ArticleView(category: $category)
                     .navigationDestination(for: Trade.self) { trade in
                         TradeDetailView(trade: trade)
+                    }
+                    .navigationDestination(for: String.self) { str in
+                        if str == "" {
+                            SearchView()
+                        } else {
+                            SearchResultView(category: category, searchText: str)
+                        }
                     }
             }
             .tabItem {

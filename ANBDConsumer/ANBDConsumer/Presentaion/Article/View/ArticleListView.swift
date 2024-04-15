@@ -10,40 +10,72 @@ import ANBDModel
 
 struct ArticleListView: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
+    @EnvironmentObject private var tradeViewModel: TradeViewModel
     
     @State var category: ANBDCategory = .accua
+    var isArticle: Bool = true
     var isFromHomeView: Bool = false
     var searchText: String? = nil
     
+    @State private var isShowingLocation: Bool = false
+    @State private var isShowingItemCategory: Bool = false
+    
     var body: some View {
         VStack(alignment: .leading) {
-            Menu {
-                Button {
-                    articleViewModel.sortOption = .time
-                    articleViewModel.updateArticles(category: category)
+            if isArticle {
+                Menu {
+                    Button {
+                        articleViewModel.sortOption = .time
+                        articleViewModel.updateArticles(category: category)
+                    } label: {
+                        Label("최신순", systemImage: articleViewModel.sortOption == .time ? "checkmark" : "")
+                    }
+                    
+                    Button {
+                        articleViewModel.sortOption = .likes
+                        articleViewModel.updateArticles(category: category)
+                    } label: {
+                        Label("좋아요순", systemImage: articleViewModel.sortOption == .likes ? "checkmark" : "")
+                    }
+                    
+                    Button {
+                        articleViewModel.sortOption = .comments
+                        articleViewModel.updateArticles(category: category)
+                    } label: {
+                        Label("댓글순", systemImage: articleViewModel.sortOption == .comments ? "checkmark" : "")
+                    }
                 } label: {
-                    Label("최신순", systemImage: articleViewModel.sortOption == .time ? "checkmark" : "")
+                    CapsuleButtonView(text: articleViewModel.getSortOptionLabel(), isForFiltering: true)
                 }
-                
-                Button {
-                    articleViewModel.sortOption = .likes
-                    articleViewModel.updateArticles(category: category)
-                } label: {
-                    Label("좋아요순", systemImage: articleViewModel.sortOption == .likes ? "checkmark" : "")
+                .frame(width: 100)
+                .padding(.leading, 10)
+            } else {
+                HStack {
+                    /// 지역 필터링
+                    Button(action: {
+                        isShowingLocation.toggle()
+                    }, label: {
+                        if tradeViewModel.selectedLocations.isEmpty {
+                            CapsuleButtonView(text: "지역", isForFiltering: true)
+                        } else {
+                            CapsuleButtonView(text: tradeViewModel.selectedLocations.count > 1 ? "지역 \(tradeViewModel.selectedLocations.count)" : "\(tradeViewModel.selectedLocations.first?.description ?? "Unknown")", isForFiltering: true, buttonColor: .accent, fontColor: .white)
+                        }
+                    })
+                    
+                    /// 카테고리 필터링
+                    Button(action: {
+                        isShowingItemCategory.toggle()
+                    }, label: {
+                        if tradeViewModel.selectedItemCategories.isEmpty {
+                            CapsuleButtonView(text: "카테고리", isForFiltering: true)
+                        } else {
+                            CapsuleButtonView(text: tradeViewModel.selectedItemCategories.count > 1 ? "카테고리 \(tradeViewModel.selectedItemCategories.count)" : "\(tradeViewModel.selectedItemCategories.first?.rawValue ?? "Unknown")", isForFiltering: true, buttonColor: .accent, fontColor: .white)
+                        }
+                    })
                 }
-                
-                Button {
-                    articleViewModel.sortOption = .comments
-                    articleViewModel.updateArticles(category: category)
-                } label: {
-                    Label("댓글순", systemImage: articleViewModel.sortOption == .comments ? "checkmark" : "")
-                }
-            } label: {
-                CapsuleButtonView(text: articleViewModel.getSortOptionLabel(), isForFiltering: true)
+                .padding(.horizontal)
             }
-            .frame(width: 100)
-            .padding(.leading, 10)
-            
+
             if articleViewModel.filteredArticles.isEmpty {
                 VStack {
                     Spacer()

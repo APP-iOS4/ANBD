@@ -1,6 +1,6 @@
 //
 //  DefaultArticleRepository.swift
-//  
+//
 //
 //  Created by 유지호 on 4/4/24.
 //
@@ -28,13 +28,8 @@ final class DefaultArticleRepository: ArticleRepository {
         self.userDataSource = userDataSource
     }
     
-}
-
-
-// MARK: Create
-@available(iOS 15, *)
-extension DefaultArticleRepository {
     
+    // MARK: Create
     func createArticle(article: Article, imageDatas: [Data]) async throws {
         do {
             let imagePaths = try await storage.uploadImageList(
@@ -50,13 +45,9 @@ extension DefaultArticleRepository {
             throw ArticleError.createArticleError(code: 4011, message: "Article을 추가하는데 실패했습니다.")
         }
     }
-}
-
-
-// MARK: Read
-@available(iOS 15, *)
-extension DefaultArticleRepository {
     
+    
+    // MARK: Read
     func readArticle(articleID: String) async throws -> Article {
         do {
             let article = try await articleDataSource.readArticle(articleID: articleID)
@@ -79,89 +70,84 @@ extension DefaultArticleRepository {
         }
     }
     
-    func readArticleList() async throws -> [Article] {
-        let articleList = try await articleDataSource.readArticleList()
+    func readArticleList(limit: Int) async throws -> [Article] {
+        let articleList = try await articleDataSource.readArticleList(limit: limit)
         return articleList
     }
     
-    func readArticleList(writerID: String) async throws -> [Article] {
-        let articleList = try await articleDataSource.readArticleList(writerID: writerID)
+    func readArticleList(writerID: String, limit: Int) async throws -> [Article] {
+        let articleList = try await articleDataSource.readArticleList(writerID: writerID, limit: limit)
         return articleList
     }
     
-    func readArticleList(category: ANBDCategory, by order: ArticleOrder) async throws -> [Article] {
+    func readArticleList(category: ANBDCategory, by order: ArticleOrder, limit: Int) async throws -> [Article] {
         guard category == .accua || category == .dasi else {
             throw ArticleError.invalidParameter(code: 4010, message: "잘못된 매개변수입니다.")
         }
         
-        let articleList = try await articleDataSource.readArticleList(category: category, by: order)
+        let articleList = try await articleDataSource.readArticleList(category: category, by: order, limit: limit)
         return articleList
     }
     
-    func readArticleList(keyword: String) async throws -> [Article] {
+    func readArticleList(keyword: String, limit: Int) async throws -> [Article] {
         if keyword.isEmpty {
             throw ArticleError.invalidParameter(code: 4010, message: "잘못된 매개변수입니다.")
         }
         
-        let articleList = try await articleDataSource.readArticleList(keyword: keyword)
+        let articleList = try await articleDataSource.readArticleList(keyword: keyword, limit: limit)
         return articleList
     }
     
-    func refreshAll() async throws -> [Article] {
+    func refreshAll(limit: Int) async throws -> [Article] {
         do {
-            let refreshedList = try await articleDataSource.refreshAll()
+            let refreshedList = try await articleDataSource.refreshAll(limit: limit)
             return refreshedList
         } catch DBError.getDocumentError {
             throw ArticleError.readArticleError(code: 4011, message: "Article을 읽어오는데 실패했습니다.")
         }
     }
     
-    func refreshWriterID(writerID: String) async throws -> [Article] {
+    func refreshWriterID(writerID: String, limit: Int) async throws -> [Article] {
         if writerID.isEmpty {
             throw ArticleError.invalidParameter(code: 4010, message: "잘못된 매개변수입니다.")
         }
         
         do {
-            let refreshedList = try await articleDataSource.refreshWriterID(writerID: writerID)
+            let refreshedList = try await articleDataSource.refreshWriterID(writerID: writerID, limit: limit)
             return refreshedList
         } catch {
             throw ArticleError.readArticleError(code: 4011, message: "Article을 읽어오는데 실패했습니다.")
         }
     }
     
-    func refreshOrder(category: ANBDCategory, by order: ArticleOrder) async throws -> [Article] {
+    func refreshOrder(category: ANBDCategory, by order: ArticleOrder, limit: Int) async throws -> [Article] {
         guard category == .accua || category == .dasi else {
             throw ArticleError.invalidParameter(code: 4010, message: "잘못된 매개변수입니다.")
         }
         
         do {
-            let refreshedList = try await articleDataSource.refreshOrder(category: category, by: order)
+            let refreshedList = try await articleDataSource.refreshOrder(category: category, by: order, limit: limit)
             return refreshedList
         } catch {
             throw ArticleError.readArticleError(code: 4011, message: "Article을 읽어오는데 실패했습니다.")
         }
     }
     
-    func refreshSearch(keyword: String) async throws -> [Article] {
+    func refreshSearch(keyword: String, limit: Int) async throws -> [Article] {
         if keyword.isEmpty {
             throw ArticleError.invalidParameter(code: 4010, message: "잘못된 매개변수입니다.")
         }
         
         do {
-            let refreshedList = try await articleDataSource.refreshSearch(keyword: keyword)
+            let refreshedList = try await articleDataSource.refreshSearch(keyword: keyword, limit: limit)
             return refreshedList
         } catch {
             throw ArticleError.readArticleError(code: 4011, message: "Article을 읽어오는데 실패했습니다.")
         }
     }
     
-}
-
-
-// MARK: Update
-@available(iOS 15, *)
-extension DefaultArticleRepository {
     
+    // MARK: Update
     func updateArticle(article: Article, imageDatas: [Data]) async throws {
         do {
             let imagePaths = try await storage.updateImageList(
@@ -197,13 +183,8 @@ extension DefaultArticleRepository {
         try await userDataSource.updateUserInfo(user: userInfo)
     }
     
-}
- 
-
-// MARK: Delete
-@available(iOS 15, *)
-extension DefaultArticleRepository {
     
+    // MARK: Delete
     func deleteArticle(article: Article) async throws {
         do {
             try await commentDataSource.deleteCommentList(articleID: article.id)

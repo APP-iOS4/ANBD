@@ -20,17 +20,6 @@ struct TradeListView: View {
     var body: some View {
         if #available(iOS 17.0, *) {
             wholeView
-                .navigationTitle(navigationTitle)
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar(isFromHomeView ? .hidden : .visible, for: .tabBar)
-                .sheet(isPresented: $isShowingLocation) {
-                    LocationBottomSheet(isShowingLocation: $isShowingLocation)
-                        .presentationDetents([.fraction(0.6)])
-                }
-                .sheet(isPresented: $isShowingItemCategory) {
-                    CategoryBottomSheet(isShowingCategory: $isShowingItemCategory)
-                        .presentationDetents([.fraction(0.6)])
-                }
                 .onChange(of: tradeViewModel.selectedLocations) {
                     tradeViewModel.filteringTrades(category: category)
                 }
@@ -39,17 +28,6 @@ struct TradeListView: View {
                 }
         } else {
             wholeView
-                .navigationTitle(navigationTitle)
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar(isFromHomeView ? .hidden : .visible, for: .tabBar)
-                .sheet(isPresented: $isShowingLocation) {
-                    LocationBottomSheet(isShowingLocation: $isShowingLocation)
-                        .presentationDetents([.fraction(0.6)])
-                }
-                .sheet(isPresented: $isShowingItemCategory) {
-                    CategoryBottomSheet(isShowingCategory: $isShowingItemCategory)
-                        .presentationDetents([.fraction(0.6)])
-                }
                 .onChange(of: tradeViewModel.selectedLocations) { _ in
                     tradeViewModel.filteringTrades(category: category)
                 }
@@ -133,6 +111,17 @@ extension TradeListView {
                     TradeDetailView(trade: item)
                 }
             }
+        }
+        .navigationTitle(navigationTitle)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(isFromHomeView ? .hidden : .visible, for: .tabBar)
+        .sheet(isPresented: $isShowingLocation) {
+            LocationBottomSheet(isShowingLocation: $isShowingLocation)
+                .presentationDetents([.fraction(0.6)])
+        }
+        .sheet(isPresented: $isShowingItemCategory) {
+            CategoryBottomSheet(isShowingCategory: $isShowingItemCategory)
+                .presentationDetents([.fraction(0.6)])
         }
     }
 }

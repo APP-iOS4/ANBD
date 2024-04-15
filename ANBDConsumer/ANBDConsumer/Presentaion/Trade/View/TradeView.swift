@@ -21,66 +21,11 @@ struct TradeView: View {
             .onChange(of: category) {
                 tradeViewModel.filteringTrades(category: category)
             }
-            .onAppear {
-                tradeViewModel.filteringTrades(category: category)
-            }
-            .fullScreenCover(isPresented: $isShowingCreate) {
-                TradeCreateView(isShowingCreate: $isShowingCreate, category: category)
-            }
-            .navigationTitle("나눔 · 거래")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarRole(.editor)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {
-                        isGoingToSearchView.toggle()
-                    }, label: {
-                        Image(systemName: "magnifyingglass")
-                            .resizable()
-                            .frame(width: 20)
-                            .foregroundStyle(.gray900)
-                    })
-                }
-            }
-            .onDisappear {
-                tradeViewModel.selectedLocations = []
-                tradeViewModel.selectedItemCategories = []
-            }
-            .navigationDestination(isPresented: $isGoingToSearchView) {
-                SearchView(category: category)
-            }
+            
         } else {
             wholeView
                 .onChange(of: category) { _ in
                     tradeViewModel.filteringTrades(category: category)
-                }
-                .onAppear {
-                    tradeViewModel.filteringTrades(category: category)
-                }
-                .fullScreenCover(isPresented: $isShowingCreate) {
-                    TradeCreateView(isShowingCreate: $isShowingCreate, category: category)
-                }
-                .navigationTitle("나눔 · 거래")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbarRole(.editor)
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button(action: {
-                            isGoingToSearchView.toggle()
-                        }, label: {
-                            Image(systemName: "magnifyingglass")
-                                .resizable()
-                                .frame(width: 20)
-                                .foregroundStyle(.gray900)
-                        })
-                    }
-                }
-                .onDisappear {
-                    tradeViewModel.selectedLocations = []
-                    tradeViewModel.selectedItemCategories = []
-                }
-                .navigationDestination(isPresented: $isGoingToSearchView) {
-                    SearchView(category: category)
                 }
         }
     }
@@ -109,6 +54,34 @@ extension TradeView {
                 WriteButtonView()
             })
         }//ZStack
+        .onAppear {
+            tradeViewModel.filteringTrades(category: category)
+        }
+        .fullScreenCover(isPresented: $isShowingCreate) {
+            TradeCreateView(isShowingCreate: $isShowingCreate, category: category)
+        }
+        .navigationTitle("나눔 · 거래")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarRole(.editor)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: {
+                    isGoingToSearchView.toggle()
+                }, label: {
+                    Image(systemName: "magnifyingglass")
+                        .resizable()
+                        .frame(width: 20)
+                        .foregroundStyle(.gray900)
+                })
+            }
+        }
+        .onDisappear {
+            tradeViewModel.selectedLocations = []
+            tradeViewModel.selectedItemCategories = []
+        }
+        .navigationDestination(isPresented: $isGoingToSearchView) {
+            SearchView(category: category)
+        }
     }
 }
 

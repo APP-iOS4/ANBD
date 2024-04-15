@@ -18,6 +18,60 @@ struct TradeListView: View {
     @State private var isShowingItemCategory: Bool = false
     
     var body: some View {
+        if #available(iOS 17.0, *) {
+            wholeView
+                .navigationTitle(navigationTitle)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar(isFromHomeView ? .hidden : .visible, for: .tabBar)
+                .sheet(isPresented: $isShowingLocation) {
+                    LocationBottomSheet(isShowingLocation: $isShowingLocation)
+                        .presentationDetents([.fraction(0.6)])
+                }
+                .sheet(isPresented: $isShowingItemCategory) {
+                    CategoryBottomSheet(isShowingCategory: $isShowingItemCategory)
+                        .presentationDetents([.fraction(0.6)])
+                }
+                .onChange(of: tradeViewModel.selectedLocations) {
+                    tradeViewModel.filteringTrades(category: category)
+                }
+                .onChange(of: tradeViewModel.selectedItemCategories) {
+                    tradeViewModel.filteringTrades(category: category)
+                }
+        } else {
+            wholeView
+                .navigationTitle(navigationTitle)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar(isFromHomeView ? .hidden : .visible, for: .tabBar)
+                .sheet(isPresented: $isShowingLocation) {
+                    LocationBottomSheet(isShowingLocation: $isShowingLocation)
+                        .presentationDetents([.fraction(0.6)])
+                }
+                .sheet(isPresented: $isShowingItemCategory) {
+                    CategoryBottomSheet(isShowingCategory: $isShowingItemCategory)
+                        .presentationDetents([.fraction(0.6)])
+                }
+                .onChange(of: tradeViewModel.selectedLocations) { _ in
+                    tradeViewModel.filteringTrades(category: category)
+                }
+                .onChange(of: tradeViewModel.selectedItemCategories) { _ in
+                    tradeViewModel.filteringTrades(category: category)
+                }
+        }
+    }
+}
+
+extension TradeListView {
+    private var navigationTitle: String {
+        if let searchText = searchText {
+            return searchText
+        } else if isFromHomeView {
+            return category.description
+        } else {
+            return "나눔 · 거래"
+        }
+    }
+    
+    fileprivate var wholeView: some View {
         VStack(alignment: .leading) {
             HStack {
                 /// 지역 필터링
@@ -79,35 +133,6 @@ struct TradeListView: View {
                     TradeDetailView(trade: item)
                 }
             }
-        }
-        .navigationTitle(navigationTitle)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar(isFromHomeView ? .hidden : .visible, for: .tabBar)
-        .sheet(isPresented: $isShowingLocation) {
-            LocationBottomSheet(isShowingLocation: $isShowingLocation)
-                .presentationDetents([.fraction(0.6)])
-        }
-        .sheet(isPresented: $isShowingItemCategory) {
-            CategoryBottomSheet(isShowingCategory: $isShowingItemCategory)
-                .presentationDetents([.fraction(0.6)])
-        }
-        .onChange(of: tradeViewModel.selectedLocations) {
-            tradeViewModel.filteringTrades(category: category)
-        }
-        .onChange(of: tradeViewModel.selectedItemCategories) {
-            tradeViewModel.filteringTrades(category: category)
-        }
-    }
-}
-
-extension TradeListView {
-    private var navigationTitle: String {
-        if let searchText = searchText {
-            return searchText
-        } else if isFromHomeView {
-            return category.description
-        } else {
-            return "나눔 · 거래"
         }
     }
 }

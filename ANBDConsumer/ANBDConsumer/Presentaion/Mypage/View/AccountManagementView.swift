@@ -57,29 +57,11 @@ struct AccountManagementView: View {
                         .ignoresSafeArea()
                 }
             }
-            .navigationTitle("내 정보")
-            .navigationBarTitleDisplayMode(.inline)
-            
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {
-                        myPageViewModel.tempUserFavoriteLocation = myPageViewModel.user.favoriteLocation
-                        isShowingEditorView.toggle()
-                    }, label: {
-                        Text("수정")
-                    })
-                }
-            }
-            
-            .fullScreenCover(isPresented: $isShowingEditorView) {
-                UserInfoEditingView()
-            }
             
             if isShowingSignOutAlertView {
                 CustomAlertView(isShowingCustomAlert: $isShowingSignOutAlertView, viewType: .signOut) {
                     // 로그아웃 메서드 넣기
                     authenticationViewModel.authState = false
-                    print("Sign Out")
                 }
             }
             
@@ -87,9 +69,25 @@ struct AccountManagementView: View {
                 CustomAlertView(isShowingCustomAlert: $isShowingWithdrawalAlertView, viewType: .withdrawal) {
                     // 회원 탈퇴 메서드 넣기
                     authenticationViewModel.authState = false
-                    print("Withdrawal")
                 }
             }
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: {
+                    myPageViewModel.tempUserFavoriteLocation = myPageViewModel.user.favoriteLocation
+                    isShowingEditorView.toggle()
+                }, label: {
+                    Text("수정")
+                })
+            }
+        }
+        
+        .navigationTitle("내 정보")
+        .navigationBarTitleDisplayMode(.inline)
+        
+        .fullScreenCover(isPresented: $isShowingEditorView) {
+            UserInfoEditingView()
         }
     }
     
@@ -109,7 +107,7 @@ struct AccountManagementView: View {
     }
 }
 
-private struct WarningTextModifier: ViewModifier {
+fileprivate struct WarningTextModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(ANBDFont.SubTitle1)

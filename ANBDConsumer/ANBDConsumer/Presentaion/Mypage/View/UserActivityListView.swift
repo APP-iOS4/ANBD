@@ -11,6 +11,8 @@ import ANBDModel
 struct UserActivityListView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     
+    // 연습용 임시 제가 이거 임시로 만들었었는데 주말에 연습해본다고!!!
+    // 
     private let articleUseCase: ArticleUsecase = DefaultArticleUsecase()
     private let tradeUseCase: TradeUsecase = DefaultTradeUsecase()
     private let userUseCase: UserUsecase = DefaultUserUsecase()
@@ -27,7 +29,6 @@ struct UserActivityListView: View {
     private var filterdTradesWrittenByUser: [Trade] {
         return tradesWrittenByUser.filter({$0.category == category})
     }
-    
     
     var body: some View {
         VStack {
@@ -51,20 +52,10 @@ struct UserActivityListView: View {
             .tabViewStyle(.page(indexDisplayMode: .never))
             .ignoresSafeArea(edges: .bottom)
         }
+        .toolbar(.hidden, for: .tabBar)
+        
         .navigationTitle("\(user.nickname)님의 ANBD")
         .navigationBarTitleDisplayMode(.inline)
-        /*
-         .navigationDestination(for: Article.self, destination: { article in
-         ArticleDetailView(article: article)
-         .toolbarRole(.editor)
-         })
-         .navigationDestination(for: Trade.self, destination: { trade in
-         TradeDetailView(trade: trade)
-         .toolbarRole(.editor)
-         })
-         */
-        
-        .toolbar(.hidden, for: .tabBar)
         
         .onAppear {
             /*
@@ -111,18 +102,10 @@ struct UserActivityListView: View {
             ScrollView(.vertical) {
                 LazyVStack {
                     ForEach(articlesWrittenByUser.filter({$0.category == category})) { article in
-                        //                        NavigationLink(value: article) {
-                        //                            ArticleListCell(article: article)
-                        //                                .padding(.vertical, 5)
-                        //                        }
-                        NavigationLink {
-                            ArticleDetailView(article: article)
-                                .toolbarRole(.editor)
-                        } label: {
+                        NavigationLink(value: article) {
                             ArticleListCell(article: article)
                                 .padding(.vertical, 5)
                         }
-                        
                         
                         Divider()
                     }
@@ -154,14 +137,7 @@ struct UserActivityListView: View {
                 ScrollView(.vertical) {
                     LazyVStack {
                         ForEach(tradesWrittenByUser.filter({$0.category == category})) { trade in
-                            //                            NavigationLink(value: trade) {
-                            //                                TradeListCell(trade: trade)
-                            //                                    .padding(.vertical, 5)
-                            //                            }
-                            NavigationLink {
-                                TradeDetailView(trade: trade)
-                                    .toolbarRole(.editor)
-                            } label: {
+                            NavigationLink(value: trade) {
                                 TradeListCell(trade: trade)
                                     .padding(.vertical, 5)
                             }

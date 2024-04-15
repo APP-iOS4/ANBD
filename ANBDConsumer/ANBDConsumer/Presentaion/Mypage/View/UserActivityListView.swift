@@ -103,7 +103,7 @@ struct UserActivityListView: View {
                 LazyVStack {
                     ForEach(articlesWrittenByUser.filter({$0.category == category})) { article in
                         NavigationLink(value: article) {
-                            ArticleListCell(article: article)
+                            ArticleListCell(value: .article(article))
                                 .padding(.vertical, 5)
                         }
                         

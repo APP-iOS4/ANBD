@@ -104,7 +104,7 @@ struct UserLikedContentsView: View {
                 LazyVStack {
                     ForEach(myPageViewModel.mockArticleData.filter({$0.category == category})) { article in
                         NavigationLink(value: article) {
-                            ArticleListCell(article: article)
+                            ArticleListCell(value: .article(article))
                                 .padding(.vertical, 5)
                         }
                         

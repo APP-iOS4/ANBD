@@ -261,7 +261,7 @@ final class DefaultTradeDataSource: TradeDataSource {
         }
         
         let query = tradeDB
-            .whereField("category", isEqualTo: category)
+            .whereField("category", isEqualTo: category.rawValue)
             .order(by: "createdAt", descending: true)
             .limit(to: category == .nanua ? 4 : 2)
         

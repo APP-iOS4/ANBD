@@ -14,7 +14,8 @@ struct ANBDTabView: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     
-    @State private var category: ANBDCategory = .accua
+    @State private var articleCategory: ANBDCategory = .accua
+    @State private var tradeCategory: ANBDCategory = .nanua
     
     var body: some View {
         TabView {
@@ -55,16 +56,19 @@ struct ANBDTabView: View {
             }
             
             /// Article (정보 공유)
-            NavigationStack {
-                ArticleView(category: $category)
+            NavigationStack(path: $articleViewModel.articlePath) {
+                ArticleView(category: $articleCategory)
                     .navigationDestination(for: Article.self) { article in
                         ArticleDetailView(article: article)
+                    }
+                    .navigationDestination(for: Trade.self) { trade in
+                        TradeDetailView(trade: trade)
                     }
                     .navigationDestination(for: String.self) { str in
                         if str == "" {
                             SearchView()
                         } else {
-                            SearchResultView(category: category, searchText: str)
+                            SearchResultView(category: articleCategory, searchText: str)
                         }
                     }
             }
@@ -73,8 +77,11 @@ struct ANBDTabView: View {
             }
             
             /// Trade (나눔 · 거래)
-            NavigationStack {
-                ArticleView(category: $category)
+            NavigationStack(path: $tradeViewModel.tradePath) {
+                ArticleView(category: $tradeCategory)
+                    .navigationDestination(for: Article.self) { article in
+                        ArticleDetailView(article: article)
+                    }
                     .navigationDestination(for: Trade.self) { trade in
                         TradeDetailView(trade: trade)
                     }
@@ -82,7 +89,7 @@ struct ANBDTabView: View {
                         if str == "" {
                             SearchView()
                         } else {
-                            SearchResultView(category: category, searchText: str)
+                            SearchResultView(category: tradeCategory, searchText: str)
                         }
                     }
             }

@@ -76,12 +76,12 @@ struct ArticleListView: View {
                 .padding(.horizontal)
             }
 
-            if articleViewModel.filteredArticles.isEmpty {
+            if articleViewModel.filteredArticles.isEmpty || tradeViewModel.filteredTrades.isEmpty {
                 VStack {
                     Spacer()
                     HStack {
                         Spacer()
-                        Text("해당하는 정보 공유 게시글이 없습니다.")
+                        Text(isArticle ? "해당하는 정보 공유 게시글이 없습니다." : "해당하는 나눔 · 거래 게시글이 없습니다.")
                             .foregroundStyle(.gray400)
                             .font(ANBDFont.body1)
                         Spacer()
@@ -91,21 +91,28 @@ struct ArticleListView: View {
             } else {
                 ScrollView {
                     LazyVStack {
-                        ForEach(articleViewModel.filteredArticles) { article in
-                            NavigationLink(value: article) {
-                                ArticleListCell(article: article)
+                        if isArticle {
+                            ForEach(articleViewModel.filteredArticles) { item in
+                                NavigationLink(value: item) {
+                                    ArticleListCell(article: item)
+                                }
+                                .padding(.vertical, 5)
+                                Divider()
                             }
-                            .padding(.vertical, 5)
-                            Divider()
+                            .padding(.horizontal)
+                        } else {
+                            ForEach(tradeViewModel.filteredTrades) { item in
+                                NavigationLink(value: item) {
+                                    TradeListCell(trade: item)
+                                }
+                                .padding(.vertical, 5)
+                                Divider()
+                            }
+                            .padding(.horizontal)
                         }
-                        .padding(.horizontal)
-                        
                     }
                     .background(.white)
                     .padding(.bottom, 80)
-                }
-                .navigationDestination(for: Article.self) { article in
-                    ArticleDetailView(article: article)
                 }
                 .background(.gray50)
             }
@@ -122,8 +129,10 @@ extension ArticleListView {
             return searchText
         } else if isFromHomeView {
             return category.description
-        } else {
+        } else if isArticle {
             return "정보 공유"
+        } else {
+            return "나눔 · 거래"
         }
     }
 }
@@ -132,5 +141,4 @@ extension ArticleListView {
 #Preview {
     ArticleListView()
         .environmentObject(ArticleViewModel())
-
 }

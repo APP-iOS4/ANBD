@@ -23,14 +23,20 @@ struct ArticleView: View {
         if #available(iOS 17.0, *) {
             listView
                 .onChange(of: category) {
-                    articleViewModel.updateArticles(category: category)
-                    tradeViewModel.filteringTrades(category: category)
+                    if isArticle {
+                        articleViewModel.updateArticles(category: category)
+                    } else {
+                        tradeViewModel.filteringTrades(category: category)
+                    }
                 }
         } else {
             listView
                 .onChange(of: category, perform: { _ in
-                    articleViewModel.updateArticles(category: category)
-                    tradeViewModel.filteringTrades(category: category)
+                    if isArticle {
+                        articleViewModel.updateArticles(category: category)
+                    } else {
+                        tradeViewModel.filteringTrades(category: category)
+                    }
                 })
         }
     }
@@ -44,14 +50,14 @@ struct ArticleView: View {
                 
                 TabView(selection: $category) {
                     if isArticle {
-                        ArticleListView(category: .accua)
+                        ArticleListView(category: .accua, isArticle: isArticle)
                             .tag(ANBDCategory.accua)
-                        ArticleListView(category: .dasi)
+                        ArticleListView(category: .dasi, isArticle: isArticle)
                             .tag(ANBDCategory.dasi)
                     } else {
-                        ArticleListView(category: .nanua)
+                        ArticleListView(category: .nanua, isArticle: isArticle)
                             .tag(ANBDCategory.nanua)
-                        ArticleListView(category: .baccua)
+                        ArticleListView(category: .baccua, isArticle: isArticle)
                             .tag(ANBDCategory.baccua)
                     }
                 }
@@ -105,7 +111,7 @@ struct ArticleView: View {
             ArticleCreateView(isShowingCreateView: $isShowingArticleCreateView, category: category, isNewArticle: true)
         })
         .fullScreenCover(isPresented: $isShowingTradeCreateView, content: {
-            ArticleCreateView(isShowingCreateView: $isShowingTradeCreateView, category: category, isNewArticle: true)
+            TradeCreateView(isShowingCreate: $isShowingTradeCreateView, category: category, isNewProduct: true)
         })
     }
 }

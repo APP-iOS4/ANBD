@@ -6,9 +6,12 @@
 //
 
 import Foundation
+import SwiftUI
 import ANBDModel
 
 final class HomeViewModel: ObservableObject {
+    @Published var homePath: NavigationPath = NavigationPath()
+    
     @Published var bannerItemList: [BannerItem] = BannerItem.mockData
     @Published var blogURL: String = "https://blog.naver.com/PostView.naver?blogId=mesns&logNo=223382133878&categoryNo=15&parentCategoryNo=14&viewDate=&currentPage=3&postListTopCurrentPage=1&from=postList&userTopListOpen=true&userTopListCount=5&userTopListManageOpen=false&userTopListCurrentPage=3"
     @Published var isShowingWebView: Bool = false

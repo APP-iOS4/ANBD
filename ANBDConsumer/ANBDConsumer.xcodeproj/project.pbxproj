@@ -27,7 +27,6 @@
 		A816E6002BC162DC00138CFC /* ImageDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A816E5FF2BC162DC00138CFC /* ImageDetailView.swift */; };
 		A816E6022BC1706600138CFC /* CustomAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A816E6012BC1706600138CFC /* CustomAlertView.swift */; };
 		A83983EE2BC7D4BD00868E4C /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83983ED2BC7D4BD00868E4C /* SearchViewModel.swift */; };
-		A83F2F982BBFC07C00E3EB13 /* NormalCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83F2F972BBFC07C00E3EB13 /* NormalCarouselView.swift */; };
 		A83F2F9B2BBFCD7D00E3EB13 /* SafariWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83F2F9A2BBFCD7D00E3EB13 /* SafariWebView.swift */; };
 		A8640B3A2BC391F800232F9C /* ReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8640B392BC391F800232F9C /* ReportView.swift */; };
 		A8640B3C2BC3C34F00232F9C /* TradeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8640B3B2BC3C34F00232F9C /* TradeListView.swift */; };
@@ -99,7 +98,6 @@
 		A816E6012BC1706600138CFC /* CustomAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlertView.swift; sourceTree = "<group>"; };
 		A83983ED2BC7D4BD00868E4C /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		A83F2F962BBF951E00E3EB13 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		A83F2F972BBFC07C00E3EB13 /* NormalCarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalCarouselView.swift; sourceTree = "<group>"; };
 		A83F2F9A2BBFCD7D00E3EB13 /* SafariWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebView.swift; sourceTree = "<group>"; };
 		A8640B392BC391F800232F9C /* ReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportView.swift; sourceTree = "<group>"; };
 		A8640B3B2BC3C34F00232F9C /* TradeListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeListView.swift; sourceTree = "<group>"; };
@@ -200,7 +198,6 @@
 		CB198D242BC3C22E000C2709 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				A83F2F972BBFC07C00E3EB13 /* NormalCarouselView.swift */,
 				CB198CF12BBF8FC8000C2709 /* CategoryDividerView.swift */,
 				A83F2F9A2BBFCD7D00E3EB13 /* SafariWebView.swift */,
 				A816E5FD2BC1254B00138CFC /* TradeStateChangeView.swift */,
@@ -675,7 +672,6 @@
 				424CA0132BC3C0E200F83F8D /* TermsView.swift in Sources */,
 				CB7BEDB92BBD4E9D00C0F298 /* ANBDConsumerApp.swift in Sources */,
 				A8640B3A2BC391F800232F9C /* ReportView.swift in Sources */,
-				A83F2F982BBFC07C00E3EB13 /* NormalCarouselView.swift in Sources */,
 				A816E5FC2BC11B7800138CFC /* ChatDetailView.swift in Sources */,
 				CB198D0A2BC38B83000C2709 /* CategoryBottomSheet.swift in Sources */,
 				A816E5FE2BC1254B00138CFC /* TradeStateChangeView.swift in Sources */,

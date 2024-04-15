@@ -45,12 +45,12 @@ struct ANBDConsumerApp: App {
         WindowGroup {
             // ANBDTabView()
             AuthenticationView()
+                .environmentObject(homeViewModel)
+                .environmentObject(tradeViewModel)
+                .environmentObject(myPageViewModel)
+                .environmentObject(articleViewModel)
+                .environmentObject(authenticationViewModel)
+                .environmentObject(searchViewModel)
         }
-        .environmentObject(homeViewModel)
-        .environmentObject(tradeViewModel)
-        .environmentObject(myPageViewModel)
-        .environmentObject(articleViewModel)
-        .environmentObject(authenticationViewModel)
-        .environmentObject(searchViewModel)
     }
 }

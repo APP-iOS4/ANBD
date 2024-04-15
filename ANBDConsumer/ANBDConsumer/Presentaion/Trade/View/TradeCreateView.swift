@@ -40,6 +40,154 @@ struct TradeCreateView: View {
     var trade: Trade?
     
     var body: some View {
+        if #available(iOS 17.0, *) {
+            wholeView
+                .onTapGesture {
+                    endTextEditing()
+                }
+                .onAppear {
+                    UITextField.appearance().clearButtonMode = .never
+                    
+                    if !isNewProduct {
+                        if let trade = trade {
+                            self.title = trade.title
+                            self.myProduct = trade.myProduct
+                            self.category = trade.category
+                            self.wantProduct = trade.wantProduct ?? ""
+                            self.content = trade.content
+                        }
+                    }
+                }
+                .onTapGesture {
+                    withAnimation {
+                        self.isShowingCategoryMenuList = false
+                        self.isShowingLocationMenuList = false
+                    }
+                }
+                .onChange(of: mustTextFields, {
+                    if self.selectedPhotosData.count != 0 && self.title != "" && self.myProduct != "" && self.content != "" {
+                        self.isFinish = false
+                    } else {
+                        self.isFinish = true
+                    }
+                })
+                .onChange(of: selectedPhotosData, {
+                    if self.selectedPhotosData.count != 0 && self.title != "" && self.myProduct != "" && self.content != "" {
+                        self.isFinish = false
+                    } else {
+                        self.isFinish = true
+                    }
+                })
+                .onTapGesture {
+                    endTextEditing()
+                }
+        } else {
+            wholeView
+                .onTapGesture {
+                    endTextEditing()
+                }
+                .onAppear {
+                    UITextField.appearance().clearButtonMode = .never
+                    
+                    if !isNewProduct {
+                        if let trade = trade {
+                            self.title = trade.title
+                            self.myProduct = trade.myProduct
+                            self.category = trade.category
+                            self.wantProduct = trade.wantProduct ?? ""
+                            self.content = trade.content
+                        }
+                    }
+                }
+                .onTapGesture {
+                    withAnimation {
+                        self.isShowingCategoryMenuList = false
+                        self.isShowingLocationMenuList = false
+                    }
+                }
+                .onChange(of: mustTextFields) { _ in
+                    if self.selectedPhotosData.count != 0 && self.title != "" && self.myProduct != "" && self.content != "" {
+                        self.isFinish = false
+                    } else {
+                        self.isFinish = true
+                    }
+                }
+                .onChange(of: selectedPhotosData) { _ in
+                    if self.selectedPhotosData.count != 0 && self.title != "" && self.myProduct != "" && self.content != "" {
+                        self.isFinish = false
+                    } else {
+                        self.isFinish = true
+                    }
+                }
+                .onTapGesture {
+                    endTextEditing()
+                }
+        }
+    }
+}
+
+extension TradeCreateView {
+    fileprivate var photosView: some View {
+        HStack {
+            PhotosPicker(selection: $selectedItems, maxSelectionCount: 5-selectedPhotosData.count, matching: .images) {
+                VStack {
+                    Image(systemName: "camera.fill")
+                        .font(.system(size: 25))
+                        .foregroundStyle(.gray)
+                        .padding(3)
+                    Text("0 / 5")
+                        .foregroundStyle(.gray)
+                        .font(.system(size: 15))
+                }//VStack
+                .padding()
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10.0)
+                        .stroke(.gray, lineWidth: 1)
+                        .foregroundStyle(.clear)
+                        .frame(width: 80, height: 80)
+                )
+                .padding(.bottom, 30)
+            }
+            .padding(.leading, 20)
+            
+            ScrollView(.horizontal) {
+                HStack {
+                    ForEach(selectedPhotosData, id: \.self) { photoData in
+                        ZStack(alignment:.topTrailing){
+                            if let image = UIImage(data: photoData) {
+                                
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .frame(width : 80 , height: 80)
+                                    .cornerRadius(10)
+                                    .clipped()
+                                    .padding(10)
+                                
+                            }
+                            
+                            Button {
+                                if let idx = selectedPhotosData.firstIndex(of: photoData) {
+                                    selectedPhotosData.remove(at: idx)
+                                }
+                            } label: {
+                                Circle()
+                                    .overlay (
+                                        Image(systemName: "xmark.circle.fill")
+                                            .font(.system(size: 20))
+                                            .foregroundStyle(.black)
+                                    )
+                                    .foregroundStyle(.white)
+                                    .frame(width: 20, height:20)
+                            }
+                        }
+                    }
+                }
+                .padding(.bottom, 30)
+            }//Horizontal ScrollView
+            .padding(.horizontal, 20)
+        }
+    }
+    fileprivate var wholeView: some View {
         ZStack {
             VStack(alignment: .leading) {
                 HStack {
@@ -77,75 +225,34 @@ struct TradeCreateView: View {
                 .padding()
                 
                 ScrollView {
-                    HStack {
-                        PhotosPicker(selection: $selectedItems, maxSelectionCount: 5-selectedPhotosData.count, matching: .images) {
-                            VStack {
-                                Image(systemName: "camera.fill")
-                                    .font(.system(size: 25))
-                                    .foregroundStyle(.gray)
-                                    .padding(3)
-                                Text("0 / 5")
-                                    .foregroundStyle(.gray)
-                                    .font(.system(size: 15))
-                            }//VStack
-                            .padding()
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10.0)
-                                    .stroke(.gray, lineWidth: 1)
-                                    .foregroundStyle(.clear)
-                                    .frame(width: 80, height: 80)
-                            )
-                            .padding(.bottom, 30)
-                        }
-                        .padding(.leading, 20)
-                        
-                        ScrollView(.horizontal) {
-                            HStack {
-                                ForEach(selectedPhotosData, id: \.self) { photoData in
-                                    ZStack(alignment:.topTrailing){
-                                        if let image = UIImage(data: photoData) {
-                                            
-                                            Image(uiImage: image)
-                                                .resizable()
-                                                .frame(width : 80 , height: 80)
-                                                .cornerRadius(10)
-                                                .clipped()
-                                                .padding(10)
-                                            
+                    if #available(iOS 17.0, *) {
+                        photosView
+                            .onChange(of: selectedItems) {
+                                for newItem in selectedItems {
+                                    Task {
+                                        if let data = try? await newItem.loadTransferable(type: Data.self) {
+                                            selectedPhotosData.append(data)
                                         }
-                                        
-                                        Button {
-                                            if let idx = selectedPhotosData.firstIndex(of: photoData) {
-                                                selectedPhotosData.remove(at: idx)
-                                            }
-                                        } label: {
-                                            Circle()
-                                                .overlay (
-                                                    Image(systemName: "xmark.circle.fill")
-                                                        .font(.system(size: 20))
-                                                        .foregroundStyle(.black)
-                                                )
-                                                .foregroundStyle(.white)
-                                                .frame(width: 20, height:20)
+                                        if selectedPhotosData.count > 5 {
+                                            selectedPhotosData.removeLast()
                                         }
                                     }
                                 }
                             }
-                            .padding(.bottom, 30)
-                        }//Horizontal ScrollView
-                        .padding(.horizontal, 20)
-                    }
-                    .onChange(of: selectedItems) {
-                        for newItem in selectedItems {
-                            Task {
-                                if let data = try? await newItem.loadTransferable(type: Data.self) {
-                                    selectedPhotosData.append(data)
-                                }
-                                if selectedPhotosData.count > 5 {
-                                    selectedPhotosData.removeLast()
+                    } else {
+                        photosView
+                            .onChange(of: selectedItems) { _ in
+                                for newItem in selectedItems {
+                                    Task {
+                                        if let data = try? await newItem.loadTransferable(type: Data.self) {
+                                            selectedPhotosData.append(data)
+                                        }
+                                        if selectedPhotosData.count > 5 {
+                                            selectedPhotosData.removeLast()
+                                        }
+                                    }
                                 }
                             }
-                        }
                     }
                     
                     //제목
@@ -297,45 +404,6 @@ struct TradeCreateView: View {
                     isShowingCreate.toggle()
                 }
             }
-        }
-        .onTapGesture {
-            endTextEditing()
-        }
-        .onAppear {
-            UITextField.appearance().clearButtonMode = .never
-            
-            if !isNewProduct {
-                if let trade = trade {
-                    self.title = trade.title
-                    self.myProduct = trade.myProduct
-                    self.category = trade.category
-                    self.wantProduct = trade.wantProduct ?? ""
-                    self.content = trade.content
-                }
-            }
-        }
-        .onTapGesture {
-            withAnimation {
-                self.isShowingCategoryMenuList = false
-                self.isShowingLocationMenuList = false
-            }
-        }
-        .onChange(of: mustTextFields, {
-            if self.selectedPhotosData.count != 0 && self.title != "" && self.myProduct != "" && self.content != "" {
-                self.isFinish = false
-            } else {
-                self.isFinish = true
-            }
-        })
-        .onChange(of: selectedPhotosData, {
-            if self.selectedPhotosData.count != 0 && self.title != "" && self.myProduct != "" && self.content != "" {
-                self.isFinish = false
-            } else {
-                self.isFinish = true
-            }
-        })
-        .onTapGesture {
-            endTextEditing()
         }
     }
 }

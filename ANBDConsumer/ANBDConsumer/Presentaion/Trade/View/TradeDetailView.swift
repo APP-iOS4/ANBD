@@ -45,7 +45,6 @@ struct TradeDetailView: View {
                             Image(.dummyImage1)
                                 .resizable()
                                 .scaledToFill()
-                                .containerRelativeFrame(.horizontal)
                                 .onTapGesture {
                                     detailImage = "DummyImage1"
                                     isShowingImageDetailView.toggle()
@@ -53,7 +52,6 @@ struct TradeDetailView: View {
                             Image(.dummyPuppy1)
                                 .resizable()
                                 .scaledToFill()
-                                .containerRelativeFrame(.horizontal)
                                 .onTapGesture {
                                     detailImage = "DummyPuppy1"
                                     isShowingImageDetailView.toggle()
@@ -61,7 +59,6 @@ struct TradeDetailView: View {
                             Image(.dummyPuppy2)
                                 .resizable()
                                 .scaledToFill()
-                                .containerRelativeFrame(.horizontal)
                                 .onTapGesture {
                                     detailImage = "DummyPuppy2"
                                     isShowingImageDetailView.toggle()
@@ -196,12 +193,13 @@ extension TradeDetailView {
     private var bottomView: some View {
         HStack {
             Image(systemName: isLiked ? "heart": "heart.fill")
-                .contentTransition(.symbolEffect(.replace))
                 .font(.system(size: 30))
                 .foregroundStyle(isLiked ? .gray200 : .heartRed)
                 .padding(.leading, 15)
                 .onTapGesture {
-                    isLiked.toggle()
+                    withAnimation {
+                        isLiked.toggle()
+                    }
                 }
                 .padding()
                 .padding(.leading, -10)

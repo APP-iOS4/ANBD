@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import FirebaseAuth
 
 @available(iOS 15, *)
 public protocol ArticleUsecase {
@@ -15,11 +14,11 @@ public protocol ArticleUsecase {
     func loadRecentArticle(category: ANBDCategory) async throws -> Article
     func loadArticleList() async throws -> [Article]
     func loadArticleList(writerID: String) async throws -> [Article]
-    func loadArticleList(by order: ArticleOrder) async throws -> [Article]
+    func loadArticleList(category: ANBDCategory, by order: ArticleOrder) async throws -> [Article]
     func searchArticle(keyword: String) async throws -> [Article]
     func refreshAllArticleList() async throws -> [Article]
     func refreshWriterIDArticleList(writerID: String) async throws -> [Article]
-    func refreshSortedArticleList(by order: ArticleOrder) async throws -> [Article]
+    func refreshSortedArticleList(category: ANBDCategory, by order: ArticleOrder) async throws -> [Article]
     func refreshSearchArticleList(keyword: String) async throws -> [Article]
     func updateArticle(article: Article, imageDatas: [Data]) async throws
     func likeArticle(articleID: String) async throws
@@ -30,11 +29,7 @@ public protocol ArticleUsecase {
 @available(iOS 15, *)
 public struct DefaultArticleUsecase: ArticleUsecase {
     
-    let userRepository: UserRepository = DefaultUserRepository()
-    let articleRepository: ArticleRepository = DefaultArticleRepository()
-    let commentRepository: CommentRepository = DefaultCommentRepository()
-    
-    let storage = StorageManager.shared
+    private let articleRepository: ArticleRepository = DefaultArticleRepository()
     
     public init() { }
     
@@ -44,15 +39,7 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     ///    - article: 작성한 Article
     ///    - imageDatas: 저장할 사진 Data 배열
     public func writeArticle(article: Article, imageDatas: [Data]) async throws {
-        let imagePaths = try await storage.uploadImageList(
-            path: .article,
-            containerID: article.id,
-            imageDatas: imageDatas
-        )
-        var newArticle = article
-        newArticle.imagePaths = imagePaths
-        
-        try await articleRepository.crateArticle(article: newArticle)
+        try await articleRepository.createArticle(article: article, imageDatas: imageDatas)
     }
     
     
@@ -94,8 +81,8 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     /// - Parameters:
     ///   - filter: 불러올 Article의 정렬 방식
     /// - Returns: 정렬된 Article 배열
-    public func loadArticleList(by order: ArticleOrder) async throws -> [Article] {
-        try await articleRepository.readArticleList(by: order)
+    public func loadArticleList(category: ANBDCategory, by order: ArticleOrder) async throws -> [Article] {
+        try await articleRepository.readArticleList(category: category, by: order)
     }
     
     
@@ -128,8 +115,8 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     /// - Parameters:
     ///   - filter: 불러올 Article의 정렬 방식
     /// - Returns: 정렬된 Article 배열
-    public func refreshSortedArticleList(by order: ArticleOrder) async throws -> [Article] {
-        try await articleRepository.refreshOrder(by: order)
+    public func refreshSortedArticleList(category: ANBDCategory, by order: ArticleOrder) async throws -> [Article] {
+        try await articleRepository.refreshOrder(category: category, by: order)
     }
     
     
@@ -147,37 +134,14 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     ///   - article: 수정할 Article의 정보
     ///   - imageDatas: 수정할 이미지 Data 배열
     public func updateArticle(article: Article, imageDatas: [Data]) async throws {
-        let imagePaths = try await storage.updateImageList(
-            path: .article,
-            containerID: article.id,
-            imagePaths: article.imagePaths,
-            imageDatas: imageDatas
-        )
-        var updatedArticle = article
-        updatedArticle.imagePaths = imagePaths
-        
-        try await articleRepository.updateArticle(article: article)
+        try await articleRepository.updateArticle(article: article, imageDatas: imageDatas)
     }
     
     /// Article을 좋아요하는 메서드
     /// - Parameters:
     ///   - articleID: 좋아요할 Article의 ID
     public func likeArticle(articleID: String) async throws {
-        guard let userID = Auth.auth().currentUser?.uid else { return }
-        var userInfo = try await userRepository.readUserInfo(userID: userID)
-        
-        var articleInfo = try await articleRepository.readArticle(articleID: articleID)
-        
-        if userInfo.likeArticles.contains(articleID) {
-            articleInfo.likeCount -= 1
-            userInfo.likeArticles = userInfo.likeArticles.filter { $0 != articleID }
-        } else {
-            articleInfo.likeCount += 1
-            userInfo.likeArticles.append(articleID)
-        }
-        
-        try await articleRepository.updateArticle(article: articleInfo)
-        try await userRepository.updateUserInfo(user: userInfo)
+        try await articleRepository.likeArticle(articleID: articleID)
     }
     
     
@@ -188,10 +152,7 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     /// 댓글 목록 -> 사진 -> 게시글 순으로 삭제됩니다.
     /// 삭제 성공 시 좋아요한 User들의 좋아요 목록에서도 사라집니다.
     public func deleteArticle(article: Article) async throws {
-        try await commentRepository.deleteCommentList(articleID: article.id)
-        try await storage.deleteImageList(path: .article, containerID: article.id, imagePaths: article.imagePaths)
         try await articleRepository.deleteArticle(article: article)
-        try await userRepository.updateUserInfoList(articleID: article.id)
     }
     
     

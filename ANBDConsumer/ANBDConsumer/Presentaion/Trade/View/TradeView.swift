@@ -16,6 +16,23 @@ struct TradeView: View {
     @State private var isGoingToSearchView: Bool = false
     
     var body: some View {
+        if #available(iOS 17.0, *) {
+            wholeView
+            .onChange(of: category) {
+                tradeViewModel.filteringTrades(category: category)
+            }
+            
+        } else {
+            wholeView
+                .onChange(of: category) { _ in
+                    tradeViewModel.filteringTrades(category: category)
+                }
+        }
+    }
+}
+
+extension TradeView {
+    fileprivate var wholeView: some View {
         ZStack(alignment: .bottomTrailing) {
             VStack(alignment: .leading) {
                 CategoryDividerView(category: $category)
@@ -37,9 +54,6 @@ struct TradeView: View {
                 WriteButtonView()
             })
         }//ZStack
-        .onChange(of: category) {
-            tradeViewModel.filteringTrades(category: category)
-        }
         .onAppear {
             tradeViewModel.filteringTrades(category: category)
         }
@@ -47,7 +61,7 @@ struct TradeView: View {
             TradeCreateView(isShowingCreate: $isShowingCreate, category: category)
         }
         .navigationTitle("나눔 · 거래")
-        .toolbarTitleDisplayMode(.inline)
+        .navigationBarTitleDisplayMode(.inline)
         .toolbarRole(.editor)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {

@@ -12,7 +12,6 @@ struct ArticleView: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     
-    @State private var isGoingToSearchView: Bool = false
     @State private var isShowingArticleCreateView: Bool = false
     @State private var isShowingTradeCreateView: Bool = false
     @Binding var category: ANBDCategory
@@ -95,16 +94,12 @@ struct ArticleView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    isGoingToSearchView.toggle()
-                }, label: {
-                    NavigationLink(value: "") {
-                        Image(systemName: "magnifyingglass")
-                            .resizable()
-                            .frame(width: 20)
-                            .foregroundStyle(.gray900)
-                    }
-                })
+                NavigationLink(value: "") {
+                    Image(systemName: "magnifyingglass")
+                        .resizable()
+                        .frame(width: 20)
+                        .foregroundStyle(.gray900)
+                }
             }
         }
         .fullScreenCover(isPresented: $isShowingArticleCreateView, content: {

@@ -48,10 +48,10 @@ struct SearchResultView: View {
                 ArticleListView(category: .accua, searchText: searchText)
                     .tag(ANBDCategory.accua)
                 
-                ArticleListView(category: .nanua, searchText: searchText)
+                ArticleListView(category: .nanua, isArticle: false, searchText: searchText)
                     .tag(ANBDCategory.nanua)
                 
-                ArticleListView(category: .baccua, searchText: searchText)
+                ArticleListView(category: .baccua, isArticle: false, searchText: searchText)
                     .tag(ANBDCategory.baccua)
                 
                 ArticleListView(category: .dasi, searchText: searchText)

@@ -94,7 +94,7 @@ struct ArticleListView: View {
                         if isArticle {
                             ForEach(articleViewModel.filteredArticles) { item in
                                 NavigationLink(value: item) {
-                                    ArticleListCell(article: item)
+                                    ArticleListCell(value: .article(item))
                                 }
                                 .padding(.vertical, 5)
                                 Divider()
@@ -103,7 +103,7 @@ struct ArticleListView: View {
                         } else {
                             ForEach(tradeViewModel.filteredTrades) { item in
                                 NavigationLink(value: item) {
-                                    TradeListCell(trade: item)
+                                    ArticleListCell(value: .trade(item))
                                 }
                                 .padding(.vertical, 5)
                                 Divider()

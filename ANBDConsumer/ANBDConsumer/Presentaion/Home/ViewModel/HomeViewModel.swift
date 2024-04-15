@@ -10,26 +10,13 @@ import SwiftUI
 import ANBDModel
 
 final class HomeViewModel: ObservableObject {
+    private let articleUsecase: ArticleUsecase = DefaultArticleUsecase()
+    
     @Published var homePath: NavigationPath = NavigationPath()
     
     @Published var bannerItemList: [BannerItem] = BannerItem.mockData
-    @Published var blogURL: String = "https://blog.naver.com/PostView.naver?blogId=mesns&logNo=223382133878&categoryNo=15&parentCategoryNo=14&viewDate=&currentPage=3&postListTopCurrentPage=1&from=postList&userTopListOpen=true&userTopListCount=5&userTopListManageOpen=false&userTopListCurrentPage=3"
-    @Published var isShowingWebView: Bool = false
-    
-
-    @Published var accuaArticle: Article = .init(writerID: "rlvy123",
-                                                 writerNickname: "기표짱표",
-                                                 category: .accua,
-                                                 title: "아껴쓰기 타이틀 무순 내용이게용 ~~ 메롱 메롱",
-                                                 content: "",
-                                                 imagePaths: ["DummyPuppy2"])
-    
-    @Published var dasiArticle: Article = .init(writerID: "jullilll",
-                                                 writerNickname: "주리줄이",
-                                                category: .dasi,
-                                                 title: "다시쓰기 타이틀 ~~~ 울라울라",
-                                                 content: "",
-                                                imagePaths: ["DummyPuppy4"])
+    @Published var accuaArticle: Article = .init(writerID: "", writerNickname: "", category: .accua, title: "",content: "", imagePaths: [])
+    @Published var dasiArticle: Article = .init(writerID: "", writerNickname: "", category: .accua, title: "",content: "", imagePaths: [])
     
     @Published var nanuaTrades: [Trade] = [.init(writerID: "maru",
                                                  writerNickname: "마루마루",
@@ -85,6 +72,20 @@ final class HomeViewModel: ObservableObject {
                                                   content: "",
                                                   myProduct: "뿡이다요",
                                                   imagePaths: ["DummyPuppy1"]),]
+    
+    
+    /// 아껴쓰기 · 다시쓰기 최신 1개씩 가져오기
+    func loadArticle(category: ANBDCategory) async {
+        do {
+            if category == .accua {
+                try await accuaArticle = articleUsecase.loadRecentArticle(category: .accua)
+            } else if category == .dasi {
+                try await dasiArticle = articleUsecase.loadRecentArticle(category: .dasi)
+            }
+        } catch {
+            
+        }
+    }
 }
 
 struct BannerItem: Identifiable {

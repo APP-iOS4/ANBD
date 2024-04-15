@@ -10,11 +10,6 @@ import ANBDModel
 
 struct HomeView: View {
     @EnvironmentObject private var homeViewModel: HomeViewModel
-    @EnvironmentObject private var tradeViewModel: TradeViewModel
-    @EnvironmentObject private var articleViewModel: ArticleViewModel
-    
-    
-    @State private var isGoingToSearchView: Bool = false
     @State private var isShowingWebView: Bool = false
     @State private var blogURL: String = HomeViewModel().bannerItemList.first!.url
     
@@ -116,6 +111,11 @@ struct HomeView: View {
                     .frame(width: geo.size.width * 0.9, height: 130)
             }
         }
+        .onAppear {
+            Task {
+                await homeViewModel.loadArticle(category: .accua)
+            }
+        }
     }
     
     // MARK: - 나눠쓰기 Section
@@ -160,6 +160,11 @@ struct HomeView: View {
             NavigationLink(value: homeViewModel.dasiArticle) {
                 articleCellView(homeViewModel.dasiArticle)
                     .frame(width: geo.size.width * 0.9, height: 130)
+            }
+        }
+        .onAppear {
+            Task {
+                await homeViewModel.loadArticle(category: .dasi)
             }
         }
     }

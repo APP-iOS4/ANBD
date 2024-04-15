@@ -26,7 +26,8 @@ struct UserPageView: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            Group {  // UserInfo
+            // UserInfo
+            Group {
                 HStack {
                     Image(uiImage: isSignedInUser ? myPageViewModel.userProfileImage : UIImage(named: "DefaultUserProfileImage")!)
                         .resizable()
@@ -72,7 +73,8 @@ struct UserPageView: View {
                 }
             }
             
-            Group {  // User Activities
+            // User Activities
+            Group {
                 HStack(spacing: 12) {
                     ActivityInfoComponent(title: "아껴 쓴 개수", count: 5, category: .accua)
                     Divider()
@@ -91,12 +93,12 @@ struct UserPageView: View {
             }
             
             if isSignedInUser {
-                Group {  // Another Functions
+                // Another Functions
+                Group {
                     VStack(alignment: .leading) {
                         Divider()
                         
                         Button(action: {
-                            // 각 리스트로 이동할 뷰
                             isShowingHeartTrades.toggle()
                         }, label: {
                             Text("내가 찜한 나눔・거래 보기")

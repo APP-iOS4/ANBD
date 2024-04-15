@@ -57,45 +57,18 @@ struct HomeView: View {
             }
             
             ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    isGoingToSearchView.toggle()
-                }, label: {
+                NavigationLink(value: "") {
                     Image(systemName: "magnifyingglass")
                         .resizable()
                         .frame(width: 20)
                         .foregroundStyle(.gray900)
-                })
+                }
             }
         }
         .fullScreenCover(isPresented: $isShowingWebView) {
             SafariWebView(url: URL(string: blogURL) ?? URL(string: "www.naver.com")!)
                 .ignoresSafeArea(edges: .bottom)
         }
-        .navigationDestination(for: ANBDCategory.self) { category in
-            switch category {
-            case .accua, .dasi:
-                ArticleListView(category: category, isFromHomeView: true)
-                    .onAppear {
-                        articleViewModel.updateArticles(category: category)
-                    }
-                
-            case .nanua, .baccua:
-                TradeListView(category: category, isFromHomeView: true)
-                    .onAppear {
-                        tradeViewModel.filteringTrades(category: category)
-                    }
-            }
-        }
-        .navigationDestination(for: Article.self) { article in
-            ArticleDetailView(article: article)
-        }
-        .navigationDestination(for: Trade.self) { trade in
-            TradeDetailView(trade: trade)
-        }
-        .navigationDestination(isPresented: $isGoingToSearchView) {
-            SearchView()
-        }
-        
     }
     
     

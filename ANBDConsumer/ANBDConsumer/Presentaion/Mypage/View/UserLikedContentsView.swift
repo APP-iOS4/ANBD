@@ -9,7 +9,6 @@ import SwiftUI
 import ANBDModel
 
 struct UserLikedContentsView: View {
-    
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     
     @State var category: ANBDCategory
@@ -46,6 +45,15 @@ struct UserLikedContentsView: View {
         }
         .navigationTitle("\(navigationTitile)")
         .navigationBarTitleDisplayMode(.inline)
+        
+        .navigationDestination(for: Article.self) { article in
+            ArticleDetailView(article: article)
+                .toolbarRole(.editor)
+        }
+        .navigationDestination(for: Trade.self) { trade in
+            TradeDetailView(trade: trade)
+                .toolbarRole(.editor)
+        }
     }
     
     @ViewBuilder
@@ -104,14 +112,7 @@ struct UserLikedContentsView: View {
             ScrollView(.vertical) {
                 LazyVStack {
                     ForEach(myPageViewModel.mockArticleData.filter({$0.category == category})) { article in
-                        //                        NavigationLink(value: article) {
-                        //                            ArticleListCell(article: article)
-                        //                                .padding(.vertical, 5)
-                        //                        }
-                        NavigationLink {
-                            ArticleDetailView(article: article)
-                                .toolbarRole(.editor)
-                        } label: {
+                        NavigationLink(value: article) {
                             ArticleListCell(article: article)
                                 .padding(.vertical, 5)
                         }
@@ -134,14 +135,7 @@ struct UserLikedContentsView: View {
             ScrollView(.vertical) {
                 LazyVStack {
                     ForEach(myPageViewModel.mockTradeData.filter({$0.category == category})) { trade in
-                        //                        NavigationLink(value: trade) {
-                        //                            TradeListCell(trade: trade)
-                        //                                .padding(.vertical, 5)
-                        //                        }
-                        NavigationLink {
-                            TradeDetailView(trade: trade)
-                                .toolbarRole(.editor)
-                        } label: {
+                        NavigationLink(value: trade) {
                             TradeListCell(trade: trade)
                                 .padding(.vertical, 5)
                         }

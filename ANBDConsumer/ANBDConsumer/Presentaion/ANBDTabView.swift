@@ -12,6 +12,7 @@ struct ANBDTabView: View {
     @EnvironmentObject private var homeViewModel: HomeViewModel
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
+    @EnvironmentObject private var myPageViewModel: MyPageViewModel
     
     var body: some View {
         TabView {
@@ -82,7 +83,7 @@ struct ANBDTabView: View {
             }
             
             /// Mypage
-            NavigationStack {
+            NavigationStack(path: $myPageViewModel.myPageNaviPath) {
                 UserPageView(isSignedInUser: true)
             }
             .tabItem {

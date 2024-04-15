@@ -7,6 +7,10 @@
 
 import Foundation
 
-enum ArticleError: Error {
-    
+public enum ArticleError: Error {
+    case invalidParameter(code: Int, message: String)
+    case createArticleError(code: Int, message: String)
+    case readArticleError(code: Int, message: String)
+    case updateArticleError(code: Int, message: String)
+    case deleteArticleError(code: Int, message: String)
 }

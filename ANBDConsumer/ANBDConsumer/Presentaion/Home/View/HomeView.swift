@@ -136,6 +136,11 @@ struct HomeView: View {
             }
             .scrollIndicators(.hidden)
         }
+        .onAppear {
+            Task {
+                await homeViewModel.loadTrades(category: .nanua)
+            }
+        }
     }
     
     // MARK: - 바꿔쓰기 Section
@@ -147,6 +152,11 @@ struct HomeView: View {
                 NavigationLink(value: trade) {
                     TradeListCell(trade: trade)
                 }
+            }
+        }
+        .onAppear {
+            Task {
+                await homeViewModel.loadTrades(category: .baccua)
             }
         }
     }

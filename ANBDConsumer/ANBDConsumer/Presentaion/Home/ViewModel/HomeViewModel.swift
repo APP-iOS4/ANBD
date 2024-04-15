@@ -11,67 +11,15 @@ import ANBDModel
 
 final class HomeViewModel: ObservableObject {
     private let articleUsecase: ArticleUsecase = DefaultArticleUsecase()
+    private let tradeUsecase: TradeUsecase = DefaultTradeUsecase()
     
     @Published var homePath: NavigationPath = NavigationPath()
-    
     @Published var bannerItemList: [BannerItem] = BannerItem.mockData
     @Published var accuaArticle: Article = .init(writerID: "", writerNickname: "", category: .accua, title: "",content: "", imagePaths: [])
     @Published var dasiArticle: Article = .init(writerID: "", writerNickname: "", category: .accua, title: "",content: "", imagePaths: [])
     
-    @Published var nanuaTrades: [Trade] = [.init(writerID: "maru",
-                                                 writerNickname: "마루마루",
-                                                 category: .nanua,
-                                                 itemCategory: .beautyCosmetics,
-                                                 location: .busan,
-                                                 title: "나눠쓰기마루마루",
-                                                 content: "",
-                                                 myProduct: "",
-                                                 imagePaths: ["DummyPuppy3"]),
-                                           .init(writerID: "maru",
-                                                 writerNickname: "마루마루",
-                                                 category: .nanua,
-                                                 itemCategory: .beautyCosmetics,
-                                                 location: .busan,
-                                                 title: "나눠쓰기메롱메롱",
-                                                 content: "",
-                                                 myProduct: "",
-                                                 imagePaths: ["DummyPuppy1"]),
-                                           .init(writerID: "maru",
-                                                 writerNickname: "마루마루",
-                                                 category: .nanua,
-                                                 itemCategory: .beautyCosmetics,
-                                                 location: .busan,
-                                                 title: "나눠쓰기어쩔어쩔",
-                                                 content: "",
-                                                 myProduct: "",
-                                                 imagePaths: ["DummyPuppy2"]),
-                                           .init(writerID: "maru",
-                                                 writerNickname: "마루마루",
-                                                 category: .nanua,
-                                                 itemCategory: .beautyCosmetics,
-                                                 location: .busan,
-                                                 title: "나눠쓰기어쩔어쩔",
-                                                 content: "",
-                                                 myProduct: "",
-                                                 imagePaths: ["DummyPuppy4"]),]
-    @Published var baccuaTrades: [Trade] = [.init(writerID: "maru",
-                                                  writerNickname: "마루마루",
-                                                  category: .baccua,
-                                                  itemCategory: .beautyCosmetics,
-                                                  location: .busan,
-                                                  title: "바꿔쓰기마루마루",
-                                                  content: "",
-                                                  myProduct: "키보드",
-                                                  imagePaths: ["DummyPuppy3"]),
-                                            .init(writerID: "maru",
-                                                  writerNickname: "마루마루",
-                                                  category: .baccua,
-                                                  itemCategory: .beautyCosmetics,
-                                                  location: .busan,
-                                                  title: "바꿔쓰기메롱메롱",
-                                                  content: "",
-                                                  myProduct: "뿡이다요",
-                                                  imagePaths: ["DummyPuppy1"]),]
+    @Published var nanuaTrades: [Trade] = []
+    @Published var baccuaTrades: [Trade] = []
     
     
     /// 아껴쓰기 · 다시쓰기 최신 1개씩 가져오기
@@ -86,6 +34,19 @@ final class HomeViewModel: ObservableObject {
             
         }
     }
+    
+    func loadTrades(category: ANBDCategory) async {
+        do {
+            if category == .nanua {
+                try await nanuaTrades = tradeUsecase.loadRecentTradeList(category: .nanua)
+            } else if category == .baccua {
+                try await baccuaTrades = tradeUsecase.loadRecentTradeList(category: .baccua)
+            }
+        } catch {
+            
+        }
+    }
+    
 }
 
 struct BannerItem: Identifiable {

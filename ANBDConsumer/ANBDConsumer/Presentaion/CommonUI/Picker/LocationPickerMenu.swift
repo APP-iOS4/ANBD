@@ -83,9 +83,18 @@ struct LocationPickerMenu: View {
         }
         //.frame(width: 250, height: 300)
         .background {
-            RoundedRectangle(cornerRadius: 10)
-                .fill(.white)
-                .stroke(Color.gray100, lineWidth: 1)
+            if #available(iOS 17.0, *) {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.white)
+                    .stroke(Color.gray100, lineWidth: 1)
+            } else {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.white)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.gray100, lineWidth: 1)
+                    }
+            }
         }
         .shadow(radius: 10)
     }

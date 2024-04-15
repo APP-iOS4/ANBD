@@ -23,40 +23,7 @@ struct UserInfoEditingView: View {
         NavigationStack {
             VStack(spacing: 40) {
                 if #available(iOS 17.0, *) {
-                    Button(action: {
-                        isShowingProfileImageEditingDialog.toggle()
-                    }, label: {
-                        Image(uiImage: myPageViewModel.userProfileImage)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 120, height: 120)
-                            .clipShape(.circle)
-                            .overlay {
-                                Image(systemName: "camera.circle.fill")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .symbolRenderingMode(.palette)
-                                    .foregroundStyle(Color.gray800, Color.gray300)
-                                    .frame(width: 35)
-                                    .offset(x: 40.0, y: 40.0)
-                            }
-                    })
-                    .padding(.top, 25)
-                    .confirmationDialog("프로필 이미지 수정하기", isPresented: $isShowingProfileImageEditingDialog) {
-                        Button(action: {
-                            myPageViewModel.userProfileImage = UIImage(named: "DefaultUserProfileImage.001.png")!
-                        }, label: {
-                            Text("기본 이미지 사용하기")
-                        })
-                        
-                        Button(action: {
-                            isShowingPhotosPicker.toggle()
-                        }, label: {
-                            Text("앨범에서 선택하기")
-                        })
-                    }
-                    
-                    .photosPicker(isPresented: $isShowingPhotosPicker, selection: $photosPickerItem)
+                    userProfilImageButton
                     
                     .onChange(of: photosPickerItem) { _, _ in
                         Task {
@@ -68,40 +35,7 @@ struct UserInfoEditingView: View {
                         }
                     }
                 } else {
-                    Button(action: {
-                        isShowingProfileImageEditingDialog.toggle()
-                    }, label: {
-                        Image(uiImage: myPageViewModel.userProfileImage)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 120, height: 120)
-                            .clipShape(.circle)
-                            .overlay {
-                                Image(systemName: "camera.circle.fill")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .symbolRenderingMode(.palette)
-                                    .foregroundStyle(Color.gray800, Color.gray300)
-                                    .frame(width: 35)
-                                    .offset(x: 40.0, y: 40.0)
-                            }
-                    })
-                    .padding(.top, 25)
-                    .confirmationDialog("프로필 이미지 수정하기", isPresented: $isShowingProfileImageEditingDialog) {
-                        Button(action: {
-                            myPageViewModel.userProfileImage = UIImage(named: "DefaultUserProfileImage.001.png")!
-                        }, label: {
-                            Text("기본 이미지 사용하기")
-                        })
-                        
-                        Button(action: {
-                            isShowingPhotosPicker.toggle()
-                        }, label: {
-                            Text("앨범에서 선택하기")
-                        })
-                    }
-                    
-                    .photosPicker(isPresented: $isShowingPhotosPicker, selection: $photosPickerItem)
+                    userProfilImageButton
                     
                     .onChange(of: photosPickerItem, perform: { _ in
                         Task {
@@ -181,6 +115,43 @@ struct UserInfoEditingView: View {
             .navigationTitle("수정하기")
             .navigationBarTitleDisplayMode(.inline)
         }
+    }
+    
+    fileprivate var userProfilImageButton: some View {
+        Button(action: {
+            isShowingProfileImageEditingDialog.toggle()
+        }, label: {
+            Image(uiImage: myPageViewModel.userProfileImage)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 120, height: 120)
+                .clipShape(.circle)
+                .overlay {
+                    Image(systemName: "camera.circle.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(Color.gray800, Color.gray300)
+                        .frame(width: 35)
+                        .offset(x: 40.0, y: 40.0)
+                }
+        })
+        .padding(.top, 25)
+        .confirmationDialog("프로필 이미지 수정하기", isPresented: $isShowingProfileImageEditingDialog) {
+            Button(action: {
+                myPageViewModel.userProfileImage = UIImage(named: "DefaultUserProfileImage.001.png")!
+            }, label: {
+                Text("기본 이미지 사용하기")
+            })
+            
+            Button(action: {
+                isShowingPhotosPicker.toggle()
+            }, label: {
+                Text("앨범에서 선택하기")
+            })
+        }
+        
+        .photosPicker(isPresented: $isShowingPhotosPicker, selection: $photosPickerItem)
     }
 
     private func TextFieldUIKit(placeholder: String, text: Binding<String>) -> some View {

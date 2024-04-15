@@ -15,19 +15,21 @@ protocol TradeDataSource {
     
     // MARK: Read
     func readTrade(tradeID: String) async throws -> Trade
-    func readTradeList() async throws -> [Trade]
-    func readTradeList(writerID: String) async throws -> [Trade]
+    func readTradeList(limit: Int) async throws -> [Trade]
+    func readTradeList(writerID: String, limit: Int) async throws -> [Trade]
     func readTradeList(category: ANBDCategory,
                        location: Location?,
-                       itemCategory: ItemCategory?) async throws -> [Trade]
-    func readTradeList(keyword: String) async throws -> [Trade]
+                       itemCategory: ItemCategory?,
+                       limit: Int) async throws -> [Trade]
+    func readTradeList(keyword: String, limit: Int) async throws -> [Trade]
     func readRecentTradeList(category: ANBDCategory) async throws -> [Trade]
-    func refreshAll() async throws -> [Trade]
-    func refreshWriterID(writerID: String) async throws -> [Trade]
+    func refreshAll(limit: Int) async throws -> [Trade]
+    func refreshWriterID(writerID: String, limit: Int) async throws -> [Trade]
     func refreshFilter(category: ANBDCategory,
                        location: Location?,
-                       itemCategory: ItemCategory?) async throws -> [Trade]
-    func refreshSearch(keyword: String) async throws -> [Trade]
+                       itemCategory: ItemCategory?,
+                       limit: Int) async throws -> [Trade]
+    func refreshSearch(keyword: String, limit: Int) async throws -> [Trade]
     
     // MARK: Update
     func updateTrade(trade: Trade) async throws
@@ -42,6 +44,7 @@ protocol TradeDataSource {
 final class DefaultTradeDataSource: TradeDataSource {
     
     private let tradeDB = Firestore.firestore().collection("TradeBoard")
+    
     private var allQuery: Query?
     private var writerIDQuery: Query?
     private var filterQuery: Query?
@@ -103,7 +106,7 @@ final class DefaultTradeDataSource: TradeDataSource {
         return trade
     }
     
-    func readTradeList() async throws -> [Trade] {
+    func readTradeList(limit: Int) async throws -> [Trade] {
         var requestQuery: Query
         
         if let allQuery {
@@ -111,7 +114,7 @@ final class DefaultTradeDataSource: TradeDataSource {
         } else {
             requestQuery = tradeDB
                 .order(by: "createdAt", descending: true)
-                .limit(to: 10)
+                .limit(to: limit)
             
             guard let lastSnapshot = try await requestQuery.getDocuments().documents.last else {
                 print("end")
@@ -120,7 +123,7 @@ final class DefaultTradeDataSource: TradeDataSource {
             
             let next = tradeDB
                 .order(by: "createdAt", descending: true)
-                .limit(to: 10)
+                .limit(to: limit)
                 .start(afterDocument: lastSnapshot)
             
             self.allQuery = next
@@ -129,7 +132,7 @@ final class DefaultTradeDataSource: TradeDataSource {
         return try await requestQuery.getDocuments().documents.compactMap { try $0.data(as: Trade.self) }
     }
     
-    func readTradeList(writerID: String) async throws -> [Trade] {
+    func readTradeList(writerID: String, limit: Int) async throws -> [Trade] {
         var requestQuery: Query
         
         if let writerIDQuery {
@@ -138,7 +141,7 @@ final class DefaultTradeDataSource: TradeDataSource {
             requestQuery = tradeDB
                 .whereField("writerID", isEqualTo: writerID)
                 .order(by: "createdAt", descending: true)
-                .limit(to: 10)
+                .limit(to: limit)
             
             guard let lastSnapshot = try await requestQuery.getDocuments().documents.last else {
                 print("end")
@@ -148,7 +151,7 @@ final class DefaultTradeDataSource: TradeDataSource {
             let next = tradeDB
                 .whereField("writerID", isEqualTo: writerID)
                 .order(by: "createdAt", descending: true)
-                .limit(to: 10)
+                .limit(to: limit)
                 .start(afterDocument: lastSnapshot)
             
             self.allQuery = next
@@ -160,7 +163,8 @@ final class DefaultTradeDataSource: TradeDataSource {
     func readTradeList(
         category: ANBDCategory,
         location: Location?,
-        itemCategory: ItemCategory?
+        itemCategory: ItemCategory?,
+        limit: Int
     ) async throws -> [Trade] {
         guard category == .nanua || category == .baccua else {
             throw NSError(domain: "Recent Trade Category Error", code: 4012)
@@ -187,7 +191,7 @@ final class DefaultTradeDataSource: TradeDataSource {
         
         query = query
             .order(by: "createdAt", descending: true)
-            .limit(to: 10)
+            .limit(to: limit)
         
         if let filterQuery {
             requestQuery = filterQuery
@@ -218,7 +222,7 @@ final class DefaultTradeDataSource: TradeDataSource {
         return tradeList
     }
     
-    func readTradeList(keyword: String) async throws -> [Trade] {
+    func readTradeList(keyword: String, limit: Int) async throws -> [Trade] {
         guard !keyword.isEmpty else { return [] }
         
         var requestQuery: Query
@@ -237,7 +241,7 @@ final class DefaultTradeDataSource: TradeDataSource {
                 ])
             )
             .order(by: "createdAt", descending: true)
-            .limit(to: 10)
+            .limit(to: limit)
         
         if let searchQuery {
             requestQuery = searchQuery
@@ -280,20 +284,21 @@ final class DefaultTradeDataSource: TradeDataSource {
         return tradeList
     }
     
-    func refreshAll() async throws -> [Trade] {
+    func refreshAll(limit: Int) async throws -> [Trade] {
         allQuery = nil
-        return try await readTradeList()
+        return try await readTradeList(limit: limit)
     }
     
-    func refreshWriterID(writerID: String) async throws -> [Trade] {
+    func refreshWriterID(writerID: String, limit: Int) async throws -> [Trade] {
         writerIDQuery = nil
-        return try await readTradeList(writerID: writerID)
+        return try await readTradeList(writerID: writerID, limit: limit)
     }
     
     func refreshFilter(
         category: ANBDCategory,
         location: Location?,
-        itemCategory: ItemCategory?
+        itemCategory: ItemCategory?,
+        limit: Int
     ) async throws -> [Trade] {
         guard category == .nanua || category == .baccua else {
             throw NSError(domain: "Recent Trade Category Error", code: 4012)
@@ -304,14 +309,15 @@ final class DefaultTradeDataSource: TradeDataSource {
         return try await readTradeList(
             category: category,
             location: location,
-            itemCategory: itemCategory
+            itemCategory: itemCategory,
+            limit: limit
         )
     }
     
-    func refreshSearch(keyword: String) async throws -> [Trade] {
+    func refreshSearch(keyword: String, limit: Int) async throws -> [Trade] {
         guard !keyword.isEmpty else { return [] }
         searchQuery = nil
-        return try await readTradeList(keyword: keyword)
+        return try await readTradeList(keyword: keyword, limit: limit)
     }
     
     

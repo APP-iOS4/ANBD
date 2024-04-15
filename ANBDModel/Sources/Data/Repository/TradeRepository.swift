@@ -45,20 +45,21 @@ final class DefaultTradeRepository: TradeRepository {
         return trade
     }
     
-    func readTradeList() async throws -> [Trade] {
-        let tradeList = try await tradeDataSource.readTradeList()
+    func readTradeList(limit: Int) async throws -> [Trade] {
+        let tradeList = try await tradeDataSource.readTradeList(limit: limit)
         return tradeList
     }
     
-    func readTradeList(writerID: String) async throws -> [Trade] {
-        let tradeList = try await tradeDataSource.readTradeList(writerID: writerID)
+    func readTradeList(writerID: String, limit: Int) async throws -> [Trade] {
+        let tradeList = try await tradeDataSource.readTradeList(writerID: writerID, limit: limit)
         return tradeList
     }
     
     func readTradeList(
         category: ANBDCategory,
         location: Location?,
-        itemCategory: ItemCategory?
+        itemCategory: ItemCategory?,
+        limit: Int
     ) async throws -> [Trade] {
         guard category == .nanua || category == .baccua else {
             throw NSError(domain: "Recent Trade Category Error", code: 4012)
@@ -67,15 +68,16 @@ final class DefaultTradeRepository: TradeRepository {
         let tradeList = try await tradeDataSource.readTradeList(
             category: category,
             location: location,
-            itemCategory: itemCategory
+            itemCategory: itemCategory,
+            limit: limit
         )
         return tradeList
     }
     
-    func readTradeList(keyword: String) async throws -> [Trade] {
+    func readTradeList(keyword: String, limit: Int) async throws -> [Trade] {
         guard !keyword.isEmpty else { return [] }
         
-        let tradeList = try await tradeDataSource.readTradeList(keyword: keyword)
+        let tradeList = try await tradeDataSource.readTradeList(keyword: keyword, limit: limit)
         return tradeList
     }
     
@@ -88,20 +90,21 @@ final class DefaultTradeRepository: TradeRepository {
         return tradeList
     }
     
-    func refreshAll() async throws -> [Trade] {
-        let refreshedList = try await tradeDataSource.refreshAll()
+    func refreshAll(limit: Int) async throws -> [Trade] {
+        let refreshedList = try await tradeDataSource.refreshAll(limit: limit)
         return refreshedList
     }
     
-    func refreshWriterID(writerID: String) async throws -> [Trade] {
-        let refreshedList = try await tradeDataSource.refreshWriterID(writerID: writerID)
+    func refreshWriterID(writerID: String, limit: Int) async throws -> [Trade] {
+        let refreshedList = try await tradeDataSource.refreshWriterID(writerID: writerID, limit: limit)
         return refreshedList
     }
     
     func refreshFilter(
         category: ANBDCategory,
         location: Location?,
-        itemCategory: ItemCategory?
+        itemCategory: ItemCategory?,
+        limit: Int
     ) async throws -> [Trade] {
         guard category == .nanua || category == .baccua else {
             throw NSError(domain: "Recent Trade Category Error", code: 4012)
@@ -110,15 +113,16 @@ final class DefaultTradeRepository: TradeRepository {
         let refreshedList = try await tradeDataSource.readTradeList(
             category: category,
             location: location,
-            itemCategory: itemCategory
+            itemCategory: itemCategory,
+            limit: limit
         )
         return refreshedList
     }
     
-    func refreshSearch(keyword: String) async throws -> [Trade] {
+    func refreshSearch(keyword: String, limit: Int) async throws -> [Trade] {
         guard !keyword.isEmpty else { return [] }
         
-        let refreshedList = try await tradeDataSource.refreshSearch(keyword: keyword)
+        let refreshedList = try await tradeDataSource.refreshSearch(keyword: keyword, limit: limit)
         return refreshedList
     }
     
@@ -141,7 +145,7 @@ final class DefaultTradeRepository: TradeRepository {
         try await tradeDataSource.updateTrade(tradeID: tradeID, tradeState: tradeState)
     }
     
-    public func likeTrade(tradeID: String) async throws {
+    func likeTrade(tradeID: String) async throws {
         guard let userID = Auth.auth().currentUser?.uid else { return }
         var userInfo = try await userDataSource.readUserInfo(userID: userID)
         

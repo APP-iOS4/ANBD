@@ -14,7 +14,6 @@ extension Date {
         formatter.dateTimeStyle = .named
         
         if Int(Date().timeIntervalSince(self)) < 60 {
-            print("time: \(Int(Date().timeIntervalSince(self)))")
             return "방금"
         } else {
             return formatter.localizedString(for: self, relativeTo: Date())

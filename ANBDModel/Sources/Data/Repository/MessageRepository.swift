@@ -58,7 +58,7 @@ final class DefaultMessageRepository: MessageRepository {
         return snapshot.documents.compactMap {try? $0.data(as: Message.self)}.filter{!$0.leaveUsers.contains(userID)}
     }
     
-    func updateNewMessage(channelID: String, completion: @escaping ((Message) -> Void)) {
+    func readNewMessage(channelID: String , userID: String , completion: @escaping ((Message) -> Void)) {
         
         let commonQuery = chatDB
             .document(channelID)
@@ -81,20 +81,37 @@ final class DefaultMessageRepository: MessageRepository {
                     return
                 }
                 snapshot.documentChanges.forEach { diff in
-                    if (diff.type == .added) {
-                        guard let newMessage = try? diff.document.data(as: Message.self) else {
-                            print("message 변환 오류")
+                    if (diff.type == .added) || (diff.type == .modified) {
+                        guard let mesaage = try? diff.document.data(as: Message.self) else {
+                            print("컴플리션 에러")
                             return
                         }
-                        completion(newMessage)
+                        //상대방이 보낸 메시지를 실시간으로 감지할떄
+                        //메시지의 상태를 읽음으로 바꾸고 , 안읽은 메시지를 수를 초기화
+                        if mesaage.userID != userID {
+                            self.chatDB.document(channelID).collection("messages").document(mesaage.id).updateData(["isRead" : true])
+                            self.chatDB.document(channelID).updateData(["unreadCount" : 0])
+                        }
+                        completion(mesaage)
                     }
-                    if (diff.type == .modified) {print("modified:\(diff.document.data())")}
-                    if (diff.type == .removed) {print("removed:\(diff.document.data())")}
+//                    if (diff.type == .removed) {print("removed:\(diff.document.data())")}
                 }
             }
     }
     
-    func resetData() {
+    func updateMessageReadStatus(channelID: String, message: Message, userID: String) async throws {
+        //내가 보낸 메시지가 아닐때만
+        guard message.userID != userID else {
+            return
+        }
+        guard let _ = try? await chatDB.document(channelID).collection("messages").document(message.id).updateData([
+            "isRead" : true
+        ]) else {
+            throw DBError.getDocumentError(message: "messageId에 해당하는 message문서에 isRead 필드 업데이트에 실패했습니다")
+        }
+    }
+    
+    func deleteListener() {
         startDoc = nil
         lastDoc = nil
         endPaging = false

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Message: Identifiable , Codable {
+public struct Message: Identifiable , Codable , Hashable {
     public var id: String = UUID().uuidString
     
     public let userID: String

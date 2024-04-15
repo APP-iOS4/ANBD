@@ -11,13 +11,11 @@ import ANBDModel
 struct UserPageView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     
+    // 임시 연습용
     private let userUseCase: UserUsecase = DefaultUserUsecase()
     
-    @State private var isShowingAccountManagementView = false
     @State private var isShowingPolicyView = false
     @State private var isShowingReportDialog = false
-    @State private var isShowingHeartTrades = false
-    @State private var isShowingLikedArticles = false
     
     @State private var category: ANBDCategory = .accua
     
@@ -27,128 +25,95 @@ struct UserPageView: View {
     var body: some View {
         VStack(spacing: 20) {
             // UserInfo
-            Group {
-                HStack {
-                    Image(uiImage: isSignedInUser ? myPageViewModel.userProfileImage : UIImage(named: "DefaultUserProfileImage")!)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 90, height: 90)
-                        .clipShape(.circle)
-                        .padding(.horizontal)
+            HStack {
+                Image(uiImage: isSignedInUser ? myPageViewModel.userProfileImage : UIImage(named: "DefaultUserProfileImage")!)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 90, height: 90)
+                    .clipShape(.circle)
+                    .padding(.horizontal)
+                
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(isSignedInUser ? "\(myPageViewModel.user.nickname) 님" : "불량마루")
+                        .foregroundStyle(Color.gray900)
+                        .font(ANBDFont.pretendardBold(24))
                     
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text(isSignedInUser ? "\(myPageViewModel.user.nickname) 님" : "불량마루")
-                            .foregroundStyle(Color.gray900)
-                            .font(ANBDFont.pretendardBold(24))
-                        
-                        Text("선호 지역 : \(myPageViewModel.user.favoriteLocation.description)")
-                            .foregroundStyle(Color.gray400)
-                            .font(ANBDFont.Caption3)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        if isSignedInUser {
-                            HStack {
-                                Text(verbatim: "sjybext@naver.com")
-                                    .foregroundStyle(Color.gray400)
-                                
-                                Spacer()
-                                
-                                Button(action: {
-                                    isShowingAccountManagementView.toggle()
-                                }, label: {
-                                    Text("계정관리")
-                                })
-                            }
-                            .font(ANBDFont.Caption3)
+                    Text("선호 지역 : \(myPageViewModel.user.favoriteLocation.description)")
+                        .foregroundStyle(Color.gray400)
+                        .font(ANBDFont.Caption3)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    if isSignedInUser {
+                        HStack {
+                            Text(verbatim: "sjybext@naver.com")
+                                .foregroundStyle(Color.gray400)
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                myPageViewModel.myPageNaviPath.append(MyPageViewModel.MyPageNaviPaths.accountManagement)
+                            }, label: {
+                                Text("계정관리")
+                            })
                         }
+                        .font(ANBDFont.Caption3)
                     }
                 }
-                .padding()
-                .navigationTitle("마이페이지")
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationDestination(isPresented: $isShowingAccountManagementView) {
-                    AccountManagementView()
-                        .toolbarRole(.editor)
-                        .toolbar(.hidden, for: .tabBar)
-                }
             }
+            .padding()
             
             // User Activities
-            Group {
-                HStack(spacing: 12) {
-                    ActivityInfoComponent(title: "아껴 쓴 개수", count: 5, category: .accua)
-                    Divider()
-                        .frame(height: 60)
-                    
-                    ActivityInfoComponent(title: "나눠 쓴 개수", count: 8, category: .nanua)
-                    Divider()
-                        .frame(height: 60)
-                    
-                    ActivityInfoComponent(title: "바꿔 쓴 개수", count: 13, category: .baccua)
-                    Divider()
-                        .frame(height: 60)
-                    
-                    ActivityInfoComponent(title: "다시 쓴 개수", count: 19, category: .dasi)
-                }
+            HStack(spacing: 12) {
+                activityInfoComponent(title: "아껴 쓴 개수", count: 5, category: .accua)
+                
+                Divider()
+                    .frame(height: 60)
+                
+                activityInfoComponent(title: "나눠 쓴 개수", count: 8, category: .nanua)
+                
+                Divider()
+                    .frame(height: 60)
+                
+                activityInfoComponent(title: "바꿔 쓴 개수", count: 13, category: .baccua)
+                
+                Divider()
+                    .frame(height: 60)
+                
+                activityInfoComponent(title: "다시 쓴 개수", count: 19, category: .dasi)
             }
             
             if isSignedInUser {
                 // Another Functions
-                Group {
-                    VStack(alignment: .leading) {
-                        Divider()
-                        
-                        Button(action: {
-                            isShowingHeartTrades.toggle()
-                        }, label: {
-                            Text("내가 찜한 나눔・거래 보기")
-                                .foregroundStyle(Color.gray900)
-                                .font(ANBDFont.SubTitle2)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding()
-                        })
-                        
-                        Divider()
-                        
-                        Button(action: {
-                            isShowingLikedArticles.toggle()
-                        }, label: {
-                            Text("내가 좋아요한 게시글 보기")
-                                .foregroundStyle(Color.gray900)
-                                .font(ANBDFont.SubTitle2)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding()
-                        })
-                        
-                        Divider()
-                        
-                        Button(action: {
-                            isShowingPolicyView.toggle()
-                        }, label: {
-                            Text("약관 및 정책")
-                                .foregroundStyle(Color.gray900)
-                                .font(ANBDFont.SubTitle2)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding()
-                        })
-                        
-                        Divider()
-                    }
-                    .fullScreenCover(isPresented: $isShowingPolicyView) {
-                        SafariWebView(url: URL(string: "https://maru-study-note.tistory.com/")!)
-                            .ignoresSafeArea(edges: .bottom)
-                    }
+                VStack(alignment: .leading) {
+                    Divider()
                     
-                    .navigationDestination(isPresented: $isShowingHeartTrades) {
-                        UserLikedContentsView(category: .nanua)
-                            .toolbarRole(.editor)
-                            .toolbar(.hidden, for: .tabBar)
-                    }
-                    .navigationDestination(isPresented: $isShowingLikedArticles) {
-                        UserLikedContentsView(category: .accua)
-                            .toolbarRole(.editor)
-                            .toolbar(.hidden, for: .tabBar)
-                    }
+                    Button(action: {
+                        myPageViewModel.myPageNaviPath.append(MyPageViewModel.MyPageNaviPaths.userHeartedTradeList)
+                    }, label: {
+                        listButtonView(title: "내가 찜한 나눔・거래 보기")
+                    })
+                    
+                    Divider()
+                    
+                    Button(action: {
+                        myPageViewModel.myPageNaviPath.append(MyPageViewModel.MyPageNaviPaths.userLikedArticleList)
+                    }, label: {
+                        listButtonView(title: "내가 좋아요한 게시글 보기")
+                    })
+                    
+                    Divider()
+                    
+                    Button(action: {
+                        isShowingPolicyView.toggle()
+                    }, label: {
+                        listButtonView(title: "약관 및 정책")
+                    })
+                    
+                    Divider()
+                }
+                .fullScreenCover(isPresented: $isShowingPolicyView) {
+                    SafariWebView(url: URL(string: "https://maru-study-note.tistory.com/")!)
+                        .ignoresSafeArea(edges: .bottom)
                 }
             }
             
@@ -175,6 +140,9 @@ struct UserPageView: View {
             }
         }
         
+        .navigationTitle("마이페이지")
+        .navigationBarTitleDisplayMode(.inline)
+        
         .confirmationDialog("유저 신고하기", isPresented: $isShowingReportDialog) {
             Button("신고하기", role: .destructive) {
                 // 유저 신고하기 메서드
@@ -184,17 +152,8 @@ struct UserPageView: View {
     }
     
     @ViewBuilder
-    private func ActivityInfoComponent(title: String, count: Int, category: ANBDCategory) -> some View {
-        NavigationLink {
-            if isSignedInUser {
-                UserActivityListView(category: category,
-                                     user: myPageViewModel.user)
-                .toolbarRole(.editor)
-            } else {
-                UserActivityListView(category: category,
-                                     user: myPageViewModel.user)
-            }
-        } label: {
+    private func activityInfoComponent(title: String, count: Int, category: ANBDCategory) -> some View {
+        NavigationLink(value: category) {
             VStack(alignment: .center, spacing: 5) {
                 
                 Text("\(title)")
@@ -205,7 +164,15 @@ struct UserPageView: View {
                     .font(ANBDFont.pretendardSemiBold(22))
             }
         }
-        
+    }
+    
+    @ViewBuilder
+    private func listButtonView(title: String) -> some View {
+        Text("\(title)")
+            .foregroundStyle(Color.gray900)
+            .font(ANBDFont.SubTitle2)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding()
     }
 }
 

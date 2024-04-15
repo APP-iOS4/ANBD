@@ -179,7 +179,7 @@ struct ArticleCreateView: View {
                         Text("다시쓰기")
                     }
                 }
-                .onChange(of: selectedItems) {
+                .onChange(of: selectedItems, perform:  { _ in
                     for newItem in selectedItems {
                         Task {
                             if let data = try? await newItem.loadTransferable(type: Data.self) {
@@ -191,7 +191,7 @@ struct ArticleCreateView: View {
                         }
                     }
                     selectedItems = []
-                }
+                })
                 .alert("이미지는 최대 5장만 가능합니다", isPresented: $isShowingImageAlert) {
                     Button("확인", role: .cancel) { }
                 }

@@ -15,58 +15,102 @@ struct ArticleView: View {
     @State private var isShowingCreateView: Bool = false
     @State var category: ANBDCategory = .accua
     @State private var currentTab: ANBDCategory = .accua
-
+    
     var body: some View {
-        ZStack(alignment: .bottomTrailing) {
-            VStack(alignment: .leading) {
-                CategoryDividerView(category: $category)
-                    .frame(height: 45)
-                
-                TabView(selection: $category) {
-                    ArticleListView(category: .accua)
-                        .tag(ANBDCategory.accua)
-                    ArticleListView(category: .dasi)
-                        .tag(ANBDCategory.dasi)
+        if #available(iOS 17.0, *) {
+            ZStack(alignment: .bottomTrailing) {
+                VStack(alignment: .leading) {
+                    CategoryDividerView(category: $category)
+                        .frame(height: 45)
+                    
+                    TabView(selection: $category) {
+                        ArticleListView(category: .accua)
+                            .tag(ANBDCategory.accua)
+                        ArticleListView(category: .dasi)
+                            .tag(ANBDCategory.dasi)
+                    }
+                    .tabViewStyle(.page(indexDisplayMode: .never))
                 }
-                .tabViewStyle(.page(indexDisplayMode: .never))
-//                .onChange(of: currentTab) { oldValue, newCategory in
-//                    if category != newCategory {
-//                        category = newCategory
-//                    }
-//                }
+                
+                Button {
+                    self.isShowingCreateView.toggle()
+                } label: {
+                    WriteButtonView()
+                }
             }
-            
-            Button {
-                self.isShowingCreateView.toggle()
-            } label: {
-                WriteButtonView()
+            .onAppear {
+                articleViewModel.updateArticles(category: category)
             }
-        }
-        .onAppear {
-            articleViewModel.updateArticles(category: category)
-        }
-        .onChange(of: category) {
-            articleViewModel.updateArticles(category: category)
-        }
-        .navigationTitle("정보 공유")
-        .toolbarTitleDisplayMode(.inline)
-        .fullScreenCover(isPresented: $isShowingCreateView, content: {
-            ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: category, isNewArticle: true)
-        })
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    isGoingToSearchView.toggle()
-                }, label: {
-                    Image(systemName: "magnifyingglass")
-                        .resizable()
-                        .frame(width: 20)
-                        .foregroundStyle(.gray900)
-                })
+            .onChange(of: category, perform: { _ in
+                articleViewModel.updateArticles(category: category)
+            })
+            .navigationTitle("정보 공유")
+            .navigationBarTitleDisplayMode(.inline)
+            .fullScreenCover(isPresented: $isShowingCreateView, content: {
+                ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: category, isNewArticle: true)
+            })
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        isGoingToSearchView.toggle()
+                    }, label: {
+                        Image(systemName: "magnifyingglass")
+                            .resizable()
+                            .frame(width: 20)
+                            .foregroundStyle(.gray900)
+                    })
+                }
             }
-        }
-        .navigationDestination(isPresented: $isGoingToSearchView) {
-            SearchView(category: category)
+            .navigationDestination(isPresented: $isGoingToSearchView) {
+                SearchView(category: category)
+            }
+        } else {
+            ZStack(alignment: .bottomTrailing) {
+                VStack(alignment: .leading) {
+                    CategoryDividerView(category: $category)
+                        .frame(height: 45)
+                    
+                    TabView(selection: $category) {
+                        ArticleListView(category: .accua)
+                            .tag(ANBDCategory.accua)
+                        ArticleListView(category: .dasi)
+                            .tag(ANBDCategory.dasi)
+                    }
+                    .tabViewStyle(.page(indexDisplayMode: .never))
+                }
+                
+                Button {
+                    self.isShowingCreateView.toggle()
+                } label: {
+                    WriteButtonView()
+                }
+            }
+            .onAppear {
+                articleViewModel.updateArticles(category: category)
+            }
+            .onChange(of: category, perform: { _ in
+                articleViewModel.updateArticles(category: category)
+            })
+            .navigationTitle("정보 공유")
+            .navigationBarTitleDisplayMode(.inline)
+            .fullScreenCover(isPresented: $isShowingCreateView, content: {
+                ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: category, isNewArticle: true)
+            })
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        isGoingToSearchView.toggle()
+                    }, label: {
+                        Image(systemName: "magnifyingglass")
+                            .resizable()
+                            .frame(width: 20)
+                            .foregroundStyle(.gray900)
+                    })
+                }
+            }
+            .navigationDestination(isPresented: $isGoingToSearchView) {
+                SearchView(category: category)
+            }
         }
     }
 }

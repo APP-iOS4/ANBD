@@ -42,7 +42,7 @@ final class MyPageViewModel: ObservableObject {
     @Published private(set) var userTrades: [Trade] = []
     
     @Published private(set) var userLikedArticles: [Article] = []
-    @Published private(set) var userHeartTrades: [Trade] = []
+    @Published private(set) var userHeartedTrades: [Trade] = []
     
     let mockArticleData: [Article] = [
         .init(writerID: "writerID", writerNickname: "닉네임닉네임닉네임닉네임닉네임닉네임닉네임", category: .accua, title: "아껴제목1", content: "내용내용5", likeCount: 30, commentCount: 50),
@@ -84,11 +84,21 @@ final class MyPageViewModel: ObservableObject {
     @Published var editedUserNickname = ""
     @Published var tempUserFavoriteLocation: Location = .seoul
     
+    @Published var myPageNaviPath = NavigationPath()
+    
     func validateEditingComplete() -> Bool {
         if (editedUserNickname.isEmpty || editedUserNickname == self.user.nickname) && (tempUserFavoriteLocation != self.user.favoriteLocation) {
             return true
         } else {
             return false
         }
+    }
+}
+
+extension MyPageViewModel {
+    enum MyPageNaviPaths {
+        case userLikedArticleList
+        case userHeartedTradeList
+        case accountManagement
     }
 }

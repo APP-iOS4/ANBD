@@ -137,6 +137,7 @@ struct UserInfoEditingView: View {
                 }
         })
         .padding(.top, 25)
+        
         .confirmationDialog("프로필 이미지 수정하기", isPresented: $isShowingProfileImageEditingDialog) {
             Button(action: {
                 myPageViewModel.userProfileImage = UIImage(named: "DefaultUserProfileImage.001.png")!

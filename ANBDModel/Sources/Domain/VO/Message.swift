@@ -20,6 +20,8 @@ public struct Message: Identifiable , Codable , Hashable {
     
     public var leaveUsers : [String]
     
+    public var isRead: Bool = false
+    
     private static var timeDateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "a hh:mm"

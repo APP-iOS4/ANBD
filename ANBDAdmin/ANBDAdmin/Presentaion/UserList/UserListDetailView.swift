@@ -54,13 +54,18 @@ struct UserListDetailView: View {
                     self.userArticleList = try await articleUsecase.loadArticleList(writerID: user.id)
                     self.userTradeList = try await tradeUsecase.loadTradeList(writerID: user.id)
                     self.userLikeArticleList = try await withThrowingTaskGroup(of: Article.self) { group in
-                                            for articleID in user.likeArticles {
-                                                group.addTask {
-                                                    try await articleUsecase.loadArticle(articleID: articleID)
-                                                }
-                                            }
-                                            return try await group.reduce(into: []) { $0.append($1) }
-                                        }
+                        for articleID in user.likeArticles {
+                            group.addTask {
+                                try await articleUsecase.loadArticle(articleID: articleID)
+                            }
+                        }
+                        var articles: [Article] = []
+                        for try await article in group {
+                            articles.append(article)
+                        }
+                        return articles
+                    }
+
                 } catch {
                     print("게시물 목록을 가져오는데 실패했습니다: \(error)")
                 }

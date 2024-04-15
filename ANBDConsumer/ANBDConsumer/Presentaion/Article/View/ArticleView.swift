@@ -30,7 +30,7 @@ struct ArticleView: View {
         }
     }
     
-    //MARK: -
+    //MARK: - article 서브뷰
     private var articleView: some View {
         ZStack(alignment: .bottomTrailing) {
             VStack(alignment: .leading) {

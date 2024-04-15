@@ -77,6 +77,7 @@ struct ArticleCreateView: View {
         }
     }
     
+    //MARK: - articleCreate 서브뷰
     private var articleCreateView: some View {
         VStack {
             InstructionsView()

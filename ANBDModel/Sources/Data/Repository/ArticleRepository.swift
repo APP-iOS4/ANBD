@@ -6,20 +6,19 @@
 //
 
 import Foundation
-import FirebaseFirestore
 import FirebaseAuth
 
 @available(iOS 15, *)
 final class DefaultArticleRepository: ArticleRepository {
     
-    private let articleDataSource: ArticleDataSource
+    private let articleDataSource: any ArticleDataSource
     private let commentDataSource: CommentDataSource
     private let userDataSource: UserDataSource
     
     private let storage = StorageManager.shared
     
     init(
-        articleDataSource: ArticleDataSource = DefaultArticleDataSource(),
+        articleDataSource: any ArticleDataSource = DefaultArticleDataSource(),
         commentDataSource: CommentDataSource = DefaultCommentDataSource(),
         userDataSource: UserDataSource = DefaultUserDataSource()
     ) {
@@ -40,7 +39,8 @@ final class DefaultArticleRepository: ArticleRepository {
             var newArticle = article
             newArticle.imagePaths = imagePaths
             
-            try await articleDataSource.createArticle(article: newArticle)
+            try await articleDataSource.createItem(item: newArticle)
+//            try await articleDataSource.createArticle(article: newArticle)
         } catch DBError.setDocumentError {
             throw ArticleError.createArticleError(code: 4011, message: "Article을 추가하는데 실패했습니다.")
         }
@@ -50,7 +50,7 @@ final class DefaultArticleRepository: ArticleRepository {
     // MARK: Read
     func readArticle(articleID: String) async throws -> Article {
         do {
-            let article = try await articleDataSource.readArticle(articleID: articleID)
+            let article = try await articleDataSource.readItem(itemID: articleID)
             return article
         } catch DBError.getDocumentError {
             throw ArticleError.readArticleError(code: 4012, message: "Article을 읽어오는데 실패했습니다.")
@@ -63,7 +63,7 @@ final class DefaultArticleRepository: ArticleRepository {
         }
         
         do {
-            let article = try await articleDataSource.readRecentArticle(category: category)
+            let article = try await articleDataSource.readRecentItem(category: category)
             return article
         } catch DBError.getDocumentError {
             throw ArticleError.readArticleError(code: 4012, message: "Article을 읽어오는데 실패했습니다.")
@@ -71,12 +71,12 @@ final class DefaultArticleRepository: ArticleRepository {
     }
     
     func readArticleList(limit: Int) async throws -> [Article] {
-        let articleList = try await articleDataSource.readArticleList(limit: limit)
+        let articleList = try await articleDataSource.readItemList(limit: limit)
         return articleList
     }
     
     func readArticleList(writerID: String, limit: Int) async throws -> [Article] {
-        let articleList = try await articleDataSource.readArticleList(writerID: writerID, limit: limit)
+        let articleList = try await articleDataSource.readItemList(writerID: writerID, limit: limit)
         return articleList
     }
     
@@ -85,7 +85,7 @@ final class DefaultArticleRepository: ArticleRepository {
             throw ArticleError.invalidParameter(code: 4010, message: "잘못된 매개변수입니다.")
         }
         
-        let articleList = try await articleDataSource.readArticleList(category: category, by: order, limit: limit)
+        let articleList = try await articleDataSource.readItemList(category: category, by: order, limit: limit)
         return articleList
     }
     
@@ -94,7 +94,7 @@ final class DefaultArticleRepository: ArticleRepository {
             throw ArticleError.invalidParameter(code: 4010, message: "잘못된 매개변수입니다.")
         }
         
-        let articleList = try await articleDataSource.readArticleList(keyword: keyword, limit: limit)
+        let articleList = try await articleDataSource.readItemList(keyword: keyword, limit: limit)
         return articleList
     }
     
@@ -159,7 +159,7 @@ final class DefaultArticleRepository: ArticleRepository {
             var updatedArticle = article
             updatedArticle.imagePaths = imagePaths
             
-            try await articleDataSource.updateArticle(article: updatedArticle)
+            try await articleDataSource.updateItem(item: updatedArticle)
         } catch DBError.updateDocumentError {
             throw ArticleError.updateArticleError(code: 4013, message: "Article을 업데이트하는데 실패했습니다.")
         }
@@ -169,7 +169,7 @@ final class DefaultArticleRepository: ArticleRepository {
         guard let userID = Auth.auth().currentUser?.uid else { return }
         
         var userInfo = try await userDataSource.readUserInfo(userID: userID)
-        var articleInfo = try await articleDataSource.readArticle(articleID: articleID)
+        var articleInfo = try await articleDataSource.readItem(itemID: articleID)
         
         if userInfo.likeArticles.contains(articleID) {
             articleInfo.likeCount -= 1
@@ -179,7 +179,7 @@ final class DefaultArticleRepository: ArticleRepository {
             userInfo.likeArticles.append(articleID)
         }
         
-        try await articleDataSource.updateArticle(article: articleInfo)
+        try await articleDataSource.updateItem(item: articleInfo)
         try await userDataSource.updateUserInfo(user: userInfo)
     }
     
@@ -189,7 +189,7 @@ final class DefaultArticleRepository: ArticleRepository {
         do {
             try await commentDataSource.deleteCommentList(articleID: article.id)
             try await storage.deleteImageList(path: .article, containerID: article.id, imagePaths: article.imagePaths)
-            try await articleDataSource.deleteArticle(article: article)
+            try await articleDataSource.deleteItem(itemID: article.id)
             try await userDataSource.updateUserInfoList(articleID: article.id)
         } catch DBError.deleteDocumentError {
             throw ArticleError.deleteArticleError(code: 4014, message: "Article을 삭제하는데 실패했습니다.")
@@ -197,7 +197,7 @@ final class DefaultArticleRepository: ArticleRepository {
     }
     
     func resetQuery() {
-        articleDataSource.resetQuery()
+        articleDataSource.resetSearchQuery()
     }
     
 }

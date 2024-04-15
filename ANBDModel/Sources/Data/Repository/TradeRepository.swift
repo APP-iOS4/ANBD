@@ -11,13 +11,13 @@ import FirebaseAuth
 @available(iOS 15, *)
 final class DefaultTradeRepository: TradeRepository {
     
-    private let tradeDataSource: TradeDataSource
+    private let tradeDataSource: any TradeDataSource
     private let userDataSource: UserDataSource
     
     private let storage = StorageManager.shared
     
     init(
-        tradeDataSource: TradeDataSource = DefaultTradeDataSource(),
+        tradeDataSource: any TradeDataSource = DefaultTradeDataSource(),
         userDataSource: UserDataSource = DefaultUserDataSource()
     ) {
         self.tradeDataSource = tradeDataSource
@@ -35,23 +35,23 @@ final class DefaultTradeRepository: TradeRepository {
         var newTrade = trade
         newTrade.imagePaths = imagePaths
         
-        try await tradeDataSource.createTrade(trade: newTrade)
+        try await tradeDataSource.createItem(item: newTrade)
     }
     
     
     // MARK: Read
     func readTrade(tradeID: String) async throws -> Trade {
-        let trade = try await tradeDataSource.readTrade(tradeID: tradeID)
+        let trade = try await tradeDataSource.readItem(itemID: tradeID)
         return trade
     }
     
     func readTradeList(limit: Int) async throws -> [Trade] {
-        let tradeList = try await tradeDataSource.readTradeList(limit: limit)
+        let tradeList = try await tradeDataSource.readItemList(limit: limit)
         return tradeList
     }
     
     func readTradeList(writerID: String, limit: Int) async throws -> [Trade] {
-        let tradeList = try await tradeDataSource.readTradeList(writerID: writerID, limit: limit)
+        let tradeList = try await tradeDataSource.readItemList(writerID: writerID, limit: limit)
         return tradeList
     }
     
@@ -65,7 +65,7 @@ final class DefaultTradeRepository: TradeRepository {
             throw NSError(domain: "Recent Trade Category Error", code: 4012)
         }
         
-        let tradeList = try await tradeDataSource.readTradeList(
+        let tradeList = try await tradeDataSource.readItemList(
             category: category,
             location: location,
             itemCategory: itemCategory,
@@ -77,7 +77,7 @@ final class DefaultTradeRepository: TradeRepository {
     func readTradeList(keyword: String, limit: Int) async throws -> [Trade] {
         guard !keyword.isEmpty else { return [] }
         
-        let tradeList = try await tradeDataSource.readTradeList(keyword: keyword, limit: limit)
+        let tradeList = try await tradeDataSource.readItemList(keyword: keyword, limit: limit)
         return tradeList
     }
     
@@ -86,7 +86,7 @@ final class DefaultTradeRepository: TradeRepository {
             throw NSError(domain: "Recent Trade Category Error", code: 4012)
         }
         
-        let tradeList = try await tradeDataSource.readRecentTradeList(category: category)
+        let tradeList = try await tradeDataSource.readRecentItemList(category: category)
         return tradeList
     }
     
@@ -110,7 +110,7 @@ final class DefaultTradeRepository: TradeRepository {
             throw NSError(domain: "Recent Trade Category Error", code: 4012)
         }
         
-        let refreshedList = try await tradeDataSource.readTradeList(
+        let refreshedList = try await tradeDataSource.readItemList(
             category: category,
             location: location,
             itemCategory: itemCategory,
@@ -138,11 +138,11 @@ final class DefaultTradeRepository: TradeRepository {
         var updatedTrade = trade
         updatedTrade.imagePaths = imagePaths
         
-        try await tradeDataSource.updateTrade(trade: updatedTrade)
+        try await tradeDataSource.updateItem(item: updatedTrade)
     }
     
     func updateTrade(tradeID: String, tradeState: TradeState) async throws {
-        try await tradeDataSource.updateTrade(tradeID: tradeID, tradeState: tradeState)
+        try await tradeDataSource.updateItem(tradeID: tradeID, tradeState: tradeState)
     }
     
     func likeTrade(tradeID: String) async throws {
@@ -166,12 +166,12 @@ final class DefaultTradeRepository: TradeRepository {
             containerID: trade.id,
             imagePaths: trade.imagePaths
         )
-        try await tradeDataSource.deleteTrade(tradeID: trade.id)
+        try await tradeDataSource.deleteItem(itemID: trade.id)
         try await userDataSource.updateUserInfoList(tradeID: trade.id)
     }
     
     func resetQuery() {
-        tradeDataSource.resetQuery()
+        tradeDataSource.resetSearchQuery()
     }
     
 }

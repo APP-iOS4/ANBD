@@ -9,35 +9,17 @@ import Foundation
 import FirebaseFirestore
 
 @available(iOS 15.0, *)
-protocol TradeDataSource {
-    // MARK: Create
-    func createTrade(trade: Trade) async throws
-    
-    // MARK: Read
-    func readTrade(tradeID: String) async throws -> Trade
-    func readTradeList(limit: Int) async throws -> [Trade]
-    func readTradeList(writerID: String, limit: Int) async throws -> [Trade]
-    func readTradeList(category: ANBDCategory,
+protocol TradeDataSource: Postable where Item == Trade {
+    func readItemList(category: ANBDCategory,
                        location: Location?,
                        itemCategory: ItemCategory?,
                        limit: Int) async throws -> [Trade]
-    func readTradeList(keyword: String, limit: Int) async throws -> [Trade]
-    func readRecentTradeList(category: ANBDCategory) async throws -> [Trade]
-    func refreshAll(limit: Int) async throws -> [Trade]
-    func refreshWriterID(writerID: String, limit: Int) async throws -> [Trade]
+    func readRecentItemList(category: ANBDCategory) async throws -> [Trade]
     func refreshFilter(category: ANBDCategory,
                        location: Location?,
                        itemCategory: ItemCategory?,
                        limit: Int) async throws -> [Trade]
-    func refreshSearch(keyword: String, limit: Int) async throws -> [Trade]
-    
-    // MARK: Update
-    func updateTrade(trade: Trade) async throws
-    func updateTrade(tradeID: String, tradeState: TradeState) async throws
-    
-    // MARK: Delete
-    func deleteTrade(tradeID: String) async throws
-    func resetQuery()
+    func updateItem(tradeID: String, tradeState: TradeState) async throws
 }
 
 @available(iOS 15.0, *)
@@ -54,40 +36,40 @@ final class DefaultTradeDataSource: TradeDataSource {
     
     
     // MARK: Create
-    func createTrade(trade: Trade) async throws {
-        if trade.category == .nanua {
-            guard let _ = try? await tradeDB.document(trade.id).setData([
-                "id": trade.id,
-                "writerID": trade.writerID,
-                "writerNickname": trade.writerNickname,
-                "createdAt": trade.createdAt,
-                "category": trade.category.rawValue,
-                "itemCategory": trade.itemCategory.rawValue,
-                "location": trade.location.rawValue,
-                "tradeState": trade.tradeState.rawValue,
-                "title": trade.title,
-                "content": trade.content,
-                "myProduct": trade.myProduct,
-                "imagePaths": trade.imagePaths
+    func createItem(item: Trade) async throws {
+        if item.category == .nanua {
+            guard let _ = try? await tradeDB.document(item.id).setData([
+                "id": item.id,
+                "writerID": item.writerID,
+                "writerNickname": item.writerNickname,
+                "createdAt": item.createdAt,
+                "category": item.category.rawValue,
+                "itemCategory": item.itemCategory.rawValue,
+                "location": item.location.rawValue,
+                "tradeState": item.tradeState.rawValue,
+                "title": item.title,
+                "content": item.content,
+                "myProduct": item.myProduct,
+                "imagePaths": item.imagePaths
             ])
             else {
                 throw DBError.setDocumentError(message: "Trade document를 추가하는데 실패했습니다.")
             }
         } else {
-            guard let _ = try? await tradeDB.document(trade.id).setData([
-                "id": trade.id,
-                "writerID": trade.writerID,
-                "writerNickname": trade.writerNickname,
-                "createdAt": trade.createdAt,
-                "category": trade.category.rawValue,
-                "itemCategory": trade.itemCategory.rawValue,
-                "location": trade.location.rawValue,
-                "tradeState": trade.tradeState.rawValue,
-                "title": trade.title,
-                "content": trade.content,
-                "myProduct": trade.myProduct,
-                "wantProduct": trade.wantProduct ?? "",
-                "imagePaths": trade.imagePaths
+            guard let _ = try? await tradeDB.document(item.id).setData([
+                "id": item.id,
+                "writerID": item.writerID,
+                "writerNickname": item.writerNickname,
+                "createdAt": item.createdAt,
+                "category": item.category.rawValue,
+                "itemCategory": item.itemCategory.rawValue,
+                "location": item.location.rawValue,
+                "tradeState": item.tradeState.rawValue,
+                "title": item.title,
+                "content": item.content,
+                "myProduct": item.myProduct,
+                "wantProduct": item.wantProduct ?? "",
+                "imagePaths": item.imagePaths
             ])
             else {
                 throw DBError.setDocumentError(message: "Trade document를 추가하는데 실패했습니다.")
@@ -97,8 +79,8 @@ final class DefaultTradeDataSource: TradeDataSource {
     
     
     // MARK: Read
-    func readTrade(tradeID: String) async throws -> Trade {
-        guard let trade = try? await tradeDB.document(tradeID).getDocument(as: Trade.self)
+    func readItem(itemID: String) async throws -> Trade {
+        guard let trade = try? await tradeDB.document(itemID).getDocument(as: Trade.self)
         else {
             throw DBError.getDocumentError(message: "ID가 일치하는 Trade document를 읽어오는데 실패했습니다.")
         }
@@ -106,7 +88,7 @@ final class DefaultTradeDataSource: TradeDataSource {
         return trade
     }
     
-    func readTradeList(limit: Int) async throws -> [Trade] {
+    func readItemList(limit: Int) async throws -> [Trade] {
         var requestQuery: Query
         
         if let allQuery {
@@ -129,10 +111,14 @@ final class DefaultTradeDataSource: TradeDataSource {
             self.allQuery = next
         }
         
-        return try await requestQuery.getDocuments().documents.compactMap { try $0.data(as: Trade.self) }
+        let tradeList = try await requestQuery
+            .getDocuments()
+            .documents
+            .compactMap { try? $0.data(as: Trade.self) }
+        return tradeList
     }
     
-    func readTradeList(writerID: String, limit: Int) async throws -> [Trade] {
+    func readItemList(writerID: String, limit: Int) async throws -> [Trade] {
         var requestQuery: Query
         
         if let writerIDQuery {
@@ -157,10 +143,14 @@ final class DefaultTradeDataSource: TradeDataSource {
             self.allQuery = next
         }
         
-        return try await requestQuery.getDocuments().documents.compactMap { try $0.data(as: Trade.self) }
+        let tradeList = try await requestQuery
+            .getDocuments()
+            .documents
+            .compactMap { try? $0.data(as: Trade.self) }
+        return tradeList
     }
     
-    func readTradeList(
+    func readItemList(
         category: ANBDCategory,
         location: Location?,
         itemCategory: ItemCategory?,
@@ -218,11 +208,10 @@ final class DefaultTradeDataSource: TradeDataSource {
         }
         
         let tradeList = snapshot.compactMap { try? $0.data(as: Trade.self) }
-        
         return tradeList
     }
     
-    func readTradeList(keyword: String, limit: Int) async throws -> [Trade] {
+    func readItemList(keyword: String, limit: Int) async throws -> [Trade] {
         guard !keyword.isEmpty else { return [] }
         
         var requestQuery: Query
@@ -259,10 +248,14 @@ final class DefaultTradeDataSource: TradeDataSource {
             searchQuery = next
         }
         
-        return try await requestQuery.getDocuments().documents.compactMap { try $0.data(as: Trade.self) }
+        let tradeList = try await requestQuery
+            .getDocuments()
+            .documents
+            .compactMap { try? $0.data(as: Trade.self) }
+        return tradeList
     }
     
-    func readRecentTradeList(category: ANBDCategory) async throws -> [Trade] {
+    func readRecentItemList(category: ANBDCategory) async throws -> [Trade] {
         guard category == .nanua || category == .baccua else {
             throw NSError(domain: "Recent Trade Category Error", code: 4012)
         }
@@ -280,18 +273,17 @@ final class DefaultTradeDataSource: TradeDataSource {
         }
                 
         let tradeList = snapshot.compactMap { try? $0.data(as: Trade.self) }
-    
         return tradeList
     }
     
     func refreshAll(limit: Int) async throws -> [Trade] {
         allQuery = nil
-        return try await readTradeList(limit: limit)
+        return try await readItemList(limit: limit)
     }
     
     func refreshWriterID(writerID: String, limit: Int) async throws -> [Trade] {
         writerIDQuery = nil
-        return try await readTradeList(writerID: writerID, limit: limit)
+        return try await readItemList(writerID: writerID, limit: limit)
     }
     
     func refreshFilter(
@@ -306,7 +298,7 @@ final class DefaultTradeDataSource: TradeDataSource {
         
         filterQuery = nil
         
-        return try await readTradeList(
+        return try await readItemList(
             category: category,
             location: location,
             itemCategory: itemCategory,
@@ -317,19 +309,19 @@ final class DefaultTradeDataSource: TradeDataSource {
     func refreshSearch(keyword: String, limit: Int) async throws -> [Trade] {
         guard !keyword.isEmpty else { return [] }
         searchQuery = nil
-        return try await readTradeList(keyword: keyword, limit: limit)
+        return try await readItemList(keyword: keyword, limit: limit)
     }
     
     
     // MARK: Update
-    func updateTrade(trade: Trade) async throws {
-        guard let _ = try? tradeDB.document(trade.id).setData(from: trade)
+    func updateItem(item: Trade) async throws {
+        guard let _ = try? tradeDB.document(item.id).setData(from: item)
         else {
             throw DBError.updateDocumentError(message: "Trade document를 업데이트하는데 실패했습니다.")
         }
     }
     
-    func updateTrade(tradeID: String, tradeState: TradeState) async throws {
+    func updateItem(tradeID: String, tradeState: TradeState) async throws {
         guard let _ = try? await tradeDB.document(tradeID).updateData([
             "tradeState": tradeState.rawValue
         ])
@@ -338,18 +330,15 @@ final class DefaultTradeDataSource: TradeDataSource {
         }
     }
     
-    
     // MARK: Delete
-    func deleteTrade(tradeID: String) async throws {
-        guard let _ = try? await tradeDB.document(tradeID).delete()
+    func deleteItem(itemID: String) async throws {
+        guard let _ = try? await tradeDB.document(itemID).delete()
         else {
             throw DBError.deleteDocumentError(message: "ID가 일치하는 Trade document를 삭제하는데 실패했습니다.")
         }
     }
     
-    func resetQuery() {
-        allQuery = nil
-        writerIDQuery = nil
+    func resetSearchQuery() {
         searchQuery = nil
     }
     

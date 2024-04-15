@@ -9,26 +9,17 @@ import Foundation
 import FirebaseFirestore
 
 @available(iOS 15, *)
-public protocol ArticleDataSource {
-    func createArticle(article: Article) async throws
-    func readArticle(articleID: String) async throws -> Article
-    func readRecentArticle(category: ANBDCategory) async throws -> Article
-    func readArticleList(limit: Int) async throws -> [Article]
-    func readArticleList(writerID: String, limit: Int) async throws -> [Article]
-    func readArticleList(category: ANBDCategory, by order: ArticleOrder, limit: Int) async throws -> [Article]
-    func readArticleList(keyword: String, limit: Int) async throws -> [Article]
-    func refreshAll(limit: Int) async throws -> [Article]
-    func refreshWriterID(writerID: String, limit: Int) async throws -> [Article]
+protocol ArticleDataSource: Postable where Item == Article {
+    func readRecentItem(category: ANBDCategory) async throws -> Article
+    func readItemList(category: ANBDCategory,
+                         by order: ArticleOrder,
+                         limit: Int) async throws -> [Article]
     func refreshOrder(category: ANBDCategory, by order: ArticleOrder, limit: Int) async throws -> [Article]
-    func refreshSearch(keyword: String, limit: Int) async throws -> [Article]
-    func updateArticle(article: Article) async throws
-    func deleteArticle(article: Article) async throws
-    func resetQuery()
 }
 
 @available(iOS 15, *)
 final class DefaultArticleDataSource: ArticleDataSource {
-    
+
     private let articleDB = Firestore.firestore().collection("ArticleBoard")
     
     private var allQuery: Query?
@@ -36,18 +27,22 @@ final class DefaultArticleDataSource: ArticleDataSource {
     private var orderQuery: Query?
     private var searchQuery: Query?
     
-    init() { 
+    init() {
+        #if DEBUG
         print("Article DataSource init")
+        #endif
     }
     
     deinit {
+        #if DEBUG
         print("Article DataSource deinit")
+        #endif
     }
-    
+
     
     // MARK: Create
-    func createArticle(article: Article) async throws {
-        guard let _ = try? articleDB.document(article.id).setData(from: article)
+    func createItem(item: Article) async throws {
+        guard let _ = try? articleDB.document(item.id).setData(from: item)
         else {
             throw DBError.setDocumentError(message: "Article document를 추가하는데 실패했습니다.")
         }
@@ -55,8 +50,8 @@ final class DefaultArticleDataSource: ArticleDataSource {
     
     
     // MARK: Read
-    func readArticle(articleID: String) async throws -> Article {
-        guard let article = try? await articleDB.document(articleID).getDocument(as: Article.self)
+    func readItem(itemID: String) async throws -> Article {
+        guard let article = try? await articleDB.document(itemID).getDocument(as: Article.self)
         else {
             throw DBError.getDocumentError(message: "ID가 일치하는 Article document를 읽어오는데 실패했습니다.")
         }
@@ -64,7 +59,7 @@ final class DefaultArticleDataSource: ArticleDataSource {
         return article
     }
     
-    func readRecentArticle(category: ANBDCategory) async throws -> Article {
+    func readRecentItem(category: ANBDCategory) async throws -> Article {
         guard category == .accua || category == .dasi else {
             throw NSError(domain: "Recent Article Category Error", code: 4011)
             
@@ -87,7 +82,7 @@ final class DefaultArticleDataSource: ArticleDataSource {
         return article
     }
         
-    func readArticleList(limit: Int) async throws -> [Article] {
+    func readItemList(limit: Int) async throws -> [Article] {
         var requestQuery: Query
         
         if let allQuery {
@@ -110,10 +105,14 @@ final class DefaultArticleDataSource: ArticleDataSource {
             self.allQuery = next
         }
         
-        return try await requestQuery.getDocuments().documents.compactMap { try $0.data(as: Article.self) }
+        let articleList = try await requestQuery
+            .getDocuments()
+            .documents
+            .compactMap { try? $0.data(as: Article.self) }
+        return articleList
     }
     
-    func readArticleList(writerID: String, limit: Int) async throws -> [Article] {
+    func readItemList(writerID: String, limit: Int) async throws -> [Article] {
         var requestQuery: Query
         
         if let writerIDQuery {
@@ -138,10 +137,14 @@ final class DefaultArticleDataSource: ArticleDataSource {
             self.writerIDQuery = next
         }
         
-        return try await requestQuery.getDocuments().documents.compactMap { try $0.data(as: Article.self) }
+        let articleList = try await requestQuery
+            .getDocuments()
+            .documents
+            .compactMap { try? $0.data(as: Article.self) }
+        return articleList
     }
     
-    func readArticleList(category: ANBDCategory, by order: ArticleOrder, limit: Int) async throws -> [Article] {
+    func readItemList(category: ANBDCategory, by order: ArticleOrder, limit: Int) async throws -> [Article] {
         guard category == .accua || category == .dasi else {
             throw NSError(domain: "Article Category Error", code: 4011)
         }
@@ -178,11 +181,14 @@ final class DefaultArticleDataSource: ArticleDataSource {
             orderQuery = next
         }
         
-        let articleList = try await requestQuery.getDocuments().documents.compactMap { try $0.data(as: Article.self) }
+        let articleList = try await requestQuery
+            .getDocuments()
+            .documents
+            .compactMap { try? $0.data(as: Article.self) }
         return articleList
     }
     
-    func readArticleList(keyword: String, limit: Int) async throws -> [Article] {
+    func readItemList(keyword: String, limit: Int) async throws -> [Article] {
         guard !keyword.isEmpty else { return [] }
         
         var requestQuery: Query
@@ -218,17 +224,21 @@ final class DefaultArticleDataSource: ArticleDataSource {
             searchQuery = next
         }
         
-        return try await requestQuery.getDocuments().documents.compactMap { try $0.data(as: Article.self) }
+        let articleList = try await requestQuery
+            .getDocuments()
+            .documents
+            .compactMap { try? $0.data(as: Article.self) }
+        return articleList
     }
     
     func refreshAll(limit: Int) async throws -> [Article] {
         allQuery = nil
-        return try await readArticleList(limit: limit)
+        return try await readItemList(limit: limit)
     }
     
     func refreshWriterID(writerID: String, limit: Int) async throws -> [Article] {
         writerIDQuery = nil
-        return try await readArticleList(writerID: writerID, limit: limit)
+        return try await readItemList(writerID: writerID, limit: limit)
     }
     
     func refreshOrder(category: ANBDCategory, by order: ArticleOrder, limit: Int) async throws -> [Article] {
@@ -237,43 +247,40 @@ final class DefaultArticleDataSource: ArticleDataSource {
         }
         
         orderQuery = nil
-        return try await readArticleList(category: category, by: order, limit: limit)
+        return try await readItemList(category: category, by: order, limit: limit)
     }
     
     func refreshSearch(keyword: String, limit: Int) async throws -> [Article] {
         guard !keyword.isEmpty else { return [] }
         searchQuery = nil
-        return try await readArticleList(keyword: keyword, limit: limit)
+        return try await readItemList(keyword: keyword, limit: limit)
     }
     
     
     // MARK: Update
-    func updateArticle(article: Article) async throws {
-        guard let _ = try? await articleDB.document(article.id).updateData([
-            "category": article.category.rawValue,
-            "title": article.title,
-            "content": article.content,
-            "imagePaths": article.imagePaths,
-            "likeCount": article.likeCount,
-            "commentCount": article.commentCount
+    func updateItem(item: Article) async throws {
+        guard let _ = try? await articleDB.document(item.id).updateData([
+            "category": item.category.rawValue,
+            "title": item.title,
+            "content": item.content,
+            "imagePaths": item.imagePaths,
+            "likeCount": item.likeCount,
+            "commentCount": item.commentCount
         ])
         else {
             throw DBError.updateDocumentError(message: "Article document를 업데이트하는데 실패했습니다.")
         }
     }
     
-    
     // MARK: Delete
-    func deleteArticle(article: Article) async throws {
-        guard let _ = try? await articleDB.document(article.id).delete()
+    func deleteItem(itemID: String) async throws {
+        guard let _ = try? await articleDB.document(itemID).delete()
         else {
             throw DBError.deleteDocumentError(message: "ID가 일치하는 Article document를 삭제하는데 실패했습니다.")
         }
     }
     
-    func resetQuery() {
-        allQuery = nil
-        writerIDQuery = nil
+    func resetSearchQuery() {
         searchQuery = nil
     }
     

@@ -51,7 +51,7 @@ public struct ChatUsecase : ChatUsecaseProtocol {
     /// - Parameters:
     ///   - userID: 현재 내 ID
     /// - Returns: 내 ID로 생성된 채널 List
-    public func loadChannelList(userID: String, completion : @escaping (_ channels: [Channel]) -> Void) {
+    public func loadChannelList(userID: String, completion :@escaping (_ channels: [Channel]) -> Void) {
         chatRepository.readChannelList(userID: userID) { channels in
             completion(channels)
         }

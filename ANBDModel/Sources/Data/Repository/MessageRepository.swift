@@ -27,7 +27,6 @@ final class DefaultMessageRepository: MessageRepository {
     }
     
     func readMessageList(channelID: String , userID: String) async throws -> [Message] {
-        
         if endPaging {return []}
         let commonQuery = chatDB
             .document(channelID)
@@ -59,7 +58,6 @@ final class DefaultMessageRepository: MessageRepository {
     }
     
     func readNewMessage(channelID: String , userID: String , completion: @escaping ((Message) -> Void)) {
-        
         let commonQuery = chatDB
             .document(channelID)
             .collection("messages")

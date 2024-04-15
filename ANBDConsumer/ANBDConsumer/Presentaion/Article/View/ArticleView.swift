@@ -15,8 +15,23 @@ struct ArticleView: View {
     @State private var isShowingCreateView: Bool = false
     @State var category: ANBDCategory = .accua
     @State private var currentTab: ANBDCategory = .accua
-
+    
     var body: some View {
+        if #available(iOS 17.0, *) {
+            articleView
+                .onChange(of: category) {
+                    articleViewModel.updateArticles(category: category)
+                }
+        } else {
+            articleView
+                .onChange(of: category, perform: { _ in
+                    articleViewModel.updateArticles(category: category)
+                })
+        }
+    }
+    
+    //MARK: - article 서브뷰
+    private var articleView: some View {
         ZStack(alignment: .bottomTrailing) {
             VStack(alignment: .leading) {
                 CategoryDividerView(category: $category)
@@ -29,11 +44,6 @@ struct ArticleView: View {
                         .tag(ANBDCategory.dasi)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
-//                .onChange(of: currentTab) { oldValue, newCategory in
-//                    if category != newCategory {
-//                        category = newCategory
-//                    }
-//                }
             }
             
             Button {
@@ -45,11 +55,8 @@ struct ArticleView: View {
         .onAppear {
             articleViewModel.updateArticles(category: category)
         }
-        .onChange(of: category) {
-            articleViewModel.updateArticles(category: category)
-        }
         .navigationTitle("정보 공유")
-        .toolbarTitleDisplayMode(.inline)
+        .navigationBarTitleDisplayMode(.inline)
         .fullScreenCover(isPresented: $isShowingCreateView, content: {
             ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: category, isNewArticle: true)
         })
@@ -70,6 +77,7 @@ struct ArticleView: View {
         }
     }
 }
+
 
 
 #Preview {

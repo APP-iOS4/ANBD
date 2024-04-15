@@ -112,7 +112,6 @@ struct HomeView: View {
                             img
                                 .resizable()
                                 .scaledToFill()
-                                .containerRelativeFrame(.horizontal)
                             
                         } placeholder: {
                             ProgressView()

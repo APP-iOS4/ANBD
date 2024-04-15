@@ -17,6 +17,36 @@ struct SearchResultView: View {
     @EnvironmentObject var tradeViewModel: TradeViewModel
     
     var body: some View {
+        if #available(iOS 17.0, *) {
+            searchResultView
+                .onAppear {
+                    tradeViewModel.filteringTrades(category: category)
+                    articleViewModel.updateArticles(category: category)
+                }
+                .onChange(of: category) { 
+                    tradeViewModel.filteringTrades(category: category)
+                    articleViewModel.updateArticles(category: category)
+                }
+                .navigationTitle(searchText)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar(.hidden, for: .tabBar)
+        } else {
+            searchResultView
+                .onAppear {
+                    tradeViewModel.filteringTrades(category: category)
+                    articleViewModel.updateArticles(category: category)
+                }
+                .onChange(of: category) { category in
+                    tradeViewModel.filteringTrades(category: category)
+                    articleViewModel.updateArticles(category: category)
+                }
+                .navigationTitle(searchText)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar(.hidden, for: .tabBar)
+        }
+    }
+    
+    fileprivate var searchResultView: some View {
         VStack {
             CategoryDividerView(category: $category, isFromSearchView: true)
                 .frame(height: 40)
@@ -38,17 +68,6 @@ struct SearchResultView: View {
             .tabViewStyle(.page(indexDisplayMode: .never))
             .ignoresSafeArea(edges: .bottom)
         }
-        .onAppear {
-            tradeViewModel.filteringTrades(category: category)
-            articleViewModel.updateArticles(category: category)
-        }
-        .onChange(of: category) {
-            tradeViewModel.filteringTrades(category: category)
-            articleViewModel.updateArticles(category: category)
-        }
-        .navigationTitle(searchText)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar(.hidden, for: .tabBar)
     }
 }
 

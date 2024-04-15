@@ -21,7 +21,7 @@ struct UserListView: View {
                 .cornerRadius(8)
                 .padding(.horizontal, 10)
             List {
-                ForEach(userListViewModel.userList.filter({ searchUserText.isEmpty ? true : $0.nickname.contains(searchUserText) }), id: \.id) { user in
+                ForEach(userListViewModel.userList.filter({ searchUserText.isEmpty ? true : $0.nickname.contains(searchUserText) || $0.id.contains(searchUserText) }), id: \.id) { user in
                     NavigationLink(destination: UserListDetailView(user: user)) {
                         HStack{
                             VStack(alignment: .leading) {
@@ -71,7 +71,6 @@ struct UserListView: View {
                     }
                 }
             }
-            
             .onAppear {
                 userListViewModel.loadUsers()
             }

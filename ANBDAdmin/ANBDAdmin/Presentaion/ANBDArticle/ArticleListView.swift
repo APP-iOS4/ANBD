@@ -21,7 +21,7 @@ struct ArticleListView: View {
                 .cornerRadius(8)
                 .padding(.horizontal, 10)
             List {
-                ForEach(articleListViewModel.articleList.filter({ searchArticleText.isEmpty ? true : $0.title.contains(searchArticleText) }), id: \.id) { article in
+                ForEach(articleListViewModel.articleList.filter({ searchArticleText.isEmpty ? true : $0.title.contains(searchArticleText) || $0.id.contains(searchArticleText) }), id: \.id) { article in
                     NavigationLink(destination: ArticleListDetailView(article: article, deletedArticleID: $articleListViewModel.deletedArticleID)) {
                         HStack{
                             VStack(alignment: .leading) {
@@ -52,8 +52,7 @@ struct ArticleListView: View {
                         }
                     }
                 }
-            }
-            
+            }    
             .onAppear {
                 articleListViewModel.loadArticles()
             }

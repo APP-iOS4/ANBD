@@ -21,7 +21,7 @@ struct TradeListView: View {
                 .cornerRadius(8)
                 .padding(.horizontal, 10)
             List {
-                ForEach(tradeListViewModel.tradeList.filter({ searchTradeText.isEmpty ? true : $0.title.contains(searchTradeText) }), id: \.id) { trade in
+                ForEach(tradeListViewModel.tradeList.filter({ searchTradeText.isEmpty ? true : $0.title.contains(searchTradeText) || $0.id.contains(searchTradeText) }), id: \.id) { trade in
                     NavigationLink(destination: TradeListDetailView(trade: trade, deletedTradeID: $tradeListViewModel.deletedTradeID)) {
                         HStack{
                             VStack(alignment: .leading) {

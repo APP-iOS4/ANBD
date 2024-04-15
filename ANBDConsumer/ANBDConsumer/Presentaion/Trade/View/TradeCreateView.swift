@@ -6,7 +6,7 @@ struct TradeCreateView: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @Binding var isShowingCreate: Bool
     @State private var placeHolder: String = ""
-    @State private var isFinish: Bool = true
+    @State private var isFinished: Bool = true
     @State private var isCancelable: Bool = true
     @State private var isShowingCategoryMenuList: Bool = false
     @State private var isShowingLocationMenuList: Bool = false
@@ -42,85 +42,40 @@ struct TradeCreateView: View {
     var body: some View {
         if #available(iOS 17.0, *) {
             wholeView
-                .onTapGesture {
-                    endTextEditing()
-                }
-                .onAppear {
-                    UITextField.appearance().clearButtonMode = .never
-                    
-                    if !isNewProduct {
-                        if let trade = trade {
-                            self.title = trade.title
-                            self.myProduct = trade.myProduct
-                            self.category = trade.category
-                            self.wantProduct = trade.wantProduct ?? ""
-                            self.content = trade.content
-                        }
-                    }
-                }
-                .onTapGesture {
-                    withAnimation {
-                        self.isShowingCategoryMenuList = false
-                        self.isShowingLocationMenuList = false
-                    }
-                }
                 .onChange(of: mustTextFields, {
                     if self.selectedPhotosData.count != 0 && self.title != "" && self.myProduct != "" && self.content != "" {
-                        self.isFinish = false
+                        self.isFinished = false
                     } else {
-                        self.isFinish = true
+                        self.isFinished = true
                     }
                 })
                 .onChange(of: selectedPhotosData, {
                     if self.selectedPhotosData.count != 0 && self.title != "" && self.myProduct != "" && self.content != "" {
-                        self.isFinish = false
+                        self.isFinished = false
                     } else {
-                        self.isFinish = true
+                        self.isFinished = true
                     }
+                    
+                    isCancelable = false
                 })
-                .onTapGesture {
-                    endTextEditing()
-                }
+                
         } else {
             wholeView
-                .onTapGesture {
-                    endTextEditing()
-                }
-                .onAppear {
-                    UITextField.appearance().clearButtonMode = .never
-                    
-                    if !isNewProduct {
-                        if let trade = trade {
-                            self.title = trade.title
-                            self.myProduct = trade.myProduct
-                            self.category = trade.category
-                            self.wantProduct = trade.wantProduct ?? ""
-                            self.content = trade.content
-                        }
-                    }
-                }
-                .onTapGesture {
-                    withAnimation {
-                        self.isShowingCategoryMenuList = false
-                        self.isShowingLocationMenuList = false
-                    }
-                }
                 .onChange(of: mustTextFields) { _ in
                     if self.selectedPhotosData.count != 0 && self.title != "" && self.myProduct != "" && self.content != "" {
-                        self.isFinish = false
+                        self.isFinished = false
                     } else {
-                        self.isFinish = true
+                        self.isFinished = true
                     }
                 }
                 .onChange(of: selectedPhotosData) { _ in
                     if self.selectedPhotosData.count != 0 && self.title != "" && self.myProduct != "" && self.content != "" {
-                        self.isFinish = false
+                        self.isFinished = false
                     } else {
-                        self.isFinish = true
+                        self.isFinished = true
                     }
-                }
-                .onTapGesture {
-                    endTextEditing()
+                    
+                    isCancelable = false
                 }
         }
     }
@@ -193,16 +148,26 @@ extension TradeCreateView {
                 HStack {
                     Button(action: {
                         endTextEditing()
+                        
+                        // 수정: 바뀐 정보가 없다면 backAlert X
+                        if let trade = trade {
+                            if title != trade.title || content != trade.content || category != trade.category || myProduct != trade.myProduct || self.itemCategory != trade.itemCategory || self.location != trade.location {
+                                isCancelable = false
+                            }
+                        }
+                        
                         for item in mustTextFields {
                             if item != "" {
                                 isCancelable = false
                             }
                         }
+                        
                         if isCancelable {
                             isShowingCreate.toggle()
                         } else {
                             isShowingBackAlert.toggle()
                         }
+                        
                     }, label: {
                         Image(systemName: "xmark")
                     })
@@ -387,7 +352,7 @@ extension TradeCreateView {
                     .padding(.bottom, 10)
                     
                     //작성완료 버튼
-                    BlueSquareButton(title: isNewProduct ? "작성 완료" : "수정 완료", isDisabled: isFinish) {
+                    BlueSquareButton(title: isNewProduct ? "작성 완료" : "수정 완료", isDisabled: isFinished) {
                         if !isNewProduct {
                             
                         } else {
@@ -403,6 +368,28 @@ extension TradeCreateView {
                 CustomAlertView(isShowingCustomAlert: $isShowingBackAlert, viewType: .writingCancel) {
                     isShowingCreate.toggle()
                 }
+            }
+        }
+        .onTapGesture {
+            endTextEditing()
+        }
+        .onAppear {
+            UITextField.appearance().clearButtonMode = .never
+            
+            if !isNewProduct {
+                if let trade = trade {
+                    self.title = trade.title
+                    self.myProduct = trade.myProduct
+                    self.category = trade.category
+                    self.wantProduct = trade.wantProduct ?? ""
+                    self.content = trade.content
+                }
+            }
+        }
+        .onTapGesture {
+            withAnimation {
+                self.isShowingCategoryMenuList = false
+                self.isShowingLocationMenuList = false
             }
         }
     }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Message: Identifiable , Codable {
+public struct Message: Identifiable , Codable , Hashable {
     public var id: String = UUID().uuidString
     
     public let userID: String
@@ -19,6 +19,8 @@ public struct Message: Identifiable , Codable {
     public var imagePath: String?
     
     public var leaveUsers : [String]
+    
+    public var isRead: Bool = false
     
     private static var timeDateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()

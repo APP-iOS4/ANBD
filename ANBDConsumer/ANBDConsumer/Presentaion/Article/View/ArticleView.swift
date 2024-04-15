@@ -18,102 +18,66 @@ struct ArticleView: View {
     
     var body: some View {
         if #available(iOS 17.0, *) {
-            ZStack(alignment: .bottomTrailing) {
-                VStack(alignment: .leading) {
-                    CategoryDividerView(category: $category)
-                        .frame(height: 45)
-                    
-                    TabView(selection: $category) {
-                        ArticleListView(category: .accua)
-                            .tag(ANBDCategory.accua)
-                        ArticleListView(category: .dasi)
-                            .tag(ANBDCategory.dasi)
-                    }
-                    .tabViewStyle(.page(indexDisplayMode: .never))
+            articleView
+                .onChange(of: category) {
+                    articleViewModel.updateArticles(category: category)
                 }
-                
-                Button {
-                    self.isShowingCreateView.toggle()
-                } label: {
-                    WriteButtonView()
-                }
-            }
-            .onAppear {
-                articleViewModel.updateArticles(category: category)
-            }
-            .onChange(of: category, perform: { _ in
-                articleViewModel.updateArticles(category: category)
-            })
-            .navigationTitle("정보 공유")
-            .navigationBarTitleDisplayMode(.inline)
-            .fullScreenCover(isPresented: $isShowingCreateView, content: {
-                ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: category, isNewArticle: true)
-            })
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {
-                        isGoingToSearchView.toggle()
-                    }, label: {
-                        Image(systemName: "magnifyingglass")
-                            .resizable()
-                            .frame(width: 20)
-                            .foregroundStyle(.gray900)
-                    })
-                }
-            }
-            .navigationDestination(isPresented: $isGoingToSearchView) {
-                SearchView(category: category)
-            }
         } else {
-            ZStack(alignment: .bottomTrailing) {
-                VStack(alignment: .leading) {
-                    CategoryDividerView(category: $category)
-                        .frame(height: 45)
-                    
-                    TabView(selection: $category) {
-                        ArticleListView(category: .accua)
-                            .tag(ANBDCategory.accua)
-                        ArticleListView(category: .dasi)
-                            .tag(ANBDCategory.dasi)
-                    }
-                    .tabViewStyle(.page(indexDisplayMode: .never))
-                }
+            articleView
+                .onChange(of: category, perform: { _ in
+                    articleViewModel.updateArticles(category: category)
+                })
+        }
+    }
+    
+    //MARK: -
+    private var articleView: some View {
+        ZStack(alignment: .bottomTrailing) {
+            VStack(alignment: .leading) {
+                CategoryDividerView(category: $category)
+                    .frame(height: 45)
                 
-                Button {
-                    self.isShowingCreateView.toggle()
-                } label: {
-                    WriteButtonView()
+                TabView(selection: $category) {
+                    ArticleListView(category: .accua)
+                        .tag(ANBDCategory.accua)
+                    ArticleListView(category: .dasi)
+                        .tag(ANBDCategory.dasi)
                 }
+                .tabViewStyle(.page(indexDisplayMode: .never))
             }
-            .onAppear {
-                articleViewModel.updateArticles(category: category)
+            
+            Button {
+                self.isShowingCreateView.toggle()
+            } label: {
+                WriteButtonView()
             }
-            .onChange(of: category, perform: { _ in
-                articleViewModel.updateArticles(category: category)
-            })
-            .navigationTitle("정보 공유")
-            .navigationBarTitleDisplayMode(.inline)
-            .fullScreenCover(isPresented: $isShowingCreateView, content: {
-                ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: category, isNewArticle: true)
-            })
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {
-                        isGoingToSearchView.toggle()
-                    }, label: {
-                        Image(systemName: "magnifyingglass")
-                            .resizable()
-                            .frame(width: 20)
-                            .foregroundStyle(.gray900)
-                    })
-                }
+        }
+        .onAppear {
+            articleViewModel.updateArticles(category: category)
+        }
+        .navigationTitle("정보 공유")
+        .navigationBarTitleDisplayMode(.inline)
+        .fullScreenCover(isPresented: $isShowingCreateView, content: {
+            ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: category, isNewArticle: true)
+        })
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: {
+                    isGoingToSearchView.toggle()
+                }, label: {
+                    Image(systemName: "magnifyingglass")
+                        .resizable()
+                        .frame(width: 20)
+                        .foregroundStyle(.gray900)
+                })
             }
-            .navigationDestination(isPresented: $isGoingToSearchView) {
-                SearchView(category: category)
-            }
+        }
+        .navigationDestination(isPresented: $isGoingToSearchView) {
+            SearchView(category: category)
         }
     }
 }
+
 
 
 #Preview {

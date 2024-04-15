@@ -81,10 +81,26 @@ struct UserActivityListView: View {
     @ViewBuilder
     func ListEmptyView() -> some View {
         VStack {
-            ContentUnavailableView("\(user.nickname)님의\n\(category.description) 활동이 없습니다.",
-                                   systemImage: "tray",
-                                   description: Text(""))
+            Spacer()
+            
+            Image(systemName: "tray")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 60)
+                .padding(.bottom, 10)
+            
+            HStack {
+                Spacer()
+                
+                Text("\(user.nickname)님의\n\(category.description) 활동이 없습니다.")
+                    .multilineTextAlignment(.center)
+                    .font(ANBDFont.body1)
+                
+                Spacer()
+            }
+            Spacer()
         }
+        .foregroundStyle(Color.gray400)
     }
     
     @ViewBuilder

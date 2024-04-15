@@ -53,15 +53,47 @@ struct UserLikedContentsView: View {
         VStack {
             switch category {
             case .accua, .dasi:
-                ContentUnavailableView("\(myPageViewModel.user.nickname)님이 좋아요한\n\(category.description) 게시글이 없습니다.",
-                                       systemImage: "tray",
-                                       description: Text(""))
+                Spacer()
+                
+                Image(systemName: "tray")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 60)
+                    .padding(.bottom, 10)
+                
+                HStack {
+                    Spacer()
+                    
+                    Text("\(myPageViewModel.user.nickname)님이 좋아요한\n\(category.description) 게시글이 없습니다.")
+                        .multilineTextAlignment(.center)
+                        .font(ANBDFont.body1)
+                    
+                    Spacer()
+                }
+                Spacer()
+                
             case .nanua, .baccua:
-                ContentUnavailableView("\(myPageViewModel.user.nickname)님이 찜한\n\(category.description) 거래가 없습니다.",
-                                       systemImage: "tray",
-                                       description: Text(""))
+                Spacer()
+                
+                Image(systemName: "tray")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 60)
+                    .padding(.bottom, 10)
+                
+                HStack {
+                    Spacer()
+                    
+                    Text("\(myPageViewModel.user.nickname)님이 찜한\n\(category.description) 거래가 없습니다.")
+                        .multilineTextAlignment(.center)
+                        .font(ANBDFont.body1)
+                    
+                    Spacer()
+                }
+                Spacer()
             }
         }
+        .foregroundStyle(Color.gray400)
     }
     
     @ViewBuilder

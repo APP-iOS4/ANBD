@@ -57,23 +57,29 @@ struct ChatDetailView: View {
                 
                 Divider()
                 
-                ScrollView {
-                    ForEach(0..<messages.count, id: \.self) { i in
-                        /// 날짜 구분선
-                        if i == 0 || messages[i].dateStringWithYear != messages[i-1].dateStringWithYear {
-                            MessageDateDividerView(dateString: messages[i].dateStringWithYear)
-                                .padding()
-                                .padding(.top, i == 0 ? 5 : 25)
-                                .padding(.bottom, 25)
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        ForEach(0..<messages.count, id: \.self) { i in
+                            /// 날짜 구분선
+                            if i == 0 || messages[i].dateStringWithYear != messages[i-1].dateStringWithYear {
+                                MessageDateDividerView(dateString: messages[i].dateStringWithYear)
+                                    .padding()
+                                    .padding(.top, i == 0 ? 5 : 25)
+                                    .padding(.bottom, 25)
+                            }
+                            
+                            /// 이미지 · 텍스트
+                            MessageCell(message: messages[i])
+                                .padding(.vertical, 1)
+                                .padding(.horizontal, 20)
                         }
-                        
-                        /// 이미지 · 텍스트
-                        MessageCell(message: messages[i])
-                            .padding(.vertical, 1)
-                            .padding(.horizontal, 20)
+                        Text("")
+                            .id("BottomID")
+                    }
+                    .onAppear {
+                        proxy.scrollTo("BottomID")
                     }
                 }
-                .defaultScrollAnchor(.bottom)
                 
                 messageSendView
                     .padding()

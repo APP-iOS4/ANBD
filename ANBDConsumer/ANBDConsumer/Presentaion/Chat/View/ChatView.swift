@@ -23,12 +23,10 @@ struct ChatView: View {
                     ScrollView {
                         LazyVStack {
                             ForEach(chats, id: \.self) { chat in
-                                SwipeAction(isShowingConfirm: $isShowingConfirmSheet) {
-                                    NavigationLink(value: "\(chat[0])") {
-                                        ChatListCell(userNickname: chat[0], lastMessage: chat[1], lastDate: chat[2], unreadMessageCount: Int(chat[3]) ?? 0)
-                                            .padding(.horizontal, 20)
-                                            .padding(.vertical, 3)
-                                    }
+                                NavigationLink(value: "\(chat[0])") {
+                                    ChatListCell(userNickname: chat[0], lastMessage: chat[1], lastDate: chat[2], unreadMessageCount: Int(chat[3]) ?? 0)
+                                        .padding(.horizontal, 20)
+                                        .padding(.vertical, 3)
                                 }
                             }
                         }
@@ -54,60 +52,6 @@ struct ChatView: View {
         .navigationDestination(for: String.self) { text in
             ChatDetailView(userNickname: text)
         }
-    }
-}
-
-// MARK: - custom swipe action
-struct SwipeAction<Content: View>: View {
-    @Binding var isShowingConfirm: Bool
-    @ViewBuilder var content: Content
-    var viewID = UUID()
-    var body: some View {
-        ScrollViewReader { scrollProxy in
-            ScrollView(.horizontal) {
-                LazyHStack(spacing: 0) {
-                    /// ChatListCell
-                    content
-                        .containerRelativeFrame(.horizontal)
-                        .id(viewID)
-                        .transition(.identity)
-                    
-                    /// Delete Button
-                    Rectangle()
-                        .fill(.clear)
-                        .frame(width: 70)
-                        .overlay(alignment: .trailing) {
-                            Button(action: {
-                                isShowingConfirm.toggle()
-                                withAnimation(.snappy) {
-                                    scrollProxy.scrollTo(viewID, anchor: .topLeading)
-                                }
-                            }, label: {
-                                Image(systemName: "trash.fill")
-                                    .font(.title3)
-                                    .foregroundStyle(.white)
-                                    .frame(width: 70)
-                                    .frame(maxHeight: .infinity)
-                            })
-                            .buttonStyle(.plain)
-                            .background(.heartRed)
-                        }
-                }
-                .scrollTargetLayout()
-                .visualEffect { content, geometryProxy in
-                    content
-                        .offset(x: scrollOffset(geometryProxy))
-                }
-            }
-            .scrollIndicators(.hidden)
-            .scrollTargetBehavior(.viewAligned)
-//            .background(.white)
-        }
-    }
-    
-    func scrollOffset(_ proxy: GeometryProxy) -> CGFloat {
-        let minX = proxy.frame(in: .scrollView(axis: .horizontal)).minX
-        return (minX > 0 ? -minX : 0)
     }
 }
 

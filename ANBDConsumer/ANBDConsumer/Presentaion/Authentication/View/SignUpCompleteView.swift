@@ -44,13 +44,13 @@ struct SignUpCompleteView: View {
         .padding(.horizontal, 20)
         .toolbar(.hidden, for: .navigationBar)
         .onAppear {
-            withAnimation(.easeOut(duration: 1)) {
-                showTitleAnimation = 1
-            } completion: {
-                withAnimation(.easeOut(duration: 2)) {
-                    showExplainAnimation = 1
-                }
-            }
+//            withAnimation(.easeOut(duration: 1)) {
+//                showTitleAnimation = 1
+//            } completion: {
+//                withAnimation(.easeOut(duration: 2)) {
+//                    showExplainAnimation = 1
+//                }
+//            }
         }
     }
 }

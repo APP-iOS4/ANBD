@@ -76,12 +76,24 @@ struct ArticleListView: View {
                 .padding(.horizontal)
             }
 
-            if articleViewModel.filteredArticles.isEmpty || tradeViewModel.filteredTrades.isEmpty {
+            if isArticle && articleViewModel.filteredArticles.isEmpty {
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            Text("해당하는 정보 공유 게시글이 없습니다.")
+                                .foregroundStyle(.gray400)
+                                .font(ANBDFont.body1)
+                            Spacer()
+                        }
+                        Spacer()
+                    }
+            } else if !isArticle && tradeViewModel.filteredTrades.isEmpty {
                 VStack {
                     Spacer()
                     HStack {
                         Spacer()
-                        Text(isArticle ? "해당하는 정보 공유 게시글이 없습니다." : "해당하는 나눔 · 거래 게시글이 없습니다.")
+                        Text("해당하는 나눔 · 거래 게시글이 없습니다.")
                             .foregroundStyle(.gray400)
                             .font(ANBDFont.body1)
                         Spacer()

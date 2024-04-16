@@ -7,14 +7,22 @@
 import SwiftUI
 
 struct AdminHomeView: View {
+    @State private var isUserListExpanded = true
     @State private var isReportedItemsExpanded = true
     @State private var isBoardListExpanded = true
     
     var body: some View {
         NavigationView {
             List {
-                NavigationLink(destination: UserListView().font(.title3)) {
-                    Text("유저목록").bold()
+                DisclosureGroup(isExpanded: $isUserListExpanded) {
+                    NavigationLink(destination: ConsumerUserListView().font(.title3)) {
+                        Text("일반 유저")
+                    }
+                    NavigationLink(destination: AdminUserListView().font(.title3)) {
+                        Text("관리자 유저")
+                    }
+                } label: {
+                    Text("유저 목록").bold()
                 }
                 DisclosureGroup(isExpanded: $isReportedItemsExpanded) {
                     NavigationLink(destination: ReportedArticleListView().font(.title3)) {
@@ -31,7 +39,7 @@ struct AdminHomeView: View {
                         Text("게시물")
                     }
                     NavigationLink(destination: TradeListView().font(.title3)) {
-                        Text("거래")
+                        Text("거래글")
                     }
                 } label: {
                     Text("게시판 목록").bold()

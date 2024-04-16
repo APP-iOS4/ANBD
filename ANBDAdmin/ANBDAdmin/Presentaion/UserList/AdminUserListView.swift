@@ -1,14 +1,13 @@
 //
-//  UserListView.swift
+//  AdminUserListView.swift
 //  ANBDAdmin
 //
-//  Created by sswv on 4/8/24.
+//  Created by sswv on 4/16/24.
 //
 
 import SwiftUI
-import ANBDModel
 
-struct UserListView: View {
+struct AdminUserListView: View {
     @StateObject private var userListViewModel = UserListViewModel()
     @State private var searchUserText = "" // 검색 텍스트 추적하는 변수
     
@@ -20,8 +19,11 @@ struct UserListView: View {
                 .background(Color(.systemGray6))
                 .cornerRadius(8)
                 .padding(.horizontal, 10)
+            
             List {
-                ForEach(userListViewModel.userList.filter({ searchUserText.isEmpty ? true : $0.nickname.contains(searchUserText) || $0.id.contains(searchUserText) }), id: \.id) { user in
+                ForEach(userListViewModel.userList.filter({
+                    ($0.userLevel == .admin) && (searchUserText.isEmpty ? true : $0.nickname.contains(searchUserText) || $0.id.contains(searchUserText))
+                }), id: \.id) { user in
                     NavigationLink(destination: UserListDetailView(user: user)) {
                         HStack{
                             VStack(alignment: .leading) {
@@ -74,7 +76,7 @@ struct UserListView: View {
             .onAppear {
                 userListViewModel.loadUsers()
             }
-            .navigationBarTitle("유저 목록")
+            .navigationBarTitle("관리자 유저 목록")
         }
     }
 }

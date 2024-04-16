@@ -46,7 +46,7 @@ struct BannerEditView: View {
                             .frame(minWidth: 0, maxWidth: 250, alignment: .leading)
                             Spacer()
                             VStack(alignment: .leading) {
-                                Text("배너 id")
+                                Text("배너 ID")
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
                                 Text("\(banner.id)")

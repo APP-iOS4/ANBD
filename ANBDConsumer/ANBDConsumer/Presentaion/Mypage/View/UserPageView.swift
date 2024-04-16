@@ -152,7 +152,7 @@ struct UserPageView: View {
     }
     
     @ViewBuilder
-    private func activityInfoComponent(title: String, count: Int, category: ANBDCategory) -> some View {
+    fileprivate func activityInfoComponent(title: String, count: Int, category: ANBDCategory) -> some View {
         NavigationLink(value: category) {
             VStack(alignment: .center, spacing: 5) {
                 
@@ -167,7 +167,7 @@ struct UserPageView: View {
     }
     
     @ViewBuilder
-    private func listButtonView(title: String) -> some View {
+    fileprivate func listButtonView(title: String) -> some View {
         Text("\(title)")
             .foregroundStyle(Color.gray900)
             .font(ANBDFont.SubTitle2)

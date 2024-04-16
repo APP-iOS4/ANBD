@@ -54,7 +54,7 @@ struct UserInfoEditingView: View {
                         .foregroundStyle(Color.gray400)
                         .padding(.bottom, 5)
                     
-                    TextFieldUIKit(placeholder: "닉네임을 입력해주세요.",
+                    textFieldUIKit(placeholder: "닉네임을 입력해주세요.",
                                    text: $myPageViewModel.editedUserNickname)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled(true)
@@ -155,13 +155,13 @@ struct UserInfoEditingView: View {
         .photosPicker(isPresented: $isShowingPhotosPicker, selection: $photosPickerItem)
     }
 
-    private func TextFieldUIKit(placeholder: String, text: Binding<String>) -> some View {
+    fileprivate func textFieldUIKit(placeholder: String, text: Binding<String>) -> some View {
         UITextField.appearance().clearButtonMode = .whileEditing
         
         return TextField(placeholder, text: text)
     }
     
-    private func downKeyboard() {
+    fileprivate func downKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }

@@ -156,7 +156,7 @@ struct HomeView: View {
             
             ForEach(homeViewModel.baccuaTrades) { trade in
                 NavigationLink(value: trade) {
-                    TradeListCell(trade: trade)
+                    ArticleListCell(value: .trade(trade))
                 }
             }
         }

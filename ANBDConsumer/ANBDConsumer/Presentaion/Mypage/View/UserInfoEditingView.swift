@@ -54,7 +54,7 @@ struct UserInfoEditingView: View {
                         .foregroundStyle(Color.gray400)
                         .padding(.bottom, 5)
                     
-                    TextFieldUIKit(placeholder: "닉네임을 입력해주세요.",
+                    textFieldUIKit(placeholder: "닉네임을 입력해주세요.",
                                    text: $myPageViewModel.editedUserNickname)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled(true)
@@ -117,7 +117,7 @@ struct UserInfoEditingView: View {
         }
     }
     
-    fileprivate var userProfilImageButton: some View {
+    private var userProfilImageButton: some View {
         Button(action: {
             isShowingProfileImageEditingDialog.toggle()
         }, label: {
@@ -155,7 +155,7 @@ struct UserInfoEditingView: View {
         .photosPicker(isPresented: $isShowingPhotosPicker, selection: $photosPickerItem)
     }
 
-    private func TextFieldUIKit(placeholder: String, text: Binding<String>) -> some View {
+    private func textFieldUIKit(placeholder: String, text: Binding<String>) -> some View {
         UITextField.appearance().clearButtonMode = .whileEditing
         
         return TextField(placeholder, text: text)

@@ -10,10 +10,7 @@ import ANBDModel
 
 struct UserPageView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
-    
-    // 임시 연습용
-    private let userUseCase: UserUsecase = DefaultUserUsecase()
-    
+        
     @State private var isShowingPolicyView = false
     @State private var isShowingReportDialog = false
     

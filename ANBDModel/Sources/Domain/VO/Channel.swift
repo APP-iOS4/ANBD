@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Channel: Identifiable , Codable {
+public struct Channel: Identifiable , Codable , Hashable{
     public var id: String = UUID().uuidString
     
     public let users : [String]

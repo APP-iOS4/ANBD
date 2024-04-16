@@ -24,8 +24,14 @@ struct ArticleView: View {
                 .onChange(of: category) {
                     if isArticle {
                         articleViewModel.updateArticles(category: category)
+                        
                     } else {
                         tradeViewModel.filteringTrades(category: category)
+                    }
+                }
+                .onAppear {
+                    Task {
+                        await articleViewModel.loadArticle(category: category)
                     }
                 }
         } else {
@@ -37,6 +43,11 @@ struct ArticleView: View {
                         tradeViewModel.filteringTrades(category: category)
                     }
                 })
+                .onAppear {
+                    Task {
+                        await articleViewModel.loadArticle(category: category)
+                    }
+                }
         }
     }
     
@@ -81,7 +92,9 @@ struct ArticleView: View {
             }
             
             if isArticle {
-                articleViewModel.updateArticles(category: category)
+                Task {
+                    await articleViewModel.loadArticle(category: category)
+                }
             } else {
                 tradeViewModel.filteringTrades(category: category)
             }

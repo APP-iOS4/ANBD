@@ -9,10 +9,13 @@ import SwiftUI
 import ANBDModel
 
 final class ArticleViewModel: ObservableObject {
+    
+    private let articleUseCase: ArticleUsecase = DefaultArticleUsecase()
+    
     @Published var articlePath: NavigationPath = NavigationPath()
     
-//    @Published var articleUsecase: ArticleUsecase
-//    @Published var commentUsecase: CommentUsecase
+    @Published var accuaArticle: Article = .init(writerID: "", writerNickname: "aaa", category: .accua, title: "제목제목",content: "내용내용", imagePaths: [])
+    @Published var dasiArticle: Article = .init(writerID: "", writerNickname: "aaa", category: .dasi, title: "제목제목",content: "내용내용", imagePaths: [])
     
     @Published var articles: Article?
 //    @Published var comments: [Comment] = []
@@ -41,10 +44,10 @@ final class ArticleViewModel: ObservableObject {
         case time, likes, comments
     }
     
-    func filteringArticles(category: ANBDCategory) {
-        filteredArticles = mockArticleData.filter({ $0.category == category })
+//    func filteringArticles(category: ANBDCategory) {
+//        filteredArticles = mockArticleData.filter({ $0.category == category })
         
-    }
+//    }
     
     func updateArticles(category: ANBDCategory) {
         switch sortOption {
@@ -85,5 +88,18 @@ final class ArticleViewModel: ObservableObject {
         case .comments:
             return "댓글순"
         }
+    }
+    
+    func loadArticle(category: ANBDCategory) async {
+        do {
+            if category == .accua {
+                try await accuaArticle = articleUseCase.loadRecentArticle(category: .accua)
+            } else if category == .dasi {
+                try await dasiArticle = articleUseCase.loadRecentArticle(category: .dasi)
+            }
+        } catch {
+            ArticleError.readArticleError(code: 4012, message: "Article을 읽어오는데 실패했습니다.")
+        }
+        
     }
 }

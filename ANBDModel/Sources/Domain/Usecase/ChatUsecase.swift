@@ -23,6 +23,7 @@ public protocol ChatUsecaseProtocol {
     func sendImageMessage(message: Message, imageData: Data ,channelID:String) async throws
     func updateUnreadCount(channelID: String , userID: String) async throws
     func leaveChatRoom(channelID: String , userID: String) async throws
+    func downloadImage(messageID : String , imagePath : String) async throws -> Data
     func initializeListener()
 }
 
@@ -151,6 +152,11 @@ public struct ChatUsecase : ChatUsecaseProtocol {
             try await chatRepository.deleteChannel(channelID: channelID)
             try await messageRepository.deleteMessageList(channelId: channelID)
         }
+    }
+    
+    //이미지 다운로드
+    public func downloadImage(messageID : String , imagePath : String) async throws -> Data{
+        try await storage.downloadImage(path: .chat, containerID: messageID, imagePath: imagePath)
     }
 }
 

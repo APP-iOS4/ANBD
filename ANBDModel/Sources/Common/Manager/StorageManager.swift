@@ -5,7 +5,7 @@
 //  Created by 유지호 on 4/4/24.
 //
 
-import Foundation
+import SwiftUI
 import FirebaseStorage
 
 public enum StoragePath: String {
@@ -75,6 +75,19 @@ public struct StorageManager {
             imagePaths.append(imagePath)
         }
         
+        if let thumbnailImageData = imageDatas.first,
+           let resizedImageData = await UIImage(data: thumbnailImageData)?
+            .byPreparingThumbnail(ofSize: .init(width: 256, height: 256))?
+            .jpegData(compressionQuality: 1) {
+            let thumbnailImagePath = try await uploadImage(
+                path: storagePath,
+                containerID: "\(containerID)/thumbnail",
+                imageData: resizedImageData
+            )
+            
+            imagePaths.insert(thumbnailImagePath, at: 0)
+        }
+        
         return imagePaths
     }
     
@@ -116,22 +129,38 @@ public struct StorageManager {
         imagePaths: [String],
         imageDatas: [Data]
     ) async throws -> [String] {
+        var updatedImagePaths: [String] = imagePaths
         let storageImagePathList = try await storageRef
             .child(storagePath.rawValue)
             .child(containerID)
             .listAll()
             .items
             .map { $0.name }
+        let firstStorageImagePath = storageImagePathList.first ?? ""
         
         for imagePath in storageImagePathList where !imagePaths.contains(imagePath) {
             try await deleteImage(path: storagePath, containerID: containerID, imagePath: imagePath)
+            
+            if imagePath == firstStorageImagePath {
+                try await deleteImage(path: storagePath, containerID: "\(containerID)/thumbnail", imagePath: imagePath)
+            }
         }
         
         for (imagePath, imageData) in zip(imagePaths, imageDatas) where !storageImagePathList.contains(imagePath)  {
             try await uploadImage(path: storagePath, containerID: containerID, imageData: imageData)
         }
         
-        return imagePaths
+        if let thumbnailImageData = imageDatas.first {
+            let thumbnailImagePath = try await uploadImage(
+                path: storagePath,
+                containerID: "\(containerID)/thumbnail",
+                imageData: thumbnailImageData
+            )
+            
+            updatedImagePaths.insert(thumbnailImagePath, at: 0)
+        }
+        
+        return updatedImagePaths
     }
     
     

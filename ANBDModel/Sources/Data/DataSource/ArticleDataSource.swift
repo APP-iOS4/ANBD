@@ -263,6 +263,7 @@ final class DefaultArticleDataSource: ArticleDataSource {
             "category": item.category.rawValue,
             "title": item.title,
             "content": item.content,
+            "thumbnailImagePath": item.thumbnailImagePath,
             "imagePaths": item.imagePaths,
             "likeCount": item.likeCount,
             "commentCount": item.commentCount

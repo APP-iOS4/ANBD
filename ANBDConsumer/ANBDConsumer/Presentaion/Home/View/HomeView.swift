@@ -11,7 +11,7 @@ import ANBDModel
 struct HomeView: View {
     @EnvironmentObject private var homeViewModel: HomeViewModel
     @State private var isShowingWebView: Bool = false
-    @State private var blogURL: String = HomeViewModel().bannerItemList.first!.url
+    @State private var blogURL: String = "https://www.naver.com"
     
     var body: some View {
         GeometryReader { geometry in
@@ -70,13 +70,13 @@ struct HomeView: View {
     // MARK: - 광고 배너
     private var adView: some View {
         TabView() {
-            ForEach(homeViewModel.bannerItemList.indices, id:\.self) { idx in
+            ForEach(homeViewModel.bannerItemList) { banner in
                 Button(action: {
-                    blogURL = homeViewModel.bannerItemList[idx].url
+                    blogURL = banner.urlString
                     isShowingWebView.toggle()
                 }, label: {
                     ZStack {
-                        AsyncImage(url: URL(string: homeViewModel.bannerItemList[idx].imageStirng)) { img in
+                        AsyncImage(url: URL(string: banner.thumbnailImageURLString)) { img in
                             img
                                 .resizable()
                                 .scaledToFill()
@@ -92,6 +92,12 @@ struct HomeView: View {
                         )
                     }
                 })
+            }
+        }
+        .onAppear {
+            Task {
+                await homeViewModel.loadBanners()
+                blogURL = homeViewModel.bannerItemList.first?.urlString ?? "https://www.naver.com"
             }
         }
         .frame(height: 130)

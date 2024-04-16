@@ -5,7 +5,7 @@
 //  Created by sswv on 4/12/24.
 //
 
-import SwiftUI
+import Foundation
 import ANBDModel
 
 class ArticleListViewModel: ObservableObject {

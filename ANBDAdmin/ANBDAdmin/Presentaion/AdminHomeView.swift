@@ -36,6 +36,9 @@ struct AdminHomeView: View {
                 } label: {
                     Text("게시판 목록").bold()
                 }
+                NavigationLink(destination: BannerEditView().font(.title3)) {
+                    Text("배너 관리").bold()
+                }
             }
             .listStyle(SidebarListStyle())
             

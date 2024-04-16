@@ -16,7 +16,6 @@ struct DefaultChatRepository: ChatRepository {
     let chatDB = Firestore.firestore().collection("ChatRoom")
     
     func createChannel(channel: Channel) async throws -> String {
-        
         guard let _ = try? chatDB.document(channel.id).setData(from: channel)
         else {
             throw DBError.setDocumentError(message: "ChatRoom document를 추가하는데 실패했습니다.")
@@ -25,7 +24,6 @@ struct DefaultChatRepository: ChatRepository {
     }
     
     func readChannelList(userID: String, completion : @escaping (_ channels: [Channel]) -> Void){
-        
         chatDB
             .whereField("users", arrayContains: userID)
             .addSnapshotListener { snapshot, error in
@@ -40,7 +38,6 @@ struct DefaultChatRepository: ChatRepository {
     }
     
     private func sortedChannel(channels : [Channel]) -> [Channel] {
-        
         return channels.sorted(by: {
             if $0.lastSendDate != $1.lastSendDate {
                 if $0.unreadCount > 0 && $1.unreadCount > 0 {
@@ -58,7 +55,6 @@ struct DefaultChatRepository: ChatRepository {
     }
     
     func readChannelID(tradeID: String, userID: String) async throws -> String? {
-        
         guard let querySnapshot = try? await chatDB
             .whereField("users", arrayContains: userID)
             .whereField("tradeId", isEqualTo: tradeID)
@@ -77,7 +73,6 @@ struct DefaultChatRepository: ChatRepository {
     }
     
     func readTradeInChannel(channelID: String) async throws -> Trade? {
-        
         guard let documnet = try? await chatDB.document(channelID).getDocument() else {
             throw DBError.getDocumentError(message: "channelID에 해당하는 ChatRoom documents를 읽어오는데 실패했습니다.")
         }
@@ -141,7 +136,6 @@ struct DefaultChatRepository: ChatRepository {
     }
     
     func updateLeftChatUser(channelID: String, userID: String) async throws {
-        
         guard let _ = try? await chatDB.document(channelID).updateData([
             "leaveUsers": FieldValue.arrayUnion([userID])
         ]) else {

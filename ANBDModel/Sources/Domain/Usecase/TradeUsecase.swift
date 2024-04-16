@@ -11,19 +11,21 @@ import Foundation
 public protocol TradeUsecase {
     func writeTrade(trade: Trade, imageDatas: [Data]) async throws
     func loadTrade(tradeID: String) async throws -> Trade
-    func loadTradeList() async throws -> [Trade]
-    func loadTradeList(writerID: String) async throws -> [Trade]
+    func loadTradeList(limit: Int?) async throws -> [Trade]
+    func loadTradeList(writerID: String, limit: Int?) async throws -> [Trade]
     func loadFilteredTradeList(category: ANBDCategory,
                                location: Location?,
-                               itemCategory: ItemCategory?) async throws -> [Trade]
+                               itemCategory: ItemCategory?,
+                               limit: Int?) async throws -> [Trade]
     func loadRecentTradeList(category: ANBDCategory) async throws -> [Trade]
-    func searchTrade(keyword: String) async throws -> [Trade]
-    func refreshAllTradeList() async throws -> [Trade]
-    func refreshWriterIDTradeList(writerID: String) async throws -> [Trade]
+    func searchTrade(keyword: String, limit: Int?) async throws -> [Trade]
+    func refreshAllTradeList(limit: Int?) async throws -> [Trade]
+    func refreshWriterIDTradeList(writerID: String, limit: Int?) async throws -> [Trade]
     func refreshFilteredTradeList(category: ANBDCategory,
                                   location: Location?,
-                                  itemCategory: ItemCategory?) async throws -> [Trade]
-    func refreshSearchTradeList(keyword: String) async throws -> [Trade]
+                                  itemCategory: ItemCategory?,
+                                  limit: Int?) async throws -> [Trade]
+    func refreshSearchTradeList(keyword: String, limit: Int?) async throws -> [Trade]
     func updateTrade(trade: Trade, imageDatas: [Data]) async throws
     func updateTradeState(tradeID: String, tradeState: TradeState) async throws
     func likeTrade(tradeID: String) async throws
@@ -59,18 +61,21 @@ public struct DefaultTradeUsecase: TradeUsecase {
     
     
     /// 모든 Trade를 불러오는 메서드
+    /// - Parameters:
+    ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: 모든 Trade 배열
-    public func loadTradeList() async throws -> [Trade] {
-        try await tradeRepository.readTradeList()
+    public func loadTradeList(limit: Int?) async throws -> [Trade] {
+        try await tradeRepository.readTradeList(limit: limit ?? 10)
     }
     
     
     /// 작성자 ID가 일치하는 모든 Trade를 불러오는 메서드
     /// - Parameters:
     ///   - writerID: 작성자의 ID
+    ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: 작성자 ID가 일치하는 Trade 배열
-    public func loadTradeList(writerID: String) async throws -> [Trade] {
-        try await tradeRepository.readTradeList(writerID: writerID)
+    public func loadTradeList(writerID: String, limit: Int?) async throws -> [Trade] {
+        try await tradeRepository.readTradeList(writerID: writerID, limit: limit ?? 10)
     }
     
     
@@ -79,16 +84,19 @@ public struct DefaultTradeUsecase: TradeUsecase {
     ///   - category: Trade의 카테고리 (1: 나눠쓰기, 2: 바꿔쓰기)
     ///   - location: Trade의 설정된 지역
     ///   - itemCategory: Trade의 물건 카테고리
+    ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: 적용된 필터에 해당되는 Trade 배열
     public func loadFilteredTradeList(
         category: ANBDCategory,
         location: Location?,
-        itemCategory: ItemCategory?
+        itemCategory: ItemCategory?,
+        limit: Int?
     ) async throws -> [Trade] {
         try await tradeRepository.readTradeList(
             category: category,
             location: location,
-            itemCategory: itemCategory
+            itemCategory: itemCategory,
+            limit: limit ?? 10
         )
     }
     
@@ -105,53 +113,61 @@ public struct DefaultTradeUsecase: TradeUsecase {
     /// keyword로 Trade을 불러오는 메서드
     /// - Parameters:
     ///   - keyword: 검색할 keyword
+    ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: title, content, itemCategory가 keyword에 해당하는 Trade 배열
-    public func searchTrade(keyword: String) async throws -> [Trade] {
-        try await tradeRepository.readTradeList(keyword: keyword)
+    public func searchTrade(keyword: String, limit: Int?) async throws -> [Trade] {
+        try await tradeRepository.readTradeList(keyword: keyword, limit: limit ?? 10)
     }
     
     
-    /// 페이지네이션 Query를 초기화하고 최신 Trade 목록 10개를 반환하는 메서드
-    ///  - Returns: Trade 배열
-    public func refreshAllTradeList() async throws -> [Trade] {
-        try await tradeRepository.refreshAll()
+    /// 페이지네이션 Query를 초기화하고 최신 Trade 목록을 반환하는 메서드
+    /// - Parameters:
+    ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
+    /// - Returns: Trade 배열
+    public func refreshAllTradeList(limit: Int?) async throws -> [Trade] {
+        try await tradeRepository.refreshAll(limit: limit ?? 10)
     }
     
     
-    /// 페이지네이션 Query를 초기화하고 작성자 ID가 일치하는 최신 Trade 목록 10개를 불러오는 메서드
+    /// 페이지네이션 Query를 초기화하고 작성자 ID가 일치하는 최신 Trade 목록을 불러오는 메서드
     /// - Parameters:
     ///   - writerID: 불러올 Trade의 writerID
+    ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: writerID가 일치하는 Trade 배열
-    public func refreshWriterIDTradeList(writerID: String) async throws -> [Trade] {
-        try await tradeRepository.refreshWriterID(writerID: writerID)
+    public func refreshWriterIDTradeList(writerID: String, limit: Int?) async throws -> [Trade] {
+        try await tradeRepository.refreshWriterID(writerID: writerID, limit: limit ?? 10)
     }
     
     
-    /// 페이지네이션 Query를 초기화하고 필터에 해당하는 Trade 목록 10개를 불러오는 메서드
+    /// 페이지네이션 Query를 초기화하고 필터에 해당하는 Trade 목록을 불러오는 메서드
     /// - Parameters:
     ///   - category: Trade의 카테고리 (1: 나눠쓰기, 2: 바꿔쓰기)
     ///   - location: Trade의 설정된 지역
     ///   - itemCategory: Trade의 물건 카테고리
+    ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: 적용된 필터에 해당되는 Trade 배열
     public func refreshFilteredTradeList(
         category: ANBDCategory,
         location: Location?,
-        itemCategory: ItemCategory?
+        itemCategory: ItemCategory?,
+        limit: Int?
     ) async throws -> [Trade] {
         try await tradeRepository.refreshFilter(
             category: category,
             location: location,
-            itemCategory: itemCategory
+            itemCategory: itemCategory,
+            limit: limit ?? 10
         )
     }
     
     
-    /// 페이지네이션 Query를 초기화하고 키워드에 해당하는 최신 Trade 목록 10개를 불러오는 메서드
+    /// 페이지네이션 Query를 초기화하고 키워드에 해당하는 최신 Trade 목록을 불러오는 메서드
     /// - Parameters:
     ///   - keyword: 검색할 Trade의 키워드
+    ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: title, content, itemCategory가 키워드에 해당하는 Trade 배열
-    public func refreshSearchTradeList(keyword: String) async throws -> [Trade] {
-        try await tradeRepository.refreshSearch(keyword: keyword)
+    public func refreshSearchTradeList(keyword: String, limit: Int?) async throws -> [Trade] {
+        try await tradeRepository.refreshSearch(keyword: keyword, limit: limit ?? 10)
     }
     
     

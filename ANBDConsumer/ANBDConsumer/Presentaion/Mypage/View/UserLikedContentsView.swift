@@ -22,10 +22,10 @@ struct UserLikedContentsView: View {
             switch category {
             case .accua, .dasi:
                 TabView(selection: $category) {
-                    UserLikedArticleListView(category: .accua)
+                    userLikedArticleListView(category: .accua)
                         .tag(ANBDCategory.accua)
                     
-                    UserLikedArticleListView(category: .dasi)
+                    userLikedArticleListView(category: .dasi)
                         .tag(ANBDCategory.dasi)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
@@ -33,10 +33,10 @@ struct UserLikedContentsView: View {
                 
             case .nanua, .baccua:
                 TabView(selection: $category) {
-                    UserHeartTradeListView(category: .nanua)
+                    userHeartTradeListView(category: .nanua)
                         .tag(ANBDCategory.nanua)
                     
-                    UserHeartTradeListView(category: .baccua)
+                    userHeartTradeListView(category: .baccua)
                         .tag(ANBDCategory.baccua)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
@@ -48,7 +48,7 @@ struct UserLikedContentsView: View {
     }
     
     @ViewBuilder
-    func ListEmptyView() -> some View {
+    private func listEmptyView() -> some View {
         VStack {
             switch category {
             case .accua, .dasi:
@@ -96,9 +96,9 @@ struct UserLikedContentsView: View {
     }
     
     @ViewBuilder
-    func UserLikedArticleListView(category: ANBDCategory) -> some View {
+    private func userLikedArticleListView(category: ANBDCategory) -> some View {
         if myPageViewModel.mockArticleData.isEmpty {
-            ListEmptyView()
+            listEmptyView()
         } else {
             ScrollView(.vertical) {
                 LazyVStack {
@@ -119,15 +119,15 @@ struct UserLikedContentsView: View {
     }
     
     @ViewBuilder
-    func UserHeartTradeListView(category: ANBDCategory) -> some View {
+    private func userHeartTradeListView(category: ANBDCategory) -> some View {
         if myPageViewModel.mockTradeData.isEmpty {
-            ListEmptyView()
+            listEmptyView()
         } else {
             ScrollView(.vertical) {
                 LazyVStack {
                     ForEach(myPageViewModel.mockTradeData.filter({$0.category == category})) { trade in
                         NavigationLink(value: trade) {
-                            TradeListCell(trade: trade)
+                            ArticleListCell(value: .trade(trade))
                                 .padding(.vertical, 5)
                         }
                         

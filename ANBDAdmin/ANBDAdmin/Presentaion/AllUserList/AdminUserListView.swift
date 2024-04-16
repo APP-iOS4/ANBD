@@ -24,7 +24,7 @@ struct AdminUserListView: View {
                 ForEach(userListViewModel.userList.filter({
                     ($0.userLevel == .admin) && (searchUserText.isEmpty ? true : $0.nickname.contains(searchUserText) || $0.id.contains(searchUserText))
                 }), id: \.id) { user in
-                    NavigationLink(destination: UserListDetailView(user: user)) {
+                    NavigationLink(destination: UserListDetailView(user: user, initialUserLevel: .admin)) {
                         HStack{
                             VStack(alignment: .leading) {
                                 Text("닉네임")

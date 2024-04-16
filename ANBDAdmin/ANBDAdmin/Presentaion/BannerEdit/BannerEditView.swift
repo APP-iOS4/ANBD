@@ -52,6 +52,7 @@ struct BannerEditView: View {
                                 Text("\(banner.id)")
                             }
                             .frame(minWidth: 0, maxWidth: 250, alignment: .leading)
+                            .padding()
                             Spacer()
                             VStack(alignment: .leading) {
                                 Text("생성일자")
@@ -91,14 +92,10 @@ struct BannerEditView: View {
                         .padding(.vertical, 30)
                     Button("배너 추가하기") {
                         Task {
-                            do {
-                                let newBanner = Banner(urlString: newBannerURL, thumbnailImageURLString: newBannerThumbnailURL)
-                                try await bannerEditViewModel.addBanner(banner: newBanner)
-                                showingAddBannerSheet = false // 배너 추가 Sheet를 숨김
-                            } catch {
-                                print("배너 추가에 실패했습니다: \(error)")
-                            }
-                        }
+                            await bannerEditViewModel.addBanner(urlString: newBannerURL, thumbnailImageURLString: newBannerThumbnailURL)
+                                                showingAddBannerSheet = false // 배너 추가 Sheet를 숨김
+                                            }
+                                    
                     }
                 }
                 .padding()

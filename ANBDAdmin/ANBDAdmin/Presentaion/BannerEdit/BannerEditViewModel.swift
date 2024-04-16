@@ -29,7 +29,13 @@ class BannerEditViewModel: ObservableObject {
             }
         }
     }
-    func addBanner(banner: Banner) async throws {
-        try await bannerUsecase.addBanner(banner: banner)
-    }
+    func addBanner(urlString: String, thumbnailImageURLString: String) async {
+            do {
+                let newBanner = Banner(urlString: urlString, thumbnailImageURLString: thumbnailImageURLString)
+                try await bannerUsecase.addBanner(banner: newBanner)
+                loadBanners()
+            } catch {
+                print("배너 추가에 실패했습니다: \(error)")
+            }
+        }
 }

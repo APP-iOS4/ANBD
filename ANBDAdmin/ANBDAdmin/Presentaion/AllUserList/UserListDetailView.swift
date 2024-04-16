@@ -9,14 +9,23 @@ import SwiftUI
 import ANBDModel
 
 struct UserListDetailView: View {
+    @Environment(\.presentationMode) var userLevelEditPresentationMode
     @State private var userArticleList: [Article] = []
     @State private var userTradeList: [Trade] = []
     @State private var userLikeArticleList: [Article] = []
     @State private var userLikeTradeList: [Article] = []
     let articleUsecase = DefaultArticleUsecase()
     let tradeUsecase = DefaultTradeUsecase()
+    let userUsecase = DefaultUserUsecase()
     let user: User
+    @State private var editingUserLevel = false // 유저 레벨 편집 상태를 추적하는 변수
+    @State private var initialUserLevel:UserLevel // 새 유저 레벨을 추적하는 변수
     
+    init(user: User, initialUserLevel: UserLevel) {
+            self.user = user
+        _initialUserLevel = State(initialValue: initialUserLevel)
+        }
+
     var body: some View {
         List {
             if let imageUrl = URL(string: user.profileImage) {
@@ -38,7 +47,6 @@ struct UserListDetailView: View {
             Text("닉네임:").foregroundColor(.gray) + Text(" \(user.nickname)")
             Text("이메일:").foregroundColor(.gray) + Text(" \(user.email)")
             Text("선호 지역:").foregroundColor(.gray) + Text(" \(user.favoriteLocation)")
-            Text("유저 레벨:").foregroundColor(.gray) + Text(" \(user.userLevel)")
             Text("14세 이상:").foregroundColor(.gray) + Text(" \(user.isOlderThanFourteen ? "예" : "아니오")")
             Text("서비스 이용약관 동의:").foregroundColor(.gray) + Text(" \(user.isAgreeService ? "예" : "아니오")")
             Text("개인정보 수집 동의:").foregroundColor(.gray) + Text(" \(user.isAgreeCollectInfo ? "예" : "아니오")")
@@ -47,6 +55,38 @@ struct UserListDetailView: View {
             Text("작성한 거래글 목록:").foregroundColor(.gray) + Text(" \n \(userTradeList.map { "\($0.title), \(dateFormatter($0.createdAt)), \($0.id)" }.joined(separator: ", \n "))")
             Text("좋아요한 게시글 목록:").foregroundColor(.gray) + Text(" \n \(userLikeArticleList.map { "\($0.title), \(dateFormatter($0.createdAt)), \($0.id)" }.joined(separator: ", \n "))")
             Text("찜한 거래글 목록:").foregroundColor(.gray) + Text(" \n \(user.likeTrades.joined(separator: ", \n "))")
+            Text("유저 권한:").foregroundColor(.gray) + Text(" \(user.userLevel)")
+            if editingUserLevel {
+                        Picker("Select new user level", selection: $initialUserLevel) {
+                            Text("Banned").tag(UserLevel.banned)
+                            Text("Consumer").tag(UserLevel.consumer)
+                            Text("Admin").tag(UserLevel.admin)
+                        }
+                        .pickerStyle(.segmented)
+                        .padding()
+                        Button("Update User Level") {
+                            var updatedUser = user
+                            updatedUser.userLevel = initialUserLevel
+                            Task {
+                                do {
+                                    try await userUsecase.updateUserInfo(user: updatedUser)
+                                    editingUserLevel = false
+                                    userLevelEditPresentationMode.wrappedValue.dismiss()
+                                } catch {
+                                    print("Failed to update user info: \(error)")
+                                }
+                            }
+                        }
+                        .buttonStyle(.borderedProminent)
+                    } else {
+                        HStack {
+                            Text("userLevel:").foregroundColor(.gray) + Text(" \(user.userLevel.rawValue)")
+                            Button(action: { editingUserLevel = true }) {
+                                Text("Edit")
+                            }
+                            .buttonStyle(.borderedProminent)
+                        }
+                    }
         }
         .onAppear {
             Task {

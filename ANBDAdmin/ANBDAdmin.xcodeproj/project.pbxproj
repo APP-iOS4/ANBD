@@ -26,6 +26,7 @@
 		820741CA2BCDFCDC00CB4584 /* BannerEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820741C92BCDFCDC00CB4584 /* BannerEditViewModel.swift */; };
 		820741CC2BCE009600CB4584 /* BannerEditDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820741CB2BCE009600CB4584 /* BannerEditDetailView.swift */; };
 		82D917782BCE40080054FF5D /* AdminUserListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82D917772BCE40080054FF5D /* AdminUserListView.swift */; };
+		82D9177B2BCE43330054FF5D /* InquiryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82D9177A2BCE43330054FF5D /* InquiryView.swift */; };
 		CB7BEDD32BBD4EE300C0F298 /* ANBDAdminApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7BEDD22BBD4EE300C0F298 /* ANBDAdminApp.swift */; };
 		CB7BEDD72BBD4EE500C0F298 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB7BEDD62BBD4EE500C0F298 /* Assets.xcassets */; };
 		CB7BEDED2BBD537A00C0F298 /* Pretendard-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CB7BEDE82BBD537A00C0F298 /* Pretendard-Bold.otf */; };
@@ -57,6 +58,7 @@
 		820741C92BCDFCDC00CB4584 /* BannerEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerEditViewModel.swift; sourceTree = "<group>"; };
 		820741CB2BCE009600CB4584 /* BannerEditDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerEditDetailView.swift; sourceTree = "<group>"; };
 		82D917772BCE40080054FF5D /* AdminUserListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminUserListView.swift; sourceTree = "<group>"; };
+		82D9177A2BCE43330054FF5D /* InquiryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InquiryView.swift; sourceTree = "<group>"; };
 		CB7BEDCF2BBD4EE300C0F298 /* ANBDAdmin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ANBDAdmin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB7BEDD22BBD4EE300C0F298 /* ANBDAdminApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ANBDAdminApp.swift; sourceTree = "<group>"; };
 		CB7BEDD62BBD4EE500C0F298 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -118,7 +120,7 @@
 			path = ReportedComment;
 			sourceTree = "<group>";
 		};
-		820741B02BC8EF0600CB4584 /* UserList */ = {
+		820741B02BC8EF0600CB4584 /* AllUserList */ = {
 			isa = PBXGroup;
 			children = (
 				820741AF2BC8EF0600CB4584 /* ConsumerUserListView.swift */,
@@ -126,19 +128,20 @@
 				820741C22BC9034400CB4584 /* UserListViewModel.swift */,
 				820741AE2BC8EF0600CB4584 /* UserListDetailView.swift */,
 			);
-			path = UserList;
+			path = AllUserList;
 			sourceTree = "<group>";
 		};
 		820741B22BC8EF0600CB4584 /* Presentaion */ = {
 			isa = PBXGroup;
 			children = (
 				820741B12BC8EF0600CB4584 /* AdminHomeView.swift */,
+				82D917792BCE42FF0054FF5D /* Inquiry */,
 				820741C62BCDFC2E00CB4584 /* BannerEdit */,
 				820741A42BC8EF0600CB4584 /* ANBDArticle */,
 				820741A72BC8EF0600CB4584 /* ANBDTrade */,
 				820741AA2BC8EF0600CB4584 /* ReportedArticle */,
 				820741AD2BC8EF0600CB4584 /* ReportedComment */,
-				820741B02BC8EF0600CB4584 /* UserList */,
+				820741B02BC8EF0600CB4584 /* AllUserList */,
 			);
 			path = Presentaion;
 			sourceTree = "<group>";
@@ -151,6 +154,14 @@
 				820741CB2BCE009600CB4584 /* BannerEditDetailView.swift */,
 			);
 			path = BannerEdit;
+			sourceTree = "<group>";
+		};
+		82D917792BCE42FF0054FF5D /* Inquiry */ = {
+			isa = PBXGroup;
+			children = (
+				82D9177A2BCE43330054FF5D /* InquiryView.swift */,
+			);
+			path = Inquiry;
 			sourceTree = "<group>";
 		};
 		CB7BEDC62BBD4EE300C0F298 = {
@@ -312,6 +323,7 @@
 				820741B72BC8EF0700CB4584 /* ReportedArticleListDetailView.swift in Sources */,
 				820741CC2BCE009600CB4584 /* BannerEditDetailView.swift in Sources */,
 				820741852BC8EEAE00CB4584 /* dateFormatter.swift in Sources */,
+				82D9177B2BCE43330054FF5D /* InquiryView.swift in Sources */,
 				820741B62BC8EF0700CB4584 /* TradeListView.swift in Sources */,
 				820741BD2BC8EF0700CB4584 /* AdminHomeView.swift in Sources */,
 				820741BC2BC8EF0700CB4584 /* ConsumerUserListView.swift in Sources */,

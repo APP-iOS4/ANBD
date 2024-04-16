@@ -47,6 +47,9 @@ struct AdminHomeView: View {
                 NavigationLink(destination: BannerEditView().font(.title3)) {
                     Text("배너 관리").bold()
                 }
+                NavigationLink(destination: InquiryView().font(.title3)) {
+                    Text("문의함").bold()
+                }
             }
             .listStyle(SidebarListStyle())
             

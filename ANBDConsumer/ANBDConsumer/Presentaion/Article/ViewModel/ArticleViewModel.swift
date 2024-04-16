@@ -14,8 +14,8 @@ final class ArticleViewModel: ObservableObject {
     
     @Published var articlePath: NavigationPath = NavigationPath()
     
-    @Published var accuaArticle: Article = .init(writerID: "", writerNickname: "aaa", category: .accua, title: "제목제목",content: "내용내용", imagePaths: [])
-    @Published var dasiArticle: Article = .init(writerID: "", writerNickname: "aaa", category: .dasi, title: "제목제목",content: "내용내용", imagePaths: [])
+    @Published var accuaArticle: Article = .init(writerID: "writerID", writerNickname: "닉네임1", category: .accua, title: "아껴제목1", content: "내용내용5", imagePaths: ["DummyImage1"], likeCount: 1, commentCount: 2)
+    @Published var dasiArticle: Article = .init(writerID: "writerID", writerNickname: "닉네임4", category: .dasi, title: "다시제목4", content: "내용내용2", imagePaths: ["DummyPuppy1"], likeCount: 450, commentCount: 999)
     
     @Published var articles: Article?
 //    @Published var comments: [Comment] = []

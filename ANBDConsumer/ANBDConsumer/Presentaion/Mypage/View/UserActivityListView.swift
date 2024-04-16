@@ -37,16 +37,16 @@ struct UserActivityListView: View {
                 .padding([.leading, .trailing, .bottom])
             
             TabView(selection: $category) {
-                UserArticleListView(category: .accua)
+                userArticleListView(category: .accua)
                     .tag(ANBDCategory.accua)
                 
-                UserTradeListView(category: .nanua)
+                userTradeListView(category: .nanua)
                     .tag(ANBDCategory.nanua)
                 
-                UserTradeListView(category: .baccua)
+                userTradeListView(category: .baccua)
                     .tag(ANBDCategory.baccua)
                 
-                UserArticleListView(category: .dasi)
+                userArticleListView(category: .dasi)
                     .tag(ANBDCategory.dasi)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
@@ -70,7 +70,7 @@ struct UserActivityListView: View {
     }
     
     @ViewBuilder
-    func ListEmptyView() -> some View {
+    private func listEmptyView() -> some View {
         VStack {
             Spacer()
             
@@ -95,9 +95,9 @@ struct UserActivityListView: View {
     }
     
     @ViewBuilder
-    func UserArticleListView(category: ANBDCategory) -> some View {
+    private func userArticleListView(category: ANBDCategory) -> some View {
         if articlesWrittenByUser.isEmpty {
-            ListEmptyView()
+            listEmptyView()
         } else {
             ScrollView(.vertical) {
                 LazyVStack {
@@ -129,16 +129,16 @@ struct UserActivityListView: View {
     }
     
     @ViewBuilder
-    func UserTradeListView(category: ANBDCategory) -> some View {
+    private func userTradeListView(category: ANBDCategory) -> some View {
         VStack {
             if tradesWrittenByUser.isEmpty {
-                ListEmptyView()
+                listEmptyView()
             } else {
                 ScrollView(.vertical) {
                     LazyVStack {
                         ForEach(tradesWrittenByUser.filter({$0.category == category})) { trade in
                             NavigationLink(value: trade) {
-                                TradeListCell(trade: trade)
+                                ArticleListCell(value: .trade(trade))
                                     .padding(.vertical, 5)
                             }
                             

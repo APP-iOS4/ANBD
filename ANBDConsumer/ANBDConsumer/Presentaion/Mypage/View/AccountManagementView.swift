@@ -18,14 +18,14 @@ struct AccountManagementView: View {
     var body: some View {
         ZStack {
             VStack(spacing: 40) {
-                DetailInfoComponentView(title: "가입한 계정",
+                detailInfoComponentView(title: "가입한 계정",
                                         content: "anbd@anbd.co.kr")
                 .padding(.top, 30)
                 
-                DetailInfoComponentView(title: "닉네임",
+                detailInfoComponentView(title: "닉네임",
                                         content: myPageViewModel.user.nickname)
                 
-                DetailInfoComponentView(title: "선호하는 거래 지역",
+                detailInfoComponentView(title: "선호하는 거래 지역",
                                         content: myPageViewModel.user.favoriteLocation.description)
                 
                 VStack {
@@ -37,7 +37,7 @@ struct AccountManagementView: View {
                         isShowingSignOutAlertView.toggle()
                     }, label: {
                         Text("로그아웃")
-                            .modifier(WarningTextModifier())
+                            .modifier(warningTextModifier())
                     })
                     
                     Rectangle()
@@ -48,7 +48,7 @@ struct AccountManagementView: View {
                         isShowingWithdrawalAlertView.toggle()
                     }, label: {
                         Text("회원탈퇴")
-                            .modifier(WarningTextModifier())
+                            .modifier(warningTextModifier())
                     })
                     
                     Rectangle()
@@ -92,7 +92,7 @@ struct AccountManagementView: View {
     }
     
     @ViewBuilder
-    private func DetailInfoComponentView(title: String, content: String) -> some View {
+    private func detailInfoComponentView(title: String, content: String) -> some View {
         VStack(alignment: .leading, spacing: 15) {
             Text("\(title)")
                 .font(ANBDFont.SubTitle2)
@@ -107,7 +107,7 @@ struct AccountManagementView: View {
     }
 }
 
-fileprivate struct WarningTextModifier: ViewModifier {
+fileprivate struct warningTextModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(ANBDFont.SubTitle1)

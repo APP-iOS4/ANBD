@@ -26,7 +26,10 @@ struct BannerEditDetailView: View {
                     case .empty:
                         ProgressView()
                     case .success(let image):
-                        image.resizable().frame(width: 400, height: 400)
+                        image
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 200)
                     case .failure:
                         Text("Failed to load image")
                     @unknown default:
@@ -35,7 +38,7 @@ struct BannerEditDetailView: View {
                 }
             }
             Text("배너 ID:").foregroundColor(.gray) + Text(" \(banner.id)")
-            Text("생성일자:").foregroundColor(.gray) + Text(" \(banner.createdAt)")
+            Text("생성일자:").foregroundColor(.gray) + Text(" \(dateFormatter(banner.createdAt))")
             
         }
         .navigationBarTitle(banner.id)

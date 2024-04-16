@@ -31,7 +31,10 @@ struct BannerEditView: View {
                                         case .empty:
                                             ProgressView()
                                         case .success(let image):
-                                            image.resizable().frame(width: 200, height: 200)
+                                            image
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 250)
                                         case .failure:
                                             Text("Failed to load image")
                                         @unknown default:
@@ -74,7 +77,18 @@ struct BannerEditView: View {
             .sheet(isPresented: $showingAddBannerSheet) {
                 VStack {
                     TextField("배너 URL", text: $newBannerURL)
+                        .padding()
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 30)
+                                            .stroke(Color.blue, lineWidth: 2)
+                                    )
                     TextField("배너 썸네일 URL", text: $newBannerThumbnailURL)
+                        .padding()
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 30)
+                                            .stroke(Color.blue, lineWidth: 2)
+                                    )
+                        .padding(.vertical, 30)
                     Button("배너 추가하기") {
                         Task {
                             do {

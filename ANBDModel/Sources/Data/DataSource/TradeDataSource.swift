@@ -50,6 +50,7 @@ final class DefaultTradeDataSource: TradeDataSource {
                 "title": item.title,
                 "content": item.content,
                 "myProduct": item.myProduct,
+                "thumbnailImagePath": item.imagePaths.first ?? "",
                 "imagePaths": item.imagePaths
             ])
             else {
@@ -69,6 +70,7 @@ final class DefaultTradeDataSource: TradeDataSource {
                 "content": item.content,
                 "myProduct": item.myProduct,
                 "wantProduct": item.wantProduct ?? "",
+                "thumbnailImagePath": item.imagePaths.first ?? "",
                 "imagePaths": item.imagePaths
             ])
             else {

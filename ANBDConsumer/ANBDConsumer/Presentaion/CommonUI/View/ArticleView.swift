@@ -23,31 +23,25 @@ struct ArticleView: View {
             listView
                 .onChange(of: category) {
                     if isArticle {
-                        articleViewModel.updateArticles(category: category)
+                        Task {
+                            await articleViewModel.filteringArticles(category: category)
+                        }
                         
                     } else {
                         tradeViewModel.filteringTrades(category: category)
-                    }
-                }
-                .onAppear {
-                    Task {
-                        await articleViewModel.loadArticle(category: category)
                     }
                 }
         } else {
             listView
                 .onChange(of: category, perform: { _ in
                     if isArticle {
-                        articleViewModel.updateArticles(category: category)
+                        Task {
+                            await articleViewModel.filteringArticles(category: category)
+                        }
                     } else {
                         tradeViewModel.filteringTrades(category: category)
                     }
                 })
-                .onAppear {
-                    Task {
-                        await articleViewModel.loadArticle(category: category)
-                    }
-                }
         }
     }
     
@@ -73,7 +67,6 @@ struct ArticleView: View {
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }
-            
             Button {
                 if isArticle {
                     self.isShowingArticleCreateView.toggle()
@@ -93,7 +86,7 @@ struct ArticleView: View {
             
             if isArticle {
                 Task {
-                    await articleViewModel.loadArticle(category: category)
+                    await articleViewModel.filteringArticles(category: category)
                 }
             } else {
                 tradeViewModel.filteringTrades(category: category)

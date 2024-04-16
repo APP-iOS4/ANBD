@@ -25,24 +25,30 @@ struct ArticleListView: View {
             if isArticle {
                 Menu {
                     Button {
-                        articleViewModel.sortOption = .time
-                        articleViewModel.updateArticles(category: category)
+                        articleViewModel.sortOption = .latest
+                        Task {
+                            await articleViewModel.filteringArticles(category: category)
+                        }
                     } label: {
-                        Label("최신순", systemImage: articleViewModel.sortOption == .time ? "checkmark" : "")
+                        Label("최신순", systemImage: articleViewModel.sortOption == .latest ? "checkmark" : "")
                     }
                     
                     Button {
-                        articleViewModel.sortOption = .likes
-                        articleViewModel.updateArticles(category: category)
+                        articleViewModel.sortOption = .mostLike
+                        Task {
+                            await articleViewModel.filteringArticles(category: category)
+                        }
                     } label: {
-                        Label("좋아요순", systemImage: articleViewModel.sortOption == .likes ? "checkmark" : "")
+                        Label("좋아요순", systemImage: articleViewModel.sortOption == .mostLike ? "checkmark" : "")
                     }
                     
                     Button {
-                        articleViewModel.sortOption = .comments
-                        articleViewModel.updateArticles(category: category)
+                        articleViewModel.sortOption = .mostComment
+                        Task {
+                            await articleViewModel.filteringArticles(category: category)
+                        }
                     } label: {
-                        Label("댓글순", systemImage: articleViewModel.sortOption == .comments ? "checkmark" : "")
+                        Label("댓글순", systemImage: articleViewModel.sortOption == .mostComment ? "checkmark" : "")
                     }
                 } label: {
                     CapsuleButtonView(text: articleViewModel.getSortOptionLabel(), isForFiltering: true)

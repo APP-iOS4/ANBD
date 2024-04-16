@@ -107,7 +107,6 @@ struct HomeView: View {
     }
     
     // MARK: - 아껴쓰기 Section
-    @ViewBuilder
     private func accuaView(geo: GeometryProxy) -> some View {
         VStack {
             sectionHeaderView(.accua)
@@ -168,7 +167,6 @@ struct HomeView: View {
     }
     
     // MARK: - 다시쓰기 Section
-    @ViewBuilder
     private func dasiView(geo: GeometryProxy) -> some View {
         VStack {
             sectionHeaderView(.dasi)
@@ -186,7 +184,6 @@ struct HomeView: View {
     }
     
     // MARK: - ANBD 각 섹션 헤더 View
-    @ViewBuilder
     private func sectionHeaderView(_ category: ANBDCategory) -> some View {
         VStack(alignment: .leading) {
             HStack {
@@ -238,7 +235,6 @@ struct HomeView: View {
     }
     
     // MARK: - 아껴쓰기 · 다시쓰기 Cell View
-    @ViewBuilder
     private func articleCellView(_ article: Article) -> some View {
         ZStack(alignment: .bottomLeading) {
             Image(article.imagePaths.first ?? "DummyImage1")
@@ -265,7 +261,6 @@ struct HomeView: View {
     }
     
     // MARK: - 나눠쓰기 Cell View
-    @ViewBuilder
     private func nanuaCellView(_ trade: Trade) -> some View {
         ZStack(alignment: .bottomLeading) {
             Image(trade.imagePaths.first ?? "DummyImage1")

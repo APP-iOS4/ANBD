@@ -6,7 +6,7 @@
 //
 import SwiftUI
 
-struct AdminHomeView: View {
+struct ANBDAdminAppHomeView: View {
     @State private var isUserListExpanded = true
     @State private var isReportedItemsExpanded = true
     @State private var isBoardListExpanded = true
@@ -15,10 +15,10 @@ struct AdminHomeView: View {
         NavigationView {
             List {
                 DisclosureGroup(isExpanded: $isUserListExpanded) {
-                    NavigationLink(destination: ConsumerUserListView().font(.title3)) {
+                    NavigationLink(destination: UserListView(userLevel: .consumer).font(.title3)) {
                         Text("일반 유저")
                     }
-                    NavigationLink(destination: AdminUserListView().font(.title3)) {
+                    NavigationLink(destination: UserListView(userLevel: .admin).font(.title3)) {
                         Text("관리자 유저")
                     }
                 } label: {

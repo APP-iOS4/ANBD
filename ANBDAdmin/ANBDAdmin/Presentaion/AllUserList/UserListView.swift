@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import ANBDModel
 
-struct ConsumerUserListView: View {
+struct UserListView: View {
     @StateObject private var userListViewModel = UserListViewModel()
     @State private var searchUserText = "" // 검색 텍스트 추적하는 변수
+    let userLevel: UserLevel
     
     var body: some View {
         VStack {
@@ -21,10 +23,11 @@ struct ConsumerUserListView: View {
                 .padding(.horizontal, 10)
             
             List {
-                ForEach(userListViewModel.userList.filter({
-                    ($0.userLevel == .consumer) && searchUserText.isEmpty ? true : $0.nickname.contains(searchUserText) || $0.id.contains(searchUserText) }), id: \.id) { user in
-                        NavigationLink(destination: UserListDetailView(user: user, initialUserLevel: .consumer)) {
-                            HStack{
+                            ForEach(userListViewModel.userList.filter({
+                                ($0.userLevel == userLevel) && (searchUserText.isEmpty ? true : $0.nickname.contains(searchUserText) || $0.id.contains(searchUserText))
+                            }), id: \.id) { user in
+                                NavigationLink(destination: UserListDetailView(user: user, initialUserLevel: userLevel)) {
+                                    HStack{
                                 VStack(alignment: .leading) {
                                     Text("닉네임")
                                         .font(.subheadline)

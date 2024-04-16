@@ -70,7 +70,7 @@ struct UserActivityListView: View {
     }
     
     @ViewBuilder
-    fileprivate func listEmptyView() -> some View {
+    private func listEmptyView() -> some View {
         VStack {
             Spacer()
             
@@ -95,7 +95,7 @@ struct UserActivityListView: View {
     }
     
     @ViewBuilder
-    fileprivate func userArticleListView(category: ANBDCategory) -> some View {
+    private func userArticleListView(category: ANBDCategory) -> some View {
         if articlesWrittenByUser.isEmpty {
             listEmptyView()
         } else {
@@ -129,7 +129,7 @@ struct UserActivityListView: View {
     }
     
     @ViewBuilder
-    fileprivate func userTradeListView(category: ANBDCategory) -> some View {
+    private func userTradeListView(category: ANBDCategory) -> some View {
         VStack {
             if tradesWrittenByUser.isEmpty {
                 listEmptyView()
@@ -138,7 +138,7 @@ struct UserActivityListView: View {
                     LazyVStack {
                         ForEach(tradesWrittenByUser.filter({$0.category == category})) { trade in
                             NavigationLink(value: trade) {
-                                TradeListCell(trade: trade)
+                                ArticleListCell(value: .trade(trade))
                                     .padding(.vertical, 5)
                             }
                             

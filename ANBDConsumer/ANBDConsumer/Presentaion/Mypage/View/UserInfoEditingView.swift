@@ -117,7 +117,7 @@ struct UserInfoEditingView: View {
         }
     }
     
-    fileprivate var userProfilImageButton: some View {
+    private var userProfilImageButton: some View {
         Button(action: {
             isShowingProfileImageEditingDialog.toggle()
         }, label: {
@@ -155,13 +155,13 @@ struct UserInfoEditingView: View {
         .photosPicker(isPresented: $isShowingPhotosPicker, selection: $photosPickerItem)
     }
 
-    fileprivate func textFieldUIKit(placeholder: String, text: Binding<String>) -> some View {
+    private func textFieldUIKit(placeholder: String, text: Binding<String>) -> some View {
         UITextField.appearance().clearButtonMode = .whileEditing
         
         return TextField(placeholder, text: text)
     }
     
-    fileprivate func downKeyboard() {
+    private func downKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }

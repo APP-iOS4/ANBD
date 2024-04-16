@@ -92,7 +92,7 @@ struct AccountManagementView: View {
     }
     
     @ViewBuilder
-    fileprivate func detailInfoComponentView(title: String, content: String) -> some View {
+    private func detailInfoComponentView(title: String, content: String) -> some View {
         VStack(alignment: .leading, spacing: 15) {
             Text("\(title)")
                 .font(ANBDFont.SubTitle2)

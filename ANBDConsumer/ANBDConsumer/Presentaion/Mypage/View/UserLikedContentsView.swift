@@ -48,7 +48,7 @@ struct UserLikedContentsView: View {
     }
     
     @ViewBuilder
-    fileprivate func listEmptyView() -> some View {
+    private func listEmptyView() -> some View {
         VStack {
             switch category {
             case .accua, .dasi:
@@ -96,7 +96,7 @@ struct UserLikedContentsView: View {
     }
     
     @ViewBuilder
-    fileprivate func userLikedArticleListView(category: ANBDCategory) -> some View {
+    private func userLikedArticleListView(category: ANBDCategory) -> some View {
         if myPageViewModel.mockArticleData.isEmpty {
             listEmptyView()
         } else {
@@ -119,7 +119,7 @@ struct UserLikedContentsView: View {
     }
     
     @ViewBuilder
-    fileprivate func userHeartTradeListView(category: ANBDCategory) -> some View {
+    private func userHeartTradeListView(category: ANBDCategory) -> some View {
         if myPageViewModel.mockTradeData.isEmpty {
             listEmptyView()
         } else {
@@ -127,7 +127,7 @@ struct UserLikedContentsView: View {
                 LazyVStack {
                     ForEach(myPageViewModel.mockTradeData.filter({$0.category == category})) { trade in
                         NavigationLink(value: trade) {
-                            TradeListCell(trade: trade)
+                            ArticleListCell(value: .trade(trade))
                                 .padding(.vertical, 5)
                         }
                         

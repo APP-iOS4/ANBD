@@ -69,8 +69,13 @@ final class ChatViewModel: ObservableObject {
     }
     
     /// 메시지 사진 로드
-    func downloadImagePath() {
-        
+    func downloadImagePath(messageID: String, imagePath: String) async throws -> Data {
+        do {
+            return try await chatUsecase.downloadImage(messageID: messageID, imagePath: imagePath)
+        } catch {
+            print("Error: \(error)")
+            return Data()
+        }
     }
     
     /// 메시지 보내기 (Text)

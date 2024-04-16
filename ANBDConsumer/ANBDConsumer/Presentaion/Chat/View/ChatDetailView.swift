@@ -46,9 +46,12 @@ struct ChatDetailView: View {
                 ScrollView {
                     LazyVStack {
                         ForEach(chatViewModel.messages.reversed()) { message in
-                            MessageCell(message: message)
+                            MessageCellStruct(message: message)
                                 .padding(.vertical, 1)
                                 .padding(.horizontal, 20)
+//                            MessageCell(message: message)
+//                                .padding(.vertical, 1)
+//                                .padding(.horizontal, 20)
                         }
                         .rotationEffect(Angle(degrees: 180))
                         .scaleEffect(x: -1.0, y: 1.0, anchor: .center)
@@ -282,12 +285,79 @@ struct ChatDetailView: View {
 
 // MARK: - 메시지 Cell
 extension ChatDetailView {
-    @ViewBuilder
+    struct MessageCellStruct: View {
+        @EnvironmentObject private var chatViewModel: ChatViewModel
+        @State private var isMine: Bool = false
+        var message: Message
+        var isRead: Bool?
+        @State var imageData: Data?
+        @Environment(\.colorScheme) private var colorScheme: ColorScheme
+        
+        var body: some View {
+            HStack(alignment: .bottom) {
+                if isMine {
+                    Spacer()
+                    
+                    VStack(alignment: .trailing) {
+                        if let isRead = isRead {
+                            Text(isRead ? "읽음" : "전송됨")
+                                .padding(.vertical, 1)
+                        }
+                        Text("\(message.dateString)")
+                    }
+                    .foregroundStyle(.gray400)
+                    .font(ANBDFont.Caption2)
+                }
+                
+                // 텍스트
+                if let content = message.content {
+                    Text(content)
+                        .padding(15)
+                        .foregroundStyle(isMine ? .white : (colorScheme == .dark ? Color(red: 13/255, green: 15/255, blue: 20/255) : .gray900))
+                        .font(ANBDFont.Caption3)
+                        .background(isMine ? Color.accentColor : .gray50)
+                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                }
+                
+                // 이미지
+                if let imageData {
+                    if let uiImage = UIImage(data: imageData) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 150)
+                            .clipShape(RoundedRectangle(cornerRadius: 15))
+                    }
+                }
+                
+                if !isMine {
+                    Text("\(message.dateString)")
+                        .foregroundStyle(.gray400)
+                        .font(ANBDFont.Caption2)
+                    
+                    Spacer()
+                }
+            }
+            .onAppear {
+                isMine = message.userID == chatViewModel.userID
+                
+                if let imagePath = message.imagePath {
+                    Task {
+                        /// 이미지 로드
+                        imageData = try await chatViewModel.downloadImagePath(messageID: message.id, imagePath: imagePath)
+                    }
+                }
+            }
+        }
+    }
+    
+    
+//    @ViewBuilder
     private func MessageCell(message: Message, isRead: Bool? = nil) -> some View {
         let isMine: Bool = message.userID == chatViewModel.userID
-        @State var image: Data?
+        @State var imageData: Data?
         
-        HStack(alignment: .bottom) {
+        return HStack(alignment: .bottom) {
             if isMine {
                 Spacer()
                 
@@ -313,18 +383,15 @@ extension ChatDetailView {
             }
             
             // 이미지
-//            if let imageURL = message.imageURL {
-//                Button(action: {
-//                    detailImage = imageURL
-//                    isShowingImageDetailView.toggle()
-//                }, label: {
-//                    Image(imageURL)
-//                        .resizable()
-//                        .aspectRatio(contentMode: .fit)
-//                        .frame(width: 150)
-//                        .clipShape(RoundedRectangle(cornerRadius: 15))
-//                })
-//            }
+            if let imageData {
+                if let uiImage = UIImage(data: imageData) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 150)
+                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                }
+            }
             
             if !isMine {
                 Text("\(message.dateString)")
@@ -337,7 +404,8 @@ extension ChatDetailView {
         .onAppear {
             if let imagePath = message.imagePath {
                 Task {
-                    
+                    /// 이미지 로드
+                    imageData = try await chatViewModel.downloadImagePath(messageID: message.id, imagePath: imagePath)
                 }
             }
         }

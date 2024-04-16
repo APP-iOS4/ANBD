@@ -68,6 +68,11 @@ final class ChatViewModel: ObservableObject {
         }
     }
     
+    /// 메시지 사진 로드
+    func downloadImagePath() {
+        
+    }
+    
     /// 메시지 보내기 (Text)
     func sendMessage(message: Message, channelID: String) async throws {
         do {
@@ -90,6 +95,15 @@ final class ChatViewModel: ObservableObject {
     func resetMessageData() {
         chatUsecase.initializeListener()
         messages = []
+    }
+    
+    /// 안읽은 메시지 개수 초기화
+    func resetUnreadCount(channelID: String) async throws {
+        do {
+            try await chatUsecase.updateUnreadCount(channelID: channelID, userID: userID)
+        } catch {
+            print("Error: \(error)")
+        }
     }
     
     /// 상대방 닉네임 불러오기

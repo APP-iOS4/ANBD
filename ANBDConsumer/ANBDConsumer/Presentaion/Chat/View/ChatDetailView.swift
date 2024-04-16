@@ -22,7 +22,8 @@ struct ChatDetailView: View {
     
     /// 보낼 메시지 관련 변수
     @State private var message: String = ""
-    @State private var selectedImage: [PhotosPickerItem] = []
+    @State private var selectedImage: PhotosPickerItem?
+    @State private var selectedPhoto: Data?
     
     /// Sheet 관련 변수
     @State private var isShowingConfirmSheet: Bool = false
@@ -65,8 +66,23 @@ struct ChatDetailView: View {
                 .rotationEffect(Angle(degrees: 180))
                 .scaleEffect(x: -1.0, y: 1.0, anchor: .center)
                 
-                messageSendView
-                    .padding()
+                if #available(iOS 17.0, *) {
+                    messageSendView
+                        .padding()
+                        .onChange(of: selectedImage) {
+                            if let image = selectedImage {
+                                sendImageMessage(image: image)
+                            }
+                        }
+                } else {
+                    messageSendView
+                        .padding()
+                        .onChange(of: selectedImage) { image in
+                            if let image = image {
+                                sendImageMessage(image: image)
+                            }
+                        }
+                }
             }
             
             if isShowingStateChangeCustomAlert {
@@ -130,6 +146,9 @@ struct ChatDetailView: View {
                     if trade != nil {
                         tradeState = trade?.tradeState ?? TradeState.trading
                     }
+                    
+                    /// 안읽음 메시지 개수 갱신
+                    try await chatViewModel.resetUnreadCount(channelID: channel.id)
                 }
                 
                 /// 가져온 Trade 확인
@@ -145,6 +164,7 @@ struct ChatDetailView: View {
     }
     
     // MARK: - 메시지 해더 뷰 (Trade 관련)
+    // TODO: ProgressView 필요 ... 합니다 ㅠㅠ
     private var messageHeaderView: some View {
         HStack {
             if isDeleted {
@@ -155,6 +175,7 @@ struct ChatDetailView: View {
                     .padding(.trailing, 10)
                     .foregroundStyle(.gray500)
             } else {
+                // 여기서 !!!!! -> Image ProgressView
                 Image("DummyImage1")
                     .resizable()
                     .scaledToFill()
@@ -218,7 +239,7 @@ struct ChatDetailView: View {
     private var messageSendView: some View {
         HStack {
             /// 사진 전송
-            PhotosPicker(selection: $selectedImage, maxSelectionCount: 1, matching: .images) {
+            PhotosPicker(selection: $selectedImage, matching: .images) {
                 Image(systemName: "photo.fill")
                     .resizable()
                     .scaledToFit()
@@ -264,6 +285,7 @@ extension ChatDetailView {
     @ViewBuilder
     private func MessageCell(message: Message, isRead: Bool? = nil) -> some View {
         let isMine: Bool = message.userID == chatViewModel.userID
+        @State var image: Data?
         
         HStack(alignment: .bottom) {
             if isMine {
@@ -312,6 +334,13 @@ extension ChatDetailView {
                 Spacer()
             }
         }
+        .onAppear {
+            if let imagePath = message.imagePath {
+                Task {
+                    
+                }
+            }
+        }
     }
 }
 
@@ -345,6 +374,27 @@ extension ChatDetailView {
             
         }
         
+    }
+    
+    /// 사진 메시지 전송 함수
+    private func sendImageMessage(image: PhotosPickerItem) {
+        Task {
+            if let data = try? await image.loadTransferable(type: Data.self) {
+                selectedPhoto = data
+            }
+            
+            let newMessage = Message(userID: chatViewModel.userID, userNickname: chatViewModel.userNickname)
+            if let imageData = selectedPhoto {
+                if let trade = trade, channel == nil {
+                    /// 채널 생성
+                }
+                
+                if let channel = channel {
+                    try await chatViewModel.sendImageMessage(message: newMessage, imageData: imageData, channelID: channel.id)
+                }
+            }
+            selectedImage = nil
+        }
     }
 }
 

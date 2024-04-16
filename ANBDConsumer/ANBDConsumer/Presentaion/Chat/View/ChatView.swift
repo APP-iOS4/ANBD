@@ -23,7 +23,7 @@ struct ChatView: View {
                     ScrollView {
                         LazyVStack {
                             ForEach(chatViewModel.chatRooms) { channel in
-                                NavigationLink(value: channel.id) {
+                                NavigationLink(value: channel) {
                                     ChatListCell(channel: channel)
                                         .padding(.horizontal, 20)
                                         .padding(.vertical, 3)

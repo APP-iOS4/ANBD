@@ -10,28 +10,16 @@ import PhotosUI
 import ANBDModel
 
 struct ChatDetailView: View {
-    /// 사용자 관련 변수 (추후 UserViewModel 연결 후 삭제)
-    var myUserID: String = "likelion123"
-    var userNickname: String = "죠니"
+    @EnvironmentObject private var chatViewModel: ChatViewModel
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme: ColorScheme
     
-    /// 메시지 관련 변수 (추후 ChatViewModel 연결 후 삭제)
+    /// 채팅방 구분 변수
+    var channel: Channel? = nil
+    
+    /// 보낼 메시지 관련 변수
     @State private var message: String = ""
     @State private var selectedImage: [PhotosPickerItem] = []
-    @State private var messages: [Message] = [
-        Message(userID: "likelion123", userNickname: "줄이", createdAt: Calendar.current.date(byAdding: .day, value: -7, to: .now) ?? .now, content: "7일전메시지내가보냄"),
-        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -7, to: .now) ?? .now, content: "7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄"),
-        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -6, to: .now) ?? .now, content: "짜자자잔6일전메시지내가안보냄"),
-        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -6, to: .now) ?? .now, content: "짜자자잔"),
-        Message(userID: "likelion123", userNickname: "줄이", createdAt: Calendar.current.date(byAdding: .day, value: -6, to: .now) ?? .now, content: "짜자자잔이거는 6일전 내가보냄"),
-        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -5, to: .now) ?? .now, content: "5일전 내가 안보냄"),
-        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -3, to: .now) ?? .now, content: "3일전 내가 안보냄내가내가내가 안보냈어"),
-        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -3, to: .now) ?? .now, content: "내가내낙나내나나는 아니ㅑ야"),
-        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: .now, content: "오늘 나 아님"),
-        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: .now, content: "오늘 나 아님222"),
-        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: .now, image: "DummyImage1"),
-        Message(userID: "likelion123", userNickname: "줄이", createdAt: .now, content: "오늘 내가 보냄"),
-        Message(userID: "likelion123", userNickname: "줄이", createdAt: .now, image: "DummyImage1"),]
-    
     
     /// Sheet 관련 변수
     @State private var isShowingConfirmSheet: Bool = false
@@ -40,8 +28,7 @@ struct ChatDetailView: View {
     @State private var detailImage: String = "DummyPuppy3"
     @State private var isGoingToReportView: Bool = false
     @State private var isShowingStateChangeCustomAlert: Bool = false
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.colorScheme) private var colorScheme: ColorScheme
+    
     
     /// Product 관련 함수 (추후 삭제 ......)
     //@State private var isTrading: Bool = true
@@ -57,29 +44,29 @@ struct ChatDetailView: View {
                 
                 Divider()
                 
-                ScrollViewReader { proxy in
-                    ScrollView {
-                        ForEach(0..<messages.count, id: \.self) { i in
-                            /// 날짜 구분선
-                            if i == 0 || messages[i].dateStringWithYear != messages[i-1].dateStringWithYear {
-                                MessageDateDividerView(dateString: messages[i].dateStringWithYear)
-                                    .padding()
-                                    .padding(.top, i == 0 ? 5 : 25)
-                                    .padding(.bottom, 25)
-                            }
-                            
-                            /// 이미지 · 텍스트
-                            MessageCell(message: messages[i])
+                /// message 내역
+                ScrollView {
+                    LazyVStack {
+                        ForEach(chatViewModel.messages.reversed()) { message in
+                            MessageCell(message: message)
                                 .padding(.vertical, 1)
                                 .padding(.horizontal, 20)
                         }
-                        Text("")
-                            .id("BottomID")
-                    }
-                    .onAppear {
-                        proxy.scrollTo("BottomID")
+                        .rotationEffect(Angle(degrees: 180))
+                        .scaleEffect(x: -1.0, y: 1.0, anchor: .center)
+                        
+                        Color.clear
+                            .onAppear {
+                                Task {
+                                    if let channel = channel {
+                                        try await chatViewModel.fetchMessages(channelID: channel.id)
+                                    }
+                                }
+                            }
                     }
                 }
+                .rotationEffect(Angle(degrees: 180))
+                .scaleEffect(x: -1.0, y: 1.0, anchor: .center)
                 
                 messageSendView
                     .padding()
@@ -106,7 +93,7 @@ struct ChatDetailView: View {
         .onTapGesture {
             endTextEditing()
         }
-        .navigationTitle(userNickname)
+        .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
@@ -137,7 +124,7 @@ struct ChatDetailView: View {
             ReportView(reportViewType: .chat)
         }
         .onAppear {
-            messages.sort(by: { $0.createdAt < $1.createdAt })
+            
         }
     }
     
@@ -258,7 +245,7 @@ struct ChatDetailView: View {
 extension ChatDetailView {
     @ViewBuilder
     private func MessageCell(message: Message, isRead: Bool? = nil) -> some View {
-        let isMine: Bool = message.userID == myUserID
+        let isMine: Bool = message.userID == chatViewModel.userID
         
         HStack(alignment: .bottom) {
             if isMine {
@@ -286,18 +273,18 @@ extension ChatDetailView {
             }
             
             // 이미지
-            if let imageURL = message.imageURL {
-                Button(action: {
-                    detailImage = imageURL
-                    isShowingImageDetailView.toggle()
-                }, label: {
-                    Image(imageURL)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 150)
-                        .clipShape(RoundedRectangle(cornerRadius: 15))
-                })
-            }
+//            if let imageURL = message.imageURL {
+//                Button(action: {
+//                    detailImage = imageURL
+//                    isShowingImageDetailView.toggle()
+//                }, label: {
+//                    Image(imageURL)
+//                        .resizable()
+//                        .aspectRatio(contentMode: .fit)
+//                        .frame(width: 150)
+//                        .clipShape(RoundedRectangle(cornerRadius: 15))
+//                })
+//            }
             
             if !isMine {
                 Text("\(message.dateString)")
@@ -314,41 +301,6 @@ extension ChatDetailView {
 #Preview {
     NavigationStack {
         ChatDetailView()
-    }
-}
-
-
-// TODO: Message Struct -> ANBDModel에 추가시 삭제 예정
-struct Message: Hashable, Identifiable {
-    let id: String = UUID().uuidString
-    
-    let userID: String
-    var userNickname: String
-    
-    var createdAt: Date = .now
-    
-    var content: String?
-    var imageURL: String?
-    
-    var dateString : String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "a hh:mm"
-        dateFormatter.locale = Locale(identifier:"ko_KR")
-        return dateFormatter.string(from: createdAt)
-    }
-    
-    var dateStringWithYear: String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy년 MM월 dd일 (E)"
-        dateFormatter.locale = Locale(identifier:"ko_KR")
-        return dateFormatter.string(from: createdAt)
-    }
-    
-    init(userID: String, userNickname: String, createdAt: Date, content: String? = nil, image: String? = nil) {
-        self.userID = userID
-        self.userNickname = userNickname
-        self.createdAt = createdAt
-        self.content = content
-        self.imageURL = image
+            .environmentObject(ChatViewModel())
     }
 }

@@ -10,7 +10,7 @@ import ANBDModel
 
 final class ChatViewModel: ObservableObject {
     
-    private let userID: String = "A414DC19-A424-4FB8-88E7-B23B06EB67A7"
+    let userID: String = "A414DC19-A424-4FB8-88E7-B23B06EB67A7"
     private let userNickname: String = "테스트관2"
     private let chatUsecase: ChatUsecase = ChatUsecase()
     
@@ -21,6 +21,16 @@ final class ChatViewModel: ObservableObject {
     func fetchChatRooms() {
         chatUsecase.loadChannelList(userID: userID) { [weak self] channel in
             self?.chatRooms = channel
+        }
+    }
+    
+    /// 채팅방 메시지 불러오기 : 20개씩 페이지네이션
+    func fetchMessages(channelID: String) async throws {
+        do {
+            let preMessages = try await chatUsecase.loadMessageList(channelID: channelID, userID: userID)
+            self.messages.insert(contentsOf: preMessages, at: 0)
+        } catch {
+            print("Error: \(error)")
         }
     }
     

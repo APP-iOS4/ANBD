@@ -100,8 +100,8 @@ struct ANBDTabView: View {
             /// Chat
             NavigationStack {
                 ChatView()
-                    .navigationDestination(for: String.self) { channelID in
-                        ChatDetailView(userNickname: channelID)
+                    .navigationDestination(for: Channel.self) { channel in
+                        ChatDetailView(channel: channel)
                     }
             }
             .tabItem {

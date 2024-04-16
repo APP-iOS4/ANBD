@@ -66,44 +66,39 @@ struct SignUpPasswordView: View {
             }
         }
         .padding()
-        .navigationDestination(isPresented: $navigate) {
-            SignUpUserInfoView()
-        }
-        
-        .onAppear {
-            focus = .password
-        }
         
         .toolbar {
-            ToolbarItem(placement: .keyboard) {
+            ToolbarItemGroup(placement: .keyboard) {
                 Button(action: {
                     focusPreviousField()
                 }, label: {
                     Label("Previous text field", systemImage: "chevron.up")
                 })
                 .disabled(!canFocusPreviousField())
-            }
-            
-            ToolbarItem(placement: .keyboard) {
+                
                 Button(action: {
                     focusNextField()
                 }, label: {
                     Label("Next text field", systemImage: "chevron.down")
                 })
                 .disabled(!canFocusNextField())
-            }
-            
-            ToolbarItem(placement: .keyboard) {
+                
                 Spacer()
-            }
-            
-            ToolbarItem(placement: .keyboard) {
+                
                 Button(action: {
                     downKeyboard()
                 }, label: {
                     Label("Keyboard down", systemImage: "keyboard.chevron.compact.down")
                 })
             }
+        }
+        
+        .navigationDestination(isPresented: $navigate) {
+            SignUpUserInfoView()
+        }
+        
+        .onAppear {
+            focus = .password
         }
     }
     

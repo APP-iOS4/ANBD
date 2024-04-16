@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CheckAgreeView: View {
+struct PolicyDetailView: View {
     @Binding var isAgree: Bool
     
     var explainString: String
@@ -44,7 +44,7 @@ struct CheckAgreeView: View {
 }
 
 #Preview {
-    CheckAgreeView(isAgree: .constant(true), explainString: "당신의 정보를 강탈하겠습니다. (필수)") {
+    PolicyDetailView(isAgree: .constant(true), explainString: "당신의 정보를 강탈하겠습니다. (필수)") {
         
     }
 }

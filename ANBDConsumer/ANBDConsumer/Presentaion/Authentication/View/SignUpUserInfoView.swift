@@ -67,26 +67,25 @@ struct SignUpUserInfoView: View {
             }
         }
         .padding()
-        .navigationDestination(isPresented: $navigate) {
-            SignUpAgreeView()
-        }
-        
-        .onAppear {
-            focus = .nickname
-        }
         
         .toolbar {
-            ToolbarItem(placement: .keyboard) {
+            ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
-            }
-            
-            ToolbarItem(placement: .keyboard) {
+                
                 Button(action: {
                     downKeyboard()
                 }, label: {
                     Label("Keyboard down", systemImage: "keyboard.chevron.compact.down")
                 })
             }
+        }
+        
+        .navigationDestination(isPresented: $navigate) {
+            SignUpPolicyAgreeView()
+        }
+        
+        .onAppear {
+            focus = .nickname
         }
     }
     

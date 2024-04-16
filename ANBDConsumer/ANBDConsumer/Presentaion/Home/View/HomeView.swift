@@ -10,13 +10,8 @@ import ANBDModel
 
 struct HomeView: View {
     @EnvironmentObject private var homeViewModel: HomeViewModel
-    @EnvironmentObject private var tradeViewModel: TradeViewModel
-    @EnvironmentObject private var articleViewModel: ArticleViewModel
-    
-    
-    @State private var isGoingToSearchView: Bool = false
     @State private var isShowingWebView: Bool = false
-    @State private var blogURL: String = HomeViewModel().bannerItemList.first!.url
+    @State private var blogURL: String = "https://www.naver.com"
     
     var body: some View {
         GeometryReader { geometry in
@@ -75,13 +70,13 @@ struct HomeView: View {
     // MARK: - 광고 배너
     private var adView: some View {
         TabView() {
-            ForEach(homeViewModel.bannerItemList.indices, id:\.self) { idx in
+            ForEach(homeViewModel.bannerItemList) { banner in
                 Button(action: {
-                    blogURL = homeViewModel.bannerItemList[idx].url
+                    blogURL = banner.urlString
                     isShowingWebView.toggle()
                 }, label: {
                     ZStack {
-                        AsyncImage(url: URL(string: homeViewModel.bannerItemList[idx].imageStirng)) { img in
+                        AsyncImage(url: URL(string: banner.thumbnailImageURLString)) { img in
                             img
                                 .resizable()
                                 .scaledToFill()
@@ -99,6 +94,12 @@ struct HomeView: View {
                 })
             }
         }
+        .onAppear {
+            Task {
+                await homeViewModel.loadBanners()
+                blogURL = homeViewModel.bannerItemList.first?.urlString ?? "https://www.naver.com"
+            }
+        }
         .frame(height: 130)
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .tabViewStyle(PageTabViewStyle())
@@ -106,7 +107,6 @@ struct HomeView: View {
     }
     
     // MARK: - 아껴쓰기 Section
-    @ViewBuilder
     private func accuaView(geo: GeometryProxy) -> some View {
         VStack {
             sectionHeaderView(.accua)
@@ -114,6 +114,11 @@ struct HomeView: View {
             NavigationLink(value: homeViewModel.accuaArticle) {
                 articleCellView(homeViewModel.accuaArticle)
                     .frame(width: geo.size.width * 0.9, height: 130)
+            }
+        }
+        .onAppear {
+            Task {
+                await homeViewModel.loadArticle(category: .accua)
             }
         }
     }
@@ -136,6 +141,11 @@ struct HomeView: View {
             }
             .scrollIndicators(.hidden)
         }
+        .onAppear {
+            Task {
+                await homeViewModel.loadTrades(category: .nanua)
+            }
+        }
     }
     
     // MARK: - 바꿔쓰기 Section
@@ -149,10 +159,14 @@ struct HomeView: View {
                 }
             }
         }
+        .onAppear {
+            Task {
+                await homeViewModel.loadTrades(category: .baccua)
+            }
+        }
     }
     
     // MARK: - 다시쓰기 Section
-    @ViewBuilder
     private func dasiView(geo: GeometryProxy) -> some View {
         VStack {
             sectionHeaderView(.dasi)
@@ -162,10 +176,14 @@ struct HomeView: View {
                     .frame(width: geo.size.width * 0.9, height: 130)
             }
         }
+        .onAppear {
+            Task {
+                await homeViewModel.loadArticle(category: .dasi)
+            }
+        }
     }
     
     // MARK: - ANBD 각 섹션 헤더 View
-    @ViewBuilder
     private func sectionHeaderView(_ category: ANBDCategory) -> some View {
         VStack(alignment: .leading) {
             HStack {
@@ -217,7 +235,6 @@ struct HomeView: View {
     }
     
     // MARK: - 아껴쓰기 · 다시쓰기 Cell View
-    @ViewBuilder
     private func articleCellView(_ article: Article) -> some View {
         ZStack(alignment: .bottomLeading) {
             Image(article.imagePaths.first ?? "DummyImage1")
@@ -244,7 +261,6 @@ struct HomeView: View {
     }
     
     // MARK: - 나눠쓰기 Cell View
-    @ViewBuilder
     private func nanuaCellView(_ trade: Trade) -> some View {
         ZStack(alignment: .bottomLeading) {
             Image(trade.imagePaths.first ?? "DummyImage1")

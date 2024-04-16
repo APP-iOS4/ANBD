@@ -33,7 +33,11 @@ final class DefaultTradeRepository: TradeRepository {
             imageDatas: imageDatas
         )
         var newTrade = trade
-        newTrade.imagePaths = imagePaths
+        newTrade.thumbnailImagePath = imagePaths.first ?? ""
+        
+        if !imagePaths.isEmpty {
+            newTrade.imagePaths = Array(imagePaths[1...])
+        }
         
         try await tradeDataSource.createItem(item: newTrade)
     }
@@ -136,7 +140,11 @@ final class DefaultTradeRepository: TradeRepository {
             imageDatas: imageDatas
         )
         var updatedTrade = trade
-        updatedTrade.imagePaths = imagePaths
+        updatedTrade.thumbnailImagePath = imagePaths.first ?? ""
+        
+        if !imagePaths.isEmpty {
+            updatedTrade.imagePaths = Array(imagePaths[1...])
+        }
         
         try await tradeDataSource.updateItem(item: updatedTrade)
     }
@@ -161,6 +169,14 @@ final class DefaultTradeRepository: TradeRepository {
     
     // MARK: Delete
     func deleteTrade(trade: Trade) async throws {
+        if !trade.thumbnailImagePath.isEmpty {
+            try await storage.deleteImage(
+                path: .trade,
+                containerID: "\(trade.id)/thumbnail",
+                imagePath: trade.thumbnailImagePath
+            )
+        }
+        
         try await storage.deleteImageList(
             path: .trade,
             containerID: trade.id,

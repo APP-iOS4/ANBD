@@ -37,10 +37,13 @@ final class DefaultArticleRepository: ArticleRepository {
                 imageDatas: imageDatas
             )
             var newArticle = article
-            newArticle.imagePaths = imagePaths
+            newArticle.thumbnailImagePath = imagePaths.first ?? ""
+            
+            if !imagePaths.isEmpty {
+                newArticle.imagePaths = Array(imagePaths[1...])
+            }
             
             try await articleDataSource.createItem(item: newArticle)
-//            try await articleDataSource.createArticle(article: newArticle)
         } catch DBError.setDocumentError {
             throw ArticleError.createArticleError(code: 4011, message: "Article을 추가하는데 실패했습니다.")
         }
@@ -157,7 +160,11 @@ final class DefaultArticleRepository: ArticleRepository {
                 imageDatas: imageDatas
             )
             var updatedArticle = article
-            updatedArticle.imagePaths = imagePaths
+            updatedArticle.thumbnailImagePath = imagePaths.first ?? ""
+            
+            if !imagePaths.isEmpty {
+                updatedArticle.imagePaths = Array(imagePaths[1...])
+            }
             
             try await articleDataSource.updateItem(item: updatedArticle)
         } catch DBError.updateDocumentError {
@@ -188,7 +195,20 @@ final class DefaultArticleRepository: ArticleRepository {
     func deleteArticle(article: Article) async throws {
         do {
             try await commentDataSource.deleteCommentList(articleID: article.id)
-            try await storage.deleteImageList(path: .article, containerID: article.id, imagePaths: article.imagePaths)
+            
+            if !article.thumbnailImagePath.isEmpty {
+                try await storage.deleteImage(
+                    path: .article,
+                    containerID: "\(article.id)/thumbnail",
+                    imagePath: article.thumbnailImagePath
+                )
+            }
+            
+            try await storage.deleteImageList(
+                path: .article,
+                containerID: article.id,
+                imagePaths: article.imagePaths
+            )
             try await articleDataSource.deleteItem(itemID: article.id)
             try await userDataSource.updateUserInfoList(articleID: article.id)
         } catch DBError.deleteDocumentError {

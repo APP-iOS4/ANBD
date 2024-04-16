@@ -15,6 +15,8 @@ struct SearchView: View {
     
     @EnvironmentObject private var homeViewModel: HomeViewModel
     @EnvironmentObject private var searchViewModel: SearchViewModel
+    @EnvironmentObject private var tradeViewModel: TradeViewModel
+    @EnvironmentObject private var articleViewModel: ArticleViewModel
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -72,6 +74,8 @@ struct SearchView: View {
         .onSubmit(of: .search) {
             if !searchText.isEmpty {
                 homeViewModel.homePath.append(searchText)
+                tradeViewModel.tradePath.append(searchText)
+                articleViewModel.articlePath.append(searchText)
             }
         }
     }
@@ -82,5 +86,7 @@ struct SearchView: View {
         SearchView(category: .accua)
             .environmentObject(HomeViewModel())
             .environmentObject(SearchViewModel())
+            .environmentObject(TradeViewModel())
+            .environmentObject(ArticleViewModel())
     }
 }

@@ -5,10 +5,11 @@
 //  Created by 최주리 on 4/3/24.
 //
 
-import Foundation
+import SwiftUI
 import ANBDModel
 
 final class ArticleViewModel: ObservableObject {
+    @Published var articlePath: NavigationPath = NavigationPath()
     
 //    @Published var articleUsecase: ArticleUsecase
 //    @Published var commentUsecase: CommentUsecase

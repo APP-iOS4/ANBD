@@ -8,10 +8,6 @@
 import SwiftUI
 
 struct SignUpEmailView: View {
-    enum FocusableField {
-        case email
-    }
-    
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var authenticationViewModel: AuthenticationViewModel
     
@@ -100,6 +96,10 @@ struct SignUpEmailView: View {
 }
 
 extension SignUpEmailView {
+    enum FocusableField {
+        case email
+    }
+    
     private func downKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }

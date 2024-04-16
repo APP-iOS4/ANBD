@@ -8,11 +8,6 @@
 import SwiftUI
 
 struct SignUpPasswordView: View {
-    enum FocusableField: Int, Hashable, CaseIterable {
-        case password
-        case passwordCheck
-    }
-    
     @EnvironmentObject private var authenticationViewModel: AuthenticationViewModel
     
     @FocusState private var focus: FocusableField?
@@ -48,16 +43,13 @@ struct SignUpPasswordView: View {
                 nextButtonAction()
             }
             
-            // 프로토타입을 위한 임시 주석
-            /*
-             if !authenticationViewModel.errorMessage.isEmpty {
-             Text(authenticationViewModel.errorMessage)
-             .frame(maxWidth: .infinity, alignment: .leading)
-             .padding(.top, 8)
-             .font(ANBDFont.Caption1)
-             .foregroundStyle(Color.heartRed)
-             }
-             */
+            if !authenticationViewModel.errorMessage.isEmpty {
+                Text(authenticationViewModel.errorMessage)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 8)
+                    .font(ANBDFont.Caption1)
+                    .foregroundStyle(Color.heartRed)
+            }
             
             Spacer()
             
@@ -113,6 +105,11 @@ struct SignUpPasswordView: View {
 }
 
 extension SignUpPasswordView {
+    enum FocusableField: Int, Hashable, CaseIterable {
+        case password
+        case passwordCheck
+    }
+    
     private func focusPreviousField() {
         focus = focus.map {
             FocusableField(rawValue: $0.rawValue - 1) ?? .password

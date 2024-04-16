@@ -8,11 +8,6 @@
 import SwiftUI
 
 struct AuthenticationView: View {
-    enum FocusableField: Int, Hashable, CaseIterable {
-        case email
-        case password
-    }
-    
     @EnvironmentObject private var authenticationViewModel: AuthenticationViewModel
     
     @FocusState private var focus: FocusableField?
@@ -146,7 +141,7 @@ struct AuthenticationView: View {
                 }
                 
                 .onAppear {
-                    authenticationViewModel.clearAccount()
+                    authenticationViewModel.clearAccountString()
                 }
             }
         }
@@ -161,6 +156,11 @@ struct AuthenticationView: View {
 }
 
 extension AuthenticationView {
+    enum FocusableField: Int, Hashable, CaseIterable {
+        case email
+        case password
+    }
+    
     private func focusPreviousField() {
         focus = focus.map {
             FocusableField(rawValue: $0.rawValue - 1) ?? .email

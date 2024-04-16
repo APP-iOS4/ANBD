@@ -69,6 +69,10 @@ struct SignUpPolicyAgreeView: View {
             
             BlueSquareButton(title: "회원가입 완료", isDisabled: !authenticationViewModel.isEssentialAgree()) {
                 authenticationViewModel.isValidSignUp = true
+                
+                Task {
+                    try await authenticationViewModel.signUp()
+                }
             }
         }
         .padding()

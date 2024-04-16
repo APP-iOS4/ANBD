@@ -187,7 +187,6 @@ struct ChatDetailView: View {
         .foregroundStyle(.gray900)
     }
     
-    @ViewBuilder
     private func MessageDateDividerView(dateString: String) -> some View {
         GeometryReader { geometry in
             HStack {
@@ -258,16 +257,22 @@ struct ChatDetailView: View {
 // MARK: - 메시지 Cell
 extension ChatDetailView {
     @ViewBuilder
-    private func MessageCell(message: Message) -> some View {
+    private func MessageCell(message: Message, isRead: Bool? = nil) -> some View {
         let isMine: Bool = message.userID == myUserID
         
         HStack(alignment: .bottom) {
             if isMine {
                 Spacer()
                 
-                Text("\(message.dateString)")
-                    .foregroundStyle(.gray400)
-                    .font(ANBDFont.Caption2)
+                VStack(alignment: .trailing) {
+                    if let isRead = isRead {
+                        Text(isRead ? "읽음" : "전송됨")
+                            .padding(.vertical, 1)
+                    }
+                    Text("\(message.dateString)")
+                }
+                .foregroundStyle(.gray400)
+                .font(ANBDFont.Caption2)
             }
             
             // 텍스트

@@ -202,5 +202,4 @@ extension ChatUsecase {
         messageRepository.deleteListener()
     }
     
-    
 }

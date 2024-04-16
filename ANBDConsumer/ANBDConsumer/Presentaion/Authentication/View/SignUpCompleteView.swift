@@ -37,7 +37,7 @@ struct SignUpCompleteView: View {
             Spacer()
             
             BlueSquareButton(title: "시작하기") {
-                authenticationViewModel.submitSignUp()
+                authenticationViewModel.checkAuthState()
             }
             .opacity(showExplainAnimation)
         }

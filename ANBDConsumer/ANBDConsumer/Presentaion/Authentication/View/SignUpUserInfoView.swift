@@ -34,6 +34,7 @@ struct SignUpUserInfoView: View {
             .autocorrectionDisabled(true)
             .submitLabel(.go)
             .onSubmit {
+                guard authenticationViewModel.isValidSignUpNickname else { return }
                 nextButtonAction()
             }
             .padding(.bottom)

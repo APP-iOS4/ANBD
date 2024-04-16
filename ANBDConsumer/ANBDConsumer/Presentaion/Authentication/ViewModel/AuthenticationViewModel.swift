@@ -68,7 +68,7 @@ final class AuthenticationViewModel: ObservableObject {
     init() {
         $loginEmailString
             .removeDuplicates()
-            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .sink { [weak self] email in
                 guard let self = self else { return }
                 self.loginEmailStringDebounced = email
@@ -77,7 +77,7 @@ final class AuthenticationViewModel: ObservableObject {
         
         $loginPasswordString
             .removeDuplicates()
-            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .sink { [weak self] password in
                 guard let self = self else { return }
                 self.loginPasswordStringDebounced = password
@@ -94,7 +94,7 @@ final class AuthenticationViewModel: ObservableObject {
         
         $signUpEmailString
             .removeDuplicates()
-            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .sink { [weak self] email in
                 guard let self = self else { return }
                 self.signUpEmailStringDebounced = email
@@ -103,7 +103,7 @@ final class AuthenticationViewModel: ObservableObject {
         
         $signUpPasswordString
             .removeDuplicates()
-            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .sink { [weak self] password in
                 guard let self = self else { return }
                 self.signUpPasswordStringDebounced = password
@@ -112,7 +112,7 @@ final class AuthenticationViewModel: ObservableObject {
         
         $signUpPasswordCheckString
             .removeDuplicates()
-            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .sink { [weak self] password in
                 guard let self = self else { return }
                 self.signUpPasswordCheckStringDebounced = password
@@ -121,7 +121,7 @@ final class AuthenticationViewModel: ObservableObject {
         
         $signUpNicknameString
             .removeDuplicates()
-            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .sink { [weak self] nickname in
                 guard let self = self else { return }
                 self.signUpNicknameStringDebounced = nickname
@@ -167,11 +167,7 @@ extension AuthenticationViewModel {
             errorMessage = ""
         }
         
-        // 프로토타입을 위한 임시 주석
-        // return (!email.isEmpty && email.isValidateEmail()) && (!password.isEmpty && password.isValidatePassword())
-        
-        // 프로토타입을 위한 임시 반환값
-        return (!email.isEmpty) && (!password.isEmpty)
+        return (!email.isEmpty && email.isValidateEmail()) && (!password.isEmpty && password.isValidatePassword())
     }
     
     func validateSignUpEmail(email: String) -> Bool {
@@ -214,6 +210,14 @@ extension AuthenticationViewModel {
         authState = true
     }
     
+    func checkAuthState() {
+        if UserDefaultsClient.shared.userInfo == nil {
+            authState = false
+        } else {
+            authState = true
+        }
+    }
+    
     func toggleAllAgree() {
         if !isAllAgree() {
             isOlderThanFourteen = true
@@ -252,6 +256,15 @@ extension AuthenticationViewModel {
         showingTermsView.toggle()
     }
     
+    func signIn() async throws {
+        do {
+            UserDefaultsClient.shared.userInfo = try await authUsecase.signIn(email: loginEmailString,
+                                                                              password: loginPasswordString)
+        } catch {
+            print("\(error.localizedDescription)")
+        }
+    }
+    
     func signUp() async throws {
         do {
             UserDefaultsClient.shared.userInfo = try await authUsecase.signUp(email: signUpEmailString,
@@ -268,34 +281,6 @@ extension AuthenticationViewModel {
     }
     
     /*
-     func signUpWithEmailPassword() async {
-     do {
-     let signUpResult = try await Auth.auth().createUser(
-     withEmail: signUpEmailString,
-     password: signUpPasswordString
-     )
-     let firebaseUser = signUpResult.user
-     let accessToken = firebaseUser.uid
-     
-     let serviceUser = User(
-     userNickname: signUpNicknameString,
-     email: signUpEmailString,
-     accessToken: accessToken,
-     isOlderThanFourteen: isOlderThanFourteen,
-     isAgreeService: isAgreeService,
-     isAgreeCollectInfo: isAgreeCollectInfo,
-     isAgreeMarketing: isAgreeMarketing
-     )
-     
-     try await userStore.saveUserInfo(userInfo: serviceUser)
-     isValidSignUp = true
-     UserDefaultsManager.shared.userInfo = serviceUser
-     } catch {
-     print(error)
-     errorMessage = error.localizedDescription
-     }
-     }
-     
      func signUpWithGoogle() async {
      do {
      guard let user = Auth.auth().currentUser
@@ -322,7 +307,7 @@ extension AuthenticationViewModel {
      }
      */
     
-    func clearAccountString() {
+    func clearSignUpDatas() {
         loginEmailString = ""
         loginPasswordString = ""
         
@@ -331,8 +316,14 @@ extension AuthenticationViewModel {
         signUpPasswordCheckString = ""
         signUpNicknameString = ""
         signUpUserFavoriteLoaction = .seoul
+        
+        isOlderThanFourteen = false
+        isAgreeService = false
+        isAgreeCollectInfo = false
+        isAgreeMarketing = false
+        
+        isValidSignUp = false
     }
-    
 }
 
 extension String {
@@ -348,8 +339,7 @@ extension String {
     }
     
     func isValidateNickname() -> Bool {
-        let regex = #"^[0-9a-z가-힣][0-9a-z가-힣._]{0,18}[0-9a-z가-힣]$"#
+        let regex = #"(?i)^[0-9a-z가-힣][0-9a-z가-힣._]{0,18}[0-9a-z가-힣]$"#
         return NSPredicate(format: "SELF MATCHES %@", regex).evaluate(with: self)
     }
-    
 }

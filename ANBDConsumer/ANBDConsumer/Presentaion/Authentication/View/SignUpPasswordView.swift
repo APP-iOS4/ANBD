@@ -40,6 +40,7 @@ struct SignUpPasswordView: View {
             .focused($focus, equals: .passwordCheck)
             .submitLabel(.go)
             .onSubmit {
+                guard authenticationViewModel.isValidSignUpPassword else { return }
                 nextButtonAction()
             }
             

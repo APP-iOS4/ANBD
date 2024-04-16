@@ -33,6 +33,7 @@ struct SignUpEmailView: View {
             .autocorrectionDisabled(true)
             .submitLabel(.go)
             .onSubmit {
+                guard authenticationViewModel.isValidSignUpEmail else { return }
                 nextButtonAction()
             }
             

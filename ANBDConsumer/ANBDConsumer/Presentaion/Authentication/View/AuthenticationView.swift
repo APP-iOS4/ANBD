@@ -48,33 +48,36 @@ struct AuthenticationView: View {
                         .focused($focus, equals: .password)
                         .submitLabel(.go)
                         .onSubmit {
-                            // 로그인
-                            authenticationViewModel.submitSignUp()
+                            Task {
+                                try await authenticationViewModel.signIn()
+                                authenticationViewModel.checkAuthState()
+                            }
                         }
                         
-                        // 프로토타입을 위한 임시 주석
-                        /*
-                         if !authenticationViewModel.errorMessage.isEmpty {
-                         Text(authenticationViewModel.errorMessage)
-                         .frame(maxWidth: .infinity, alignment: .leading)
-                         .padding(.top, 8)
-                         .font(ANBDFont.Caption1)
-                         .foregroundStyle(.heartRed)
-                         }
-                         */
+                        if !authenticationViewModel.errorMessage.isEmpty {
+                            Text(authenticationViewModel.errorMessage)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.top, 8)
+                                .font(ANBDFont.Caption1)
+                                .foregroundStyle(.heartRed)
+                        }
                     }
                     .padding(.bottom, 30)
                     
                     VStack(spacing: 20) {
                         BlueSquareButton(title: "로그인",
                                          isDisabled: !authenticationViewModel.isValidLogin) {
-                            // 로그인
-                            authenticationViewModel.submitSignUp()
+                            Task {
+                                try await authenticationViewModel.signIn()
+                                authenticationViewModel.checkAuthState()
+                            }
                         }
                         
                         Button(action: {
                             // 구글 로그인
+                            #if DEBUG
                             print("구글 로그인 - 프로토타입")
+                            #endif
                         }, label: {
                             RoundedRectangle(cornerRadius: 14)
                                 .stroke(Color.gray200)
@@ -129,7 +132,7 @@ struct AuthenticationView: View {
                             Label("Next text field", systemImage: "chevron.down")
                         })
                         .disabled(!canFocusNextField())
-                
+                        
                         Spacer()
                         
                         Button(action: {
@@ -141,7 +144,8 @@ struct AuthenticationView: View {
                 }
                 
                 .onAppear {
-                    authenticationViewModel.clearAccountString()
+                    authenticationViewModel.clearSignUpDatas()
+                    authenticationViewModel.checkAuthState()
                 }
             }
         }

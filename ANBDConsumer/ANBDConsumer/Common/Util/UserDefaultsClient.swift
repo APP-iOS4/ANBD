@@ -23,22 +23,15 @@ final class UserDefaultsClient: ObservableObject {
         }
         
         set {
-            guard let encodedData = try? JSONEncoder().encode(newValue) 
+            guard let encodedData = try? JSONEncoder().encode(newValue)
             else { return }
             
             UserDefaults.standard.setValue(encodedData, forKey: Keys.userInfo.id)
         }
     }
     
-    @Published var authState: Bool = UserDefaults.standard.bool(forKey: Keys.authState.id) {
-        didSet {
-            UserDefaults.standard.set(authState, forKey: Keys.authState.id)
-        }
-    }
-    
     enum Keys: CaseIterable {
         case userInfo
-        case authState
         
         var id: String {
             "\(self)"

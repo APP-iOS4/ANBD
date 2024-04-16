@@ -31,7 +31,7 @@ struct ANBDTabView: View {
                                 }
                             
                         case .nanua, .baccua:
-                            ArticleListView(category: category, isFromHomeView: true)
+                            ArticleListView(category: category, isArticle: false, isFromHomeView: true)
                                 .onAppear {
                                     tradeViewModel.filteringTrades(category: category)
                                 }

@@ -21,7 +21,7 @@ protocol CommentDataSource {
 }
 
 @available(iOS 15, *)
-final class DefaultCommentDataSource: CommentDataSource {
+struct DefaultCommentDataSource: CommentDataSource {
     
     private let commentDB = Firestore.firestore().collection("Comment")
     
@@ -29,14 +29,6 @@ final class DefaultCommentDataSource: CommentDataSource {
         print("Comment DataSource init")
     }
     
-    deinit {
-        print("Comment DataSource deinit")
-    }
-    
-}
-
-@available(iOS 15, *)
-extension DefaultCommentDataSource {
     
     // MARK: Create
     /// CommentDB에 댓글 정보를 추가합니다.

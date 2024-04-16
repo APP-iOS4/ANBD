@@ -9,10 +9,10 @@ import Foundation
 
 @available(iOS 15, *)
 public struct Comment: Codable, Identifiable {
-    public var id: String
-    public var articleID: String
+    public let id: String
+    public let articleID: String
     
-    public var writerID: String
+    public let writerID: String
     public var writerNickname: String
     public var writerProfileImageURL: String
     

@@ -12,14 +12,14 @@ public protocol ArticleUsecase {
     func writeArticle(article: Article, imageDatas: [Data]) async throws
     func loadArticle(articleID: String) async throws -> Article
     func loadRecentArticle(category: ANBDCategory) async throws -> Article
-    func loadArticleList() async throws -> [Article]
-    func loadArticleList(writerID: String) async throws -> [Article]
-    func loadArticleList(category: ANBDCategory, by order: ArticleOrder) async throws -> [Article]
-    func searchArticle(keyword: String) async throws -> [Article]
-    func refreshAllArticleList() async throws -> [Article]
-    func refreshWriterIDArticleList(writerID: String) async throws -> [Article]
-    func refreshSortedArticleList(category: ANBDCategory, by order: ArticleOrder) async throws -> [Article]
-    func refreshSearchArticleList(keyword: String) async throws -> [Article]
+    func loadArticleList(limit: Int) async throws -> [Article]
+    func loadArticleList(writerID: String, limit: Int) async throws -> [Article]
+    func loadArticleList(category: ANBDCategory, by order: ArticleOrder, limit: Int) async throws -> [Article]
+    func searchArticle(keyword: String, limit: Int) async throws -> [Article]
+    func refreshAllArticleList(limit: Int) async throws -> [Article]
+    func refreshWriterIDArticleList(writerID: String, limit: Int) async throws -> [Article]
+    func refreshSortedArticleList(category: ANBDCategory, by order: ArticleOrder, limit: Int) async throws -> [Article]
+    func refreshSearchArticleList(keyword: String, limit: Int) async throws -> [Article]
     func updateArticle(article: Article, imageDatas: [Data]) async throws
     func likeArticle(articleID: String) async throws
     func deleteArticle(article: Article) async throws
@@ -63,69 +63,79 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     
     /// 모든 Article을 불러오는 메서드
     /// - Returns: Article 배열
-    public func loadArticleList() async throws -> [Article] {
-        try await articleRepository.readArticleList()
+    public func loadArticleList(limit: Int = 10) async throws -> [Article] {
+        try await articleRepository.readArticleList(limit: limit)
     }
     
     
     /// writerID가 일치하는 모든 Article을 불러오는 메서드
     /// - Parameters:
     ///   - writerID: 불러올 Article의 writerID
+    ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: writerID가 일치하는 Article 배열
-    public func loadArticleList(writerID: String) async throws -> [Article] {
-        try await articleRepository.readArticleList(writerID: writerID)
+    public func loadArticleList(writerID: String, limit: Int = 10) async throws -> [Article] {
+        try await articleRepository.readArticleList(writerID: writerID, limit: limit)
     }
     
     
     /// 정렬 방식에 따라 정렬된 모든 Article을 불러오는 메서드
     /// - Parameters:
-    ///   - filter: 불러올 Article의 정렬 방식
+    ///   - category: 불러올 Article의 카테고리 (0이면 아, 3이면 다)
+    ///   - order: 불러올 Article의 정렬 방식
+    ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: 정렬된 Article 배열
-    public func loadArticleList(category: ANBDCategory, by order: ArticleOrder) async throws -> [Article] {
-        try await articleRepository.readArticleList(category: category, by: order)
+    public func loadArticleList(category: ANBDCategory, by order: ArticleOrder, limit: Int = 10) async throws -> [Article] {
+        try await articleRepository.readArticleList(category: category, by: order, limit: limit)
     }
     
     
     /// keyword로 Article을 불러오는 메서드
     /// - Parameters:
     ///   - keyword: 검색할 keyword
+    ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: title, content가 keyword에 해당하는 Article 배열
-    public func searchArticle(keyword: String) async throws -> [Article] {
-        try await articleRepository.readArticleList(keyword: keyword)
+    public func searchArticle(keyword: String, limit: Int = 10) async throws -> [Article] {
+        try await articleRepository.readArticleList(keyword: keyword, limit: limit)
     }
     
     
-    /// 페이지네이션 Query를 초기화하고 최신 Article 목록 10개를 반환하는 메서드
+    /// 페이지네이션 Query를 초기화하고 최신 Article 목록을 반환하는 메서드
+    /// - Parameters:
+    ///  - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     ///  - Returns: Article 배열
-    public func refreshAllArticleList() async throws -> [Article] {
-        try await articleRepository.refreshAll()
+    public func refreshAllArticleList(limit: Int = 10) async throws -> [Article] {
+        try await articleRepository.refreshAll(limit: limit)
     }
     
     
-    /// 페이지네이션 Query를 초기화하고 작성자 ID가 일치하는 최신 Article 목록 10개를 불러오는 메서드
+    /// 페이지네이션 Query를 초기화하고 작성자 ID가 일치하는 최신 Article 목록을 불러오는 메서드
     /// - Parameters:
     ///   - writerID: 불러올 Article의 writerID
+    ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: writerID가 일치하는 Article 배열
-    public func refreshWriterIDArticleList(writerID: String) async throws -> [Article] {
-        try await articleRepository.refreshWriterID(writerID: writerID)
+    public func refreshWriterIDArticleList(writerID: String, limit: Int = 10) async throws -> [Article] {
+        try await articleRepository.refreshWriterID(writerID: writerID, limit: limit)
     }
     
     
-    /// 페이지네이션 Query를 초기화하고 정렬 방식에 따라 정렬된 Article 목록 10개를 불러오는 메서드
+    /// 페이지네이션 Query를 초기화하고 정렬 방식에 따라 정렬된 Article 목록을 불러오는 메서드
     /// - Parameters:
-    ///   - filter: 불러올 Article의 정렬 방식
+    ///   - category: 불러올 Article의 카테고리 (0이면 아, 3이면 다)
+    ///   - order: 불러올 Article의 정렬 방식
+    ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: 정렬된 Article 배열
-    public func refreshSortedArticleList(category: ANBDCategory, by order: ArticleOrder) async throws -> [Article] {
-        try await articleRepository.refreshOrder(category: category, by: order)
+    public func refreshSortedArticleList(category: ANBDCategory, by order: ArticleOrder, limit: Int = 10) async throws -> [Article] {
+        try await articleRepository.refreshOrder(category: category, by: order, limit: limit)
     }
     
     
-    /// 페이지네이션 Query를 초기화하고 키워드에 해당하는 최신 Article 목록 10개를 불러오는 메서드
+    /// 페이지네이션 Query를 초기화하고 키워드에 해당하는 최신 Article 목록을 불러오는 메서드
     /// - Parameters:
     ///   - keyword: 검색할 Article의 키워드
+    ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: title, content가 키워드에 해당하는 Article 배열
-    public func refreshSearchArticleList(keyword: String) async throws -> [Article] {
-        try await articleRepository.refreshSearch(keyword: keyword)
+    public func refreshSearchArticleList(keyword: String, limit: Int = 10) async throws -> [Article] {
+        try await articleRepository.refreshSearch(keyword: keyword, limit: limit)
     }
     
     

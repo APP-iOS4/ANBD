@@ -16,6 +16,9 @@ struct ChatDetailView: View {
     
     /// 채팅방 구분 변수
     var channel: Channel? = nil
+    @State var trade: Trade? = nil
+    @State private var tradeState: TradeState = .trading
+    @State private var isDeleted: Bool = false
     
     /// 보낼 메시지 관련 변수
     @State private var message: String = ""
@@ -28,12 +31,6 @@ struct ChatDetailView: View {
     @State private var detailImage: String = "DummyPuppy3"
     @State private var isGoingToReportView: Bool = false
     @State private var isShowingStateChangeCustomAlert: Bool = false
-    
-    
-    /// Product 관련 함수 (추후 삭제 ......)
-    //@State private var isTrading: Bool = true
-    @State private var tradeState: TradeState = .trading
-    @State private var isDeleted: Bool = false
     
     var body: some View {
         ZStack {
@@ -124,7 +121,26 @@ struct ChatDetailView: View {
             ReportView(reportViewType: .chat)
         }
         .onAppear {
-            
+            Task {
+                if let channel = channel {
+                    chatViewModel.addMessageListener(channelID: channel.id)
+                    trade = try await chatViewModel.getTrade(channelID: channel.id)
+                    
+                    /// Trade 상태 확인
+                    if trade != nil {
+                        tradeState = trade?.tradeState ?? TradeState.trading
+                    }
+                }
+                
+                /// 가져온 Trade 확인
+                if trade == nil {
+                    /// 삭제된 Trade
+                    isDeleted = true
+                }
+            }
+        }
+        .onDisappear {
+            chatViewModel.resetMessageData()
         }
     }
     
@@ -148,12 +164,12 @@ struct ChatDetailView: View {
             }
             
             VStack(alignment: .leading) {
-                Text(isDeleted ? "삭제된 게시물" : "나 헤드셋 님 매직 키보드 플리증용용")
+                Text(isDeleted ? "삭제된 게시물" : trade?.title ?? "Unknown")
                     .lineLimit(1)
                     .font(ANBDFont.SubTitle3)
                 
                 Spacer()
-                Text(isDeleted ? "글쓴이가 삭제한 게시물이에요. " : "헤드셋 ↔ 무선 키보드")
+                Text(tradeProductString)
                     .foregroundStyle(.gray400)
                     .font(ANBDFont.Caption3)
             }
@@ -163,6 +179,7 @@ struct ChatDetailView: View {
             
             if !isDeleted {
                 VStack(alignment: .leading) {
+                    // TODO: TradeStateChangeView 수정해야 함 : tradeState 매개변수가 아니라 trade 전체 넘겨주기 
                     TradeStateChangeView(tradeState: $tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert)
                     
                     Spacer()
@@ -226,6 +243,7 @@ struct ChatDetailView: View {
             /// 메시지 전송
             Button(action: {
                 if !message.isEmpty {
+                    sendMessage()
                     message = ""
                 }
             }, label: {
@@ -294,6 +312,39 @@ extension ChatDetailView {
                 Spacer()
             }
         }
+    }
+}
+
+// MARK: - 필요 함수 · 변수 모아두기
+extension ChatDetailView {
+    /// Trade 상품 String
+    private var tradeProductString: String {
+        if isDeleted {
+            return "글쓴이가 삭제한 게시물이에요."
+        } else {
+            if let trade = trade {
+                if trade.category == .nanua {
+                    return trade.myProduct
+                } else if trade.category == .baccua {
+                    return "\(trade.myProduct) ↔ \(trade.wantProduct ?? "제시")"
+                }
+            }
+            return ""
+        }
+    }
+    
+    /// 메시지 전송 함수
+    private func sendMessage() {
+        let newMessage = Message(userID: chatViewModel.userID, userNickname: chatViewModel.userNickname, content: message)
+        
+        Task {
+            /// 채널이 기존에 있을 시,
+            if let channel = channel {
+                try await chatViewModel.sendMessage(message: newMessage, channelID: channel.id)
+            }
+            
+        }
+        
     }
 }
 

@@ -25,6 +25,8 @@ final class ArticleViewModel: ObservableObject {
 
     @Published private(set) var filteredArticles: [Article] = []
 
+    let mockArticleData: [Article] = [
+    ]
     
     init() {
 

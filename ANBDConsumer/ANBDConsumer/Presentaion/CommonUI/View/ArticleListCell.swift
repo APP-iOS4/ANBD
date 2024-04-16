@@ -150,5 +150,5 @@ struct ArticleListCell: View {
 }
 
 #Preview {
-    ArticleListCell(value: .article(Article(writerID: "asd", writerNickname: "asd", category: .accua, title: "asd", content: "asd")))
+    ArticleListCell(value: .article(Article(writerID: "asd", writerNickname: "asd", category: .accua, title: "asd", content: "asd", thumbnailImagePath: "")))
 }

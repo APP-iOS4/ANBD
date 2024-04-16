@@ -20,8 +20,8 @@ final class HomeViewModel: ObservableObject {
     
     @Published var bannerItemList: [Banner] = []
     
-    @Published var accuaArticle: Article = .init(writerID: "", writerNickname: "", category: .accua, title: "",content: "", imagePaths: [])
-    @Published var dasiArticle: Article = .init(writerID: "", writerNickname: "", category: .accua, title: "",content: "", imagePaths: [])
+    @Published var accuaArticle: Article = .init(writerID: "", writerNickname: "", category: .accua, title: "",content: "", thumbnailImagePath: "", imagePaths: [])
+    @Published var dasiArticle: Article = .init(writerID: "", writerNickname: "", category: .accua, title: "",content: "", thumbnailImagePath: "", imagePaths: [])
     
     @Published var nanuaTrades: [Trade] = []
     @Published var baccuaTrades: [Trade] = []

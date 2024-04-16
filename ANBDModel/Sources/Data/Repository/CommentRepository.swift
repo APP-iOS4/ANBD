@@ -12,11 +12,11 @@ import FirebaseFirestore
 struct DefaultCommentRepository: CommentRepository {
     
     private let commentDataSource: CommentDataSource
-    private let articleDataSource: ArticleDataSource
+    private let articleDataSource: any ArticleDataSource
     
     init(
         commentDataSource: CommentDataSource = DefaultCommentDataSource(),
-        articleDataSource: ArticleDataSource = DefaultArticleDataSource()
+        articleDataSource: any ArticleDataSource = DefaultArticleDataSource()
     ) {
         self.commentDataSource = commentDataSource
         self.articleDataSource = articleDataSource
@@ -27,12 +27,12 @@ struct DefaultCommentRepository: CommentRepository {
     /// CommentDB에 댓글 정보를 추가합니다.
     func createComment(articleID: String, comment: Comment) async throws {
         do {
-            var articleInfo = try await articleDataSource.readArticle(articleID: articleID)
+            var articleInfo = try await articleDataSource.readItem(itemID: articleID)
             
             try await commentDataSource.createComment(comment: comment)
             articleInfo.commentCount += 1
             
-            try await articleDataSource.updateArticle(article: articleInfo)
+            try await articleDataSource.updateItem(item: articleInfo)
         } catch DBError.setDocumentError {
             throw CommentError.createCommentError(code: 4021, message: "Comment를 추가하는데 실패했습니다.")
         }
@@ -96,12 +96,12 @@ struct DefaultCommentRepository: CommentRepository {
     // MARK: Delete
     func deleteComment(articleID: String, commentID: String) async throws {
         do {
-            var articleInfo = try await articleDataSource.readArticle(articleID: articleID)
+            var articleInfo = try await articleDataSource.readItem(itemID: articleID)
             
             try await commentDataSource.deleteComment(commentID: commentID)
             articleInfo.commentCount -= 1
             
-            try await articleDataSource.updateArticle(article: articleInfo)
+            try await articleDataSource.updateItem(item: articleInfo)
         } catch DBError.deleteDocumentError {
             throw CommentError.deleteCommentError(code: 4024, message: "Comment를 삭제하는데 실패했습니다.")
         }

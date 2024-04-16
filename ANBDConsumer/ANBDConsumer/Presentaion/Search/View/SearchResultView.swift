@@ -19,15 +19,21 @@ struct SearchResultView: View {
     var body: some View {
         if #available(iOS 17.0, *) {
             searchResultView
-                .onChange(of: category) { 
-                    tradeViewModel.filteringTrades(category: category)
-                    articleViewModel.updateArticles(category: category)
+                .onChange(of: category) {
+                    if category == .accua || category == .dasi {
+                        articleViewModel.updateArticles(category: category)
+                    } else {
+                        tradeViewModel.filteringTrades(category: category)
+                    }
                 }
         } else {
             searchResultView
                 .onChange(of: category) { category in
-                    tradeViewModel.filteringTrades(category: category)
-                    articleViewModel.updateArticles(category: category)
+                    if category == .accua || category == .dasi {
+                        articleViewModel.updateArticles(category: category)
+                    } else {
+                        tradeViewModel.filteringTrades(category: category)
+                    }
                 }
         }
     }
@@ -36,16 +42,16 @@ struct SearchResultView: View {
         VStack {
             CategoryDividerView(category: $category, isFromSearchView: true)
                 .frame(height: 40)
-                .padding()
+                .padding(.horizontal)
             
             TabView(selection: $category) {
                 ArticleListView(category: .accua, searchText: searchText)
                     .tag(ANBDCategory.accua)
                 
-                TradeListView(category: .nanua, searchText: searchText)
+                ArticleListView(category: .nanua, isArticle: false, searchText: searchText)
                     .tag(ANBDCategory.nanua)
                 
-                TradeListView(category: .baccua, searchText: searchText)
+                ArticleListView(category: .baccua, isArticle: false, searchText: searchText)
                     .tag(ANBDCategory.baccua)
                 
                 ArticleListView(category: .dasi, searchText: searchText)
@@ -55,8 +61,11 @@ struct SearchResultView: View {
             .ignoresSafeArea(edges: .bottom)
         }
         .onAppear {
-            tradeViewModel.filteringTrades(category: category)
-            articleViewModel.updateArticles(category: category)
+            if category == .accua || category == .dasi {
+                articleViewModel.updateArticles(category: category)
+            } else {
+                tradeViewModel.filteringTrades(category: category)
+            }
         }
         .navigationTitle(searchText)
         .navigationBarTitleDisplayMode(.inline)

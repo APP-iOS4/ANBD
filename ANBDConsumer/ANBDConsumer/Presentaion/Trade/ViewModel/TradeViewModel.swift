@@ -5,11 +5,12 @@
 //  Created by 최주리 on 4/3/24.
 //
 
-import Foundation
 import ANBDModel
+import SwiftUI
 
 @MainActor
 final class TradeViewModel: ObservableObject {
+    @Published var tradePath: NavigationPath = NavigationPath()
     
     /// 필터링 옵션 : Location · ItemCateogry
     @Published var selectedLocations: Set<Location> = []

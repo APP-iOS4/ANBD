@@ -10,10 +10,10 @@ import Foundation
 @available(iOS 15, *)
 public struct Trade: Codable, Identifiable, Hashable {
     /// 거래글의 고유 식별값
-    public private(set) var id: String
+    public let id: String
     
     /// 작성자의 ID
-    public var writerID: String
+    public let writerID: String
     
     /// 작성자의 닉네임
     public var writerNickname: String

@@ -13,7 +13,7 @@ struct SignUpEmailView: View {
     
     @FocusState private var focus: FocusableField?
     
-    @State private var navigate = false
+    @State private var isNavigate = false
     
     var body: some View {
         VStack {
@@ -77,7 +77,7 @@ struct SignUpEmailView: View {
             }
         }
         
-        .navigationDestination(isPresented: $navigate) {
+        .navigationDestination(isPresented: $isNavigate) {
             SignUpPasswordView()
         }
         
@@ -87,7 +87,7 @@ struct SignUpEmailView: View {
     }
     
     private func nextButtonAction() {
-        navigate = true
+        isNavigate = true
     }
 }
 

@@ -13,8 +13,7 @@ struct SignUpUserInfoView: View {
     
     @FocusState private var focus: FocusableField?
     
-    @State private var navigate = false
-    // @State private var selectedLocation: Location = .seoul
+    @State private var isNavigate = false
     @State private var isShowingMenuList: Bool = false
     
     var body: some View {
@@ -74,7 +73,7 @@ struct SignUpUserInfoView: View {
             }
         }
         
-        .navigationDestination(isPresented: $navigate) {
+        .navigationDestination(isPresented: $isNavigate) {
             SignUpPolicyAgreeView()
         }
         
@@ -84,7 +83,7 @@ struct SignUpUserInfoView: View {
     }
     
     private func nextButtonAction() {
-        navigate = true
+        isNavigate = true
     }
 }
 

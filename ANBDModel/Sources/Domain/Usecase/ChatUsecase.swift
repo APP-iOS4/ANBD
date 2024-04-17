@@ -11,7 +11,7 @@ import UIKit
 
 @available(iOS 15, *)
 public protocol ChatUsecaseProtocol {
-    func createChannel(channel : Channel) async throws -> String
+    func createChannel(channel : Channel) async throws -> Channel
     func loadChannelList(userID: String, completion : @escaping (_ channels: [Channel]) -> Void)
     func loadMessageList(channelID: String, userID: String ) async throws -> [Message]
     func getChannelID(tradeID : String , userID: String) async throws -> String?
@@ -45,7 +45,7 @@ public struct ChatUsecase : ChatUsecaseProtocol {
     /// - Parameters:
     ///   - channel: 새로 추가할려는 채널
     /// - Returns: 새로 생성된 채널ID
-    public func createChannel(channel: Channel) async throws -> String{
+    public func createChannel(channel: Channel) async throws -> Channel{
         try await chatRepository.createChannel(channel: channel)
     }
     

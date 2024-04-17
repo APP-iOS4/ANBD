@@ -9,7 +9,7 @@ import Foundation
 
 @available(iOS 15, *)
 public protocol ChatRepository {
-    func createChannel(channel : Channel) async throws -> String
+    func createChannel(channel : Channel) async throws -> Channel
     func readChannelList(userID: String, completion : @escaping (_ channels: [Channel]) -> Void)
     func readChannelID(tradeID : String , userID: String) async throws -> String?
     func readTradeInChannel(channelID: String)  async throws -> Trade?

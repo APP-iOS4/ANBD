@@ -86,9 +86,9 @@ struct ArticleDetailView: View {
                             HStack {
                                 Button {
                                     Task {
-                                        await articleViewModel.toggleLikeArticle(articleID: article.id)
+//                                        await articleViewModel.toggleLikeArticle(articleID: article.id)
                                         isLiked.toggle()
-                                        await articleViewModel.updateLikeCount(articleID: article.id, increment: isLiked)
+//                                        await articleViewModel.updateLikeCount(articleID: article.id, increment: isLiked)
                                     }
                                 } label: {
                                     Image(systemName: isLiked ? "hand.thumbsup.fill" : "hand.thumbsup")

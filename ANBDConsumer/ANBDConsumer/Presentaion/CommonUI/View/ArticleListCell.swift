@@ -10,6 +10,7 @@ import ANBDModel
 
 struct ArticleListCell: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
+    @EnvironmentObject private var tradeViewModel: TradeViewModel
     
     enum ListCellValue {
         case article(Article)
@@ -24,21 +25,21 @@ struct ArticleListCell: View {
         switch value {
         case .article(let article):
             HStack(alignment: .top) {
-                if let thumbnailImageData,
-                   let uiImage = UIImage(data: thumbnailImageData) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
+                if let thumbnailImageData {
+                    if let uiImage = UIImage(data: thumbnailImageData) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 100, height: 100)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .padding(.trailing, 10)
+                    }
+                } else {
+                    ProgressView()
                         .frame(width: 100, height: 100)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                         .padding(.trailing, 10)
                 }
-                //            Image("\(article.imagePaths.first ?? "DummyPuppy1")")
-                //                .resizable()
-                //                .aspectRatio(contentMode: .fill)
-                //                .frame(width: 100, height: 100)
-                //                .clipShape(RoundedRectangle(cornerRadius: 10))
-                //                .padding(.trailing, 10)
                 
                 VStack(alignment: .leading, spacing: 5) {
                     Text("\(article.title)")
@@ -100,12 +101,22 @@ struct ArticleListCell: View {
             
         case .trade(let trade):
             HStack(alignment: .top) {
-                Image("\(trade.imagePaths.first ?? "DummyPuppy1")")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 100, height: 100)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .padding(.trailing, 10)
+
+                if let thumbnailImageData {
+                    if let uiImage = UIImage(data: thumbnailImageData) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 100, height: 100)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .padding(.trailing, 10)
+                    }
+                } else {
+                    ProgressView()
+                        .frame(width: 100, height: 100)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .padding(.trailing, 10)
+                }
                 
                 VStack(alignment: .leading, spacing: 5) {
                     Text("\(trade.title)")
@@ -148,7 +159,22 @@ struct ArticleListCell: View {
                 }
             }
             .frame(height: 100)
+            .onAppear {
+                Task {
+                    do {
+                        let image = try await StorageManager.shared.downloadImage(
+                            path: .trade,
+                            containerID: "\(trade.id)/thumbnail",
+                            imagePath: trade.thumbnailImagePath
+                        )
+                        thumbnailImageData = image
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                }
+            }
         }
+        
     }
 }
 

@@ -103,10 +103,9 @@ public struct ChatUsecase : ChatUsecaseProtocol {
     /// - Parameters:
     ///   - channel: 현재 채널
     ///   - userID: 내 ID
-    /// - Returns: 상대방  유저 정보 
+    /// - Returns: 상대방 User 정보
     public func getOtherUser(channel: Channel, userID: String) async throws -> User {
         let otherUserID = getOtherUserID(users: channel.users, userID: userID)
-        
         return try await userRepository.readUserInfo(userID: otherUserID)
     }
     

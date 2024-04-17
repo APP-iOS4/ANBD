@@ -108,6 +108,9 @@ struct ANBDTabView: View {
             /// Chat
             NavigationStack {
                 ChatView()
+                    .navigationDestination(for: Channel.self) { channel in
+                        ChatDetailView(channel: channel)
+                    }
             }
             .tabItem {
                 Label("채팅", systemImage: "bubble.right")

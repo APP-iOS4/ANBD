@@ -16,6 +16,7 @@ enum AgreeType {
     case agreeMarketing
 }
 
+@MainActor
 final class AuthenticationViewModel: ObservableObject {
     private let authUsecase: AuthUsecase = DefaultAuthUsecase()
     
@@ -265,6 +266,16 @@ extension AuthenticationViewModel {
         }
     }
     
+    func signOut(completion: @escaping () -> Void) async throws {
+        do {
+            try await authUsecase.signOut()
+            
+            completion()
+        } catch {
+            print("\(error.localizedDescription)")
+        }
+    }
+    
     func signUp() async throws {
         do {
             UserDefaultsClient.shared.userInfo = try await authUsecase.signUp(email: signUpEmailString,
@@ -275,6 +286,32 @@ extension AuthenticationViewModel {
                                                                               isAgreeService: isAgreeService,
                                                                               isAgreeCollectInfo: isAgreeCollectInfo,
                                                                               isAgreeMarketing: isAgreeMarketing)
+        } catch {
+            print("\(error.localizedDescription)")
+        }
+    }
+    
+    func checkDuplicatedEmail() async -> Bool {
+        let isDuplicate = await authUsecase.checkDuplicatedEmail(email: signUpEmailString)
+        
+        return isDuplicate
+    }
+    
+    func checkDuplicatedNickname() async -> Bool {
+        let isDuplicate = await authUsecase.checkDuplicatedNickname(nickname: signUpNicknameString)
+        
+        return isDuplicate
+    }
+    
+    func withdrawal(completion: @escaping () -> Void) async throws {
+        do {
+            try await signOut(completion: { })
+            
+            if let user = UserDefaultsClient.shared.userInfo {
+                try await authUsecase.withdrawal(userID: user.id)
+            }
+            
+            completion()
         } catch {
             print("\(error.localizedDescription)")
         }

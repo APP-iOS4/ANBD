@@ -158,7 +158,7 @@ struct TradeDetailView: View {
             TradeCreateView(isShowingCreate: $isShowingCreat, isNewProduct: false, trade: trade)
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
-            ImageDetailView(imageString: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
+//            ImageDetailView(imageString: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
         }
         .navigationDestination(isPresented: $isGoingToReportView) {
             ReportView(reportViewType: .trade)

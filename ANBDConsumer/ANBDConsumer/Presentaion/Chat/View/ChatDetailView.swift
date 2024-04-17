@@ -15,7 +15,7 @@ struct ChatDetailView: View {
     @Environment(\.colorScheme) private var colorScheme: ColorScheme
     
     /// 채팅방 구분 변수
-    var channel: Channel? = nil
+    @State var channel: Channel? = nil
     @State var trade: Trade? = nil
     @State private var tradeState: TradeState = .trading
     @State private var isDeleted: Bool = false
@@ -29,7 +29,7 @@ struct ChatDetailView: View {
     @State private var isShowingConfirmSheet: Bool = false
     @State private var isShowingCustomAlertView: Bool = false
     @State private var isShowingImageDetailView: Bool = false
-    @State private var detailImage: String = "DummyPuppy3"
+    @State private var detailImage: Image = Image("DummyPuppy3")
     @State private var isGoingToReportView: Bool = false
     @State private var isShowingStateChangeCustomAlert: Bool = false
     
@@ -46,7 +46,7 @@ struct ChatDetailView: View {
                 ScrollView {
                     LazyVStack {
                         ForEach(chatViewModel.messages.reversed()) { message in
-                            MessageCellStruct(message: message)
+                            MessageCellStruct(message: message, isShowingImageDetailView: $isShowingImageDetailView, detailImage: $detailImage)
                                 .padding(.vertical, 1)
                                 .padding(.horizontal, 20)
 //                            MessageCell(message: message)
@@ -134,13 +134,18 @@ struct ChatDetailView: View {
             }
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
-            ImageDetailView(imageString: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
+            ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
         }
         .navigationDestination(isPresented: $isGoingToReportView) {
             ReportView(reportViewType: .chat)
         }
         .onAppear {
             Task {
+                /// 채팅방 불러오기
+                if channel == nil, let trade {
+                    channel = try await chatViewModel.getChannel(tradeID: trade.id)
+                }
+                
                 if let channel = channel {
                     chatViewModel.addMessageListener(channelID: channel.id)
                     trade = try await chatViewModel.getTrade(channelID: channel.id)
@@ -292,6 +297,8 @@ extension ChatDetailView {
         var isRead: Bool?
         @State var imageData: Data?
         @Environment(\.colorScheme) private var colorScheme: ColorScheme
+        @Binding var isShowingImageDetailView: Bool
+        @Binding var detailImage: Image
         
         var body: some View {
             HStack(alignment: .bottom) {
@@ -322,11 +329,16 @@ extension ChatDetailView {
                 // 이미지
                 if let imageData {
                     if let uiImage = UIImage(data: imageData) {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 150)
-                            .clipShape(RoundedRectangle(cornerRadius: 15))
+                        Button(action: {
+                            detailImage = Image(uiImage: uiImage)
+                            isShowingImageDetailView.toggle()
+                        }, label: {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 150)
+                                .clipShape(RoundedRectangle(cornerRadius: 15))
+                        })
                     }
                 }
                 
@@ -435,11 +447,28 @@ extension ChatDetailView {
         let newMessage = Message(userID: chatViewModel.userID, userNickname: chatViewModel.userNickname, content: message)
         
         Task {
-            /// 채널이 기존에 있을 시,
-            if let channel = channel {
-                try await chatViewModel.sendMessage(message: newMessage, channelID: channel.id)
+            /// 채널이 없을 때
+            if channel == nil, let trade {
+                let newChannel = Channel(participants: [trade.writerID, chatViewModel.userID],
+                                         participantNicknames: [trade.writerNickname, chatViewModel.userNickname],
+                                         lastMessage: "",
+                                         lastSendDate: .now,
+                                         lastSendId: chatViewModel.userID,
+                                         unreadCount: 0,
+                                         tradeId: trade.id)
+                
+                channel = try await chatViewModel.makeChannel(channel: newChannel)
+                
+                if let channel {
+                    chatViewModel.addMessageListener(channelID: channel.id)
+                }
             }
             
+            /// 채널 생성 후
+            if let channel = channel {
+                print(channel.id)
+                try await chatViewModel.sendMessage(message: newMessage, channelID: channel.id)
+            }
         }
         
     }
@@ -453,10 +482,24 @@ extension ChatDetailView {
             
             let newMessage = Message(userID: chatViewModel.userID, userNickname: chatViewModel.userNickname)
             if let imageData = selectedPhoto {
-                if let trade = trade, channel == nil {
-                    /// 채널 생성
+                /// 채널이 없을 때
+                if channel == nil, let trade {
+                    let newChannel = Channel(participants: [trade.writerID, chatViewModel.userID],
+                                             participantNicknames: [trade.writerNickname, chatViewModel.userNickname],
+                                             lastMessage: "",
+                                             lastSendDate: .now,
+                                             lastSendId: chatViewModel.userID,
+                                             unreadCount: 0,
+                                             tradeId: trade.id)
+                    
+                    channel = try await chatViewModel.makeChannel(channel: newChannel)
+                    
+                    if let channel {
+                        chatViewModel.addMessageListener(channelID: channel.id)
+                    }
                 }
                 
+                /// 채널 있
                 if let channel = channel {
                     try await chatViewModel.sendImageMessage(message: newMessage, imageData: imageData, channelID: channel.id)
                 }

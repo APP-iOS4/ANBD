@@ -49,12 +49,22 @@ final class ChatViewModel: ObservableObject {
     }
     
     /// 채널 생성 (처음 채팅을 남길 때) : ChannelID 반환
-    func makeChannel(channel: Channel) async throws -> String {
+    func makeChannel(channel: Channel) async throws -> Channel {
         do {
             return try await chatUsecase.createChannel(channel: channel)
         } catch {
             print("Error: \(error)")
-            return ""
+            return Channel(participants: [], participantNicknames: [], lastMessage: "", lastSendDate: .now, lastSendId: "", unreadCount: 0, tradeId: "")
+        }
+    }
+    
+    /// 채널 가져오기
+    func getChannel(tradeID: String) async throws -> Channel? {
+        do {
+            return try await chatUsecase.getChannel(tradeID: tradeID, userID: userID)
+        } catch {
+            print("getChannel Error: \(error)")
+            return nil
         }
     }
     

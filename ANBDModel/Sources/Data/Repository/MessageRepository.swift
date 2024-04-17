@@ -92,6 +92,7 @@ final class DefaultMessageRepository: MessageRepository {
                         }
                         completion(mesaage)
                     }
+//                    if (diff.type == .modified) {print("modified:\(diff.document.data())")}
 //                    if (diff.type == .removed) {print("removed:\(diff.document.data())")}
                 }
             }

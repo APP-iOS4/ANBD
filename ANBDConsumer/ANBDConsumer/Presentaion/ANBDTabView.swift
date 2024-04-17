@@ -27,7 +27,9 @@ struct ANBDTabView: View {
                         case .accua, .dasi:
                             ArticleListView(category: category, isFromHomeView: true)
                                 .onAppear {
-                                    articleViewModel.updateArticles(category: category)
+                                    Task {
+                                        await articleViewModel.filteringArticles(category: category)
+                                    }
                                 }
                             
                         case .nanua, .baccua:

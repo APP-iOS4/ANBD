@@ -9,6 +9,7 @@ import SwiftUI
 import ANBDModel
 
 struct ArticleDetailView: View {
+    @EnvironmentObject private var articleViewModel: ArticleViewModel
     
     var article: Article
     
@@ -77,15 +78,18 @@ struct ArticleDetailView: View {
                                 .font(ANBDFont.body1)
                                 .padding(.bottom, 10)
                             
-                            Image("DummyImage1")
+                            Image("\(article.imagePaths)")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .padding(.bottom, 10)
                             
                             HStack {
                                 Button {
-                                    isLiked.toggle()
-                                    // 좋아요 기능 로직 추가 필요
+                                    Task {
+                                        await articleViewModel.toggleLikeArticle(articleID: article.id)
+                                        isLiked.toggle()
+                                        await articleViewModel.updateLikeCount(articleID: article.id, increment: isLiked)
+                                    }
                                 } label: {
                                     Image(systemName: isLiked ? "hand.thumbsup.fill" : "hand.thumbsup")
                                         .resizable()
@@ -211,7 +215,6 @@ struct ArticleDetailView: View {
                 }
                 .zIndex(2)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                
             }
             
             VStack {
@@ -242,7 +245,6 @@ struct ArticleDetailView: View {
                 .toolbar(.hidden, for: .tabBar)
                 .background(Color.white)
             }
-            
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -266,6 +268,9 @@ struct ArticleDetailView: View {
                 }
                 
                 Button(role: .destructive) {
+                    Task {
+                        await articleViewModel.deleteArticle(article: article)
+                    }
                     isShowingCustomAlertArticle.toggle()
                 } label: {
                     Text("삭제하기")

@@ -37,12 +37,14 @@ struct SignUpCompleteView: View {
             Spacer()
             
             BlueSquareButton(title: "시작하기") {
-                authenticationViewModel.submitSignUp()
+                authenticationViewModel.checkAuthState()
             }
             .opacity(showExplainAnimation)
         }
         .padding(.horizontal, 20)
+        
         .toolbar(.hidden, for: .navigationBar)
+        
         .onAppear {
             if #available(iOS 17.0, *) {
                 withAnimation(.easeOut(duration: 1)) {

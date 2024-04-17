@@ -25,10 +25,10 @@ struct ArticleView: View {
             listView
                 .onChange(of: category) {
                     if isArticle {
-                        Task {
-                            await articleViewModel.filteringArticles(category: category)
-                        }
-                        
+//                        Task {
+//                            await articleViewModel.filteringArticles(category: category)
+//                        }
+                        articleViewModel.filteringArticles(category: category)
                     } else {
                         tradeViewModel.filteringTrades(category: category)
                     }
@@ -37,9 +37,11 @@ struct ArticleView: View {
             listView
                 .onChange(of: category, perform: { _ in
                     if isArticle {
-                        Task {
-                            await articleViewModel.filteringArticles(category: category)
-                        }
+//                        Task {
+//                            await articleViewModel.filteringArticles(category: category)
+//                        }
+                        articleViewModel.filteringArticles(category: category)
+                        
                     } else {
                         tradeViewModel.filteringTrades(category: category)
                     }
@@ -85,16 +87,16 @@ struct ArticleView: View {
                 isFirstAppear = false
                 if category == .accua || category == .dasi {
                     isArticle = true
-                } else {
-                    isArticle = false
-                }
-                
-                if isArticle {
                     Task {
-                        await articleViewModel.filteringArticles(category: category)
+                        await articleViewModel.loadAllArticles()
+                        articleViewModel.filteringArticles(category: category)
                     }
                 } else {
-                    tradeViewModel.filteringTrades(category: category)
+                    isArticle = false
+                    Task {
+                        await tradeViewModel.loadAllTrades()
+                        tradeViewModel.filteringTrades(category: category)
+                    }
                 }
             }
         }
@@ -117,7 +119,11 @@ struct ArticleView: View {
         .fullScreenCover(isPresented: $isShowingArticleCreateView, content: {
             ArticleCreateView(isShowingCreateView: $isShowingArticleCreateView, category: category, isNewArticle: true)
         })
-        .fullScreenCover(isPresented: $isShowingTradeCreateView, content: {
+        .fullScreenCover(isPresented: $isShowingTradeCreateView, onDismiss: {
+            Task {
+                tradeViewModel.filteringTrades(category: category)
+            }
+        }, content: {
             TradeCreateView(isShowingCreate: $isShowingTradeCreateView, category: category, isNewProduct: true)
         })
     }

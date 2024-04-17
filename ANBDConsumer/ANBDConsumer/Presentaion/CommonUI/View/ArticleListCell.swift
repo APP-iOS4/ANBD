@@ -9,36 +9,36 @@ import SwiftUI
 import ANBDModel
 
 struct ArticleListCell: View {
-
-    // enum 부터 protocol까지 따로 빼고싶은데 어떻게 빼야할지 모르겠어서 일단 ListCell에 둠,,,,
+    @EnvironmentObject private var articleViewModel: ArticleViewModel
+    
     enum ListCellValue {
         case article(Article)
         case trade(Trade)
     }
-
-    protocol ListableItem {
-        var title: String { get }
-        var writerNickname: String { get }
-        var createdAt: String { get }
-        var imagePath: String { get }
-        var likeCount: Int? { get }
-        var commentCount: Int? { get }
-    }
-    
+    @State private var thumbnailImageData: Data?
     @State private var isLiked: Bool = false
-    	
+    
     var value: ListCellValue
-
+    
     var body: some View {
         switch value {
         case .article(let article):
             HStack(alignment: .top) {
-                Image("\(article.imagePaths.first ?? "DummyPuppy1")")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 100, height: 100)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .padding(.trailing, 10)
+                if let thumbnailImageData,
+                   let uiImage = UIImage(data: thumbnailImageData) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 100, height: 100)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .padding(.trailing, 10)
+                }
+                //            Image("\(article.imagePaths.first ?? "DummyPuppy1")")
+                //                .resizable()
+                //                .aspectRatio(contentMode: .fill)
+                //                .frame(width: 100, height: 100)
+                //                .clipShape(RoundedRectangle(cornerRadius: 10))
+                //                .padding(.trailing, 10)
                 
                 VStack(alignment: .leading, spacing: 5) {
                     Text("\(article.title)")
@@ -83,6 +83,20 @@ struct ArticleListCell: View {
                 }
             }
             .frame(height: 100)
+            .onAppear {
+                Task {
+                    do {
+                        let image = try await StorageManager.shared.downloadImage(
+                            path: .article,
+                            containerID: "\(article.id)/thumbnail",
+                            imagePath: article.thumbnailImagePath
+                        )
+                        thumbnailImageData = image
+                    } catch {
+                        
+                    }
+                }
+            }
             
         case .trade(let trade):
             HStack(alignment: .top) {

@@ -13,7 +13,6 @@ struct TradeDetailView: View {
     @State var trade: Trade
     @State private var isGoingToReportView: Bool = false
     @State private var isShowingCreat: Bool = false
-    @State private var isGoingToChatView: Bool = false
     @State private var isGoingToProfileView: Bool = false
     @State private var isShowingConfirm: Bool = false
     @State private var isShowingImageDetailView: Bool = false
@@ -61,17 +60,14 @@ struct TradeDetailView: View {
                         
                         //작성자 이미지, 닉네임, 작성시간
                         HStack {
-                            Button(action: {
-                                //프로필탭으로 이동
-                                isGoingToProfileView.toggle()
-                            }, label: {
-                                //작성자의 프로필
+                            NavigationLink(value: "tradeToUser") {
                                 Image(.dummyImage1)
                                     .resizable()
                                     .frame(width: 40, height: 40)
                                     .scaledToFill()
                                     .clipShape(Circle())
-                            })
+                            }
+        
                             VStack(alignment: .leading) {
                                 Text("\(trade.writerNickname)")
                                     .font(ANBDFont.SubTitle1)
@@ -163,12 +159,6 @@ struct TradeDetailView: View {
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
             ImageDetailView(imageString: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
         }
-        .navigationDestination(isPresented: $isGoingToReportView) {
-            //ReportView(reportViewType: .trade)
-        }
-        .navigationDestination(isPresented: $isGoingToProfileView) {
-            //            UserPageView(isSignedInUser: false)
-        }
         .navigationTitle("나눔 · 거래")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarRole(.editor)
@@ -186,7 +176,7 @@ struct TradeDetailView: View {
                     }
                 } else {
                     Button("신고하기", role: .destructive) {
-                        isGoingToReportView.toggle()
+                        tradeViewModel.tradePath.append("tradeToReport")
                     }
                 }
             }
@@ -240,15 +230,19 @@ extension TradeDetailView {
             
             Spacer()
             
-            if let user = UserDefaultsClient.shared.userInfo { }
-            else {
-                BlueSquareButton(height: 45, title: "채팅하기") {
-                    isGoingToChatView.toggle()
-                }
-                .frame(width: 100)
-                .padding()
-                .navigationDestination(isPresented: $isGoingToChatView) {
-                    ChatDetailView()
+            if let user = UserDefaultsClient.shared.userInfo { 
+                if user.id != trade.writerID {
+                    NavigationLink(value: "tradeToChat") {
+                        RoundedRectangle(cornerRadius: 14)
+                            .foregroundStyle(.accent)
+                            .overlay {
+                                Text("채팅하기")
+                                    .font(ANBDFont.pretendardMedium(16))
+                                    .foregroundStyle(.white)
+                            }
+                            .frame(width: 100, height: 45)
+                            .padding()
+                    }
                 }
             }
         }

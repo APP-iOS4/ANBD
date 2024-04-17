@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ImageDetailView: View {
-    @Binding var imageString: String
+    @Binding var detailImage: Image
     @Binding var isShowingImageDetailView: Bool
     
     var body: some View {
@@ -26,21 +26,18 @@ struct ImageDetailView: View {
             }
             Spacer()
             
-            Image(imageString)
+            detailImage
                 .resizable()
                 .scaledToFit()
             
             Spacer()
         }
         .background(.black.opacity(0.95))
-        .onAppear {
-            print("여긴 ImageDetailView : \(imageString)")
-        }
     }
 }
 
 #Preview {
     NavigationStack {
-        ImageDetailView(imageString: .constant("DummyPuppy1"), isShowingImageDetailView: .constant(true))
+        ImageDetailView(detailImage: .constant(Image("DummyPuppy1")), isShowingImageDetailView: .constant(true))
     }
 }

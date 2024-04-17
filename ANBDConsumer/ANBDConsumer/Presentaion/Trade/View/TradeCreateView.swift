@@ -353,10 +353,19 @@ extension TradeCreateView {
                     
                     //작성완료 버튼
                     BlueSquareButton(title: isNewProduct ? "작성 완료" : "수정 완료", isDisabled: isFinished) {
-                        if !isNewProduct {
-                            
+                        if isNewProduct {
+                            Task {
+                                await tradeViewModel.createTrade(category: category, itemCategory: tradeViewModel.selectedItemCategory, location: tradeViewModel.selectedLocation, title: title, content: content, myProduct: myProduct, wantProduct: wantProduct, images: selectedPhotosData)
+                                
+                                await tradeViewModel.reloadAllTrades()
+                            }
                         } else {
-                            
+                            if let trade = trade {
+                                Task {
+//                                    await tradeViewModel.updateTrade(trade: trade, images: selectedPhotosData)
+//                                    await tradeViewModel.reloadAllTrades()
+                                }
+                            }
                         }
                         self.isShowingCreate.toggle()
                     }

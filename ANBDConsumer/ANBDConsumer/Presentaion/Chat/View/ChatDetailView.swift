@@ -10,79 +10,83 @@ import PhotosUI
 import ANBDModel
 
 struct ChatDetailView: View {
-    /// 사용자 관련 변수 (추후 UserViewModel 연결 후 삭제)
-    var myUserID: String = "likelion123"
-    var userNickname: String = "죠니"
+    @EnvironmentObject private var chatViewModel: ChatViewModel
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme: ColorScheme
     
-    /// 메시지 관련 변수 (추후 ChatViewModel 연결 후 삭제)
+    /// 채팅방 구분 변수
+    @State var channel: Channel? = nil
+    @State var trade: Trade? = nil
+    @State private var tradeState: TradeState = .trading
+    @State private var isDeleted: Bool = false
+    
+    /// 보낼 메시지 관련 변수
     @State private var message: String = ""
-    @State private var selectedImage: [PhotosPickerItem] = []
-    @State private var messages: [Message] = [
-        Message(userID: "likelion123", userNickname: "줄이", createdAt: Calendar.current.date(byAdding: .day, value: -7, to: .now) ?? .now, content: "7일전메시지내가보냄"),
-        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -7, to: .now) ?? .now, content: "7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄7일전메시지친구가가가가가가가가보냄"),
-        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -6, to: .now) ?? .now, content: "짜자자잔6일전메시지내가안보냄"),
-        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -6, to: .now) ?? .now, content: "짜자자잔"),
-        Message(userID: "likelion123", userNickname: "줄이", createdAt: Calendar.current.date(byAdding: .day, value: -6, to: .now) ?? .now, content: "짜자자잔이거는 6일전 내가보냄"),
-        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -5, to: .now) ?? .now, content: "5일전 내가 안보냄"),
-        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -3, to: .now) ?? .now, content: "3일전 내가 안보냄내가내가내가 안보냈어"),
-        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: Calendar.current.date(byAdding: .day, value: -3, to: .now) ?? .now, content: "내가내낙나내나나는 아니ㅑ야"),
-        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: .now, content: "오늘 나 아님"),
-        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: .now, content: "오늘 나 아님222"),
-        Message(userID: "ltsnotme", userNickname: "죠니", createdAt: .now, image: "DummyImage1"),
-        Message(userID: "likelion123", userNickname: "줄이", createdAt: .now, content: "오늘 내가 보냄"),
-        Message(userID: "likelion123", userNickname: "줄이", createdAt: .now, image: "DummyImage1"),]
-    
+    @State private var selectedImage: PhotosPickerItem?
+    @State private var selectedPhoto: Data?
     
     /// Sheet 관련 변수
     @State private var isShowingConfirmSheet: Bool = false
     @State private var isShowingCustomAlertView: Bool = false
     @State private var isShowingImageDetailView: Bool = false
-    @State private var detailImage: String = "DummyPuppy3"
+    @State private var detailImage: Image = Image("DummyPuppy3")
     @State private var isGoingToReportView: Bool = false
     @State private var isShowingStateChangeCustomAlert: Bool = false
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.colorScheme) private var colorScheme: ColorScheme
-    
-    /// Product 관련 함수 (추후 삭제 ......)
-    //@State private var isTrading: Bool = true
-    @State private var tradeState: TradeState = .trading
-    @State private var isDeleted: Bool = false
     
     var body: some View {
         ZStack {
             VStack {
-                messageHeaderView
+                MessageHeaderView(trade: trade, tradeState: $tradeState, isShowingStateChangeCustomAlert: $isShowingStateChangeCustomAlert)
                     .padding(.vertical, 5)
                     .padding(.horizontal, 15)
                 
+//                messageHeaderView
+//                    .padding(.vertical, 5)
+//                    .padding(.horizontal, 15)
+                
                 Divider()
                 
-                ScrollViewReader { proxy in
-                    ScrollView {
-                        ForEach(0..<messages.count, id: \.self) { i in
-                            /// 날짜 구분선
-                            if i == 0 || messages[i].dateStringWithYear != messages[i-1].dateStringWithYear {
-                                MessageDateDividerView(dateString: messages[i].dateStringWithYear)
-                                    .padding()
-                                    .padding(.top, i == 0 ? 5 : 25)
-                                    .padding(.bottom, 25)
-                            }
-                            
-                            /// 이미지 · 텍스트
-                            MessageCell(message: messages[i])
+                /// message 내역
+                ScrollView {
+                    LazyVStack {
+                        ForEach(chatViewModel.messages.reversed()) { message in
+                            MessageCellStruct(message: message, isShowingImageDetailView: $isShowingImageDetailView, detailImage: $detailImage)
                                 .padding(.vertical, 1)
                                 .padding(.horizontal, 20)
                         }
-                        Text("")
-                            .id("BottomID")
-                    }
-                    .onAppear {
-                        proxy.scrollTo("BottomID")
+                        .rotationEffect(Angle(degrees: 180))
+                        .scaleEffect(x: -1.0, y: 1.0, anchor: .center)
+                        
+                        Color.clear
+                            .onAppear {
+                                Task {
+                                    if let channel = channel {
+                                        try await chatViewModel.addListener(channelID: channel.id)
+                                    }
+                                }
+                            }
                     }
                 }
+                .rotationEffect(Angle(degrees: 180))
+                .scaleEffect(x: -1.0, y: 1.0, anchor: .center)
                 
-                messageSendView
-                    .padding()
+                if #available(iOS 17.0, *) {
+                    messageSendView
+                        .padding()
+                        .onChange(of: selectedImage) {
+                            if let image = selectedImage {
+                                sendImageMessage(image: image)
+                            }
+                        }
+                } else {
+                    messageSendView
+                        .padding()
+                        .onChange(of: selectedImage) { image in
+                            if let image = image {
+                                sendImageMessage(image: image)
+                            }
+                        }
+                }
             }
             
             if isShowingStateChangeCustomAlert {
@@ -106,7 +110,7 @@ struct ChatDetailView: View {
         .onTapGesture {
             endTextEditing()
         }
-        .navigationTitle(userNickname)
+        .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
@@ -131,17 +135,138 @@ struct ChatDetailView: View {
             }
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
-            ImageDetailView(imageString: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
+            ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
         }
         .navigationDestination(isPresented: $isGoingToReportView) {
             ReportView(reportViewType: .chat)
         }
         .onAppear {
-            messages.sort(by: { $0.createdAt < $1.createdAt })
+            Task {
+                /// 채팅방 불러오기 (trade만 알때)
+                if channel == nil, let trade {
+                    channel = try await chatViewModel.getChannel(tradeID: trade.id)
+                    if let channel = channel {
+                        try await chatViewModel.addListener(channelID: channel.id)
+                    }
+                }
+                
+                /// 채널만 알 때 ......
+                if let channel = channel {
+                    trade = try await chatViewModel.getTrade(channelID: channel.id)
+                    
+                    /// Trade 상태 확인
+                    if trade != nil {
+                        tradeState = trade?.tradeState ?? TradeState.trading
+                    }
+                    
+                    /// 안읽음 메시지 개수 갱신
+                    try await chatViewModel.resetUnreadCount(channelID: channel.id)
+                }
+                
+                /// 가져온 Trade 확인
+                if trade == nil {
+                    /// 삭제된 Trade
+                    isDeleted = true
+                }
+            }
+        }
+        .onDisappear {
+            chatViewModel.resetMessageData()
         }
     }
     
     // MARK: - 메시지 해더 뷰 (Trade 관련)
+    // TODO: ProgressView 필요 ... 합니다 ㅠㅠ
+    struct MessageHeaderView: View {
+        var trade: Trade?
+        @State private var imageData: Data?
+        @EnvironmentObject private var chatViewModel: ChatViewModel
+        @Binding var tradeState: TradeState
+        @Binding var isShowingStateChangeCustomAlert: Bool
+        
+        var body: some View {
+            HStack {
+                if trade == nil {
+                    Image(systemName: "exclamationmark.square.fill")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 60, height: 60)
+                        .padding(.trailing, 10)
+                        .foregroundStyle(.gray500)
+                } else {
+                    if let imageData {
+                        if let uiImage = UIImage(data: imageData) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 70, height: 70)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .padding(.trailing, 10)
+                        }
+                    } else {
+                        Image("ANBDWarning")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 70, height: 70)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .padding(.trailing, 10)
+                    }
+                }
+                
+                VStack(alignment: .leading) {
+                    Text(trade == nil ? "삭제된 게시물" : trade?.title ?? "Unknown")
+                        .lineLimit(1)
+                        .font(ANBDFont.SubTitle3)
+                        .padding(.bottom, 10)
+                    
+                    Text(tradeProductString)
+                        .foregroundStyle(.gray400)
+                        .font(ANBDFont.Caption3)
+                }
+                .padding(.vertical, 8)
+                
+                Spacer()
+                
+                if trade != nil {
+                    VStack(alignment: .leading) {
+                        // TODO: TradeStateChangeView 수정해야 함 : tradeState 매개변수가 아니라 trade 전체 넘겨주기
+                        TradeStateChangeView(tradeState: $tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert)
+                            .padding(.bottom, 10)
+                        
+//                        Spacer()
+                        Text(tradeProductString)
+                            .foregroundStyle(.clear)
+                            .font(ANBDFont.Caption3)
+                    }
+                    .padding(.vertical, 8)
+                }
+            }
+            .onAppear {
+                Task {
+                    if let trade = trade {
+                        imageData = try await chatViewModel.loadThumnailImage(containerID: trade.id, imagePath: trade.thumbnailImagePath)
+                    }
+                }
+            }
+        }
+        
+        /// Trade 상품 String
+        private var tradeProductString: String {
+            if trade == nil {
+                return "글쓴이가 삭제한 게시물이에요."
+            } else {
+                if let trade = trade {
+                    if trade.category == .nanua {
+                        return trade.myProduct
+                    } else if trade.category == .baccua {
+                        return "\(trade.myProduct) ↔ \(trade.wantProduct ?? "제시")"
+                    }
+                }
+                return ""
+            }
+        }
+    }
+    
     private var messageHeaderView: some View {
         HStack {
             if isDeleted {
@@ -152,6 +277,7 @@ struct ChatDetailView: View {
                     .padding(.trailing, 10)
                     .foregroundStyle(.gray500)
             } else {
+                // 여기서 !!!!! -> Image ProgressView
                 Image("DummyImage1")
                     .resizable()
                     .scaledToFill()
@@ -161,12 +287,12 @@ struct ChatDetailView: View {
             }
             
             VStack(alignment: .leading) {
-                Text(isDeleted ? "삭제된 게시물" : "나 헤드셋 님 매직 키보드 플리증용용")
+                Text(isDeleted ? "삭제된 게시물" : trade?.title ?? "Unknown")
                     .lineLimit(1)
                     .font(ANBDFont.SubTitle3)
                 
                 Spacer()
-                Text(isDeleted ? "글쓴이가 삭제한 게시물이에요. " : "헤드셋 ↔ 무선 키보드")
+                Text(tradeProductString)
                     .foregroundStyle(.gray400)
                     .font(ANBDFont.Caption3)
             }
@@ -176,6 +302,7 @@ struct ChatDetailView: View {
             
             if !isDeleted {
                 VStack(alignment: .leading) {
+                    // TODO: TradeStateChangeView 수정해야 함 : tradeState 매개변수가 아니라 trade 전체 넘겨주기
                     TradeStateChangeView(tradeState: $tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert)
                     
                     Spacer()
@@ -187,7 +314,6 @@ struct ChatDetailView: View {
         .foregroundStyle(.gray900)
     }
     
-    @ViewBuilder
     private func MessageDateDividerView(dateString: String) -> some View {
         GeometryReader { geometry in
             HStack {
@@ -215,7 +341,7 @@ struct ChatDetailView: View {
     private var messageSendView: some View {
         HStack {
             /// 사진 전송
-            PhotosPicker(selection: $selectedImage, maxSelectionCount: 1, matching: .images) {
+            PhotosPicker(selection: $selectedImage, matching: .images) {
                 Image(systemName: "photo.fill")
                     .resizable()
                     .scaledToFit()
@@ -240,6 +366,7 @@ struct ChatDetailView: View {
             /// 메시지 전송
             Button(action: {
                 if !message.isEmpty {
+                    sendMessage()
                     message = ""
                 }
             }, label: {
@@ -257,93 +384,168 @@ struct ChatDetailView: View {
 
 // MARK: - 메시지 Cell
 extension ChatDetailView {
-    @ViewBuilder
-    private func MessageCell(message: Message) -> some View {
-        let isMine: Bool = message.userID == myUserID
+    struct MessageCellStruct: View {
+        @EnvironmentObject private var chatViewModel: ChatViewModel
+        @State private var isMine: Bool = false
+        var message: Message
+        var isRead: Bool?
+        @State var imageData: Data?
+        @Environment(\.colorScheme) private var colorScheme: ColorScheme
+        @Binding var isShowingImageDetailView: Bool
+        @Binding var detailImage: Image
         
-        HStack(alignment: .bottom) {
-            if isMine {
-                Spacer()
-                
-                Text("\(message.dateString)")
+        var body: some View {
+            HStack(alignment: .bottom) {
+                if isMine {
+                    Spacer()
+                    
+                    VStack(alignment: .trailing) {
+                        if let isRead = isRead {
+                            Text(isRead ? "읽음" : "전송됨")
+                                .padding(.vertical, 1)
+                        }
+                        Text("\(message.dateString)")
+                    }
                     .foregroundStyle(.gray400)
                     .font(ANBDFont.Caption2)
-            }
-            
-            // 텍스트
-            if let content = message.content {
-                Text(content)
-                    .padding(15)
-                    .foregroundStyle(isMine ? .white : (colorScheme == .dark ? Color(red: 13/255, green: 15/255, blue: 20/255) : .gray900))
-                    .font(ANBDFont.Caption3)
-                    .background(isMine ? Color.accentColor : .gray50)
-                    .clipShape(RoundedRectangle(cornerRadius: 15))
-            }
-            
-            // 이미지
-            if let imageURL = message.imageURL {
-                Button(action: {
-                    detailImage = imageURL
-                    isShowingImageDetailView.toggle()
-                }, label: {
-                    Image(imageURL)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 150)
+                }
+                
+                // 텍스트
+                if let content = message.content {
+                    Text(content)
+                        .padding(15)
+                        .foregroundStyle(isMine ? .white : (colorScheme == .dark ? Color(red: 13/255, green: 15/255, blue: 20/255) : .gray900))
+                        .font(ANBDFont.Caption3)
+                        .background(isMine ? Color.accentColor : .gray50)
                         .clipShape(RoundedRectangle(cornerRadius: 15))
-                })
-            }
-            
-            if !isMine {
-                Text("\(message.dateString)")
-                    .foregroundStyle(.gray400)
-                    .font(ANBDFont.Caption2)
+                }
                 
-                Spacer()
+                // 이미지
+                if let imageData {
+                    if let uiImage = UIImage(data: imageData) {
+                        Button(action: {
+                            detailImage = Image(uiImage: uiImage)
+                            isShowingImageDetailView.toggle()
+                        }, label: {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 150)
+                                .clipShape(RoundedRectangle(cornerRadius: 15))
+                        })
+                    }
+                }
+                
+                if !isMine {
+                    Text("\(message.dateString)")
+                        .foregroundStyle(.gray400)
+                        .font(ANBDFont.Caption2)
+                    
+                    Spacer()
+                }
+            }
+            .onAppear {
+                isMine = message.userID == chatViewModel.userID
+                
+                if let imagePath = message.imagePath {
+                    Task {
+                        /// 이미지 로드
+                        imageData = try await chatViewModel.downloadImagePath(messageID: message.id, imagePath: imagePath)
+                    }
+                }
             }
         }
     }
 }
 
+// MARK: - 필요 함수 · 변수 모아두기
+extension ChatDetailView {
+    /// Trade 상품 String
+    private var tradeProductString: String {
+        if isDeleted {
+            return "글쓴이가 삭제한 게시물이에요."
+        } else {
+            if let trade = trade {
+                if trade.category == .nanua {
+                    return trade.myProduct
+                } else if trade.category == .baccua {
+                    return "\(trade.myProduct) ↔ \(trade.wantProduct ?? "제시")"
+                }
+            }
+            return ""
+        }
+    }
+    
+    /// 메시지 전송 함수
+    private func sendMessage() {
+        let newMessage = Message(userID: chatViewModel.userID, userNickname: chatViewModel.userNickname, content: message)
+        
+        Task {
+            /// 채널이 없을 때
+            if channel == nil, let trade {
+                let newChannel = Channel(participants: [trade.writerID, chatViewModel.userID],
+                                         participantNicknames: [trade.writerNickname, chatViewModel.userNickname],
+                                         lastMessage: "",
+                                         lastSendDate: .now,
+                                         lastSendId: chatViewModel.userID,
+                                         unreadCount: 0,
+                                         tradeId: trade.id)
+                
+                channel = try await chatViewModel.makeChannel(channel: newChannel)
+                
+                if let channel {
+                    try await chatViewModel.addListener(channelID: channel.id)
+                }
+            }
+            
+            /// 채널 생성 후
+            if let channel = channel {
+                print(channel.id)
+                try await chatViewModel.sendMessage(message: newMessage, channelID: channel.id)
+            }
+        }
+        
+    }
+    
+    /// 사진 메시지 전송 함수
+    private func sendImageMessage(image: PhotosPickerItem) {
+        Task {
+            if let data = try? await image.loadTransferable(type: Data.self) {
+                selectedPhoto = data
+            }
+            
+            let newMessage = Message(userID: chatViewModel.userID, userNickname: chatViewModel.userNickname)
+            if let imageData = selectedPhoto {
+                /// 채널이 없을 때
+                if channel == nil, let trade {
+                    let newChannel = Channel(participants: [trade.writerID, chatViewModel.userID],
+                                             participantNicknames: [trade.writerNickname, chatViewModel.userNickname],
+                                             lastMessage: "",
+                                             lastSendDate: .now,
+                                             lastSendId: chatViewModel.userID,
+                                             unreadCount: 0,
+                                             tradeId: trade.id)
+                    
+                    channel = try await chatViewModel.makeChannel(channel: newChannel)
+                    
+                    if let channel {
+                        try await chatViewModel.addListener(channelID: channel.id)
+                    }
+                }
+                
+                /// 채널 있
+                if let channel = channel {
+                    try await chatViewModel.sendImageMessage(message: newMessage, imageData: imageData, channelID: channel.id)
+                }
+            }
+            selectedImage = nil
+        }
+    }
+}
 
 #Preview {
     NavigationStack {
         ChatDetailView()
-    }
-}
-
-
-// TODO: Message Struct -> ANBDModel에 추가시 삭제 예정
-struct Message: Hashable, Identifiable {
-    let id: String = UUID().uuidString
-    
-    let userID: String
-    var userNickname: String
-    
-    var createdAt: Date = .now
-    
-    var content: String?
-    var imageURL: String?
-    
-    var dateString : String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "a hh:mm"
-        dateFormatter.locale = Locale(identifier:"ko_KR")
-        return dateFormatter.string(from: createdAt)
-    }
-    
-    var dateStringWithYear: String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy년 MM월 dd일 (E)"
-        dateFormatter.locale = Locale(identifier:"ko_KR")
-        return dateFormatter.string(from: createdAt)
-    }
-    
-    init(userID: String, userNickname: String, createdAt: Date, content: String? = nil, image: String? = nil) {
-        self.userID = userID
-        self.userNickname = userNickname
-        self.createdAt = createdAt
-        self.content = content
-        self.imageURL = image
+            .environmentObject(ChatViewModel())
     }
 }

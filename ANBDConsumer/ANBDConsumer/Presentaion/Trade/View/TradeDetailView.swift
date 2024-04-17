@@ -13,7 +13,6 @@ struct TradeDetailView: View {
     @State var trade: Trade
     @State private var isGoingToReportView: Bool = false
     @State private var isShowingCreat: Bool = false
-    @State private var isGoingToChatView: Bool = false
     @State private var isGoingToProfileView: Bool = false
     @State private var isShowingConfirm: Bool = false
     @State private var isShowingImageDetailView: Bool = false
@@ -21,11 +20,11 @@ struct TradeDetailView: View {
     @State private var isShowingDeleteCustomAlert: Bool = false
     @Environment(\.dismiss) private var dismiss
     
+    @State private var detailImage: Image = Image("DummyPuppy1")
+    @State private var imageData: [Data] = []
+    
     //임시..
     @State private var isLiked: Bool = false
-    @State private var isWriter: Bool = true
-    @State private var isTraiding: Bool = true
-    @State private var detailImage: String = "DummpyPuppy1"
     
     var body: some View {
         ZStack {
@@ -34,35 +33,26 @@ struct TradeDetailView: View {
                     VStack(alignment: .leading) {
                         //이미지
                         TabView() {
-                            //ForEach(trade.imagePaths, id: \.self) { item in
-                            //                        AsyncImage(url: URL(string: item), content: { img in
-                            //                            img.resizable()
-                            //                                .scaledToFill()
-                            //                                .containerRelativeFrame(.horizontal)
-                            //                        }, placeholder: {
-                            //                            ProgressView()
-                            //                        })
-                            Image(.dummyImage1)
-                                .resizable()
-                                .scaledToFill()
-                                .onTapGesture {
-                                    detailImage = "DummyImage1"
-                                    isShowingImageDetailView.toggle()
-                                }
-                            Image(.dummyPuppy1)
-                                .resizable()
-                                .scaledToFill()
-                                .onTapGesture {
-                                    detailImage = "DummyPuppy1"
-                                    isShowingImageDetailView.toggle()
-                                }
-                            Image(.dummyPuppy2)
-                                .resizable()
-                                .scaledToFill()
-                                .onTapGesture {
-                                    detailImage = "DummyPuppy2"
-                                    isShowingImageDetailView.toggle()
-                                }
+//                            ForEach(trade.imagePaths, id: \.self) { item in
+//                                Image(item)
+//                                    .resizable()
+//                                    .scaledToFill()
+//                                    .onTapGesture {
+//                                        detailImage = item
+//                                        isShowingImageDetailView.toggle()
+//                                    }
+//                            }
+                            if let uiImage = UIImage(data: imageData.first ?? Data()) {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .onTapGesture {
+                                        detailImage = Image(uiImage: uiImage)
+                                        isShowingImageDetailView.toggle()
+                                    }
+                            } else {
+                                ProgressView()
+                            }
                         }
                         .frame(height: 300)
                         .tabViewStyle(PageTabViewStyle())
@@ -70,16 +60,14 @@ struct TradeDetailView: View {
                         
                         //작성자 이미지, 닉네임, 작성시간
                         HStack {
-                            Button(action: {
-                                //프로필탭으로 이동
-                                isGoingToProfileView.toggle()
-                            }, label: {
-                                Image(.dummyImage1) // UserViewModel과 연결해야함
+                            NavigationLink(value: "tradeToUser") {
+                                Image(.dummyImage1)
                                     .resizable()
                                     .frame(width: 40, height: 40)
                                     .scaledToFill()
                                     .clipShape(Circle())
-                            })
+                            }
+        
                             VStack(alignment: .leading) {
                                 Text("\(trade.writerNickname)")
                                     .font(ANBDFont.SubTitle1)
@@ -92,7 +80,11 @@ struct TradeDetailView: View {
                             
                             Spacer()
                             
-                            TradeStateChangeView(tradeState: $trade.tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert, fontSize: 17)
+                            if let user = UserDefaultsClient.shared.userInfo {
+                                if user.id == trade.writerID {
+                                    TradeStateChangeView(tradeState: $trade.tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert, fontSize: 17)
+                                }
+                            }
                         }//HStack
                         .padding(5)
                         .padding(.horizontal, 5)
@@ -123,21 +115,29 @@ struct TradeDetailView: View {
             }//VStack
             if isShowingStateChangeCustomAlert {
                 CustomAlertView(isShowingCustomAlert: $isShowingStateChangeCustomAlert, viewType: .changeState) {
-                    //task로 변경해주기~
-                    if trade.tradeState == .trading {
-                        trade.tradeState = .finish
-                    } else {
-                        trade.tradeState = .trading
+                    Task {
+                        print("상태 변경!")
+                        await tradeViewModel.updateState(trade: trade)
                     }
                 }
             }
             if isShowingDeleteCustomAlert {
                 CustomAlertView(isShowingCustomAlert: $isShowingDeleteCustomAlert, viewType: .tradeDelete) {
-                    print("삭제~")
-                    self.dismiss()
+                    Task {
+                        print("삭제!")
+                        await tradeViewModel.deleteTrade(trade: trade)
+                        await tradeViewModel.reloadAllTrades()
+                        self.dismiss()
+                    }
                 }
             }
         }//ZStack
+        .onAppear {
+            tradeViewModel.getOneTrade(trade: trade)
+            Task {
+                imageData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: trade.id, imagePath: trade.imagePaths)
+            }
+        }
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -152,37 +152,38 @@ struct TradeDetailView: View {
             }
         }
         .fullScreenCover(isPresented: $isShowingCreat, onDismiss: {
+            //userviewmodel에서 user 선호 지역으로 바꾸기
             tradeViewModel.selectedLocation = .seoul
             tradeViewModel.selectedItemCategory = .digital
+            Task {
+                await tradeViewModel.loadOneTrade(trade: trade)
+                trade = tradeViewModel.trade
+            }
         }) {
             TradeCreateView(isShowingCreate: $isShowingCreat, isNewProduct: false, trade: trade)
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
-            ImageDetailView(imageString: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
-        }
-        .navigationDestination(isPresented: $isGoingToReportView) {
-            ReportView(reportViewType: .trade)
-        }
-        .navigationDestination(isPresented: $isGoingToProfileView) {
-//            UserPageView(isSignedInUser: false)
+            ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
         }
         .navigationTitle("나눔 · 거래")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarRole(.editor)
         .confirmationDialog("", isPresented: $isShowingConfirm) {
-            if isWriter {
-                Button("수정하기") {
-                    isShowingCreat.toggle()
-                    tradeViewModel.selectedLocation = trade.location
-                    tradeViewModel.selectedItemCategory = trade.itemCategory
-                }
-                
-                Button("삭제하기", role: .destructive) {
-                    isShowingDeleteCustomAlert.toggle()
-                }
-            } else {
-                Button("신고하기", role: .destructive) {
-                    isGoingToReportView.toggle()
+            if let user = UserDefaultsClient.shared.userInfo {
+                if user.id == trade.writerID {
+                    Button("수정하기") {
+                        isShowingCreat.toggle()
+                        tradeViewModel.selectedLocation = trade.location
+                        tradeViewModel.selectedItemCategory = trade.itemCategory
+                    }
+                    
+                    Button("삭제하기", role: .destructive) {
+                        isShowingDeleteCustomAlert.toggle()
+                    }
+                } else {
+                    Button("신고하기", role: .destructive) {
+                        tradeViewModel.tradePath.append("tradeToReport")
+                    }
                 }
             }
         }
@@ -235,14 +236,19 @@ extension TradeDetailView {
             
             Spacer()
             
-            if !isWriter {
-                BlueSquareButton(height: 45, title: "채팅하기") {
-                    isGoingToChatView.toggle()
-                }
-                .frame(width: 100)
-                .padding()
-                .navigationDestination(isPresented: $isGoingToChatView) {
-                    ChatDetailView()
+            if let user = UserDefaultsClient.shared.userInfo { 
+                if user.id != trade.writerID {
+                    NavigationLink(value: "tradeToChat") {
+                        RoundedRectangle(cornerRadius: 14)
+                            .foregroundStyle(.accent)
+                            .overlay {
+                                Text("채팅하기")
+                                    .font(ANBDFont.pretendardMedium(16))
+                                    .foregroundStyle(.white)
+                            }
+                            .frame(width: 100, height: 45)
+                            .padding()
+                    }
                 }
             }
         }

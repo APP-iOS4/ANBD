@@ -90,6 +90,12 @@ struct ANBDTabView: View {
                     .navigationDestination(for: String.self) { str in
                         if str == "" {
                             SearchView()
+                        } else if str == "tradeToChat" {
+                            ChatDetailView()
+                        } else if str == "tradeToUser" {
+                            UserPageView(isSignedInUser: false)
+                        } else if str == "tradeToReport" {
+                            ReportView(reportViewType: .trade)
                         } else {
                             SearchResultView(category: tradeCategory, searchText: str)
                         }
@@ -102,6 +108,9 @@ struct ANBDTabView: View {
             /// Chat
             NavigationStack {
                 ChatView()
+                    .navigationDestination(for: Channel.self) { channel in
+                        ChatDetailView(channel: channel)
+                    }
             }
             .tabItem {
                 Label("채팅", systemImage: "bubble.right")

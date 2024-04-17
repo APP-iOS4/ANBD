@@ -73,23 +73,23 @@ final class DefaultMessageRepository: MessageRepository {
         }
         
        listener = requestQuery
-            .addSnapshotListener { snapshot, error in
+            .addSnapshotListener { [weak self] snapshot, error in
                 guard let snapshot = snapshot else {
                     print("메시지 업데이트 에러 : \(error!)")
                     return
                 }
                 snapshot.documentChanges.forEach { diff in
-                    if (diff.type == .added) || (diff.type == .modified) {
+                    if (diff.type == .added) {
                         guard let mesaage = try? diff.document.data(as: Message.self) else {
                             print("컴플리션 에러")
                             return
                         }
                         //상대방이 보낸 메시지를 실시간으로 감지할떄
                         //메시지의 상태를 읽음으로 바꾸고 , 안읽은 메시지를 수를 초기화
-                        if mesaage.userID != userID {
-                            self.chatDB.document(channelID).collection("messages").document(mesaage.id).updateData(["isRead" : true])
-                            self.chatDB.document(channelID).updateData(["unreadCount" : 0])
-                        }
+//                        if mesaage.userID != userID {
+//                            self.chatDB.document(channelID).collection("messages").document(mesaage.id).updateData(["isRead" : true])
+//                            self.chatDB.document(channelID).updateData(["unreadCount" : 0])
+//                        }
                         completion(mesaage)
                     }
 //                    if (diff.type == .modified) {print("modified:\(diff.document.data())")}

@@ -8,10 +8,6 @@
 import SwiftUI
 
 struct SignUpEmailView: View {
-    enum FocusableField {
-        case email
-    }
-    
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var authenticationViewModel: AuthenticationViewModel
     
@@ -37,19 +33,17 @@ struct SignUpEmailView: View {
             .autocorrectionDisabled(true)
             .submitLabel(.go)
             .onSubmit {
+                guard authenticationViewModel.isValidSignUpEmail else { return }
                 nextButtonAction()
             }
             
-            // 프로토타입을 위한 임시 주석
-            /*
-             if !authenticationViewModel.errorMessage.isEmpty {
-             Text(authenticationViewModel.errorMessage)
-             .frame(maxWidth: .infinity, alignment: .leading)
-             .padding(.top, 8)
-             .font(ANBDFont.Caption1)
-             .foregroundStyle(Color.heartRed)
-             }
-             */
+            if !authenticationViewModel.errorMessage.isEmpty {
+                Text(authenticationViewModel.errorMessage)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 8)
+                    .font(ANBDFont.Caption1)
+                    .foregroundStyle(Color.heartRed)
+            }
             
             HStack {
                 Text("이미 계정이 있으신가요?")
@@ -70,26 +64,25 @@ struct SignUpEmailView: View {
             }
         }
         .padding()
-        .navigationDestination(isPresented: $navigate) {
-            SignUpPasswordView()
-        }
-        
-        .onAppear {
-            focus = .email
-        }
         
         .toolbar {
-            ToolbarItem(placement: .keyboard) {
+            ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
-            }
-            
-            ToolbarItem(placement: .keyboard) {
+                
                 Button(action: {
                     downKeyboard()
                 }, label: {
                     Label("Keyboard down", systemImage: "keyboard.chevron.compact.down")
                 })
             }
+        }
+        
+        .navigationDestination(isPresented: $navigate) {
+            SignUpPasswordView()
+        }
+        
+        .onAppear {
+            focus = .email
         }
     }
     
@@ -104,6 +97,10 @@ struct SignUpEmailView: View {
 }
 
 extension SignUpEmailView {
+    enum FocusableField {
+        case email
+    }
+    
     private func downKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }

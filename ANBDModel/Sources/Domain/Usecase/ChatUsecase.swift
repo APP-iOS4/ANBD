@@ -11,28 +11,31 @@ import UIKit
 
 @available(iOS 15, *)
 public protocol ChatUsecaseProtocol {
-    func createChannel(channel : Channel) async throws -> String
+    func createChannel(channel : Channel) async throws -> Channel
     func loadChannelList(userID: String, completion : @escaping (_ channels: [Channel]) -> Void)
     func loadMessageList(channelID: String, userID: String ) async throws -> [Message]
     func getChannelID(tradeID : String , userID: String) async throws -> String?
     func getTradeInChannel(channelID: String)  async throws -> Trade?
     func getOtherUserNickname(userNicknames: [String], userNickname : String) -> String
     func getOtherUserID(users: [String], userID: String) -> String
+    func getOtherUser(channel : Channel , userID: String) async throws -> User
     func listenNewMessage(channelID: String ,userID: String ,completion: @escaping ((Message) -> Void))
     func sendMessage(message: Message , channelID: String) async throws
     func sendImageMessage(message: Message, imageData: Data ,channelID:String) async throws
     func updateUnreadCount(channelID: String , userID: String) async throws
     func leaveChatRoom(channelID: String , userID: String) async throws
+    func downloadImage(messageID : String , imagePath : String) async throws -> Data
     func initializeListener()
 }
 
 @available(iOS 15, *)
 public struct ChatUsecase : ChatUsecaseProtocol {
     
-    let chatRepository: ChatRepository = DefaultChatRepository()
-    let messageRepository : MessageRepository = DefaultMessageRepository()
+    private let chatRepository: ChatRepository = DefaultChatRepository()
+    private let messageRepository : MessageRepository = DefaultMessageRepository()
+    private let userRepository : UserRepository = DefaultUserRepository()
     
-    let storage = StorageManager.shared
+    private let storage = StorageManager.shared
     
     public init() {}
     
@@ -42,7 +45,7 @@ public struct ChatUsecase : ChatUsecaseProtocol {
     /// - Parameters:
     ///   - channel: 새로 추가할려는 채널
     /// - Returns: 새로 생성된 채널ID
-    public func createChannel(channel: Channel) async throws -> String{
+    public func createChannel(channel: Channel) async throws -> Channel{
         try await chatRepository.createChannel(channel: channel)
     }
     
@@ -93,6 +96,17 @@ public struct ChatUsecase : ChatUsecaseProtocol {
             return "상대방을 찾을수 없습니다"
         }
         return users[(index+1) % 2]
+    }
+    
+    //채팅방 리스트에서 상대방 user 정보를 얻는법 (프로필 이미지 얻기 위해서?)
+    ///
+    /// - Parameters:
+    ///   - channel: 현재 채널
+    ///   - userID: 내 ID
+    /// - Returns: 상대방 User 정보
+    public func getOtherUser(channel: Channel, userID: String) async throws -> User {
+        let otherUserID = getOtherUserID(users: channel.users, userID: userID)
+        return try await userRepository.readUserInfo(userID: otherUserID)
     }
     
     //채팅방 리스트에서 채팅방을 들어갔을때 채팅방 상단에 게시글의 정보가 보여야하기 때문에 채널 ID로 Trade 정보를 얻는 메소드
@@ -152,6 +166,11 @@ public struct ChatUsecase : ChatUsecaseProtocol {
             try await messageRepository.deleteMessageList(channelId: channelID)
         }
     }
+    
+    //이미지 다운로드
+    public func downloadImage(messageID : String , imagePath : String) async throws -> Data{
+        try await storage.downloadImage(path: .chat, containerID: messageID, imagePath: imagePath)
+    }
 }
 
 // MARK: - 메시지 관련 메소드
@@ -195,6 +214,5 @@ extension ChatUsecase {
     public func initializeListener() {
         messageRepository.deleteListener()
     }
-    
     
 }

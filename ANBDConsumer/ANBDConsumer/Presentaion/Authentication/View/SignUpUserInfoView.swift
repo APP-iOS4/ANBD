@@ -15,52 +15,73 @@ struct SignUpUserInfoView: View {
     
     @State private var isNavigate = false
     @State private var isShowingMenuList: Bool = false
+    @State private var isShwoingDuplicatedNicknameAlert = false
     
     var body: some View {
-        VStack(alignment: .leading) {
-            Text("회원가입")
-                .font(ANBDFont.Heading2)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.top, 16)
-                .padding(.bottom, 70)
-            
-            TextFieldWithTitle(fieldType: .normal,
-                               title: "닉네임",
-                               placeholder: "2~20자의 닉네임을 입력해주세요.",
-                               inputText: $authenticationViewModel.signUpNicknameString)
-            .focused($focus, equals: .nickname)
-            .textInputAutocapitalization(.never)
-            .autocorrectionDisabled(true)
-            .submitLabel(.go)
-            .onSubmit {
-                guard authenticationViewModel.isValidSignUpNickname else { return }
-                nextButtonAction()
-            }
-            .padding(.bottom)
-            
-            if !authenticationViewModel.errorMessage.isEmpty {
-                Text(authenticationViewModel.errorMessage)
+        ZStack {
+            VStack(alignment: .leading) {
+                Text("회원가입")
+                    .font(ANBDFont.Heading2)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.bottom)
-                    .font(ANBDFont.Caption1)
-                    .foregroundStyle(Color.heartRed)
+                    .padding(.top, 16)
+                    .padding(.bottom, 70)
+                
+                TextFieldWithTitle(fieldType: .normal,
+                                   title: "닉네임",
+                                   placeholder: "2~20자의 닉네임을 입력해주세요.",
+                                   inputText: $authenticationViewModel.signUpNicknameString)
+                .focused($focus, equals: .nickname)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled(true)
+                .submitLabel(.go)
+                .onSubmit {
+                    guard authenticationViewModel.isValidSignUpNickname else { return }
+                    
+                    Task {
+                        if await authenticationViewModel.checkDuplicatedNickname() {
+                            isShwoingDuplicatedNicknameAlert.toggle()
+                        } else {
+                            nextButtonAction()
+                        }
+                    }
+                }
+                .padding(.bottom)
+                
+                if !authenticationViewModel.errorMessage.isEmpty {
+                    Text(authenticationViewModel.errorMessage)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.bottom)
+                        .font(ANBDFont.Caption1)
+                        .foregroundStyle(Color.heartRed)
+                }
+                
+                Text("선호하는 거래 지역")
+                    .font(ANBDFont.SubTitle3)
+                    .foregroundStyle(Color.gray900)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
+                LocationPickerMenu(isShowingMenuList: $isShowingMenuList, selectedItem: authenticationViewModel.signUpUserFavoriteLoaction)
+                
+                Spacer()
+                
+                BlueSquareButton(title: "다음", isDisabled: !authenticationViewModel.isValidSignUpNickname) {
+                    Task {
+                        if await authenticationViewModel.checkDuplicatedNickname() {
+                            isShwoingDuplicatedNicknameAlert.toggle()
+                        } else {
+                            nextButtonAction()
+                        }
+                    }
+                }
             }
+            .padding()
             
-            Text("선호하는 거래 지역")
-                .font(ANBDFont.SubTitle3)
-                .foregroundStyle(Color.gray900)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            
-            LocationPickerMenu(isShowingMenuList: $isShowingMenuList, selectedItem: authenticationViewModel.signUpUserFavoriteLoaction)
-            
-            Spacer()
-            
-            BlueSquareButton(title: "다음", isDisabled: !authenticationViewModel.isValidSignUpNickname) {
-                nextButtonAction()
+            if isShwoingDuplicatedNicknameAlert {
+                CustomAlertView(isShowingCustomAlert: $isShwoingDuplicatedNicknameAlert, viewType: .duplicatedNickname) {
+                    focus = .nickname
+                }
             }
         }
-        .padding()
-        
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()

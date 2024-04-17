@@ -13,6 +13,7 @@ final class ArticleViewModel: ObservableObject {
     
     private let articleUseCase: ArticleUsecase = DefaultArticleUsecase()
     private let storageManager = StorageManager.shared
+    @Published var articles: [Article] = []
 
     @Published var articlePath: NavigationPath = NavigationPath()
     
@@ -32,19 +33,45 @@ final class ArticleViewModel: ObservableObject {
 
     }
     
-    func filteringArticles(category: ANBDCategory) async {
+    func filteringArticles(category: ANBDCategory) {
+        filteredArticles = articles.filter({ $0.category == category })
+    }
+    
+    func loadAllArticles() async {
         do {
-            filteredArticles = try await articleUseCase.loadArticleList(category: category, by: .latest, limit: 10)
-            print(filteredArticles)
+            try await self.articles.append(contentsOf: articleUseCase.loadArticleList(limit: 10))
+            print("read")
         } catch {
             print(error.localizedDescription)
         }
-    } 
+    }
+    
+    func reloadAllArticles() async {
+        do {
+            print("read")
+            self.articles = try await articleUseCase.refreshAllArticleList(limit: 10)
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+//    func filteringArticles(category: ANBDCategory) async {
+//        do {
+//            filteredArticles.append(
+//                contentsOf: try await articleUseCase.loadArticleList(category: category, by: .latest, limit: 10)
+//                )
+//            print(filteredArticles)
+//        } catch {
+//            print(error.localizedDescription)
+//        }
+//    } 
     
     func refreshSortedArticleList(category: ANBDCategory, by order: ArticleOrder, limit: Int) async {
         do {
-            filteredArticles = try await articleUseCase.refreshSortedArticleList(category: category, by: sortOption, limit: 10)
-            
+            filteredArticles.append(
+                contentsOf:  try await articleUseCase.refreshSortedArticleList(category: category, by: sortOption, limit: 10)
+                )
+            print(filteredArticles)
         } catch {
             print(error.localizedDescription)
         }

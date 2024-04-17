@@ -112,7 +112,7 @@ struct HomeView: View {
             sectionHeaderView(.accua)
             
             NavigationLink(value: homeViewModel.accuaArticle) {
-                articleCellView(homeViewModel.accuaArticle)
+                ArticleCellView(article: homeViewModel.accuaArticle)
                     .frame(width: geo.size.width * 0.9, height: 130)
             }
         }
@@ -132,7 +132,7 @@ struct HomeView: View {
                 LazyHStack {
                     ForEach(homeViewModel.nanuaTrades) { trade in
                         NavigationLink(value: trade) {
-                            nanuaCellView(trade)
+                            NanuaCellView(trade: trade)
                                 .frame(width: 140, height: 140)
                                 .padding(.horizontal, 1)
                         }
@@ -172,7 +172,7 @@ struct HomeView: View {
             sectionHeaderView(.dasi)
             
             NavigationLink(value: homeViewModel.dasiArticle) {
-                articleCellView(homeViewModel.dasiArticle)
+                ArticleCellView(article: homeViewModel.dasiArticle)
                     .frame(width: geo.size.width * 0.9, height: 130)
             }
         }
@@ -235,53 +235,87 @@ struct HomeView: View {
     }
     
     // MARK: - 아껴쓰기 · 다시쓰기 Cell View
-    private func articleCellView(_ article: Article) -> some View {
-        ZStack(alignment: .bottomLeading) {
-            Image(article.imagePaths.first ?? "DummyImage1")
-                .resizable()
-                .scaledToFill()
-                .frame(height: 130)
-            
-            LinearGradient(
-                gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.4)]),
-                startPoint: .center,
-                endPoint: .bottom
-            )
-            
-            Text(article.title)
-                .multilineTextAlignment(.leading)
-                .lineLimit(2)
-                .padding(10)
-                .padding(.trailing, 70)
-                .foregroundStyle(.white)
-                .font(ANBDFont.SubTitle1)
+    struct ArticleCellView: View {
+        var article: Article
+        @State private var imageData: Data?
+        @EnvironmentObject private var homeViewModel: HomeViewModel
+        
+        var body: some View {
+            ZStack(alignment: .bottomLeading) {
+                if let imageData {
+                    if let uiImage = UIImage(data: imageData) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(height: 130)
+                    }
+                } else {
+                    ProgressView()
+                }
+                
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.4)]),
+                    startPoint: .center,
+                    endPoint: .bottom
+                )
+                
+                Text(article.title)
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(2)
+                    .padding(10)
+                    .padding(.trailing, 70)
+                    .foregroundStyle(.white)
+                    .font(ANBDFont.SubTitle1)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .foregroundStyle(.gray900)
+            .onAppear {
+                Task {
+                    imageData = try await homeViewModel.loadThumnailImage(path: .article, containerID: article.id, imagePath: article.thumbnailImagePath)
+                }
+            }
         }
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-        .foregroundStyle(.gray900)
     }
     
     // MARK: - 나눠쓰기 Cell View
-    private func nanuaCellView(_ trade: Trade) -> some View {
-        ZStack(alignment: .bottomLeading) {
-            Image(trade.imagePaths.first ?? "DummyImage1")
-                .resizable()
-                .frame(width: 140, height: 140)
-                .scaledToFit()
-            
-            LinearGradient(
-                gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.4)]),
-                startPoint: .center,
-                endPoint: .bottom
-            )
-            
-            Text(trade.title)
-                .lineLimit(1)
-                .padding(10)
-                .padding(.trailing, 20)
-                .foregroundStyle(.white)
-                .font(ANBDFont.SubTitle1)
+    struct NanuaCellView: View {
+        var trade: Trade
+        @State private var imageData: Data?
+        @EnvironmentObject private var homeViewModel: HomeViewModel
+        
+        var body: some View {
+            ZStack(alignment: .bottomLeading) {
+                if let imageData {
+                    if let uiImage = UIImage(data: imageData) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(height: 130)
+                    }
+                } else {
+                    ProgressView()
+                }
+                
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.4)]),
+                    startPoint: .center,
+                    endPoint: .bottom
+                )
+                
+                Text(trade.title)
+                    .lineLimit(1)
+                    .padding(10)
+                    .padding(.trailing, 20)
+                    .foregroundStyle(.white)
+                    .font(ANBDFont.SubTitle1)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .onAppear {
+                Task {
+                    imageData = try await homeViewModel.loadThumnailImage(path: .trade, containerID: trade.id, imagePath: trade.thumbnailImagePath)
+                }
+            }
         }
-        .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 }
 

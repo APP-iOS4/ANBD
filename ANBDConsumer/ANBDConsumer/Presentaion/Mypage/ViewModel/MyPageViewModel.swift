@@ -51,6 +51,9 @@ final class MyPageViewModel: ObservableObject {
     
     @Published var myPageNaviPath = NavigationPath()
     
+    let mockArticleData: [Article] = []
+    let mockTradeData: [Trade] = []
+    
     /// UserDefaults에서 유저 정보 불러오기
     func loadUserInfo() {
         if let user = UserDefaultsClient.shared.userInfo {

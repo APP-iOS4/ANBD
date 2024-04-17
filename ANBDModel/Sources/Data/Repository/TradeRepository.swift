@@ -61,14 +61,10 @@ final class DefaultTradeRepository: TradeRepository {
     
     func readTradeList(
         category: ANBDCategory,
-        location: Location?,
-        itemCategory: ItemCategory?,
+        location: [Location]?,
+        itemCategory: [ItemCategory]?,
         limit: Int
     ) async throws -> [Trade] {
-        guard category == .nanua || category == .baccua else {
-            throw NSError(domain: "Recent Trade Category Error", code: 4012)
-        }
-        
         let tradeList = try await tradeDataSource.readItemList(
             category: category,
             location: location,
@@ -86,10 +82,6 @@ final class DefaultTradeRepository: TradeRepository {
     }
     
     func readRecentTradeList(category: ANBDCategory) async throws -> [Trade] {
-        guard category == .nanua || category == .baccua else {
-            throw NSError(domain: "Recent Trade Category Error", code: 4012)
-        }
-        
         let tradeList = try await tradeDataSource.readRecentItemList(category: category)
         return tradeList
     }
@@ -106,14 +98,10 @@ final class DefaultTradeRepository: TradeRepository {
     
     func refreshFilter(
         category: ANBDCategory,
-        location: Location?,
-        itemCategory: ItemCategory?,
+        location: [Location]?,
+        itemCategory: [ItemCategory]?,
         limit: Int
     ) async throws -> [Trade] {
-        guard category == .nanua || category == .baccua else {
-            throw NSError(domain: "Recent Trade Category Error", code: 4012)
-        }
-        
         let refreshedList = try await tradeDataSource.readItemList(
             category: category,
             location: location,

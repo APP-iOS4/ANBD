@@ -18,7 +18,7 @@ struct DefaultChatRepository: ChatRepository {
     func createChannel(channel: Channel) async throws -> Channel {
         guard let _ = try? chatDB.document(channel.id).setData(from: channel)
         else {
-            throw DBError.setDocumentError(message: "ChatRoom document를 추가하는데 실패했습니다.")
+            throw DBError.setChannelDocumentError
         }
         return channel
     }
@@ -26,13 +26,14 @@ struct DefaultChatRepository: ChatRepository {
     func readChannelList(userID: String, completion : @escaping (_ channels: [Channel]) -> Void){
         chatDB
             .whereField("users", arrayContains: userID)
+            .order(by: "lastSendDate", descending: true)
             .addSnapshotListener { snapshot, error in
                 guard let document = snapshot else {
                     print("채널리스트 업데이트 에러 : \(error!)")
                     return
                 }
-                var channels =  document.documents.compactMap { try? $0.data(as: Channel.self) }.filter{!$0.leaveUsers.contains(userID)}
-                channels = sortedChannel(channels: channels)
+                let channels =  document.documents.compactMap { try? $0.data(as: Channel.self) }.filter{!$0.leaveUsers.contains(userID)}
+//                channels = sortedChannel(channels: channels)
                 completion(channels)
         }
     }
@@ -60,7 +61,7 @@ struct DefaultChatRepository: ChatRepository {
             .whereField("tradeId", isEqualTo: tradeID)
             .getDocuments()
         else {
-            throw DBError.getDocumentError(message: "userID에 해당하는 ChatRoom documents를 읽어오는데 실패했습니다.")
+            throw DBError.getChannelDocumentError
         }
         for document in querySnapshot.documents {
             let channel = try? document.data(as: Channel.self)
@@ -71,14 +72,13 @@ struct DefaultChatRepository: ChatRepository {
     
     func readTradeInChannel(channelID: String) async throws -> Trade? {
         guard let documnet = try? await chatDB.document(channelID).getDocument() else {
-            throw DBError.getDocumentError(message: "channelID에 해당하는 ChatRoom documents를 읽어오는데 실패했습니다.")
+            throw DBError.getChannelDocumentError
         }
         guard let data = documnet.data(), let tradeID = data["tradeId"] as? String else {
-            throw DBError.getDocumentError(message: "채널안에 있는 TradeId 데이터를 읽는데 실패")
-        }
+            throw DBError.getChannelDocumentError        }
         
         guard let trade = try? await db.collection("TradeBoard").document(tradeID).getDocument(as : Trade.self) else {
-            throw DBError.getDocumentError(message: "tradeId에 해당하는 documents를 읽어오는데 실패했습니다.")
+            throw DBError.getTradeDocumentError
         }
         
         return trade
@@ -111,7 +111,7 @@ struct DefaultChatRepository: ChatRepository {
                 "leaveUsers": []
             ]
         ) else {
-            throw DBError.updateDocumentError(message: "channelID에 해당하는 channel 문서를 업데이트하는데 실패했습니다.")
+            throw DBError.updateChannelDocumentError
         }
     }
     
@@ -119,7 +119,7 @@ struct DefaultChatRepository: ChatRepository {
         guard channelID != "" else {return}
         
         guard let document = try? await chatDB.document(channelID).getDocument() else {
-            throw DBError.getDocumentError(message: "channelID에 해당하는 ChatRoom documents를 읽어오는데 실패했습니다.")
+            throw DBError.getChannelDocumentError
         }
         
         guard document.exists , let data = document.data() , userID != data["lastSendId"] as? String else {
@@ -127,7 +127,7 @@ struct DefaultChatRepository: ChatRepository {
         }
         
         guard let _ = try? await chatDB.document(channelID).updateData(["unreadCount" : 0]) else {
-            throw DBError.updateDocumentError(message: "channel unreadCount 필드를 업데이트하는데 실패했습니다.")
+            throw DBError.updateChannelDocumentError
         }
         
     }
@@ -136,11 +136,10 @@ struct DefaultChatRepository: ChatRepository {
         guard let _ = try? await chatDB.document(channelID).updateData([
             "leaveUsers": FieldValue.arrayUnion([userID])
         ]) else {
-            throw DBError.updateDocumentError(message: "channel leaveUsers 필드를 업데이트하는데 실패했습니다.")
-        }
+            throw DBError.updateChannelDocumentError        }
         
         guard let querySnapshot = try? await chatDB.document(channelID).collection("messages").getDocuments() else {
-            throw DBError.getDocumentError(message: "channelID에 해당하는 messages Document 불러오기 실패했습니다")
+            throw DBError.getChannelDocumentError
         }
         
         for document in querySnapshot.documents {
@@ -153,7 +152,7 @@ struct DefaultChatRepository: ChatRepository {
     
     func deleteChannel(channelID : String) async throws {
         guard let _ = try? await chatDB.document(channelID).delete() else {
-            throw DBError.deleteDocumentError(message: "ID가 일치하는 channel document를 삭제하는데 실패했습니다.")
+            throw DBError.deleteChannelDocumentError
         }
     }
     

@@ -27,8 +27,8 @@ public struct DefaultBannerUsecase: BannerUsecase {
     /// - Parameters:
     ///   - banner: 추가하려는 Banner
     public func addBanner(banner: Banner) async throws {
-        guard !banner.urlString.isEmpty && !banner.thumbnailImageURLString.isEmpty else {
-            throw NSError(domain: "invalid parameter", code: 4002)
+        if banner.urlString.isEmpty || banner.thumbnailImageURLString.isEmpty {
+            return
         }
         
         let banner = Banner(

@@ -11,13 +11,13 @@ import FirebaseFirestore
 @available(iOS 15.0, *)
 protocol TradeDataSource: Postable where Item == Trade {
     func readItemList(category: ANBDCategory,
-                       location: Location?,
-                       itemCategory: ItemCategory?,
-                       limit: Int) async throws -> [Trade]
+                      location: [Location]?,
+                      itemCategory: [ItemCategory]?,
+                      limit: Int) async throws -> [Trade]
     func readRecentItemList(category: ANBDCategory) async throws -> [Trade]
     func refreshFilter(category: ANBDCategory,
-                       location: Location?,
-                       itemCategory: ItemCategory?,
+                       location: [Location]?,
+                       itemCategory: [ItemCategory]?,
                        limit: Int) async throws -> [Trade]
     func updateItem(tradeID: String, tradeState: TradeState) async throws
 }
@@ -50,11 +50,11 @@ final class DefaultTradeDataSource: TradeDataSource {
                 "title": item.title,
                 "content": item.content,
                 "myProduct": item.myProduct,
-                "thumbnailImagePath": item.imagePaths.first ?? "",
+                "thumbnailImagePath": item.thumbnailImagePath,
                 "imagePaths": item.imagePaths
             ])
             else {
-                throw DBError.setDocumentError(message: "Trade document를 추가하는데 실패했습니다.")
+                throw DBError.setTradeDocumentError
             }
         } else {
             guard let _ = try? await tradeDB.document(item.id).setData([
@@ -70,11 +70,11 @@ final class DefaultTradeDataSource: TradeDataSource {
                 "content": item.content,
                 "myProduct": item.myProduct,
                 "wantProduct": item.wantProduct ?? "",
-                "thumbnailImagePath": item.imagePaths.first ?? "",
+                "thumbnailImagePath": item.thumbnailImagePath,
                 "imagePaths": item.imagePaths
             ])
             else {
-                throw DBError.setDocumentError(message: "Trade document를 추가하는데 실패했습니다.")
+                throw DBError.setTradeDocumentError
             }
         }
     }
@@ -84,7 +84,7 @@ final class DefaultTradeDataSource: TradeDataSource {
     func readItem(itemID: String) async throws -> Trade {
         guard let trade = try? await tradeDB.document(itemID).getDocument(as: Trade.self)
         else {
-            throw DBError.getDocumentError(message: "ID가 일치하는 Trade document를 읽어오는데 실패했습니다.")
+            throw DBError.getTradeDocumentError
         }
         
         return trade
@@ -100,7 +100,11 @@ final class DefaultTradeDataSource: TradeDataSource {
                 .order(by: "createdAt", descending: true)
                 .limit(to: limit)
             
-            guard let lastSnapshot = try await requestQuery.getDocuments().documents.last else {
+            guard let lastSnapshot = try await requestQuery
+                .getDocuments()
+                .documents
+                .last
+            else {
                 print("end")
                 return []
             }
@@ -113,10 +117,14 @@ final class DefaultTradeDataSource: TradeDataSource {
             self.allQuery = next
         }
         
-        let tradeList = try await requestQuery
+        guard let snapshot = try? await requestQuery
             .getDocuments()
             .documents
-            .compactMap { try? $0.data(as: Trade.self) }
+        else {
+            throw DBError.getTradeDocumentError
+        }
+        
+        let tradeList = snapshot.compactMap { try? $0.data(as: Trade.self) }
         return tradeList
     }
     
@@ -131,7 +139,11 @@ final class DefaultTradeDataSource: TradeDataSource {
                 .order(by: "createdAt", descending: true)
                 .limit(to: limit)
             
-            guard let lastSnapshot = try await requestQuery.getDocuments().documents.last else {
+            guard let lastSnapshot = try await requestQuery
+                .getDocuments()
+                .documents
+                .last
+            else {
                 print("end")
                 return []
             }
@@ -145,23 +157,23 @@ final class DefaultTradeDataSource: TradeDataSource {
             self.allQuery = next
         }
         
-        let tradeList = try await requestQuery
+        guard let snapshot = try? await requestQuery
             .getDocuments()
             .documents
-            .compactMap { try? $0.data(as: Trade.self) }
+        else {
+            throw DBError.getTradeDocumentError
+        }
+        
+        let tradeList = snapshot.compactMap { try? $0.data(as: Trade.self) }
         return tradeList
     }
     
     func readItemList(
         category: ANBDCategory,
-        location: Location?,
-        itemCategory: ItemCategory?,
+        location: [Location]?,
+        itemCategory: [ItemCategory]?,
         limit: Int
     ) async throws -> [Trade] {
-        guard category == .nanua || category == .baccua else {
-            throw NSError(domain: "Recent Trade Category Error", code: 4012)
-        }
-        
         var requestQuery: Query
         var query = tradeDB
             .whereField("category", isEqualTo: category.rawValue)
@@ -169,16 +181,16 @@ final class DefaultTradeDataSource: TradeDataSource {
         if let location, let itemCategory {
             query = query.whereFilter(
                 .andFilter([
-                    .whereField("location", isEqualTo: location.rawValue),
-                    .whereField("itemCategory", isEqualTo: itemCategory.rawValue)
+                    .whereField("location", in: location.map { $0.rawValue }),
+                    .whereField("itemCategory", in: itemCategory.map { $0.rawValue })
                 ])
             )
         } else if let location {
             query = tradeDB
-                .whereField("location", isEqualTo: location.rawValue)
+                .whereField("location", in: location.map { $0.rawValue })
         } else if let itemCategory {
             query = tradeDB
-                .whereField("itemCategory", isEqualTo: itemCategory.rawValue)
+                .whereField("itemCategory", in: itemCategory.map { $0.rawValue })
         }
         
         query = query
@@ -206,7 +218,7 @@ final class DefaultTradeDataSource: TradeDataSource {
         
         guard let snapshot = try? await requestQuery.getDocuments().documents
         else {
-            throw DBError.getDocumentError(message: "필터링 된 Trade List를 불러오는데 실패했습니다.")
+            throw DBError.getTradeDocumentError
         }
         
         let tradeList = snapshot.compactMap { try? $0.data(as: Trade.self) }
@@ -239,7 +251,11 @@ final class DefaultTradeDataSource: TradeDataSource {
         } else {
             requestQuery = filteredQuery
             
-            guard let lastSnapshot = try await requestQuery.getDocuments().documents.last else {
+            guard let lastSnapshot = try await requestQuery
+                .getDocuments()
+                .documents
+                .last
+            else {
                 print("end")
                 return []
             }
@@ -250,18 +266,18 @@ final class DefaultTradeDataSource: TradeDataSource {
             searchQuery = next
         }
         
-        let tradeList = try await requestQuery
+        guard let snapshot = try? await requestQuery
             .getDocuments()
             .documents
-            .compactMap { try? $0.data(as: Trade.self) }
+        else {
+            throw DBError.getTradeDocumentError
+        }
+        
+        let tradeList = snapshot.compactMap { try? $0.data(as: Trade.self) }
         return tradeList
     }
     
     func readRecentItemList(category: ANBDCategory) async throws -> [Trade] {
-        guard category == .nanua || category == .baccua else {
-            throw NSError(domain: "Recent Trade Category Error", code: 4012)
-        }
-        
         let query = tradeDB
             .whereField("category", isEqualTo: category.rawValue)
             .order(by: "createdAt", descending: true)
@@ -271,7 +287,7 @@ final class DefaultTradeDataSource: TradeDataSource {
             .getDocuments()
             .documents
         else {
-            throw DBError.getDocumentError(message: "최근 \(category.description) Trade 목록을 읽어오는데 실패했습니다.")
+            throw DBError.getTradeDocumentError
         }
                 
         let tradeList = snapshot.compactMap { try? $0.data(as: Trade.self) }
@@ -290,14 +306,10 @@ final class DefaultTradeDataSource: TradeDataSource {
     
     func refreshFilter(
         category: ANBDCategory,
-        location: Location?,
-        itemCategory: ItemCategory?,
+        location: [Location]?,
+        itemCategory: [ItemCategory]?,
         limit: Int
     ) async throws -> [Trade] {
-        guard category == .nanua || category == .baccua else {
-            throw NSError(domain: "Recent Trade Category Error", code: 4012)
-        }
-        
         filterQuery = nil
         
         return try await readItemList(
@@ -319,7 +331,7 @@ final class DefaultTradeDataSource: TradeDataSource {
     func updateItem(item: Trade) async throws {
         guard let _ = try? tradeDB.document(item.id).setData(from: item)
         else {
-            throw DBError.updateDocumentError(message: "Trade document를 업데이트하는데 실패했습니다.")
+            throw DBError.updateTradeDocumentError
         }
     }
     
@@ -328,7 +340,7 @@ final class DefaultTradeDataSource: TradeDataSource {
             "tradeState": tradeState.rawValue
         ])
         else {
-            throw DBError.updateDocumentError(message: "Trade document를 업데이트하는데 실패했습니다.")
+            throw DBError.updateTradeDocumentError
         }
     }
     
@@ -336,7 +348,7 @@ final class DefaultTradeDataSource: TradeDataSource {
     func deleteItem(itemID: String) async throws {
         guard let _ = try? await tradeDB.document(itemID).delete()
         else {
-            throw DBError.deleteDocumentError(message: "ID가 일치하는 Trade document를 삭제하는데 실패했습니다.")
+            throw DBError.deleteTradeDocumentError
         }
     }
     

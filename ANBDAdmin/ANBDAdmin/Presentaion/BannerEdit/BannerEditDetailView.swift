@@ -9,7 +9,7 @@ import SwiftUI
 import ANBDModel
 
 struct BannerEditDetailView: View {
-    @Environment(\.presentationMode) var bannerPresentationMode
+    @Environment(\.presentationMode) var bannerDeletePresentationMode
     let banner: Banner
     let bannerUsecase = DefaultBannerUsecase()
     @Binding var deletedBannerID: String?
@@ -56,7 +56,7 @@ struct BannerEditDetailView: View {
                                 do {
                                     try await bannerUsecase.deleteBanner(bannerID: banner.id)
                                     deletedBannerID = banner.id
-                                    bannerPresentationMode.wrappedValue.dismiss()
+                                    bannerDeletePresentationMode.wrappedValue.dismiss()
                                 } catch {
                                     print("게시물을 삭제하는데 실패했습니다: \(error)")
                                 }

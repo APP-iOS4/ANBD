@@ -79,23 +79,22 @@ struct BannerEditView: View {
                 VStack {
                     TextField("배너 URL", text: $newBannerURL)
                         .padding()
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 30)
-                                            .stroke(Color.blue, lineWidth: 2)
-                                    )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 30)
+                                .stroke(Color.blue, lineWidth: 2)
+                        )
                     TextField("배너 썸네일 URL", text: $newBannerThumbnailURL)
                         .padding()
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 30)
-                                            .stroke(Color.blue, lineWidth: 2)
-                                    )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 30)
+                                .stroke(Color.blue, lineWidth: 2)
+                        )
                         .padding(.vertical, 30)
                     Button("배너 추가하기") {
                         Task {
                             await bannerEditViewModel.addBanner(urlString: newBannerURL, thumbnailImageURLString: newBannerThumbnailURL)
-                                                showingAddBannerSheet = false // 배너 추가 Sheet를 숨김
-                                            }
-                                    
+                            showingAddBannerSheet = false // 배너 추가 Sheet를 숨김
+                        }
                     }
                 }
                 .padding()

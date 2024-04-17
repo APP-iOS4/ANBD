@@ -22,7 +22,7 @@ final class DefaultMessageRepository: MessageRepository {
     
     func createMessage(message: Message, channelID: String) async throws {
         guard let _ = try? chatDB.document(channelID).collection("messages").document(message.id).setData(from: message) else {
-            throw DBError.setDocumentError(message: "message 컬렉션에 데이터를 업데이트하는데 실패하였습니다.")
+            throw DBError.setMessageDocumentError
         }
     }
     
@@ -43,7 +43,7 @@ final class DefaultMessageRepository: MessageRepository {
         }
         
         guard let snapshot = try? await requestQuery.getDocuments() else {
-            throw DBError.getDocumentError(message: "channelID에 해당하는 messages Document를 얻어오는데 실패했습니다")
+            throw DBError.getMessageDocumentError
         }
         
         if snapshot.documents.isEmpty {
@@ -106,7 +106,7 @@ final class DefaultMessageRepository: MessageRepository {
         guard let _ = try? await chatDB.document(channelID).collection("messages").document(message.id).updateData([
             "isRead" : true
         ]) else {
-            throw DBError.getDocumentError(message: "messageId에 해당하는 message문서에 isRead 필드 업데이트에 실패했습니다")
+            throw DBError.getMessageDocumentError
         }
     }
     
@@ -121,7 +121,7 @@ final class DefaultMessageRepository: MessageRepository {
         let querySnapshot = try await chatDB.document(channelId).collection("messages").getDocuments()
         for document in querySnapshot.documents {
             guard let _ = try? await chatDB.document(channelId).collection("messages").document(document.documentID).delete() else {
-                throw DBError.deleteDocumentError(message: "channelID가 일치하는 messages Documents를 삭제하는데 실패했습니다.")
+                throw DBError.deleteChannelDocumentError
             }
         }
     }

@@ -20,43 +20,72 @@ struct ArticleListView: View {
                 .background(Color(.systemGray6))
                 .cornerRadius(8)
                 .padding(.horizontal, 10)
-            List {
-                ForEach(articleListViewModel.articleList.filter({ searchArticleText.isEmpty ? true : $0.title.contains(searchArticleText) || $0.id.contains(searchArticleText) }), id: \.id) { article in
-                    NavigationLink(destination: ArticleListDetailView(article: article, deletedArticleID: $articleListViewModel.deletedArticleID)) {
-                        HStack{
-                            VStack(alignment: .leading) {
-                                Text("제목")
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                                Text("\(article.title)")
-                                    .font(.title3)
+            HStack{
+                Spacer()
+                VStack(alignment: .leading) {
+                    Text("제목")
+                        .font(.title3)
+                }
+                .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
+                Spacer()
+                VStack(alignment: .leading) {
+                    Text("작성자 닉네임")
+                        .font(.title3)
+                }
+                .frame(minWidth: 0, maxWidth: 258, alignment: .leading)
+                Spacer()
+                VStack(alignment: .leading) {
+                    Text("생성일자")
+                        .font(.title3)
+                }
+                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                Spacer()
+            }
+            .padding(.horizontal, 15)
+            .padding(.bottom, 5)
+            ScrollView{
+                LazyVStack {
+                    ForEach(articleListViewModel.articleList.filter({ searchArticleText.isEmpty ? true : $0.title.contains(searchArticleText) || $0.id.contains(searchArticleText) }), id: \.id) { article in
+                        NavigationLink(destination: ArticleListDetailView(article: article, deletedArticleID: $articleListViewModel.deletedArticleID)) {
+                            HStack{
+                                Spacer()
+                                VStack(alignment: .leading) {
+                                    Text("\(article.title)")
+                                        .font(.title3)
+                                        .foregroundColor(.black)
+                                }
+                                .frame(minWidth: 0, maxWidth: 250, alignment: .leading)
+                                Divider()
+                                Spacer()
+                                VStack(alignment: .leading) {
+                                    Text("\(article.writerNickname)")
+                                        .foregroundColor(.black)
+                                }
+                                .frame(minWidth: 0, maxWidth: 250, alignment: .leading)
+                                Divider()
+                                Spacer()
+                                VStack(alignment: .leading) {
+                                    Text("\(dateFormatter(article.createdAt))")
+                                        .foregroundColor(.black)
+                                }
+                                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                                Spacer()
                             }
-                            .frame(minWidth: 0, maxWidth: 250, alignment: .leading)
-                            Spacer()
-                            VStack(alignment: .leading) {
-                                Text("작성자 닉네임")
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                                Text("\(article.writerNickname)")
-                            }
-                            .frame(minWidth: 0, maxWidth: 250, alignment: .leading)
-                            Spacer()
-                            VStack(alignment: .leading) {
-                                Text("생성일자")
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                                Text("\(dateFormatter(article.createdAt))")
-                            }
-                            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                            Spacer()
+                            .frame(maxWidth: .infinity, minHeight: 50)
+                                    .background(Color.white)
+                                    .cornerRadius(10)
+                                    .padding(.horizontal)
                         }
                     }
                 }
-            }    
-            .onAppear {
-                articleListViewModel.loadArticles()
+                .onAppear {
+                    articleListViewModel.loadArticles()
+                }
+                .navigationBarTitle("게시물 목록")
             }
-            .navigationBarTitle("게시물 목록")
+            .padding(.top, 10)
+            .background(Color(.systemGroupedBackground))
         }
     }
 }
+

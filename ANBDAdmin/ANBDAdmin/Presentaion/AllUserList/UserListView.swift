@@ -21,13 +21,42 @@ struct UserListView: View {
                 .background(Color(.systemGray6))
                 .cornerRadius(8)
                 .padding(.horizontal, 10)
-            
-            List {
-                            ForEach(userListViewModel.userList.filter({
-                                ($0.userLevel == userLevel) && (searchUserText.isEmpty ? true : $0.nickname.contains(searchUserText) || $0.id.contains(searchUserText))
-                            }), id: \.id) { user in
-                                NavigationLink(destination: UserListDetailView(user: user, initialUserLevel: userLevel)) {
-                                    HStack{
+            HStack{
+                Spacer()
+                VStack(alignment: .leading) {
+                    Text("닉네임")
+                        .font(.title3)
+                }
+                .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
+                Spacer()
+                VStack(alignment: .leading) {
+                    Text("이메일")
+                        .font(.title3)
+                }
+                .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
+                Spacer()
+                VStack(alignment: .leading) {
+                    Text("유저권한")
+                        .font(.title3)
+                }
+                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                Spacer()
+                VStack(alignment: .leading) {
+                    Text("프로필 사진")
+                        .font(.title3)
+                }
+                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                Spacer()
+            }
+            .padding(.horizontal, 15)
+            .padding(.bottom, 5)
+            ScrollView {
+                LazyVStack{
+                    ForEach(userListViewModel.userList.filter({
+                        ($0.userLevel == userLevel) && (searchUserText.isEmpty ? true : $0.nickname.contains(searchUserText) || $0.id.contains(searchUserText))
+                    }), id: \.id) { user in
+                        NavigationLink(destination: UserListDetailView(user: user, initialUserLevel: userLevel)) {
+                            HStack{
                                 VStack(alignment: .leading) {
                                     Text("닉네임")
                                         .font(.subheadline)
@@ -72,13 +101,20 @@ struct UserListView: View {
                                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                                 Spacer()
                             }
+                            .frame(maxWidth: .infinity, minHeight: 50)
+                            .background(Color.white)
+                            .cornerRadius(10)
+                            .padding(.horizontal)
                         }
                     }
+                }
+                .onAppear {
+                    userListViewModel.loadUsers()
+                }
+                .navigationBarTitle("유저 목록")
             }
-            .onAppear {
-                userListViewModel.loadUsers()
-            }
-            .navigationBarTitle("유저 목록")
+            .padding(.top, 10)
+            .background(Color(.systemGroupedBackground))
         }
     }
 }

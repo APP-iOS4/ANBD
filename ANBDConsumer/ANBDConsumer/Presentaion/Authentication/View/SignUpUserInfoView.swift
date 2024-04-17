@@ -9,16 +9,12 @@ import SwiftUI
 import ANBDModel
 
 struct SignUpUserInfoView: View {
-    enum FocusableField {
-        case nickname
-    }
-    
     @EnvironmentObject private var authenticationViewModel: AuthenticationViewModel
     
     @FocusState private var focus: FocusableField?
     
     @State private var navigate = false
-    @State private var selectedLocation: Location = .seoul
+    // @State private var selectedLocation: Location = .seoul
     @State private var isShowingMenuList: Bool = false
     
     var body: some View {
@@ -38,27 +34,25 @@ struct SignUpUserInfoView: View {
             .autocorrectionDisabled(true)
             .submitLabel(.go)
             .onSubmit {
+                guard authenticationViewModel.isValidSignUpNickname else { return }
                 nextButtonAction()
             }
             .padding(.bottom)
             
-            // 프로토타입을 위한 임시 주석
-            /*
-             if !authenticationViewModel.errorMessage.isEmpty {
-             Text(authenticationViewModel.errorMessage)
-             .frame(maxWidth: .infinity, alignment: .leading)
-             .padding(.bottom)
-             .font(ANBDFont.Caption1)
-             .foregroundStyle(Color.heartRed)
-             }
-             */
+            if !authenticationViewModel.errorMessage.isEmpty {
+                Text(authenticationViewModel.errorMessage)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.bottom)
+                    .font(ANBDFont.Caption1)
+                    .foregroundStyle(Color.heartRed)
+            }
             
             Text("선호하는 거래 지역")
                 .font(ANBDFont.SubTitle3)
                 .foregroundStyle(Color.gray900)
                 .frame(maxWidth: .infinity, alignment: .leading)
             
-            LocationPickerMenu(isShowingMenuList: $isShowingMenuList, selectedItem: selectedLocation)
+            LocationPickerMenu(isShowingMenuList: $isShowingMenuList, selectedItem: authenticationViewModel.signUpUserFavoriteLoaction)
             
             Spacer()
             
@@ -67,26 +61,25 @@ struct SignUpUserInfoView: View {
             }
         }
         .padding()
-        .navigationDestination(isPresented: $navigate) {
-            SignUpAgreeView()
-        }
-        
-        .onAppear {
-            focus = .nickname
-        }
         
         .toolbar {
-            ToolbarItem(placement: .keyboard) {
+            ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
-            }
-            
-            ToolbarItem(placement: .keyboard) {
+                
                 Button(action: {
                     downKeyboard()
                 }, label: {
                     Label("Keyboard down", systemImage: "keyboard.chevron.compact.down")
                 })
             }
+        }
+        
+        .navigationDestination(isPresented: $navigate) {
+            SignUpPolicyAgreeView()
+        }
+        
+        .onAppear {
+            focus = .nickname
         }
     }
     
@@ -101,6 +94,10 @@ struct SignUpUserInfoView: View {
 }
 
 extension SignUpUserInfoView {
+    enum FocusableField {
+        case nickname
+    }
+    
     private func downKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }

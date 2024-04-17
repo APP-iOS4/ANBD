@@ -26,13 +26,14 @@ struct DefaultChatRepository: ChatRepository {
     func readChannelList(userID: String, completion : @escaping (_ channels: [Channel]) -> Void){
         chatDB
             .whereField("users", arrayContains: userID)
+            .order(by: "lastSendDate", descending: true)
             .addSnapshotListener { snapshot, error in
                 guard let document = snapshot else {
                     print("채널리스트 업데이트 에러 : \(error!)")
                     return
                 }
-                var channels =  document.documents.compactMap { try? $0.data(as: Channel.self) }.filter{!$0.leaveUsers.contains(userID)}
-                channels = sortedChannel(channels: channels)
+                let channels =  document.documents.compactMap { try? $0.data(as: Channel.self) }.filter{!$0.leaveUsers.contains(userID)}
+//                channels = sortedChannel(channels: channels)
                 completion(channels)
         }
     }

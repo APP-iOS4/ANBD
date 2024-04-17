@@ -25,27 +25,27 @@ struct UserInfoEditingView: View {
                 if #available(iOS 17.0, *) {
                     userProfilImageButton
                     
-                    .onChange(of: photosPickerItem) { _, _ in
-                        Task {
-                            if let photosPickerItem, let data = try? await photosPickerItem.loadTransferable(type: Data.self) {
-                                if let image = await UIImage(data: data)?.byPreparingThumbnail(ofSize: .init(width: 512, height: 512)) {
-                                    myPageViewModel.userProfileImage = image
+                        .onChange(of: photosPickerItem) { _, _ in
+                            Task {
+                                if let photosPickerItem, let data = try? await photosPickerItem.loadTransferable(type: Data.self) {
+                                    if let image = await UIImage(data: data)?.byPreparingThumbnail(ofSize: .init(width: 512, height: 512)) {
+                                        myPageViewModel.userProfileImage = image
+                                    }
                                 }
                             }
                         }
-                    }
                 } else {
                     userProfilImageButton
                     
-                    .onChange(of: photosPickerItem, perform: { _ in
-                        Task {
-                            if let photosPickerItem, let data = try? await photosPickerItem.loadTransferable(type: Data.self) {
-                                if let image = await UIImage(data: data)?.byPreparingThumbnail(ofSize: .init(width: 512, height: 512)) {
-                                    myPageViewModel.userProfileImage = image
+                        .onChange(of: photosPickerItem, perform: { _ in
+                            Task {
+                                if let photosPickerItem, let data = try? await photosPickerItem.loadTransferable(type: Data.self) {
+                                    if let image = await UIImage(data: data)?.byPreparingThumbnail(ofSize: .init(width: 512, height: 512)) {
+                                        myPageViewModel.userProfileImage = image
+                                    }
                                 }
                             }
-                        }
-                    })
+                        })
                 }
                 
                 VStack(alignment: .leading) {
@@ -56,17 +56,14 @@ struct UserInfoEditingView: View {
                     
                     textFieldUIKit(placeholder: "닉네임을 입력해주세요.",
                                    text: $myPageViewModel.editedUserNickname)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled(true)
-                        .font(ANBDFont.SubTitle1)
-                        .foregroundStyle(Color.gray900)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled(true)
+                    .font(ANBDFont.SubTitle1)
+                    .foregroundStyle(Color.gray900)
                     
                     Divider()
                 }
                 .padding(.horizontal, 20)
-                .onAppear {
-                    myPageViewModel.editedUserNickname = myPageViewModel.user.nickname
-                }
                 
                 VStack(alignment: .leading) {
                     Text("선호하는 거래 지역")
@@ -102,9 +99,14 @@ struct UserInfoEditingView: View {
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
-                        myPageViewModel.user.nickname = myPageViewModel.editedUserNickname
-                        myPageViewModel.user.favoriteLocation = myPageViewModel.tempUserFavoriteLocation
+                        //                        myPageViewModel.user.nickname = myPageViewModel.editedUserNickname
+                        //                        myPageViewModel.user.favoriteLocation = myPageViewModel.tempUserFavoriteLocation
                         dismiss()
+                        
+                        //                        Task {
+                        //                            await myPageViewModel.updateUserInfo(updatedNickname: myPageViewModel.editedUserNickname,
+                        //                                                                 updatedLocation: myPageViewModel.tempUserFavoriteLocation)
+                        //                        }
                     }, label: {
                         Text("완료")
                     })
@@ -114,6 +116,11 @@ struct UserInfoEditingView: View {
             
             .navigationTitle("수정하기")
             .navigationBarTitleDisplayMode(.inline)
+            
+            
+            .onAppear {
+                myPageViewModel.editedUserNickname = myPageViewModel.user.nickname
+            }
         }
     }
     
@@ -154,7 +161,7 @@ struct UserInfoEditingView: View {
         
         .photosPicker(isPresented: $isShowingPhotosPicker, selection: $photosPickerItem)
     }
-
+    
     private func textFieldUIKit(placeholder: String, text: Binding<String>) -> some View {
         UITextField.appearance().clearButtonMode = .whileEditing
         

@@ -42,7 +42,7 @@ struct UserPageView: View {
                     
                     if isSignedInUser {
                         HStack {
-                            Text(verbatim: "sjybext@naver.com")
+                            Text(verbatim: "\(myPageViewModel.user.email)")
                                 .foregroundStyle(Color.gray400)
                             
                             Spacer()
@@ -61,22 +61,22 @@ struct UserPageView: View {
             
             // User Activities
             HStack(spacing: 12) {
-                activityInfoComponent(title: "아껴 쓴 개수", count: 5, category: .accua)
+                activityInfoComponent(title: "아껴 쓴 개수", count: 0, category: .accua)
                 
                 Divider()
                     .frame(height: 60)
                 
-                activityInfoComponent(title: "나눠 쓴 개수", count: 8, category: .nanua)
+                activityInfoComponent(title: "나눠 쓴 개수", count: 0, category: .nanua)
                 
                 Divider()
                     .frame(height: 60)
                 
-                activityInfoComponent(title: "바꿔 쓴 개수", count: 13, category: .baccua)
+                activityInfoComponent(title: "바꿔 쓴 개수", count: 0, category: .baccua)
                 
                 Divider()
                     .frame(height: 60)
                 
-                activityInfoComponent(title: "다시 쓴 개수", count: 19, category: .dasi)
+                activityInfoComponent(title: "다시 쓴 개수", count: 0, category: .dasi)
             }
             
             if isSignedInUser {
@@ -145,6 +145,10 @@ struct UserPageView: View {
                 // 유저 신고하기 메서드
                 print("유저 신고하기")
             }
+        }
+        
+        .onAppear {
+            myPageViewModel.loadUserInfo()
         }
     }
     

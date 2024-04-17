@@ -27,7 +27,6 @@ struct ArticleListView: View {
                     Button {
                         articleViewModel.sortOption = .latest
                         Task {
-//                            await articleViewModel.filteringArticles(category: category)
                             await articleViewModel.refreshSortedArticleList(category: category, by: .latest, limit:10)
                         }
                     } label: {
@@ -37,7 +36,6 @@ struct ArticleListView: View {
                     Button {
                         articleViewModel.sortOption = .mostLike
                         Task {
-//                            await articleViewModel.filteringArticles(category: category)
                             await articleViewModel.refreshSortedArticleList(category: category, by: .mostLike, limit:10)
                         }
                     } label: {
@@ -47,7 +45,6 @@ struct ArticleListView: View {
                     Button {
                         articleViewModel.sortOption = .mostComment
                         Task {
-//                            await articleViewModel.filteringArticles(category: category)
                             await articleViewModel.refreshSortedArticleList(category: category, by: .mostComment, limit:10)
                         }
                     } label: {

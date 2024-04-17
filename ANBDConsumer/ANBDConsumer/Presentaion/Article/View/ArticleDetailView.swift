@@ -10,7 +10,7 @@ import ANBDModel
 
 struct ArticleDetailView: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
-
+    
     var article: Article
     
     @State private var isLiked: Bool = false
@@ -85,8 +85,11 @@ struct ArticleDetailView: View {
                             
                             HStack {
                                 Button {
-                                    isLiked.toggle()
-                                    // 좋아요 기능 로직 추가 필요
+                                    Task {
+                                        await articleViewModel.toggleLikeArticle(articleID: article.id)
+                                        isLiked.toggle()
+                                        await articleViewModel.updateLikeCount(articleID: article.id, increment: isLiked)
+                                    }
                                 } label: {
                                     Image(systemName: isLiked ? "hand.thumbsup.fill" : "hand.thumbsup")
                                         .resizable()
@@ -212,7 +215,6 @@ struct ArticleDetailView: View {
                 }
                 .zIndex(2)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                
             }
             
             VStack {
@@ -243,7 +245,6 @@ struct ArticleDetailView: View {
                 .toolbar(.hidden, for: .tabBar)
                 .background(Color.white)
             }
-            
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {

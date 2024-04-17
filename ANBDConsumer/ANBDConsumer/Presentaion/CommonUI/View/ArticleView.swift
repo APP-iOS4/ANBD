@@ -19,7 +19,7 @@ struct ArticleView: View {
     @State private var isArticle: Bool = true
     
     @State private var isFirstAppear: Bool = true
-    //
+
     var body: some View {
         if #available(iOS 17.0, *) {
             listView
@@ -122,8 +122,6 @@ struct ArticleView: View {
         })
     }
 }
-
-
 
 #Preview {
     ArticleView(category: .constant(.accua))

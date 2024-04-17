@@ -23,6 +23,7 @@ final class ArticleViewModel: ObservableObject {
     @Published var sortOption: ArticleOrder = .latest
     
     @Published private(set) var filteredArticles: [Article] = []
+    @Published private var isLiked: Bool = false
 
     let mockArticleData: [Article] = [
     ]
@@ -75,8 +76,41 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
+    func likeArticle(articleID: String) async {
+        do {
+            try await articleUseCase.likeArticle(articleID: articleID)
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
     func resetQuery() {
         articleUseCase.resetQuery()
+    }
+    
+    func toggleLikeArticle(articleID: String) async {
+        do {
+            if isLiked {
+                try await articleUseCase.likeArticle(articleID: articleID)
+                isLiked = false
+            } else {
+                try await articleUseCase.likeArticle(articleID: articleID)
+                isLiked = true
+            }
+            isLiked.toggle()
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func updateLikeCount(articleID: String, increment: Bool) async {
+        if let index = filteredArticles.firstIndex(where: { $0.id == articleID }) {
+            if increment {
+                filteredArticles[index].likeCount += 1
+            } else {
+                filteredArticles[index].likeCount -= 1
+            }
+        }
     }
     
     func getSortOptionLabel() -> String {

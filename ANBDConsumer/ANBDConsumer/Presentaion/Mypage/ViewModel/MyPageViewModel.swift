@@ -46,9 +46,6 @@ final class MyPageViewModel: ObservableObject {
     @Published private(set) var userLikedArticles: [Article] = []
     @Published private(set) var userHeartedTrades: [Trade] = []
     
-    let mockArticleData: [Article] = []
-    let mockTradeData: [Trade] = []
-    
     @Published var editedUserNickname = ""
     @Published var tempUserFavoriteLocation: Location = .seoul
     

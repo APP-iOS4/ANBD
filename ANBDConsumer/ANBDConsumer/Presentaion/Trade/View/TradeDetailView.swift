@@ -163,7 +163,7 @@ struct TradeDetailView: View {
             TradeCreateView(isShowingCreate: $isShowingCreat, isNewProduct: false, trade: trade)
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
-//            ImageDetailView(imageString: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
+            ImageDetailView(imageString: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
         }
         .navigationTitle("나눔 · 거래")
         .navigationBarTitleDisplayMode(.inline)

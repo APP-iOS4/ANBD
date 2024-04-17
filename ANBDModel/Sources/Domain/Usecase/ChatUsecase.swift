@@ -11,7 +11,7 @@ import UIKit
 
 @available(iOS 15, *)
 public protocol ChatUsecaseProtocol {
-    func createChannel(channel : Channel) async throws -> String
+    func createChannel(channel : Channel) async throws -> Channel
     func loadChannelList(userID: String, completion : @escaping (_ channels: [Channel]) -> Void)
     func loadMessageList(channelID: String, userID: String ) async throws -> [Message]
     func getChannelID(tradeID : String , userID: String) async throws -> String?
@@ -45,7 +45,7 @@ public struct ChatUsecase : ChatUsecaseProtocol {
     /// - Parameters:
     ///   - channel: 새로 추가할려는 채널
     /// - Returns: 새로 생성된 채널ID
-    public func createChannel(channel: Channel) async throws -> String{
+    public func createChannel(channel: Channel) async throws -> Channel{
         try await chatRepository.createChannel(channel: channel)
     }
     
@@ -103,9 +103,10 @@ public struct ChatUsecase : ChatUsecaseProtocol {
     /// - Parameters:
     ///   - channel: 현재 채널
     ///   - userID: 내 ID
-    /// - Returns: 상대방 User 정보
+    /// - Returns: 상대방  유저 정보 
     public func getOtherUser(channel: Channel, userID: String) async throws -> User {
         let otherUserID = getOtherUserID(users: channel.users, userID: userID)
+        
         return try await userRepository.readUserInfo(userID: otherUserID)
     }
     

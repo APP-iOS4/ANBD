@@ -15,12 +15,12 @@ struct DefaultChatRepository: ChatRepository {
     private var db = Firestore.firestore()
     let chatDB = Firestore.firestore().collection("ChatRoom")
     
-    func createChannel(channel: Channel) async throws -> String {
+    func createChannel(channel: Channel) async throws -> Channel {
         guard let _ = try? chatDB.document(channel.id).setData(from: channel)
         else {
             throw DBError.setDocumentError(message: "ChatRoom document를 추가하는데 실패했습니다.")
         }
-        return channel.id
+        return channel
     }
     
     func readChannelList(userID: String, completion : @escaping (_ channels: [Channel]) -> Void){

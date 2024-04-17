@@ -61,14 +61,16 @@ struct AccountManagementView: View {
             if isShowingSignOutAlertView {
                 CustomAlertView(isShowingCustomAlert: $isShowingSignOutAlertView, viewType: .signOut) {
                     // 로그아웃 메서드 넣기
-                    authenticationViewModel.authState = false
+                    UserDefaultsClient.shared.userInfo = nil
+                    authenticationViewModel.checkAuthState()
                 }
             }
             
             if isShowingWithdrawalAlertView {
                 CustomAlertView(isShowingCustomAlert: $isShowingWithdrawalAlertView, viewType: .withdrawal) {
                     // 회원 탈퇴 메서드 넣기
-                    authenticationViewModel.authState = false
+                    UserDefaultsClient.shared.userInfo = nil
+                    authenticationViewModel.checkAuthState()
                 }
             }
         }

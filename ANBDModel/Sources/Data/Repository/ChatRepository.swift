@@ -54,7 +54,7 @@ struct DefaultChatRepository: ChatRepository {
         })
     }
     
-    func readChannelID(tradeID: String, userID: String) async throws -> String? {
+    func readChannel(tradeID: String, userID: String) async throws -> Channel? {
         guard let querySnapshot = try? await chatDB
             .whereField("users", arrayContains: userID)
             .whereField("tradeId", isEqualTo: tradeID)
@@ -63,11 +63,8 @@ struct DefaultChatRepository: ChatRepository {
             throw DBError.getDocumentError(message: "userID에 해당하는 ChatRoom documents를 읽어오는데 실패했습니다.")
         }
         for document in querySnapshot.documents {
-            let data = document.data()
-            guard let channelID = data["id"] as? String else {
-                return nil
-            }
-            return channelID
+            let channel = try? document.data(as: Channel.self)
+            return channel
         }
         return nil
     }

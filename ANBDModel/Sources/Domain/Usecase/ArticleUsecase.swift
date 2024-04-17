@@ -39,6 +39,16 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     ///    - article: 작성한 Article
     ///    - imageDatas: 저장할 사진 Data 배열
     public func writeArticle(article: Article, imageDatas: [Data]) async throws {
+        guard article.category == .accua || article.category == .dasi else {
+            throw ArticleError.invalidCategory
+        }
+        
+        if article.title.isEmpty || article.content.isEmpty {
+            throw ArticleError.invalidTitleContentField
+        } else if imageDatas.isEmpty {
+            throw ArticleError.invalidImageField
+        }
+        
         try await articleRepository.createArticle(article: article, imageDatas: imageDatas)
     }
     
@@ -48,7 +58,12 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     ///   - articleID: 불러올 Article의 ID
     /// - Returns: articleID가 일치하는 Article
     public func loadArticle(articleID: String) async throws -> Article {
-        try await articleRepository.readArticle(articleID: articleID)
+        if articleID.isEmpty {
+            throw ArticleError.invalidArticleIDField
+        }
+        
+        let article = try await articleRepository.readArticle(articleID: articleID)
+        return article
     }
     
     
@@ -57,14 +72,20 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     ///   - category: 불러올 최신 Article의 카테고리
     /// - Returns: 카테고리가 일치하는 최신 Article
     public func loadRecentArticle(category: ANBDCategory) async throws -> Article {
-        try await articleRepository.readRecentArticle(category: category)
+        guard category == .accua || category == .dasi else {
+            throw ArticleError.invalidCategory
+        }
+        
+        let recentArticle = try await articleRepository.readRecentArticle(category: category)
+        return recentArticle
     }
     
     
     /// 모든 Article을 불러오는 메서드
     /// - Returns: Article 배열
     public func loadArticleList(limit: Int = 10) async throws -> [Article] {
-        try await articleRepository.readArticleList(limit: limit)
+        let articleList = try await articleRepository.readArticleList(limit: limit)
+        return articleList
     }
     
     
@@ -74,7 +95,12 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: writerID가 일치하는 Article 배열
     public func loadArticleList(writerID: String, limit: Int = 10) async throws -> [Article] {
-        try await articleRepository.readArticleList(writerID: writerID, limit: limit)
+        if writerID.isEmpty {
+            throw ArticleError.invalidWriterInfoField
+        }
+        
+        let articleList = try await articleRepository.readArticleList(writerID: writerID, limit: limit)
+        return articleList
     }
     
     
@@ -85,7 +111,12 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: 정렬된 Article 배열
     public func loadArticleList(category: ANBDCategory, by order: ArticleOrder, limit: Int = 10) async throws -> [Article] {
-        try await articleRepository.readArticleList(category: category, by: order, limit: limit)
+        guard category == .accua || category == .dasi else {
+            throw ArticleError.invalidCategory
+        }
+        
+        let articleList = try await articleRepository.readArticleList(category: category, by: order, limit: limit)
+        return articleList
     }
     
     
@@ -95,7 +126,12 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: title, content가 keyword에 해당하는 Article 배열
     public func searchArticle(keyword: String, limit: Int = 10) async throws -> [Article] {
-        try await articleRepository.readArticleList(keyword: keyword, limit: limit)
+        if keyword.isEmpty {
+            throw ArticleError.invalidKeyword
+        }
+        
+        let articleList = try await articleRepository.readArticleList(keyword: keyword, limit: limit)
+        return articleList
     }
     
     
@@ -104,7 +140,8 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     ///  - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     ///  - Returns: Article 배열
     public func refreshAllArticleList(limit: Int = 10) async throws -> [Article] {
-        try await articleRepository.refreshAll(limit: limit)
+        let articleList = try await articleRepository.refreshAll(limit: limit)
+        return articleList
     }
     
     
@@ -114,7 +151,12 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: writerID가 일치하는 Article 배열
     public func refreshWriterIDArticleList(writerID: String, limit: Int = 10) async throws -> [Article] {
-        try await articleRepository.refreshWriterID(writerID: writerID, limit: limit)
+        if writerID.isEmpty {
+            throw ArticleError.invalidWriterInfoField
+        }
+        
+        let articleList = try await articleRepository.refreshWriterID(writerID: writerID, limit: limit)
+        return articleList
     }
     
     
@@ -125,7 +167,12 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: 정렬된 Article 배열
     public func refreshSortedArticleList(category: ANBDCategory, by order: ArticleOrder, limit: Int = 10) async throws -> [Article] {
-        try await articleRepository.refreshOrder(category: category, by: order, limit: limit)
+        guard category == .accua || category == .dasi else {
+            throw ArticleError.invalidCategory
+        }
+        
+        let articleList = try await articleRepository.refreshOrder(category: category, by: order, limit: limit)
+        return articleList
     }
     
     
@@ -135,7 +182,12 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: title, content가 키워드에 해당하는 Article 배열
     public func refreshSearchArticleList(keyword: String, limit: Int = 10) async throws -> [Article] {
-        try await articleRepository.refreshSearch(keyword: keyword, limit: limit)
+        if keyword.isEmpty {
+            throw ArticleError.invalidKeyword
+        }
+        
+        let articleList = try await articleRepository.refreshSearch(keyword: keyword, limit: limit)
+        return articleList
     }
     
     
@@ -144,6 +196,14 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     ///   - article: 수정할 Article의 정보
     ///   - imageDatas: 수정할 이미지 Data 배열
     public func updateArticle(article: Article, imageDatas: [Data]) async throws {
+        guard article.category == .accua || article.category == .dasi else {
+            throw ArticleError.invalidCategory
+        }
+        
+        if imageDatas.isEmpty {
+            throw ArticleError.invalidImageField
+        }
+        
         try await articleRepository.updateArticle(article: article, imageDatas: imageDatas)
     }
     
@@ -151,6 +211,10 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     /// - Parameters:
     ///   - articleID: 좋아요할 Article의 ID
     public func likeArticle(articleID: String) async throws {
+        if articleID.isEmpty {
+            throw ArticleError.invalidArticleIDField
+        }
+        
         try await articleRepository.likeArticle(articleID: articleID)
     }
     

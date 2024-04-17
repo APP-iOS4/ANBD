@@ -17,16 +17,16 @@ public protocol TradeRepository {
     func readTradeList(limit: Int) async throws -> [Trade]
     func readTradeList(writerID: String, limit: Int) async throws -> [Trade]
     func readTradeList(category: ANBDCategory,
-                       location: Location?,
-                       itemCategory: ItemCategory?,
+                       location: [Location]?,
+                       itemCategory: [ItemCategory]?,
                        limit: Int) async throws -> [Trade]
     func readTradeList(keyword: String, limit: Int) async throws -> [Trade]
     func readRecentTradeList(category: ANBDCategory) async throws -> [Trade]
     func refreshAll(limit: Int) async throws -> [Trade]
     func refreshWriterID(writerID: String, limit: Int) async throws -> [Trade]
     func refreshFilter(category: ANBDCategory,
-                       location: Location?,
-                       itemCategory: ItemCategory?,
+                       location: [Location]?,
+                       itemCategory: [ItemCategory]?,
                        limit: Int) async throws -> [Trade]
     func refreshSearch(keyword: String, limit: Int) async throws -> [Trade]
     

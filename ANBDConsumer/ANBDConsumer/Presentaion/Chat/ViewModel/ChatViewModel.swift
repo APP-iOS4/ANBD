@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 import ANBDModel
 
 @MainActor
@@ -14,9 +15,30 @@ final class ChatViewModel: ObservableObject {
     let userID: String = "A414DC19-A424-4FB8-88E7-B23B06EB67A7"
     let userNickname: String = "테스트관2"
     private let chatUsecase: ChatUsecase = ChatUsecase()
+    private let storageManager = StorageManager.shared
     
     @Published var chatRooms: [Channel] = []
     @Published var messages: [Message] = []
+    
+    var isListener: Bool = false
+    
+    /// fetch + listener
+    func addListener(channelID: String) async throws {
+        do {
+            let preMessages = try await chatUsecase.loadMessageList(channelID: channelID, userID: userID)
+            self.messages.insert(contentsOf: preMessages, at: 0)
+            
+            if !isListener {
+                isListener = true
+                chatUsecase.listenNewMessage(channelID: channelID, userID: userID) { [weak self] message in
+                    self?.messages.append(message)
+                }
+            }
+        } catch {
+            print("addListener ERROR: \(error)")
+        }
+    }
+    
     
     /// 전체 채팅방 리스트 불러오기
     func fetchChatRooms() {
@@ -25,7 +47,7 @@ final class ChatViewModel: ObservableObject {
         }
     }
     
-    /// 채팅방 메시지 불러오기 : 20개씩 페이지네이션
+    /// 채팅방 메시지 불러오기 : 20개씩 페이지네이션 
     func fetchMessages(channelID: String) async throws {
         do {
             let preMessages = try await chatUsecase.loadMessageList(channelID: channelID, userID: userID)
@@ -37,13 +59,18 @@ final class ChatViewModel: ObservableObject {
     
     /// 메시지 리스너 (실시간 채팅 확인 - 읽음·안읽음, 추가)
     func addMessageListener(channelID: String) {
-        chatUsecase.listenNewMessage(channelID: channelID, userID: userID) { [weak self] message in
-            if let lastMessageID = self?.messages.last?.id, lastMessageID == message.id, let lastIndex = self?.messages.indices.last {
-                /// 읽음 처리
-                self?.messages[lastIndex].isRead = true
-            } else {
-                /// 메시지 전송 (추가)
+        if !isListener {
+            isListener = true
+            chatUsecase.listenNewMessage(channelID: channelID, userID: userID) { [weak self] message in
                 self?.messages.append(message)
+                
+    //            if let lastMessageID = self?.messages.last?.id, lastMessageID == message.id, let lastIndex = self?.messages.indices.last {
+    //                /// 읽음 처리
+    //                self?.messages[lastIndex].isRead = true
+    //            } else {
+    //                /// 메시지 전송 (추가)
+    //                self?.messages.append(message)
+    //            }
             }
         }
     }
@@ -78,6 +105,21 @@ final class ChatViewModel: ObservableObject {
         }
     }
     
+    
+    /// 이미지 다운로드
+    func loadThumnailImage(containerID: String, imagePath: String) async throws -> Data {
+        do {
+            return try await storageManager.downloadImage(path: .trade, containerID: "\(containerID)/thumbnail", imagePath: imagePath)
+        } catch {
+            print("HomeViewModel Error loadImage : \(error) \(error.localizedDescription)")
+
+            /// 이미지 예외 처리
+            let image = UIImage(named: "ANBDWarning")
+            let imageData = image?.pngData()
+            return imageData ?? Data()
+        }
+    }
+    
     /// 메시지 사진 로드
     func downloadImagePath(messageID: String, imagePath: String) async throws -> Data {
         do {
@@ -108,6 +150,7 @@ final class ChatViewModel: ObservableObject {
     
     /// 채팅방 onDisappear시, 메시지 데이터 초기화
     func resetMessageData() {
+        isListener = false
         chatUsecase.initializeListener()
         messages = []
     }

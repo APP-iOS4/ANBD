@@ -39,7 +39,7 @@ struct UserListView: View {
                     Text("유저권한")
                         .font(.title3)
                 }
-                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
                 Spacer()
                 VStack(alignment: .leading) {
                     Text("프로필 사진")
@@ -49,7 +49,7 @@ struct UserListView: View {
                 Spacer()
             }
             .padding(.horizontal, 15)
-            .padding(.bottom, 5)
+            .padding(.vertical, 5)
             ScrollView {
                 LazyVStack{
                     ForEach(userListViewModel.userList.filter({
@@ -57,30 +57,28 @@ struct UserListView: View {
                     }), id: \.id) { user in
                         NavigationLink(destination: UserListDetailView(user: user, initialUserLevel: userLevel)) {
                             HStack{
+                                Spacer()
                                 VStack(alignment: .leading) {
-                                    Text("닉네임")
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
                                     Text("\(user.nickname)")
-                                        .font(.title2)
+                                        .font(.title3)
+                                        .foregroundColor(.black)
                                 }
                                 .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
+                                Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
-                                    Text("이메일")
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
                                     Text("\(user.email)")
+                                        .foregroundColor(.black)
+
                                 }
                                 .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
+                                Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
-                                    Text("유저 권한")
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
                                     Text("\(user.userLevel)")
                                 }
                                 .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
+                                Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
                                     if let imageUrl = URL(string: user.profileImage) {

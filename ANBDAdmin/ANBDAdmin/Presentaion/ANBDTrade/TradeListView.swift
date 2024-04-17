@@ -42,7 +42,7 @@ struct TradeListView: View {
                 Spacer()
             }
             .padding(.horizontal, 15)
-            .padding(.bottom, 5)
+            .padding(.vertical, 5)
             ScrollView {
                 LazyVStack{
                     ForEach(tradeListViewModel.tradeList.filter({ searchTradeText.isEmpty ? true : $0.title.contains(searchTradeText) || $0.id.contains(searchTradeText) }), id: \.id) { trade in

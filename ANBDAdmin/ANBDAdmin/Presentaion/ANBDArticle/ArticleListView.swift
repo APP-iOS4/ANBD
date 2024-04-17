@@ -42,7 +42,7 @@ struct ArticleListView: View {
                 Spacer()
             }
             .padding(.horizontal, 15)
-            .padding(.bottom, 5)
+            .padding(.vertical, 5)
             ScrollView{
                 LazyVStack {
                     ForEach(articleListViewModel.articleList.filter({ searchArticleText.isEmpty ? true : $0.title.contains(searchArticleText) || $0.id.contains(searchArticleText) }), id: \.id) { article in
@@ -72,9 +72,9 @@ struct ArticleListView: View {
                                 Spacer()
                             }
                             .frame(maxWidth: .infinity, minHeight: 50)
-                                    .background(Color.white)
-                                    .cornerRadius(10)
-                                    .padding(.horizontal)
+                            .background(Color.white)
+                            .cornerRadius(10)
+                            .padding(.horizontal)
                         }
                     }
                 }

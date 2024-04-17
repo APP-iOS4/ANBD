@@ -8,10 +8,10 @@
 import Foundation
 
 public enum StorageError: Int, Error {
-    case invalidContainerID = 5029
+    case invalidContainerID = 4050
     case invalidImagePath
     case invalidImageData
-    case uploadError
+    case uploadError = 5029
     case downloadError
     case updateError
     case deleteError

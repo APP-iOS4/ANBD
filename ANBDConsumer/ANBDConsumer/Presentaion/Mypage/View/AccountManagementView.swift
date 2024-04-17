@@ -19,7 +19,7 @@ struct AccountManagementView: View {
         ZStack {
             VStack(spacing: 40) {
                 detailInfoComponentView(title: "가입한 계정",
-                                        content: "anbd@anbd.co.kr")
+                                        content: "\(myPageViewModel.user.email)")
                 .padding(.top, 30)
                 
                 detailInfoComponentView(title: "닉네임",
@@ -96,6 +96,10 @@ struct AccountManagementView: View {
         
         .fullScreenCover(isPresented: $isShowingEditorView) {
             UserInfoEditingView()
+        }
+        
+        .onAppear {
+            myPageViewModel.loadUserInfo()
         }
     }
     

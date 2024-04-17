@@ -22,6 +22,7 @@ struct TradeDetailView: View {
     @Environment(\.dismiss) private var dismiss
     
     @State private var detailImage: String = "DummpyPuppy1"
+    @State private var imageData: [Data] = []
     
     //임시..
     @State private var isLiked: Bool = false
@@ -33,14 +34,25 @@ struct TradeDetailView: View {
                     VStack(alignment: .leading) {
                         //이미지
                         TabView() {
-                            ForEach(trade.imagePaths, id: \.self) { item in
-                                Image(item)
+//                            ForEach(trade.imagePaths, id: \.self) { item in
+//                                Image(item)
+//                                    .resizable()
+//                                    .scaledToFill()
+//                                    .onTapGesture {
+//                                        detailImage = item
+//                                        isShowingImageDetailView.toggle()
+//                                    }
+//                            }
+                            if let uiImage = UIImage(data: imageData.first ?? Data()) {
+                                Image(uiImage: uiImage)
                                     .resizable()
                                     .scaledToFill()
                                     .onTapGesture {
-                                        detailImage = item
+                                        //detailImage = item
                                         isShowingImageDetailView.toggle()
                                     }
+                            } else {
+                                ProgressView()
                             }
                         }
                         .frame(height: 300)
@@ -124,6 +136,11 @@ struct TradeDetailView: View {
                 }
             }
         }//ZStack
+        .onAppear {
+            Task {
+                imageData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: trade.id, imagePath: trade.imagePaths)
+            }
+        }
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {

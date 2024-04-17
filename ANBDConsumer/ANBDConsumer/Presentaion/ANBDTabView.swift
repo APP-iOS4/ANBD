@@ -48,8 +48,14 @@ struct ANBDTabView: View {
                     .navigationDestination(for: String.self) { str in
                         if str == "" {
                             SearchView()
+                        } else if str == "tradeToChat" {
+                            ChatDetailView()
+                        } else if str == "tradeToUser" {
+                            UserPageView(isSignedInUser: false)
+                        } else if str == "tradeToReport" {
+                            ReportView(reportViewType: .trade)
                         } else {
-                            SearchResultView(category: .accua, searchText: str)
+                            SearchResultView(category: tradeCategory, searchText: str)
                         }
                     }
             }

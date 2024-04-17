@@ -11,7 +11,7 @@ import Foundation
 public protocol ChatRepository {
     func createChannel(channel : Channel) async throws -> Channel
     func readChannelList(userID: String, completion : @escaping (_ channels: [Channel]) -> Void)
-    func readChannelID(tradeID : String , userID: String) async throws -> String?
+    func readChannel(tradeID : String , userID: String) async throws -> Channel?
     func readTradeInChannel(channelID: String)  async throws -> Trade?
     func readLeftBothUser(channelID: String) async throws -> Bool
     func updateChannel(message: Message , channelID: String) async throws

@@ -9,7 +9,8 @@ import SwiftUI
 import ANBDModel
 
 struct ArticleDetailView: View {
-    
+    @EnvironmentObject private var articleViewModel: ArticleViewModel
+
     var article: Article
     
     @State private var isLiked: Bool = false
@@ -77,7 +78,7 @@ struct ArticleDetailView: View {
                                 .font(ANBDFont.body1)
                                 .padding(.bottom, 10)
                             
-                            Image("DummyImage1")
+                            Image("\(article.imagePaths)")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .padding(.bottom, 10)
@@ -266,6 +267,9 @@ struct ArticleDetailView: View {
                 }
                 
                 Button(role: .destructive) {
+                    Task {
+                        await articleViewModel.deleteArticle(article: article)
+                    }
                     isShowingCustomAlertArticle.toggle()
                 } label: {
                     Text("삭제하기")

@@ -18,6 +18,8 @@ struct ArticleView: View {
     //true - accua, dasi / false - nanua, baccua
     @State private var isArticle: Bool = true
     
+    @State private var isFirstAppear: Bool = true
+    //
     var body: some View {
         if #available(iOS 17.0, *) {
             listView
@@ -78,18 +80,22 @@ struct ArticleView: View {
             }
         }
         .onAppear {
-            if category == .accua || category == .dasi {
-                isArticle = true
-            } else {
-                isArticle = false
-            }
-            
-            if isArticle {
-                Task {
-                    await articleViewModel.filteringArticles(category: category)
+            // 임의로 온어피어 한 번만 되게 함..................
+            if  isFirstAppear {
+                isFirstAppear = false
+                if category == .accua || category == .dasi {
+                    isArticle = true
+                } else {
+                    isArticle = false
                 }
-            } else {
-                tradeViewModel.filteringTrades(category: category)
+                
+                if isArticle {
+                    Task {
+                        await articleViewModel.filteringArticles(category: category)
+                    }
+                } else {
+                    tradeViewModel.filteringTrades(category: category)
+                }
             }
         }
         .onDisappear {

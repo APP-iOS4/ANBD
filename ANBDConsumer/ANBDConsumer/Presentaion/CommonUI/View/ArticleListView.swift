@@ -27,7 +27,8 @@ struct ArticleListView: View {
                     Button {
                         articleViewModel.sortOption = .latest
                         Task {
-                            await articleViewModel.filteringArticles(category: category)
+//                            await articleViewModel.filteringArticles(category: category)
+                            await articleViewModel.refreshSortedArticleList(category: category, by: .latest, limit:10)
                         }
                     } label: {
                         Label("최신순", systemImage: articleViewModel.sortOption == .latest ? "checkmark" : "")
@@ -36,7 +37,8 @@ struct ArticleListView: View {
                     Button {
                         articleViewModel.sortOption = .mostLike
                         Task {
-                            await articleViewModel.filteringArticles(category: category)
+//                            await articleViewModel.filteringArticles(category: category)
+                            await articleViewModel.refreshSortedArticleList(category: category, by: .mostLike, limit:10)
                         }
                     } label: {
                         Label("좋아요순", systemImage: articleViewModel.sortOption == .mostLike ? "checkmark" : "")
@@ -45,7 +47,8 @@ struct ArticleListView: View {
                     Button {
                         articleViewModel.sortOption = .mostComment
                         Task {
-                            await articleViewModel.filteringArticles(category: category)
+//                            await articleViewModel.filteringArticles(category: category)
+                            await articleViewModel.refreshSortedArticleList(category: category, by: .mostComment, limit:10)
                         }
                     } label: {
                         Label("댓글순", systemImage: articleViewModel.sortOption == .mostComment ? "checkmark" : "")

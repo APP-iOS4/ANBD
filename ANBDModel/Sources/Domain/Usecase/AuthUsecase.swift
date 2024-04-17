@@ -38,13 +38,21 @@ public struct DefaultAuthUsecase: AuthUsecase {
     ///   - password: User의 비밀번호
     /// - Returns: User 로그인에 성공한 User의 정보
     public func signIn(email: String, password: String) async throws -> User {
+        if email.isEmpty {
+            throw AuthError.invalidEmailField
+        } else if !email.isValidateEmail() {
+            throw AuthError.invalidEmailRegularExpression
+        }
+        
+        if password.isEmpty {
+            throw AuthError.invalidPasswordField
+        } else if !password.isValidatePassword() {
+            throw AuthError.invalidPasswordRegularExpression
+        }
+        
         let signInResult = try await Auth.auth().signIn(withEmail: email, password: password)
         let userID = signInResult.user.uid
-        
-        guard let userInfo = try? await userRepository.readUserInfo(userID: userID)
-        else {
-            throw AuthError.signInError(message: "로그인에 실패했습니다.")
-        }
+        let userInfo = try await userRepository.readUserInfo(userID: userID)
         
         return userInfo
     }
@@ -65,6 +73,24 @@ public struct DefaultAuthUsecase: AuthUsecase {
         isAgreeCollectInfo: Bool,
         isAgreeMarketing: Bool
     ) async throws -> User {
+        if email.isEmpty {
+            throw AuthError.invalidEmailField
+        } else if !email.isValidateEmail() {
+            throw AuthError.invalidEmailRegularExpression
+        }
+        
+        if password.isEmpty {
+            throw AuthError.invalidPasswordField
+        } else if !password.isValidatePassword() {
+            throw AuthError.invalidPasswordRegularExpression
+        }
+        
+        if nickname.isEmpty {
+            throw AuthError.invalidNicknameField
+        } else if !password.isValidateNickname() {
+            throw AuthError.invalidNicknameRegularExpression
+        }
+        
         let signUpResult = try await Auth.auth().createUser(withEmail: email, password: password)
         let userID = signUpResult.user.uid
         
@@ -79,11 +105,7 @@ public struct DefaultAuthUsecase: AuthUsecase {
             isAgreeMarketing: isAgreeMarketing
         )
         
-        guard let userInfo = try? await userRepository.createUserInfo(user: newUser)
-        else {
-            throw AuthError.signUpError(message: "회원가입에 실패했습니다.")
-        }
-        
+        let userInfo = try await userRepository.createUserInfo(user: newUser)
         return userInfo
     }
     
@@ -100,7 +122,17 @@ public struct DefaultAuthUsecase: AuthUsecase {
     /// UserDB 상에서 User document를 삭제한다.
     /// 로컬에 저장된 User정보는 별도로 처리해줄 것
     public func withdrawal(userID: String) async throws {
-        try await signOut()
+        if userID.isEmpty {
+            throw UserError.invalidUserID
+        }
+        
+        let user = Auth.auth().currentUser
+        
+        // 최근 로그인 기록이 없다면 재인증 처리해야함
+//        var credential = EmailAuthProvider.credential(withEmail: <#T##String#>, password: <#T##String#>)
+//        try await user?.reauthenticate(with: credential)
+        
+        try await user?.delete()
         try await userRepository.deleteUserInfo(userID: userID)
     }
     
@@ -112,6 +144,9 @@ public struct DefaultAuthUsecase: AuthUsecase {
             try await userRepository.checkUser(email: email)
             return false
         } catch {
+            #if DEBUG
+            print(error.localizedDescription)
+            #endif
             return true
         }
     }
@@ -124,6 +159,9 @@ public struct DefaultAuthUsecase: AuthUsecase {
             try await userRepository.checkUser(nickname: nickname)
             return false
         } catch {
+            #if DEBUG
+            print(error.localizedDescription)
+            #endif
             return true
         }
     }

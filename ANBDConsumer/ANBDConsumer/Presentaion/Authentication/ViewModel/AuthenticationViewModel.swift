@@ -69,7 +69,7 @@ final class AuthenticationViewModel: ObservableObject {
     init() {
         $loginEmailString
             .removeDuplicates()
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.4), scheduler: DispatchQueue.main)
             .sink { [weak self] email in
                 guard let self = self else { return }
                 self.loginEmailStringDebounced = email
@@ -78,7 +78,7 @@ final class AuthenticationViewModel: ObservableObject {
         
         $loginPasswordString
             .removeDuplicates()
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.4), scheduler: DispatchQueue.main)
             .sink { [weak self] password in
                 guard let self = self else { return }
                 self.loginPasswordStringDebounced = password
@@ -95,7 +95,7 @@ final class AuthenticationViewModel: ObservableObject {
         
         $signUpEmailString
             .removeDuplicates()
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.05), scheduler: DispatchQueue.main)
             .sink { [weak self] email in
                 guard let self = self else { return }
                 self.signUpEmailStringDebounced = email
@@ -104,7 +104,7 @@ final class AuthenticationViewModel: ObservableObject {
         
         $signUpPasswordString
             .removeDuplicates()
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.1), scheduler: DispatchQueue.main)
             .sink { [weak self] password in
                 guard let self = self else { return }
                 self.signUpPasswordStringDebounced = password
@@ -113,7 +113,7 @@ final class AuthenticationViewModel: ObservableObject {
         
         $signUpPasswordCheckString
             .removeDuplicates()
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.05), scheduler: DispatchQueue.main)
             .sink { [weak self] password in
                 guard let self = self else { return }
                 self.signUpPasswordCheckStringDebounced = password
@@ -122,7 +122,7 @@ final class AuthenticationViewModel: ObservableObject {
         
         $signUpNicknameString
             .removeDuplicates()
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.05), scheduler: DispatchQueue.main)
             .sink { [weak self] nickname in
                 guard let self = self else { return }
                 self.signUpNicknameStringDebounced = nickname

@@ -150,7 +150,6 @@ struct ArticleCreateView: View {
                             }
                         }
                     }
-                    
                 }
             }
             Divider()
@@ -182,6 +181,30 @@ struct ArticleCreateView: View {
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
+                    Task {
+                        if isNewArticle {
+                            let newArticle = Article(writerID: "아티클아이디",
+                                                     writerNickname: "아티클닉네임",
+                                                     category: category,
+                                                     title: title,
+                                                     content: content,
+                                                     thumbnailImagePath: "",
+                                                     imagePaths: [""])
+                            
+                            await articleViewModel.writeArticle(article: newArticle, imageDatas: selectedImageData)
+                        } else {
+                            if var article = article {
+                                article.title = self.title
+                                article.content = self.content
+                                article.category = self.category
+                                
+                                await articleViewModel.updateArticle(article: article, imageDatas: selectedImageData)
+
+                            }
+                        }
+                        await articleViewModel.refreshSortedArticleList(category: category, by: .latest, limit: 10)
+                        isShowingCreateView = false
+                    }
                     isShowingCreateView.toggle()
                 } label: {
                     Text("완료")

@@ -21,7 +21,9 @@ struct SearchResultView: View {
             searchResultView
                 .onChange(of: category) {
                     if category == .accua || category == .dasi {
-                        articleViewModel.updateArticles(category: category)
+                        Task {
+                            await articleViewModel.filteringArticles(category: category)
+                        }
                     } else {
                         tradeViewModel.filteringTrades(category: category)
                     }
@@ -30,7 +32,9 @@ struct SearchResultView: View {
             searchResultView
                 .onChange(of: category) { category in
                     if category == .accua || category == .dasi {
-                        articleViewModel.updateArticles(category: category)
+                        Task {
+                            await articleViewModel.filteringArticles(category: category)
+                        }
                     } else {
                         tradeViewModel.filteringTrades(category: category)
                     }
@@ -62,7 +66,9 @@ struct SearchResultView: View {
         }
         .onAppear {
             if category == .accua || category == .dasi {
-                articleViewModel.updateArticles(category: category)
+                Task {
+                    await articleViewModel.filteringArticles(category: category)
+                }
             } else {
                 tradeViewModel.filteringTrades(category: category)
             }

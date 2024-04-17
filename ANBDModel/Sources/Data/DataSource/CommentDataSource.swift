@@ -35,7 +35,7 @@ struct DefaultCommentDataSource: CommentDataSource {
     func createComment(comment: Comment) async throws {
         guard let _ = try? commentDB.document(comment.id).setData(from: comment)
         else {
-            throw DBError.setDocumentError(message: "Comment document를 추가하는데 실패했습니다.")
+            throw DBError.setCommentDocumentError
         }
     }
     
@@ -45,7 +45,7 @@ struct DefaultCommentDataSource: CommentDataSource {
     func readComment(commentID: String) async throws -> Comment {
         guard let comment = try? await commentDB.document(commentID).getDocument(as: Comment.self)
         else {
-            throw DBError.getDocumentError(message: "commentID가 일치하는 Comment document를 읽어오는데 실패했습니다.")
+            throw DBError.getCommentDocumentError
         }
         
         return comment
@@ -53,9 +53,12 @@ struct DefaultCommentDataSource: CommentDataSource {
     
     /// articleID가 일치하는 댓글 목록을 반환한다.
     func readCommentList(articleID: String) async throws -> [Comment] {
-        guard let snapshot = try? await commentDB.whereField("articleID", isEqualTo: articleID).getDocuments().documents
+        guard let snapshot = try? await commentDB
+            .whereField("articleID", isEqualTo: articleID)
+            .getDocuments()
+            .documents
         else {
-            throw DBError.getDocumentError(message: "articleID가 일치하는 Comment documents를 읽어오는데 실패했습니다.")
+            throw DBError.getCommentDocumentError
         }
         
         return snapshot.compactMap { try? $0.data(as: Comment.self) }
@@ -63,9 +66,12 @@ struct DefaultCommentDataSource: CommentDataSource {
     
     /// writerID가 일치하는 댓글 목록을 반환한다.
     func readCommentList(writerID: String) async throws -> [Comment] {
-        guard let snapshot = try? await commentDB.whereField("writerID", isEqualTo: writerID).getDocuments().documents
+        guard let snapshot = try? await commentDB
+            .whereField("writerID", isEqualTo: writerID)
+            .getDocuments()
+            .documents
         else {
-            throw DBError.getDocumentError(message: "writerID가 일치하는 Comment documents를 읽어오는데 실패했습니다.")
+            throw DBError.getCommentDocumentError
         }
         
         return snapshot.compactMap { try? $0.data(as: Comment.self) }
@@ -76,7 +82,7 @@ struct DefaultCommentDataSource: CommentDataSource {
     func readCommentList() async throws -> [Comment] {
         guard let snapshot = try? await commentDB.getDocuments().documents
         else {
-            throw DBError.getDocumentError(message: "Comment documents를 읽어오는데 실패했습니다.")
+            throw DBError.getCommentDocumentError
         }
         
         return snapshot.compactMap { try? $0.data(as: Comment.self) }
@@ -86,9 +92,11 @@ struct DefaultCommentDataSource: CommentDataSource {
     // MARK: Update
     /// 댓글 정보를 수정한다.
     func updateComment(comment: Comment) async throws {
-        guard let _ = try? await commentDB.document(comment.id).updateData(["content": comment.content])
+        guard let _ = try? await commentDB
+            .document(comment.id)
+            .updateData(["content": comment.content])
         else {
-            throw DBError.updateDocumentError(message: "Comment 정보를 업데이트하는데 실패했습니다.")
+            throw DBError.updateCommentDocumentError
         }
     }
     
@@ -97,14 +105,17 @@ struct DefaultCommentDataSource: CommentDataSource {
     func deleteComment(commentID: String) async throws {
         guard let _ = try? await commentDB.document(commentID).delete()
         else {
-            throw DBError.deleteDocumentError(message: "Comment 정보를 삭제하는데 실패했습니다.")
+            throw DBError.deleteCommentDocumentError
         }
     }
     
     func deleteCommentList(articleID: String) async throws {
-        guard let snapshot = try? await commentDB.whereField("articleID", isEqualTo: articleID).getDocuments().documents
+        guard let snapshot = try? await commentDB
+            .whereField("articleID", isEqualTo: articleID)
+            .getDocuments()
+            .documents
         else {
-            throw DBError.getDocumentError(message: "articleID가 일치하는 Comment documents를 읽어오는데 실패했습니다.")
+            throw DBError.getCommentDocumentError
         }
         
         let commentList = snapshot.compactMap { try? $0.data(as: Comment.self) }

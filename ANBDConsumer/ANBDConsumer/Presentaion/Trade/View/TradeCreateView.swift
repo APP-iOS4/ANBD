@@ -362,8 +362,8 @@ extension TradeCreateView {
                         } else {
                             if let trade = trade {
                                 Task {
-                                    await tradeViewModel.updateTrade(trade: trade, images: selectedPhotosData)
-                                    await tradeViewModel.reloadAllTrades()
+//                                    await tradeViewModel.updateTrade(trade: trade, images: selectedPhotosData)
+//                                    await tradeViewModel.reloadAllTrades()
                                 }
                             }
                         }

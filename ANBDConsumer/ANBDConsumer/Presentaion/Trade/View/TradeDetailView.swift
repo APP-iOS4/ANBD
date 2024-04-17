@@ -20,7 +20,7 @@ struct TradeDetailView: View {
     @State private var isShowingDeleteCustomAlert: Bool = false
     @Environment(\.dismiss) private var dismiss
     
-    @State private var detailImage: String = "DummpyPuppy1"
+    @State private var detailImage: Image = Image("DummyPuppy1")
     @State private var imageData: [Data] = []
     
     //임시..
@@ -47,7 +47,7 @@ struct TradeDetailView: View {
                                     .resizable()
                                     .scaledToFill()
                                     .onTapGesture {
-                                        //detailImage = item
+                                        detailImage = Image(uiImage: uiImage)
                                         isShowingImageDetailView.toggle()
                                     }
                             } else {
@@ -133,6 +133,7 @@ struct TradeDetailView: View {
             }
         }//ZStack
         .onAppear {
+            tradeViewModel.getOneTrade(trade: trade)
             Task {
                 imageData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: trade.id, imagePath: trade.imagePaths)
             }
@@ -151,13 +152,18 @@ struct TradeDetailView: View {
             }
         }
         .fullScreenCover(isPresented: $isShowingCreat, onDismiss: {
+            //userviewmodel에서 user 선호 지역으로 바꾸기
             tradeViewModel.selectedLocation = .seoul
             tradeViewModel.selectedItemCategory = .digital
+            Task {
+                await tradeViewModel.loadOneTrade(trade: trade)
+                trade = tradeViewModel.trade
+            }
         }) {
             TradeCreateView(isShowingCreate: $isShowingCreat, isNewProduct: false, trade: trade)
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
-            ImageDetailView(imageString: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
+//            ImageDetailView(imageString: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
         }
         .navigationTitle("나눔 · 거래")
         .navigationBarTitleDisplayMode(.inline)

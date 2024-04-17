@@ -50,10 +50,17 @@ final class TradeViewModel: ObservableObject {
         self.selectedLocation = location
     }
     
+    func getOneTrade(trade: Trade) {
+        self.trade = trade
+    }
+    
+    
+    
     //read
     func loadAllTrades() async {
         do {
             try await self.trades.append(contentsOf: tradeUseCase.loadTradeList(limit: 10))
+            print("read")
         } catch {
             print(error.localizedDescription)
         }
@@ -61,9 +68,18 @@ final class TradeViewModel: ObservableObject {
     
     func reloadAllTrades() async {
         do {
-            try await self.trades = tradeUseCase.refreshAllTradeList(limit: 10)
+            print("read")
+            self.trades = try await tradeUseCase.refreshAllTradeList(limit: 10)
         } catch {
             print(error.localizedDescription)
+        }
+    }
+    
+    func loadOneTrade(trade: Trade) async {
+        do {
+            self.trade = try await tradeUseCase.loadTrade(tradeID: trade.id)
+        } catch {
+            print("trade 하나 불러오기 실패: \(error.localizedDescription)")
         }
     }
     
@@ -124,8 +140,16 @@ final class TradeViewModel: ObservableObject {
         }
     }
     
-    //update
-    func updateTrade(trade: Trade, images: [Data]) async {
+    //update -> 아직 안됨 
+    func updateTrade(category: ANBDCategory, itemCategory: ItemCategory, location: Location, title: String, content: String, myProduct: String, wantProduct: String?, images: [Data]) async {
+        
+        self.trade.category = category
+        self.trade.itemCategory = itemCategory
+        self.trade.location = location
+        self.trade.title = title
+        self.trade.content = content
+        self.trade.myProduct = myProduct
+        self.trade.wantProduct = wantProduct
         
         //이미지 리사이징
         var newImages: [Data] = []
@@ -135,7 +159,7 @@ final class TradeViewModel: ObservableObject {
         }
         
         do {
-            try await tradeUseCase.updateTrade(trade: trade, imageDatas: newImages)
+            try await tradeUseCase.updateTrade(trade: self.trade, imageDatas: newImages)
         } catch {
             print("수정 실패: \(error.localizedDescription)")
         }

@@ -25,13 +25,22 @@ public struct DefaultCommentUsecase: CommentUsecase {
     
     /// articleID가 일치하는 Article에 Comment를 작성하는 메서드
     public func writeComment(articleID: String, comment: Comment) async throws {
+        if articleID.isEmpty {
+            throw ArticleError.invalidArticleIDField
+        }
+        
         try await commentRepository.createComment(articleID: articleID, comment: comment)
     }
     
     
     /// articleID가 일치하는 Article의 Comment 배열을 반환하는 메서드
     public func loadCommentList(articleID: String) async throws -> [Comment] {
-        try await commentRepository.readCommentList(articleID: articleID)
+        if articleID.isEmpty {
+            throw ArticleError.invalidArticleIDField
+        }
+        
+        let commentList = try await commentRepository.readCommentList(articleID: articleID)
+        return commentList
     }
     
     
@@ -43,6 +52,10 @@ public struct DefaultCommentUsecase: CommentUsecase {
     
     /// commentID가 일치하는 Comment를 삭제하는 메서드
     public func deleteComment(articleID: String, commentID: String) async throws {
+        if articleID.isEmpty {
+            throw ArticleError.invalidArticleIDField
+        }
+        
         try await commentRepository.deleteComment(articleID: articleID, commentID: commentID)
     }
     

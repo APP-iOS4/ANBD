@@ -14,16 +14,16 @@ public protocol TradeUsecase {
     func loadTradeList(limit: Int?) async throws -> [Trade]
     func loadTradeList(writerID: String, limit: Int?) async throws -> [Trade]
     func loadFilteredTradeList(category: ANBDCategory,
-                               location: Location?,
-                               itemCategory: ItemCategory?,
+                               location: [Location]?,
+                               itemCategory: [ItemCategory]?,
                                limit: Int?) async throws -> [Trade]
     func loadRecentTradeList(category: ANBDCategory) async throws -> [Trade]
     func searchTrade(keyword: String, limit: Int?) async throws -> [Trade]
     func refreshAllTradeList(limit: Int?) async throws -> [Trade]
     func refreshWriterIDTradeList(writerID: String, limit: Int?) async throws -> [Trade]
     func refreshFilteredTradeList(category: ANBDCategory,
-                                  location: Location?,
-                                  itemCategory: ItemCategory?,
+                                  location: [Location]?,
+                                  itemCategory: [ItemCategory]?,
                                   limit: Int?) async throws -> [Trade]
     func refreshSearchTradeList(keyword: String, limit: Int?) async throws -> [Trade]
     func updateTrade(trade: Trade, imageDatas: [Data]) async throws
@@ -36,8 +36,7 @@ public protocol TradeUsecase {
 @available(iOS 15, *)
 public struct DefaultTradeUsecase: TradeUsecase {
     
-    let tradeRepository: TradeRepository = DefaultTradeRepository()
-    
+    private let tradeRepository: TradeRepository = DefaultTradeRepository()
     
     public init() { }
     
@@ -47,6 +46,14 @@ public struct DefaultTradeUsecase: TradeUsecase {
     ///    - trade: 작성한 Trade
     ///    - imageDatas: 저장할 사진 Data 배열
     public func writeTrade(trade: Trade, imageDatas: [Data]) async throws {
+        guard trade.category == .nanua || trade.category == .baccua else {
+            throw TradeError.invalidCategory
+        }
+        
+        if imageDatas.isEmpty {
+            throw TradeError.invalidImageField
+        }
+        
         try await tradeRepository.createTrade(trade: trade, imageDatas: imageDatas)
     }
     
@@ -56,7 +63,12 @@ public struct DefaultTradeUsecase: TradeUsecase {
     ///   - tradeID: 불러올 Trade의 ID
     /// - Returns: tradeID가 일치하는 Trade
     public func loadTrade(tradeID: String) async throws -> Trade {
-        try await tradeRepository.readTrade(tradeID: tradeID)
+        if tradeID.isEmpty {
+            throw TradeError.invalidTradeIDField
+        }
+        
+        let tradeList = try await tradeRepository.readTrade(tradeID: tradeID)
+        return tradeList
     }
     
     
@@ -75,7 +87,12 @@ public struct DefaultTradeUsecase: TradeUsecase {
     ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: 작성자 ID가 일치하는 Trade 배열
     public func loadTradeList(writerID: String, limit: Int?) async throws -> [Trade] {
-        try await tradeRepository.readTradeList(writerID: writerID, limit: limit ?? 10)
+        if writerID.isEmpty {
+            throw TradeError.invalidWriterInfoField
+        }
+        
+        let tradeList = try await tradeRepository.readTradeList(writerID: writerID, limit: limit ?? 10)
+        return tradeList
     }
     
     
@@ -88,16 +105,21 @@ public struct DefaultTradeUsecase: TradeUsecase {
     /// - Returns: 적용된 필터에 해당되는 Trade 배열
     public func loadFilteredTradeList(
         category: ANBDCategory,
-        location: Location?,
-        itemCategory: ItemCategory?,
+        location: [Location]?,
+        itemCategory: [ItemCategory]?,
         limit: Int?
     ) async throws -> [Trade] {
-        try await tradeRepository.readTradeList(
+        guard category == .nanua || category == .baccua else {
+            throw TradeError.invalidCategory
+        }
+        
+        let tradeList = try await tradeRepository.readTradeList(
             category: category,
             location: location,
             itemCategory: itemCategory,
             limit: limit ?? 10
         )
+        return tradeList
     }
     
     
@@ -106,7 +128,12 @@ public struct DefaultTradeUsecase: TradeUsecase {
     ///   - category: Trade의 카테고리
     /// - Returns: 카테고리가 일치하는 최신 Trade 배열
     public func loadRecentTradeList(category: ANBDCategory) async throws -> [Trade] {
-        try await tradeRepository.readRecentTradeList(category: category)
+        guard category == .nanua || category == .baccua else {
+            throw TradeError.invalidCategory
+        }
+        
+        let tradeList = try await tradeRepository.readRecentTradeList(category: category)
+        return tradeList
     }
     
     
@@ -116,7 +143,12 @@ public struct DefaultTradeUsecase: TradeUsecase {
     ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: title, content, itemCategory가 keyword에 해당하는 Trade 배열
     public func searchTrade(keyword: String, limit: Int?) async throws -> [Trade] {
-        try await tradeRepository.readTradeList(keyword: keyword, limit: limit ?? 10)
+        if keyword.isEmpty {
+            throw TradeError.invalidKeyword
+        }
+        
+        let tradeList = try await tradeRepository.readTradeList(keyword: keyword, limit: limit ?? 10)
+        return tradeList
     }
     
     
@@ -135,7 +167,12 @@ public struct DefaultTradeUsecase: TradeUsecase {
     ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: writerID가 일치하는 Trade 배열
     public func refreshWriterIDTradeList(writerID: String, limit: Int?) async throws -> [Trade] {
-        try await tradeRepository.refreshWriterID(writerID: writerID, limit: limit ?? 10)
+        if writerID.isEmpty {
+            throw TradeError.invalidWriterInfoField
+        }
+        
+        let tradeList = try await tradeRepository.refreshWriterID(writerID: writerID, limit: limit ?? 10)
+        return tradeList
     }
     
     
@@ -148,16 +185,21 @@ public struct DefaultTradeUsecase: TradeUsecase {
     /// - Returns: 적용된 필터에 해당되는 Trade 배열
     public func refreshFilteredTradeList(
         category: ANBDCategory,
-        location: Location?,
-        itemCategory: ItemCategory?,
+        location: [Location]?,
+        itemCategory: [ItemCategory]?,
         limit: Int?
     ) async throws -> [Trade] {
-        try await tradeRepository.refreshFilter(
+        guard category == .nanua || category == .baccua else {
+            throw TradeError.invalidCategory
+        }
+        
+        let tradeList = try await tradeRepository.refreshFilter(
             category: category,
             location: location,
             itemCategory: itemCategory,
             limit: limit ?? 10
         )
+        return tradeList
     }
     
     
@@ -167,18 +209,26 @@ public struct DefaultTradeUsecase: TradeUsecase {
     ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: title, content, itemCategory가 키워드에 해당하는 Trade 배열
     public func refreshSearchTradeList(keyword: String, limit: Int?) async throws -> [Trade] {
-        try await tradeRepository.refreshSearch(keyword: keyword, limit: limit ?? 10)
+        if keyword.isEmpty {
+            throw TradeError.invalidKeyword
+        }
+        
+        let tradeList = try await tradeRepository.refreshSearch(keyword: keyword, limit: limit ?? 10)
+        return tradeList
     }
     
     
     /// Trade의 정보를 수정하는 메서드
     /// - Parameters:
-    ///   - category: 수정한 Trade의 카테고리
     ///   - trade: 수정한 Trade 정보
     ///   - imageDatas: 수정한 Trade의 이미지 Data 배열
     public func updateTrade(trade: Trade, imageDatas: [Data]) async throws {
+        guard trade.category == .nanua || trade.category == .baccua else {
+            throw TradeError.invalidCategory
+        }
+        
         if trade.category == .baccua && trade.wantProduct == nil {
-            throw NSError(domain: "Trade Field Error", code: 4010)
+            throw TradeError.invalidWantProductField
         }
         
         try await tradeRepository.updateTrade(trade: trade, imageDatas: imageDatas)
@@ -190,6 +240,10 @@ public struct DefaultTradeUsecase: TradeUsecase {
     ///   - tradeID: 수정하려는 Trade의 ID
     ///   - tradeState: 변경하려는 거래 상태
     public func updateTradeState(tradeID: String, tradeState: TradeState) async throws {
+        if tradeID.isEmpty {
+            throw TradeError.invalidTradeIDField
+        }
+        
         try await tradeRepository.updateTrade(tradeID: tradeID, tradeState: tradeState)
     }
     
@@ -198,6 +252,10 @@ public struct DefaultTradeUsecase: TradeUsecase {
     /// - Parameters:
     ///   - tradeID: 찜할 Trade의 ID
     public func likeTrade(tradeID: String) async throws {
+        if tradeID.isEmpty {
+            throw TradeError.invalidTradeIDField
+        }
+        
         try await tradeRepository.likeTrade(tradeID: tradeID)
     }
     

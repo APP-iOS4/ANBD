@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SignUpAgreeView: View {
+struct SignUpPolicyAgreeView: View {
     @EnvironmentObject private var authenticationViewModel: AuthenticationViewModel
     
     var body: some View {
@@ -39,26 +39,26 @@ struct SignUpAgreeView: View {
             
             Divider()
             
-            CheckAgreeView(
+            PolicyDetailView(
                 isAgree: $authenticationViewModel.isOlderThanFourteen,
                 explainString: "만 14세 이상입니다. (필수)"
             )
             
-            CheckAgreeView(
+            PolicyDetailView(
                 isAgree: $authenticationViewModel.isAgreeService,
                 explainString: "서비스 이용약관에 동의 (필수)"
             ) {
                 authenticationViewModel.showTermsView(type: .agreeService)
             }
             
-            CheckAgreeView(
+            PolicyDetailView(
                 isAgree: $authenticationViewModel.isAgreeCollectInfo,
                 explainString: "개인정보 수집 및 이용에 동의 (필수)"
             ) {
                 authenticationViewModel.showTermsView(type: .agreeCollectionInfo)
             }
             
-            CheckAgreeView(
+            PolicyDetailView(
                 isAgree: $authenticationViewModel.isAgreeMarketing,
                 explainString: "광고 및 마케팅 수신에 동의 (선택)"
             ) {
@@ -69,6 +69,10 @@ struct SignUpAgreeView: View {
             
             BlueSquareButton(title: "회원가입 완료", isDisabled: !authenticationViewModel.isEssentialAgree()) {
                 authenticationViewModel.isValidSignUp = true
+                
+                Task {
+                    try await authenticationViewModel.signUp()
+                }
             }
         }
         .padding()
@@ -76,6 +80,7 @@ struct SignUpAgreeView: View {
         .sheet(isPresented: $authenticationViewModel.showingTermsView) {
             TermsView()
         }
+        
         .navigationDestination(isPresented: $authenticationViewModel.isValidSignUp) {
             SignUpCompleteView()
         }
@@ -83,6 +88,6 @@ struct SignUpAgreeView: View {
 }
 
 #Preview {
-    SignUpAgreeView()
+    SignUpPolicyAgreeView()
         .environmentObject(AuthenticationViewModel())
 }

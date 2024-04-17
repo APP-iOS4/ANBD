@@ -65,7 +65,7 @@ final class HomeViewModel: ObservableObject {
     /// 이미지 다운로드
     func loadThumnailImage(path: StoragePath, containerID: String, imagePath: String) async throws -> Data {
         do {
-            return try await storageManager.downloadImage(path: path, containerID: containerID, imagePath: "\(imagePath)/thumbnail")
+            return try await storageManager.downloadImage(path: path, containerID: "\(containerID)/thumbnail", imagePath: imagePath)
         } catch {
             print("HomeViewModel Error loadImage : \(error) \(error.localizedDescription)")
 

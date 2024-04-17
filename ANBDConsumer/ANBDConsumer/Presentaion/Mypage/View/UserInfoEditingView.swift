@@ -99,14 +99,12 @@ struct UserInfoEditingView: View {
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
-                        //                        myPageViewModel.user.nickname = myPageViewModel.editedUserNickname
-                        //                        myPageViewModel.user.favoriteLocation = myPageViewModel.tempUserFavoriteLocation
                         dismiss()
                         
-                        //                        Task {
-                        //                            await myPageViewModel.updateUserInfo(updatedNickname: myPageViewModel.editedUserNickname,
-                        //                                                                 updatedLocation: myPageViewModel.tempUserFavoriteLocation)
-                        //                        }
+//                        Task {
+//                            await myPageViewModel.updateUserInfo(updatedNickname: myPageViewModel.editedUserNickname,
+//                                                                 updatedLocation: myPageViewModel.tempUserFavoriteLocation)
+//                        }
                     }, label: {
                         Text("완료")
                     })

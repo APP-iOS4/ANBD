@@ -70,6 +70,7 @@ final class MyPageViewModel: ObservableObject {
             updatedUser.favoriteLocation = updatedLocation
             
             try await userUsecase.updateUserInfo(user: updatedUser)
+            UserDefaultsClient.shared.userInfo = updatedUser
         } catch {
             print("\(error.localizedDescription)")
         }

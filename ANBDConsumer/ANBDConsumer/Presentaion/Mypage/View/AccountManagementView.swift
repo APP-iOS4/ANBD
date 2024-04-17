@@ -97,6 +97,10 @@ struct AccountManagementView: View {
         .fullScreenCover(isPresented: $isShowingEditorView) {
             UserInfoEditingView()
         }
+        
+        .onAppear {
+            myPageViewModel.loadUserInfo()
+        }
     }
     
     @ViewBuilder

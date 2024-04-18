@@ -23,6 +23,9 @@ struct ANBDAdminAppHomeView: View {
                     NavigationLink(destination: UserListView(userLevel: .admin).font(.title3)) {
                         Text("관리자 유저")
                     }
+                    NavigationLink(destination: UserListView(userLevel: .banned).font(.title3)) {
+                        Text("접근 제한 유저")
+                    }
                 } label: {
                     Text("유저 목록").bold()
                 }

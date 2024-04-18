@@ -64,6 +64,19 @@ final class AuthenticationViewModel: ObservableObject {
     
     @Published private(set) var errorMessage: String = ""
     
+    @Published var user = User(id: "",
+                                   nickname: "",
+                                   profileImage: "",
+                                   email: "",
+                                   favoriteLocation: .seoul,
+                                   userLevel: .consumer,
+                                   isOlderThanFourteen: false,
+                                   isAgreeService: false,
+                                   isAgreeCollectInfo: false,
+                                   isAgreeMarketing: false,
+                                   likeArticles: [],
+                                   likeTrades: [])
+    
     private var cancellables = Set<AnyCancellable>()
     
     init() {
@@ -212,8 +225,13 @@ extension AuthenticationViewModel {
     }
     
     func checkAuthState() {
-        if UserDefaultsClient.shared.userInfo == nil {
+        if let user = UserDefaultsClient.shared.userInfo {
+                    self.user = user
+                }
+        
+        if (UserDefaultsClient.shared.userInfo == nil) || user.userLevel != ANBDModel.UserLevel.admin{
             authState = false
+            errorMessage = "접근 권한이 없습니다"
         } else {
             authState = true
         }

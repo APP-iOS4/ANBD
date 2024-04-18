@@ -30,7 +30,7 @@ struct ArticleDetailView: View {
     
     @State private var detailImage: Image = Image("DummyPuppy1")
     @State private var imageData: [Data] = []
-
+    
     @Environment(\.dismiss) private var dismiss
     
     struct Comment: Identifiable {
@@ -70,7 +70,7 @@ struct ArticleDetailView: View {
                                 }
                             }
                             .navigationDestination(isPresented: $isGoingToProfileView) {
-//                                UserPageView(isSignedInUser: false)
+                                //                                UserPageView(isSignedInUser: false)
                             }
                             .padding(.bottom, 20)
                             
@@ -81,26 +81,26 @@ struct ArticleDetailView: View {
                             Text("\(article.content)")
                                 .font(ANBDFont.body1)
                                 .padding(.bottom, 10)
-
-                                if let uiImage = UIImage(data: imageData.first ?? Data()) {
-                                    Image(uiImage: uiImage)
+                            
+                            ForEach(imageData, id: \.self) { photoData in
+                                if let image = UIImage(data: photoData) {
+                                    Image(uiImage: image)
                                         .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .padding(.bottom, 10)
+                                        .scaledToFill()
                                         .onTapGesture {
-                                            detailImage = Image(uiImage: uiImage)
+                                            detailImage = Image(uiImage: image)
                                             isShowingImageDetailView.toggle()
                                         }
                                 } else {
                                     ProgressView()
                                 }
-
+                            }
                             HStack {
                                 Button {
                                     Task {
-//                                        await articleViewModel.toggleLikeArticle(articleID: article.id)
+                                        //                                        await articleViewModel.toggleLikeArticle(articleID: article.id)
                                         isLiked.toggle()
-//                                        await articleViewModel.updateLikeCount(articleID: article.id, increment: isLiked)
+                                        //                                        await articleViewModel.updateLikeCount(articleID: article.id, increment: isLiked)
                                     }
                                 } label: {
                                     Image(systemName: isLiked ? "hand.thumbsup.fill" : "hand.thumbsup")

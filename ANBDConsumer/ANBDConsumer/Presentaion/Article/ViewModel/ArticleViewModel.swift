@@ -95,8 +95,16 @@ final class ArticleViewModel: ObservableObject {
     }
     
     func writeArticle(article: Article, imageDatas: [Data]) async {
+        
+        //이미지 리사이징
+        var newImages: [Data] = []
+        for image in imageDatas {
+            let imageData = await UIImage(data: image)?.byPreparingThumbnail(ofSize: .init(width: 1024, height: 1024))?.jpegData(compressionQuality: 0.5)
+            newImages.append(imageData ?? Data())
+        }
+        
         do {
-            try await articleUseCase.writeArticle(article: article, imageDatas: imageDatas)
+            try await articleUseCase.writeArticle(article: article, imageDatas: newImages)
         } catch {
             print(error.localizedDescription)
         }

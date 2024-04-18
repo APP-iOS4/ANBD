@@ -20,17 +20,19 @@ struct CustomAlertView: View {
             
             ZStack {
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(.white)
+                    .fill(Color(UIColor.systemBackground))
                     .frame(height: 200)
                 
                 VStack {
                     Text(title)
                         .font(ANBDFont.SubTitle1)
+                        .foregroundStyle(.gray900)
                         .padding(.vertical, 10)
                     
                     Text(description)
                         .multilineTextAlignment(.center)
                         .font(ANBDFont.body1)
+                        .foregroundStyle(.gray900)
                         .padding(.bottom, 15)
                     
                     if viewType == .duplicatedEmail || viewType == .duplicatedNickname {

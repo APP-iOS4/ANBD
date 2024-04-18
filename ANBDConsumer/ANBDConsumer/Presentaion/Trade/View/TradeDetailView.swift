@@ -98,7 +98,7 @@ struct TradeDetailView: View {
                                 .fontWeight(.bold)
                                 .padding(.bottom, 1)
                             Text("\(trade.itemCategory.rawValue) · \(trade.location.description)")
-                                .font(ANBDFont.body1)
+                                .font(ANBDFont.pretendardMedium(13))
                                 .foregroundStyle(.gray500)
                                 .padding(.bottom)
                             
@@ -152,9 +152,7 @@ struct TradeDetailView: View {
             }
         }
         .fullScreenCover(isPresented: $isShowingCreat, onDismiss: {
-            //userviewmodel에서 user 선호 지역으로 바꾸기
-            tradeViewModel.selectedLocation = .seoul
-            tradeViewModel.selectedItemCategory = .digital
+            print("dismiss")
             Task {
                 await tradeViewModel.loadOneTrade(trade: trade)
                 trade = tradeViewModel.trade
@@ -195,12 +193,10 @@ extension TradeDetailView {
         HStack {
             Image(systemName: isLiked ? "heart": "heart.fill")
                 .font(.system(size: 30))
-                .foregroundStyle(isLiked ? .gray200 : .heartRed)
+                .foregroundStyle(isLiked ? .gray800 : .heartRed)
                 .padding(.leading, 15)
                 .onTapGesture {
-                    withAnimation {
-                        isLiked.toggle()
-                    }
+                    isLiked.toggle()
                 }
                 .padding()
                 .padding(.leading, -10)

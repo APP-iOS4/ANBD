@@ -242,16 +242,23 @@ struct HomeView: View {
         
         var body: some View {
             ZStack(alignment: .bottomLeading) {
-                if let imageData {
-                    if let uiImage = UIImage(data: imageData) {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(height: 130)
+                VStack {
+                    if let imageData {
+                        if let uiImage = UIImage(data: imageData) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(height: 130)
+                        }
+                    } else {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                            Spacer()
+                        }
                     }
-                } else {
-                    ProgressView()
                 }
+                .frame(height: 130)
                 
                 LinearGradient(
                     gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.4)]),
@@ -285,16 +292,19 @@ struct HomeView: View {
         
         var body: some View {
             ZStack(alignment: .bottomLeading) {
-                if let imageData {
-                    if let uiImage = UIImage(data: imageData) {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(height: 130)
+                VStack {
+                    if let imageData {
+                        if let uiImage = UIImage(data: imageData) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .frame(height: 140)
+                                .scaledToFill()
+                        }
+                    } else {
+                        ProgressView()
                     }
-                } else {
-                    ProgressView()
                 }
+                .frame(width: 140, height: 140)
                 
                 LinearGradient(
                     gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.4)]),
@@ -309,6 +319,7 @@ struct HomeView: View {
                     .foregroundStyle(.white)
                     .font(ANBDFont.SubTitle1)
             }
+            .frame(width: 140, height: 140)
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .onAppear {
                 Task {

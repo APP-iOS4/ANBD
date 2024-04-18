@@ -113,6 +113,7 @@ struct ChatDetailView: View {
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
+        .toolbarRole(.editor)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {

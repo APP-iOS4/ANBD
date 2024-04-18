@@ -66,6 +66,7 @@ struct ReportView: View {
         .navigationTitle("신고하기")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
+        .toolbarRole(.editor)
     }
 }
 

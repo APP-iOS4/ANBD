@@ -40,6 +40,10 @@ public struct StorageManager {
         containerID: String,
         imageData: Data
     ) async throws -> String {
+        if containerID.isEmpty {
+            throw StorageError.invalidContainerID
+        }
+        
         let imagePath = "\(UUID().uuidString).jpeg"
         
         guard let _ = try? await storageRef
@@ -68,6 +72,14 @@ public struct StorageManager {
         containerID: String,
         imageDatas: [Data]
     ) async throws -> [String] {
+        if containerID.isEmpty {
+            throw StorageError.invalidContainerID
+        }
+        
+        if imageDatas.isEmpty {
+            throw StorageError.invalidImageData
+        }
+        
         var imagePaths: [String] = []
         
         for imageData in imageDatas {
@@ -97,7 +109,7 @@ public struct StorageManager {
     /// - Parameters:
     ///   - path: Image를 저장하려는 탭 (ex: Article, Trade, Profile)
     ///   - containerID: Image를 담을 모델의 ID (ex: ArticleID, TradeID, UserID)
-    ///   - imageID: 수정하려는 Image의 ID
+    ///   - imagePath: 수정하려는 Image의 Path
     ///   - imageData: 수정할 Image의 Data
     public func updateImage(
         path storagePath: StoragePath,
@@ -105,6 +117,14 @@ public struct StorageManager {
         imagePath: String,
         imageData: Data
     ) async throws {
+        if containerID.isEmpty {
+            throw StorageError.invalidContainerID
+        }
+        
+        if imagePath.isEmpty {
+            throw StorageError.invalidImagePath
+        }
+        
         guard let _ = try? await storageRef
             .child(storagePath.rawValue)
             .child(containerID)
@@ -121,7 +141,7 @@ public struct StorageManager {
     /// - Parameters:
     ///   - path: Image를 저장하려는 탭 (ex: Article, Trade, Profile)
     ///   - containerID: Image를 담을 모델의 ID (ex: ArticleID, TradeID, UserID)
-    ///   - imageID: 수정하려는 Image의 ID
+    ///   - imagePaths: container에 저장되어있던 ImagePath 배열
     ///   - imageDatas: 수정할 Image의 Data 배열
     public func updateImageList(
         path storagePath: StoragePath,
@@ -129,6 +149,18 @@ public struct StorageManager {
         imagePaths: [String],
         imageDatas: [Data]
     ) async throws -> [String] {
+        if containerID.isEmpty {
+            throw StorageError.invalidContainerID
+        }
+        
+        if imagePaths.isEmpty {
+            throw StorageError.invalidImagePath
+        }
+        
+        if imageDatas.isEmpty {
+            throw StorageError.invalidImageData
+        }
+        
         var updatedImagePaths: [String] = imagePaths
         let storageImagePathList = try await storageRef
             .child(storagePath.rawValue)
@@ -175,6 +207,14 @@ public struct StorageManager {
         containerID: String,
         imagePath: String
     ) async throws -> Data {
+        if containerID.isEmpty {
+            throw StorageError.invalidContainerID
+        }
+        
+        if imagePath.isEmpty {
+            throw StorageError.invalidImagePath
+        }
+        
         return try await withCheckedThrowingContinuation { continuation in
             storageRef
                 .child(storagePath.rawValue)
@@ -203,6 +243,14 @@ public struct StorageManager {
         containerID: String,
         imagePaths: [String]
     ) async throws -> [Data] {
+        if containerID.isEmpty {
+            throw StorageError.invalidContainerID
+        }
+        
+        if imagePaths.isEmpty {
+            throw StorageError.invalidImagePath
+        }
+        
         var imageDatas: [Data] = []
         
         for imagePath in imagePaths {
@@ -225,6 +273,14 @@ public struct StorageManager {
         containerID: String,
         imagePath: String
     ) async throws {
+        if containerID.isEmpty {
+            throw StorageError.invalidContainerID
+        }
+        
+        if imagePath.isEmpty {
+            throw StorageError.invalidImagePath
+        }
+        
         guard let _ = try? await storageRef
             .child(storagePath.rawValue)
             .child(containerID)
@@ -247,6 +303,14 @@ public struct StorageManager {
         containerID: String,
         imagePaths: [String]
     ) async throws {
+        if containerID.isEmpty {
+            throw StorageError.invalidContainerID
+        }
+        
+        if imagePaths.isEmpty {
+            throw StorageError.invalidImagePath
+        }
+        
         for imagePath in imagePaths {
             try await deleteImage(path: storagePath, containerID: containerID, imagePath: imagePath)
         }

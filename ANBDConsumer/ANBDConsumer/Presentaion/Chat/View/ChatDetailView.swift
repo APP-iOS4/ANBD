@@ -218,13 +218,12 @@ struct ChatDetailView: View {
                     Text(trade == nil ? "삭제된 게시물" : trade?.title ?? "Unknown")
                         .lineLimit(1)
                         .font(ANBDFont.SubTitle3)
-                        .padding(.bottom, 10)
+                        .padding(.bottom, 3)
                     
                     Text(tradeProductString)
                         .foregroundStyle(.gray400)
                         .font(ANBDFont.Caption3)
                 }
-                .padding(.vertical, 8)
                 
                 Spacer()
                 
@@ -232,9 +231,7 @@ struct ChatDetailView: View {
                     VStack(alignment: .leading) {
                         // TODO: TradeStateChangeView 수정해야 함 : tradeState 매개변수가 아니라 trade 전체 넘겨주기
                         TradeStateChangeView(tradeState: $tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert)
-                            .padding(.bottom, 10)
                         
-//                        Spacer()
                         Text(tradeProductString)
                             .foregroundStyle(.clear)
                             .font(ANBDFont.Caption3)

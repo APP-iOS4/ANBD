@@ -8,7 +8,6 @@
 import SwiftUI
 import ANBDModel
 
-@MainActor
 final class ArticleViewModel: ObservableObject {
     
     private let articleUseCase: ArticleUsecase = DefaultArticleUsecase()
@@ -16,10 +15,6 @@ final class ArticleViewModel: ObservableObject {
     @Published var articles: [Article] = []
 
     @Published var articlePath: NavigationPath = NavigationPath()
-    
-//    @Published var accuaArticle: Article = .init(writerID: "", writerNickname: "", category: .accua, title: "",content: "", imagePaths: [], thumbnailImagePath: )
-//    @Published var dasiArticle: Article = .init(writerID: "", writerNickname: "", category: .accua, title: "",con, thumbnailImagePath: <#String#>tent: "", imagePaths: [])
-//    @Published var comments: [Comment] = []
 
     @Published var sortOption: ArticleOrder = .latest
     
@@ -37,6 +32,7 @@ final class ArticleViewModel: ObservableObject {
         filteredArticles = articles.filter({ $0.category == category })
     }
     
+    @MainActor
     func loadAllArticles() async {
         do {
             try await self.articles.append(contentsOf: articleUseCase.loadArticleList(limit: 10))
@@ -66,6 +62,7 @@ final class ArticleViewModel: ObservableObject {
 //        }
 //    } 
     
+    @MainActor
     func refreshSortedArticleList(category: ANBDCategory, by order: ArticleOrder, limit: Int) async {
         do {
             filteredArticles.append(
@@ -80,7 +77,6 @@ final class ArticleViewModel: ObservableObject {
     func writeArticle(article: Article, imageDatas: [Data]) async {
         do {
             try await articleUseCase.writeArticle(article: article, imageDatas: imageDatas)
-
         } catch {
             print(error.localizedDescription)
         }

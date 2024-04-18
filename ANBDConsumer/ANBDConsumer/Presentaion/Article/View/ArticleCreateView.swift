@@ -9,6 +9,7 @@ import SwiftUI
 import PhotosUI
 import ANBDModel
 
+@MainActor
 struct ArticleCreateView: View {
     
     @EnvironmentObject private var articleViewModel: ArticleViewModel
@@ -183,14 +184,18 @@ struct ArticleCreateView: View {
                 Button {
                     Task {
                         if isNewArticle {
-                            let newArticle = Article(writerID: "아티클아이디",
-                                                     writerNickname: "아티클닉네임",
+                            guard let user = UserDefaultsClient.shared.userInfo else {
+                                return
+                            }
+                            // dump(article)
+                            // dump(user)
+                            let newArticle = Article(writerID: user.id,
+                                                     writerNickname: user.nickname,
                                                      category: category,
                                                      title: title,
                                                      content: content,
                                                      thumbnailImagePath: "",
-                                                     imagePaths: [""])
-                            
+                                                     imagePaths: [])
                             await articleViewModel.writeArticle(article: newArticle, imageDatas: selectedImageData)
                         } else {
                             if var article = article {

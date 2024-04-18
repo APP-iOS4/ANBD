@@ -20,7 +20,7 @@ final class TradeViewModel: ObservableObject {
     
     @Published private(set) var trades: [Trade] = []
     @Published private(set) var filteredTrades: [Trade] = []
-    @Published private(set) var trade: Trade = Trade(id: "", writerID: "", writerNickname: "", createdAt: Date(), category: .nanua, itemCategory: .beautyCosmetics, location: .busan, tradeState: .trading, title: "", content: "", myProduct: "", wantProduct: nil, thumbnailImagePath: "", imagePaths: [])
+    @Published var trade: Trade = Trade(id: "", writerID: "", writerNickname: "", createdAt: Date(), category: .nanua, itemCategory: .beautyCosmetics, location: .busan, tradeState: .trading, title: "", content: "", myProduct: "", wantProduct: nil, thumbnailImagePath: "", imagePaths: [])
     
     @Published var selectedItemCategory: ItemCategory = .digital
     @Published var selectedLocation: Location = .seoul
@@ -104,7 +104,6 @@ final class TradeViewModel: ObservableObject {
         return detailImages
     }
     
-    //create
     func createTrade(category: ANBDCategory, itemCategory: ItemCategory, location: Location, title: String, content: String, myProduct: String, wantProduct: String, images: [Data]) async {
         
         let user = UserDefaultsClient.shared.userInfo
@@ -133,7 +132,6 @@ final class TradeViewModel: ObservableObject {
         }
     }
     
-    //delete
     func deleteTrade(trade: Trade) async {
         do {
             try await tradeUseCase.deleteTrade(trade: trade)
@@ -142,7 +140,6 @@ final class TradeViewModel: ObservableObject {
         }
     }
     
-    //update -> 아직 안됨 
     func updateTrade(category: ANBDCategory, title: String, content: String, myProduct: String, wantProduct: String, images: [Data]) async {
         
         self.trade.category = category
@@ -166,6 +163,7 @@ final class TradeViewModel: ObservableObject {
         
         do {
             try await tradeUseCase.updateTrade(trade: self.trade, imageDatas: newImages)
+            trade = try await tradeUseCase.loadTrade(tradeID: trade.id)
         } catch {
             print("수정 실패: \(error.localizedDescription)")
         }
@@ -174,7 +172,13 @@ final class TradeViewModel: ObservableObject {
     func updateState(trade: Trade) async {
         
         do {
-            try await tradeUseCase.updateTradeState(tradeID: trade.id, tradeState: trade.tradeState)
+            if trade.tradeState == .trading {
+                try await tradeUseCase.updateTradeState(tradeID: trade.id, tradeState: .finish)
+                self.trade.tradeState = .finish
+            } else {
+                try await tradeUseCase.updateTradeState(tradeID: trade.id, tradeState: .trading)
+                self.trade.tradeState = .trading
+            }
         } catch {
             print("상태수정 실패: \(error.localizedDescription)")
         }

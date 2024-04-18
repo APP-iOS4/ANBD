@@ -361,17 +361,22 @@ extension TradeCreateView {
                                 await tradeViewModel.createTrade(category: category, itemCategory: tradeViewModel.selectedItemCategory, location: tradeViewModel.selectedLocation, title: title, content: content, myProduct: myProduct, wantProduct: wantProduct, images: selectedPhotosData)
                                 
                                 await tradeViewModel.reloadAllTrades()
+                                
+                                tradeViewModel.selectedLocation = .seoul
+                                tradeViewModel.selectedItemCategory = .digital
                             }
                         } else {
                             if let trade = trade {
                                 Task {
                                     await tradeViewModel.updateTrade(category: category, title: title, content: content, myProduct: myProduct, wantProduct: wantProduct, images: selectedPhotosData)
                                     await tradeViewModel.reloadAllTrades()
+                                    
+                                    tradeViewModel.selectedLocation = .seoul
+                                    tradeViewModel.selectedItemCategory = .digital
                                 }
                             }
                         }
-                        tradeViewModel.selectedLocation = .seoul
-                        tradeViewModel.selectedItemCategory = .digital
+                        
                         self.isShowingCreate.toggle()
                     }
                     .padding(20)

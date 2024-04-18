@@ -33,25 +33,18 @@ struct TradeDetailView: View {
                     VStack(alignment: .leading) {
                         //이미지
                         TabView() {
-//                            ForEach(trade.imagePaths, id: \.self) { item in
-//                                Image(item)
-//                                    .resizable()
-//                                    .scaledToFill()
-//                                    .onTapGesture {
-//                                        detailImage = item
-//                                        isShowingImageDetailView.toggle()
-//                                    }
-//                            }
-                            if let uiImage = UIImage(data: imageData.first ?? Data()) {
-                                Image(uiImage: uiImage)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .onTapGesture {
-                                        detailImage = Image(uiImage: uiImage)
-                                        isShowingImageDetailView.toggle()
-                                    }
-                            } else {
-                                ProgressView()
+                            ForEach(imageData, id: \.self) { photoData in
+                                if let image = UIImage(data: photoData) {
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .scaledToFill()
+                                        .onTapGesture {
+                                            detailImage = Image(uiImage: image)
+                                            isShowingImageDetailView.toggle()
+                                        }
+                                } else {
+                                    ProgressView()
+                                }
                             }
                         }
                         .frame(height: 300)
@@ -67,7 +60,7 @@ struct TradeDetailView: View {
                                     .scaledToFill()
                                     .clipShape(Circle())
                             }
-        
+                            
                             VStack(alignment: .leading) {
                                 Text("\(trade.writerNickname)")
                                     .font(ANBDFont.SubTitle1)
@@ -232,7 +225,7 @@ extension TradeDetailView {
             
             Spacer()
             
-            if let user = UserDefaultsClient.shared.userInfo { 
+            if let user = UserDefaultsClient.shared.userInfo {
                 if user.id != trade.writerID {
                     NavigationLink(value: "tradeToChat") {
                         RoundedRectangle(cornerRadius: 14)

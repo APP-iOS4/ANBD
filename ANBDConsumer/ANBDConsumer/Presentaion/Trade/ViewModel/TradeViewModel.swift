@@ -105,16 +105,18 @@ final class TradeViewModel: ObservableObject {
     }
     
     //create
-    func createTrade(category: ANBDCategory, itemCategory: ItemCategory, location: Location, title: String, content: String, myProduct: String, wantProduct: String?, images: [Data]) async {
+    func createTrade(category: ANBDCategory, itemCategory: ItemCategory, location: Location, title: String, content: String, myProduct: String, wantProduct: String, images: [Data]) async {
         
         let user = UserDefaultsClient.shared.userInfo
-        let newTrade: Trade
+        var want: String = ""
         
-        if let want = wantProduct {
-            newTrade = Trade(writerID: user!.id, writerNickname: user!.nickname, category: category, itemCategory: itemCategory, location: location, title: title, content: content, myProduct: myProduct, wantProduct: want, thumbnailImagePath: "", imagePaths: [])
+        if wantProduct == "" {
+            want = "제시"
         } else {
-            newTrade = Trade(writerID: user!.id, writerNickname: user!.nickname, category: category, itemCategory: itemCategory, location: location, title: title, content: content, myProduct: myProduct, thumbnailImagePath: "", imagePaths: [])
+            want = wantProduct
         }
+        
+        let newTrade = Trade(writerID: user!.id, writerNickname: user!.nickname, category: category, itemCategory: itemCategory, location: location, title: title, content: content, myProduct: myProduct, wantProduct: want, thumbnailImagePath: "", imagePaths: [])
         
         //이미지 리사이징
         var newImages: [Data] = []
@@ -141,15 +143,19 @@ final class TradeViewModel: ObservableObject {
     }
     
     //update -> 아직 안됨 
-    func updateTrade(category: ANBDCategory, itemCategory: ItemCategory, location: Location, title: String, content: String, myProduct: String, wantProduct: String?, images: [Data]) async {
+    func updateTrade(category: ANBDCategory, title: String, content: String, myProduct: String, wantProduct: String, images: [Data]) async {
         
         self.trade.category = category
-        self.trade.itemCategory = itemCategory
-        self.trade.location = location
+        self.trade.itemCategory = self.selectedItemCategory
+        self.trade.location = self.selectedLocation
         self.trade.title = title
         self.trade.content = content
         self.trade.myProduct = myProduct
-        self.trade.wantProduct = wantProduct
+        if wantProduct != "" {
+            self.trade.wantProduct = wantProduct
+        } else {
+            self.trade.wantProduct = "제시"
+        }
         
         //이미지 리사이징
         var newImages: [Data] = []

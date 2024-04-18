@@ -76,6 +76,7 @@ struct SearchResultView: View {
         .navigationTitle(searchText)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
+        .toolbarRole(.editor)
     }
 }
 

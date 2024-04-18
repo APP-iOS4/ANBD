@@ -70,6 +70,7 @@ struct SearchView: View {
         .navigationTitle("검색하기")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
+        .toolbarRole(.editor)
         .searchable(text: $searchText)
         .onSubmit(of: .search) {
             if !searchText.isEmpty {

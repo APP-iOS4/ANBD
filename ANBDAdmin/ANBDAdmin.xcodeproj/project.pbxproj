@@ -26,6 +26,13 @@
 		820741CA2BCDFCDC00CB4584 /* BannerEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820741C92BCDFCDC00CB4584 /* BannerEditViewModel.swift */; };
 		820741CC2BCE009600CB4584 /* BannerEditDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820741CB2BCE009600CB4584 /* BannerEditDetailView.swift */; };
 		82D9177B2BCE43330054FF5D /* InquiryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82D9177A2BCE43330054FF5D /* InquiryView.swift */; };
+		82FB37902BD0FF0000F0B78A /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82FB378F2BD0FF0000F0B78A /* AuthenticationView.swift */; };
+		82FB37922BD0FF1B00F0B78A /* AuthenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82FB37912BD0FF1B00F0B78A /* AuthenticationViewModel.swift */; };
+		82FB37C22BD105A400F0B78A /* UserDefaultsClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82FB37C12BD105A400F0B78A /* UserDefaultsClient.swift */; };
+		82FB37C42BD1062400F0B78A /* ANBDFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82FB37C32BD1062400F0B78A /* ANBDFont.swift */; };
+		82FB37C82BD1070300F0B78A /* TextFieldWithTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82FB37C72BD1070300F0B78A /* TextFieldWithTitle.swift */; };
+		82FB37CB2BD1074900F0B78A /* BlueSquareButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82FB37CA2BD1074900F0B78A /* BlueSquareButton.swift */; };
+		82FB37CE2BD1125700F0B78A /* CustomAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82FB37CD2BD1125700F0B78A /* CustomAlertView.swift */; };
 		CB7BEDD32BBD4EE300C0F298 /* ANBDAdminApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7BEDD22BBD4EE300C0F298 /* ANBDAdminApp.swift */; };
 		CB7BEDD72BBD4EE500C0F298 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB7BEDD62BBD4EE500C0F298 /* Assets.xcassets */; };
 		CB7BEDED2BBD537A00C0F298 /* Pretendard-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CB7BEDE82BBD537A00C0F298 /* Pretendard-Bold.otf */; };
@@ -57,6 +64,13 @@
 		820741C92BCDFCDC00CB4584 /* BannerEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerEditViewModel.swift; sourceTree = "<group>"; };
 		820741CB2BCE009600CB4584 /* BannerEditDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerEditDetailView.swift; sourceTree = "<group>"; };
 		82D9177A2BCE43330054FF5D /* InquiryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InquiryView.swift; sourceTree = "<group>"; };
+		82FB378F2BD0FF0000F0B78A /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
+		82FB37912BD0FF1B00F0B78A /* AuthenticationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationViewModel.swift; sourceTree = "<group>"; };
+		82FB37C12BD105A400F0B78A /* UserDefaultsClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsClient.swift; sourceTree = "<group>"; };
+		82FB37C32BD1062400F0B78A /* ANBDFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ANBDFont.swift; sourceTree = "<group>"; };
+		82FB37C72BD1070300F0B78A /* TextFieldWithTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldWithTitle.swift; sourceTree = "<group>"; };
+		82FB37CA2BD1074900F0B78A /* BlueSquareButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueSquareButton.swift; sourceTree = "<group>"; };
+		82FB37CD2BD1125700F0B78A /* CustomAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlertView.swift; sourceTree = "<group>"; };
 		CB7BEDCF2BBD4EE300C0F298 /* ANBDAdmin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ANBDAdmin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB7BEDD22BBD4EE300C0F298 /* ANBDAdminApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ANBDAdminApp.swift; sourceTree = "<group>"; };
 		CB7BEDD62BBD4EE500C0F298 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -132,13 +146,14 @@
 			isa = PBXGroup;
 			children = (
 				820741B12BC8EF0600CB4584 /* ANBDAdminAppHomeView.swift */,
-				82D917792BCE42FF0054FF5D /* Inquiry */,
+				82FB378D2BD0FE7300F0B78A /* Auth */,
 				820741C62BCDFC2E00CB4584 /* BannerEdit */,
 				820741A42BC8EF0600CB4584 /* ANBDArticle */,
 				820741A72BC8EF0600CB4584 /* ANBDTrade */,
 				820741AA2BC8EF0600CB4584 /* ReportedArticle */,
 				820741AD2BC8EF0600CB4584 /* ReportedComment */,
 				820741B02BC8EF0600CB4584 /* AllUserList */,
+				82D917792BCE42FF0054FF5D /* Inquiry */,
 			);
 			path = Presentaion;
 			sourceTree = "<group>";
@@ -159,6 +174,59 @@
 				82D9177A2BCE43330054FF5D /* InquiryView.swift */,
 			);
 			path = Inquiry;
+			sourceTree = "<group>";
+		};
+		82FB378D2BD0FE7300F0B78A /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				82FB378F2BD0FF0000F0B78A /* AuthenticationView.swift */,
+				82FB37912BD0FF1B00F0B78A /* AuthenticationViewModel.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		82FB37C02BD1056800F0B78A /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				82FB37C12BD105A400F0B78A /* UserDefaultsClient.swift */,
+				82FB37C32BD1062400F0B78A /* ANBDFont.swift */,
+			);
+			name = Util;
+			path = ../../../ANBDConsumer/ANBDConsumer/Common/Util;
+			sourceTree = "<group>";
+		};
+		82FB37C52BD1069800F0B78A /* CommonUI */ = {
+			isa = PBXGroup;
+			children = (
+				82FB37CC2BD1123D00F0B78A /* View */,
+				82FB37C92BD1071D00F0B78A /* Button */,
+				82FB37C62BD106D300F0B78A /* TextField */,
+			);
+			path = CommonUI;
+			sourceTree = "<group>";
+		};
+		82FB37C62BD106D300F0B78A /* TextField */ = {
+			isa = PBXGroup;
+			children = (
+				82FB37C72BD1070300F0B78A /* TextFieldWithTitle.swift */,
+			);
+			path = TextField;
+			sourceTree = "<group>";
+		};
+		82FB37C92BD1071D00F0B78A /* Button */ = {
+			isa = PBXGroup;
+			children = (
+				82FB37CA2BD1074900F0B78A /* BlueSquareButton.swift */,
+			);
+			path = Button;
+			sourceTree = "<group>";
+		};
+		82FB37CC2BD1123D00F0B78A /* View */ = {
+			isa = PBXGroup;
+			children = (
+				82FB37CD2BD1125700F0B78A /* CustomAlertView.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		CB7BEDC62BBD4EE300C0F298 = {
@@ -182,8 +250,9 @@
 			isa = PBXGroup;
 			children = (
 				CB7BEDFE2BBD542700C0F298 /* App */,
-				820741B22BC8EF0600CB4584 /* Presentaion */,
 				CB7BEE082BBD55A900C0F298 /* Common */,
+				820741B22BC8EF0600CB4584 /* Presentaion */,
+				82FB37C52BD1069800F0B78A /* CommonUI */,
 				CB7BEE032BBD54D900C0F298 /* Resource */,
 			);
 			path = ANBDAdmin;
@@ -223,6 +292,7 @@
 			isa = PBXGroup;
 			children = (
 				820741842BC8EEAE00CB4584 /* dateFormatter.swift */,
+				82FB37C02BD1056800F0B78A /* Util */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -315,20 +385,27 @@
 				820741B82BC8EF0700CB4584 /* ReportedArticleListView.swift in Sources */,
 				820741B52BC8EF0700CB4584 /* TradeListDetailView.swift in Sources */,
 				820741B92BC8EF0700CB4584 /* ReportedCommentListDetailView.swift in Sources */,
+				82FB37CE2BD1125700F0B78A /* CustomAlertView.swift in Sources */,
 				CB7BEDD32BBD4EE300C0F298 /* ANBDAdminApp.swift in Sources */,
 				820741B72BC8EF0700CB4584 /* ReportedArticleListDetailView.swift in Sources */,
+				82FB37C42BD1062400F0B78A /* ANBDFont.swift in Sources */,
 				820741CC2BCE009600CB4584 /* BannerEditDetailView.swift in Sources */,
 				820741852BC8EEAE00CB4584 /* dateFormatter.swift in Sources */,
+				82FB37C82BD1070300F0B78A /* TextFieldWithTitle.swift in Sources */,
 				82D9177B2BCE43330054FF5D /* InquiryView.swift in Sources */,
 				820741B62BC8EF0700CB4584 /* TradeListView.swift in Sources */,
 				820741BD2BC8EF0700CB4584 /* ANBDAdminAppHomeView.swift in Sources */,
 				820741BC2BC8EF0700CB4584 /* UserListView.swift in Sources */,
 				820741C32BC9034400CB4584 /* UserListViewModel.swift in Sources */,
+				82FB37CB2BD1074900F0B78A /* BlueSquareButton.swift in Sources */,
 				820741B32BC8EF0700CB4584 /* ArticleListDetailView.swift in Sources */,
 				820741BB2BC8EF0700CB4584 /* UserListDetailView.swift in Sources */,
 				820741B42BC8EF0700CB4584 /* ArticleListView.swift in Sources */,
+				82FB37922BD0FF1B00F0B78A /* AuthenticationViewModel.swift in Sources */,
+				82FB37C22BD105A400F0B78A /* UserDefaultsClient.swift in Sources */,
 				820741C82BCDFC5B00CB4584 /* BannerEditView.swift in Sources */,
 				820741BA2BC8EF0700CB4584 /* ReportedCommentListView.swift in Sources */,
+				82FB37902BD0FF0000F0B78A /* AuthenticationView.swift in Sources */,
 				820741C12BC9014200CB4584 /* TradeListViewModel.swift in Sources */,
 				820741CA2BCDFCDC00CB4584 /* BannerEditViewModel.swift in Sources */,
 				820741BF2BC9000900CB4584 /* ArticleListViewModel.swift in Sources */,

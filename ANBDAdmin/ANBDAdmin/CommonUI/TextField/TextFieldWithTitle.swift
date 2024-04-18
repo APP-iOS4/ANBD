@@ -71,7 +71,3 @@ struct TextFieldWithTitle: View {
         return SecureField(placeholder, text: text)
     }
 }
-
-#Preview {
-    TextFieldWithTitle(fieldType: .secure, title: "이메일", placeholder: "이메일을 입력해주세요.", inputText: .constant("Maru"))
-}

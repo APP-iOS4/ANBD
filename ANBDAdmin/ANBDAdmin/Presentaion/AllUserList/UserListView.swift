@@ -15,7 +15,7 @@ struct UserListView: View {
     
     var body: some View {
         VStack {
-            TextField("검색...", text: $searchUserText)
+            TextField("유저의 닉네임이나 ID값으로 검색...", text: $searchUserText)
                 .textCase(.lowercase)
                 .padding(7)
                 .background(Color(.systemGray6))
@@ -69,13 +69,13 @@ struct UserListView: View {
                                 VStack(alignment: .leading) {
                                     Text("\(user.email)")
                                         .foregroundColor(.black)
-
                                 }
                                 .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
                                     Text("\(user.userLevel)")
+                                        .foregroundColor(.black)
                                 }
                                 .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
                                 Divider()

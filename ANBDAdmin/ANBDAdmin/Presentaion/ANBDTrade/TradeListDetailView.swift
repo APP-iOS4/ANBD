@@ -7,16 +7,34 @@
 
 import SwiftUI
 import ANBDModel
+import FirebaseStorage
 
 struct TradeListDetailView: View {
     @Environment(\.presentationMode) var tradepresentationMode
     let trade: Trade
     let tradeUsecase = DefaultTradeUsecase()
     @Binding var deletedTradeID: String?
-    @State private var tradeDeleteShowingAlert = false // 경고 표시 상태를 추적 변수
+    @State private var tradeDeleteShowingAlert = false
+    @State private var tradeImageUrls:[URL?] = []
+
 
     var body: some View {
         List {
+            Text("이미지:").foregroundColor(.gray)
+            ForEach(tradeImageUrls.indices, id: \.self) { index in
+                            if let url = tradeImageUrls[index] {
+                                AsyncImage(url: url) { image in
+                                    image.resizable()
+                                        .scaledToFit()
+                                        .frame(height: 300)
+                                } placeholder: {
+                                    ProgressView()
+                                }
+                            } else {
+                                ProgressView()
+                            }
+                        }
+            Text("이미지 ID:").foregroundColor(.gray) + Text(" \(trade.imagePaths )")
             Text("제목:").foregroundColor(.gray) + Text(" \(trade.title)")
             Text("게시물ID:").foregroundColor(.gray) + Text(" \(trade.id)")
             Text("작성자 닉네임:").foregroundColor(.gray) + Text(" \(trade.writerNickname)")
@@ -26,8 +44,11 @@ struct TradeListDetailView: View {
             Text("내 물건:").foregroundColor(.gray) + Text(" \(trade.myProduct)")
             Text("바꾸고 싶은 물건:").foregroundColor(.gray) + Text(" \(String(describing: trade.wantProduct))")
             Text("내용:").foregroundColor(.gray) + Text(" \(trade.content)")
-            Text("이미지:").foregroundColor(.gray) + Text(" \(trade.imagePaths )")
+            
         }
+        .onAppear {
+                    tradeLoadImages()
+                }
         .navigationBarTitle(trade.title)
         .toolbar {
                     Button("Delete") {
@@ -53,5 +74,22 @@ struct TradeListDetailView: View {
                     )
                 }
     }
+    func tradeLoadImages() {
+            let storage = Storage.storage()
+            let storageRef = storage.reference()
+
+            for path in trade.imagePaths {
+                let fullPath = "Trade/\(trade.id)/\(path)"
+                let imageRef = storageRef.child(fullPath)
+                
+                imageRef.downloadURL { url, error in
+                    if let error = error {
+                        print("Error downloading image URL: \(error)")
+                    } else {
+                        tradeImageUrls.append(url)
+                    }
+                }
+            }
+        }
 }
 

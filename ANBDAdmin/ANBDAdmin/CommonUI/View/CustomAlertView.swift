@@ -14,10 +14,7 @@ struct CustomAlertView: View {
     var completionHandler: () -> Void
     
     var body: some View {
-        ZStack {
-            Color.gray900
-                .opacity(0.3)
-            
+        
             ZStack {
                 RoundedRectangle(cornerRadius: 20)
                     .fill(.white)
@@ -70,9 +67,8 @@ struct CustomAlertView: View {
             .padding(.horizontal, 50)
             .foregroundStyle(.gray900)
         }
-        .ignoresSafeArea()
     }
-}
+
 
 extension CustomAlertView {
     enum AlertViewType {
@@ -128,7 +124,7 @@ extension CustomAlertView {
         case .articleDelete:
             return "해당 게시글을 삭제하시겠습니까?\n삭제한 게시글은 복구되지 않습니다."
         case .commentDelete:
-            return "해당 댓글을 삭제하시겠습니까?\n삭제한 댓글은 복구되지 않습니다." 
+            return "해당 댓글을 삭제하시겠습니까?\n삭제한 댓글은 복구되지 않습니다."
         case .writingCancel:
             return "작성하던 내용을 삭제하고\n돌아가시겠습니까?"
         }

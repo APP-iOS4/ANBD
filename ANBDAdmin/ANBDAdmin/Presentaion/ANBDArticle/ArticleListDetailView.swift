@@ -7,17 +7,33 @@
 
 import SwiftUI
 import ANBDModel
+import FirebaseStorage
 
 struct ArticleListDetailView: View {
     @Environment(\.presentationMode) var articlePresentationMode
     let article: Article
     let articleUsecase = DefaultArticleUsecase()
     @Binding var deletedArticleID: String?
-    @State private var articleDeleteShowingAlert = false // 경고 표시 상태를 추적 변수
-
+    @State private var articleDeleteShowingAlert = false
+    @State private var articleImageUrls:[URL?] = []
     
     var body: some View {
         List {
+            Text("이미지:").foregroundColor(.gray)
+            ForEach(articleImageUrls.indices, id: \.self) { index in
+                            if let url = articleImageUrls[index] {
+                                AsyncImage(url: url) { image in
+                                    image.resizable()
+                                        .scaledToFit()
+                                        .frame(height: 300)
+                                } placeholder: {
+                                    ProgressView()
+                                }
+                            } else {
+                                ProgressView()
+                            }
+                        }
+            Text("이미지 ID:").foregroundColor(.gray) + Text(" \(article.imagePaths )")
             Text("제목:").foregroundColor(.gray) + Text(" \(article.title)")
             Text("게시물ID:").foregroundColor(.gray) + Text(" \(article.id)")
             Text("작성자 닉네임:").foregroundColor(.gray) + Text(" \(article.writerNickname)")
@@ -25,10 +41,12 @@ struct ArticleListDetailView: View {
             Text("생성일자:").foregroundColor(.gray) + Text(" \(dateFormatter(article.createdAt))")
             Text("카테고리:").foregroundColor(.gray) + Text(" \(article.category)")
             Text("내용:").foregroundColor(.gray) + Text(" \(article.content)")
-            Text("이미지:").foregroundColor(.gray) + Text(" \(article.imagePaths )")
             Text("좋아요 수:").foregroundColor(.gray) + Text(" \(article.likeCount)")
             Text("댓글 수:").foregroundColor(.gray) + Text(" \(article.commentCount)")
         }
+        .onAppear {
+                    articleLoadImages()
+                }
         .navigationBarTitle(article.title)
         .toolbar {
                     Button("Delete") {
@@ -53,7 +71,25 @@ struct ArticleListDetailView: View {
                         secondaryButton: .cancel()
                     )
                 }
+        
     }
+    func articleLoadImages() {
+            let storage = Storage.storage()
+            let storageRef = storage.reference()
+
+            for path in article.imagePaths {
+                let fullPath = "Article/\(article.id)/\(path)"
+                let imageRef = storageRef.child(fullPath)
+                
+                imageRef.downloadURL { url, error in
+                    if let error = error {
+                        print("Error downloading image URL: \(error)")
+                    } else {
+                        articleImageUrls.append(url)
+                    }
+                }
+            }
+        }
 }
 
 

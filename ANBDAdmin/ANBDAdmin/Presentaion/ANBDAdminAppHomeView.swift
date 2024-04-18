@@ -7,9 +7,11 @@
 import SwiftUI
 
 struct ANBDAdminAppHomeView: View {
+    @EnvironmentObject private var authenticationViewModel: AuthenticationViewModel
     @State private var isUserListExpanded = true
     @State private var isReportedItemsExpanded = true
     @State private var isBoardListExpanded = true
+    @State private var isShowingSignOutAlertView = false
     
     var body: some View {
         NavigationView {
@@ -50,10 +52,39 @@ struct ANBDAdminAppHomeView: View {
                 NavigationLink(destination: InquiryView().font(.title3)) {
                     Text("문의함").bold()
                 }
+                Spacer()
+                Button(action: {
+                                        isShowingSignOutAlertView.toggle()
+                                    }, label: {
+                                        Text("로그아웃")
+                                            .modifier(warningTextModifier())
+                                    })
+                .buttonStyle(.bordered)
             }
             .listStyle(SidebarListStyle())
             
             Text("항목을 선택하세요.")
+        }
+        if isShowingSignOutAlertView {
+            InquiryView()
+                        .sheet(isPresented: $isShowingSignOutAlertView) {
+                                CustomAlertView(isShowingCustomAlert: $isShowingSignOutAlertView, viewType: .signOut) {
+                                    Task {
+                                        try await authenticationViewModel.signOut {
+                                            UserDefaultsClient.shared.userInfo = nil
+                                            authenticationViewModel.checkAuthState()
+                                        }
+                                    }
+                                }
+                            }
+                    }
+    }
+    fileprivate struct warningTextModifier: ViewModifier {
+        func body(content: Content) -> some View {
+            content
+                .font(ANBDFont.SubTitle1)
+                .foregroundStyle(Color.heartRed)
+                .frame(maxWidth: .infinity, minHeight: 45)
         }
     }
 }

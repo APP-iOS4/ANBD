@@ -149,9 +149,7 @@ struct ArticleListCell: View {
                             .frame(width: 20)
                             .foregroundStyle(isLiked ? .heartRed : .gray800)
                             .onTapGesture {
-                                withAnimation {
-                                    isLiked.toggle()
-                                }
+                                isLiked.toggle()
                             }
                             .padding(.leading, 10)
                     }

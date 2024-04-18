@@ -139,7 +139,7 @@ extension TradeCreateView {
                 }
                 .padding(.bottom, 30)
             }//Horizontal ScrollView
-            .padding(.horizontal, 20)
+            .padding(.trailing, 20)
         }
     }
     fileprivate var wholeView: some View {
@@ -163,6 +163,9 @@ extension TradeCreateView {
                         }
                         
                         if isCancelable {
+                            //지역은 user 선호 지역으로 선택되게
+                            tradeViewModel.selectedLocation = .seoul
+                            tradeViewModel.selectedItemCategory = .digital
                             isShowingCreate.toggle()
                         } else {
                             isShowingBackAlert.toggle()
@@ -367,6 +370,8 @@ extension TradeCreateView {
                                 }
                             }
                         }
+                        tradeViewModel.selectedLocation = .seoul
+                        tradeViewModel.selectedItemCategory = .digital
                         self.isShowingCreate.toggle()
                     }
                     .padding(20)
@@ -375,6 +380,8 @@ extension TradeCreateView {
             
             if isShowingBackAlert {
                 CustomAlertView(isShowingCustomAlert: $isShowingBackAlert, viewType: .writingCancel) {
+                    tradeViewModel.selectedLocation = .seoul
+                    tradeViewModel.selectedItemCategory = .digital
                     isShowingCreate.toggle()
                 }
             }

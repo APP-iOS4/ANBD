@@ -10,10 +10,14 @@ import FirebaseFirestore
 import FirebaseStorage
 
 @available(iOS 15, *)
-struct DefaultChatRepository: ChatRepository {
+final class DefaultChatRepository: ChatRepository {
+    
+    
 
     private var db = Firestore.firestore()
-    let chatDB = Firestore.firestore().collection("ChatRoom")
+    private let chatDB = Firestore.firestore().collection("ChatRoom")
+    
+    private var listener : ListenerRegistration?
     
     func createChannel(channel: Channel) async throws -> Channel {
         guard let _ = try? chatDB.document(channel.id).setData(from: channel)
@@ -24,10 +28,10 @@ struct DefaultChatRepository: ChatRepository {
     }
     
     func readChannelList(userID: String, completion : @escaping (_ channels: [Channel]) -> Void){
-        chatDB
+        listener = chatDB
             .whereField("users", arrayContains: userID)
             .order(by: "lastSendDate", descending: true)
-            .addSnapshotListener { snapshot, error in
+            .addSnapshotListener { [weak self] snapshot, error in
                 guard let document = snapshot else {
                     print("채널리스트 업데이트 에러 : \(error!)")
                     return
@@ -36,6 +40,10 @@ struct DefaultChatRepository: ChatRepository {
 //                channels = sortedChannel(channels: channels)
                 completion(channels)
         }
+    }
+    
+    func deleteListener() {
+        listener?.remove()
     }
     
     private func sortedChannel(channels : [Channel]) -> [Channel] {

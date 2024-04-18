@@ -18,4 +18,5 @@ public protocol ChatRepository {
     func updateUnreadCount(channelID: String , userID: String) async throws
     func updateLeftChatUser(channelID: String, userID: String) async throws
     func deleteChannel(channelID : String) async  throws
+    func deleteListener()
 }

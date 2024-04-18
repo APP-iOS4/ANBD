@@ -30,10 +30,11 @@ struct UserPageView: View {
                     .clipShape(.circle)
                     .padding(.horizontal)
                 
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: 3) {
                     Text(isSignedInUser ? "\(myPageViewModel.user.nickname) 님" : "불량마루")
                         .foregroundStyle(Color.gray900)
                         .font(ANBDFont.pretendardBold(24))
+                        .padding(.bottom, 10)
                     
                     Text("선호 지역 : \(myPageViewModel.user.favoriteLocation.description)")
                         .foregroundStyle(Color.gray400)

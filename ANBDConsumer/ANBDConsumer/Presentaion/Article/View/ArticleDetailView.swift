@@ -20,6 +20,7 @@ struct ArticleDetailView: View {
     @State private var comments: [Comment] = []
     @State private var commentText: String = ""
     
+    @State private var isShowingImageDetailView: Bool = false
     @State private var isShowingCreateView: Bool = false
     @State private var isGoingToReportView: Bool = false
     @State private var isGoingToProfileView: Bool = false
@@ -27,6 +28,9 @@ struct ArticleDetailView: View {
     @State private var isShowingCustomAlertArticle: Bool = false
     @State private var isShowingCustomAlertComment: Bool = false
     
+    @State private var detailImage: Image = Image("DummyPuppy1")
+    @State private var imageData: [Data] = []
+
     @Environment(\.dismiss) private var dismiss
     
     struct Comment: Identifiable {
@@ -77,12 +81,20 @@ struct ArticleDetailView: View {
                             Text("\(article.content)")
                                 .font(ANBDFont.body1)
                                 .padding(.bottom, 10)
-                            
-                            Image("\(article.imagePaths)")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .padding(.bottom, 10)
-                            
+
+                                if let uiImage = UIImage(data: imageData.first ?? Data()) {
+                                    Image(uiImage: uiImage)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .padding(.bottom, 10)
+                                        .onTapGesture {
+                                            detailImage = Image(uiImage: uiImage)
+                                            isShowingImageDetailView.toggle()
+                                        }
+                                } else {
+                                    ProgressView()
+                                }
+
                             HStack {
                                 Button {
                                     Task {
@@ -283,8 +295,16 @@ struct ArticleDetailView: View {
                 }
             }
         }
+        .onAppear {
+            Task {
+                imageData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
+            }
+        }
         .fullScreenCover(isPresented: $isShowingCreateView) {
             ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, isNewArticle: false, article: article)
+        }
+        .fullScreenCover(isPresented: $isShowingImageDetailView) {
+            ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
         }
         .navigationDestination(isPresented: $isGoingToReportView) {
             ReportView(reportViewType: .article)

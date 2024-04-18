@@ -74,6 +74,26 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
+    func loadDetailImages(path: StoragePath, containerID: String, imagePath: [String]) async throws -> [Data] {
+        var detailImages: [Data] = []
+        
+        for image in imagePath {
+            do {
+                detailImages.append(
+                    try await storageManager.downloadImage(path: path, containerID: containerID, imagePath: image)
+                )
+            } catch {
+                print("이미지 실패요... \(error.localizedDescription)")
+                
+                //이미지 예외
+                let image = UIImage(named: "ANBDWarning")
+                let imageData = image?.pngData()
+                detailImages.append( imageData ?? Data() )
+            }
+        }
+        return detailImages
+    }
+    
     func writeArticle(article: Article, imageDatas: [Data]) async {
         do {
             try await articleUseCase.writeArticle(article: article, imageDatas: imageDatas)

@@ -193,7 +193,7 @@ extension TradeDetailView {
         HStack {
             Image(systemName: isLiked ? "heart": "heart.fill")
                 .font(.system(size: 30))
-                .foregroundStyle(isLiked ? .gray200 : .heartRed)
+                .foregroundStyle(isLiked ? .gray800 : .heartRed)
                 .padding(.leading, 15)
                 .onTapGesture {
                     isLiked.toggle()

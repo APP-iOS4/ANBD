@@ -129,7 +129,7 @@ struct ArticleListView: View {
                             .padding(.horizontal)
                         }
                     }
-                    .background(.white)
+                    .background(Color(UIColor.systemBackground))
                     .padding(.bottom, 80)
                 }
                 .background(.gray50)

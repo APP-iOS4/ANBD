@@ -129,7 +129,7 @@ struct ArticleListView: View {
                             .padding(.horizontal)
                         }
                     }
-                    .background(.white)
+                    .background(Color(UIColor.systemBackground))
                     .padding(.bottom, 80)
                 }
                 .background(.gray50)
@@ -138,6 +138,14 @@ struct ArticleListView: View {
         .navigationTitle(navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(isFromHomeView ? .hidden : .visible, for: .tabBar)
+        .sheet(isPresented: $isShowingLocation) {
+                    LocationBottomSheet(isShowingLocation: $isShowingLocation)
+                        .presentationDetents([.fraction(0.6)])
+                }
+                .sheet(isPresented: $isShowingItemCategory) {
+                    CategoryBottomSheet(isShowingCategory: $isShowingItemCategory)
+                        .presentationDetents([.fraction(0.6)])
+                }
     }
 }
 

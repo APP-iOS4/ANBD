@@ -14,7 +14,7 @@ struct ArticleListView: View {
     
     var body: some View {
         VStack {
-            TextField("검색...", text: $searchArticleText)
+            TextField("제목이나 ID값으로 검색...", text: $searchArticleText)
                 .textCase(.lowercase)
                 .padding(7)
                 .background(Color(.systemGray6))

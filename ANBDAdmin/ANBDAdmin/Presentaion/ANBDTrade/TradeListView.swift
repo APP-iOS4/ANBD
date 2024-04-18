@@ -14,7 +14,7 @@ struct TradeListView: View {
     
     var body: some View {
         VStack {
-            TextField("검색...", text: $searchTradeText)
+            TextField("제목이나 ID값으로 검색...", text: $searchTradeText)
                 .textCase(.lowercase)
                 .padding(7)
                 .background(Color(.systemGray6))

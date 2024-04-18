@@ -26,14 +26,16 @@ struct ANBDTabView: View {
                         switch category {
                         case .accua, .dasi:
                             ArticleListView(category: category, isFromHomeView: true)
+                                .toolbarRole(.editor)
                                 .onAppear {
                                     Task {
-                                        await articleViewModel.filteringArticles(category: category)
+                                        articleViewModel.filteringArticles(category: category)
                                     }
                                 }
                             
                         case .nanua, .baccua:
                             ArticleListView(category: category, isArticle: false, isFromHomeView: true)
+                                .toolbarRole(.editor)
                                 .onAppear {
                                     tradeViewModel.filteringTrades(category: category)
                                 }

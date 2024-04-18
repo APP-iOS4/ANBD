@@ -126,7 +126,7 @@ struct ChatDetailView: View {
             }
         }
         .confirmationDialog("", isPresented: $isShowingConfirmSheet) {
-            Button("채팅 신고하기", role: .destructive) {
+            Button("채팅 신고하기") {
                 isGoingToReportView.toggle()
             }
             

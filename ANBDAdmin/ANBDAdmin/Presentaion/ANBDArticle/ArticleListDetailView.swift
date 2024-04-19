@@ -34,16 +34,56 @@ struct ArticleListDetailView: View {
                                 ProgressView()
                             }
                         }
-            Text("이미지 ID:").foregroundColor(.gray) + Text(" \(article.imagePaths )")
-            Text("제목:").foregroundColor(.gray) + Text(" \(article.title)")
-            Text("게시물ID:").foregroundColor(.gray) + Text(" \(article.id)")
-            Text("작성자 닉네임:").foregroundColor(.gray) + Text(" \(article.writerNickname)")
-            Text("작성자 ID:").foregroundColor(.gray) + Text(" \(article.writerID)")
-            Text("생성일자:").foregroundColor(.gray) + Text(" \(dateFormatter(article.createdAt))")
-            Text("카테고리:").foregroundColor(.gray) + Text(" \(article.category)")
-            Text("내용:").foregroundColor(.gray) + Text(" \(article.content)")
-            Text("좋아요 수:").foregroundColor(.gray) + Text(" \(article.likeCount)")
-            Text("댓글 수:").foregroundColor(.gray) + Text(" \(article.commentCount)")
+            HStack {
+                Text("이미지 ID:").foregroundColor(.gray)
+                Spacer()
+                Text(" \(article.imagePaths)")
+            }
+            HStack {
+                Text("제목:").foregroundColor(.gray)
+                Spacer()
+                Text(" \(article.title)")
+            }
+            HStack {
+                Text("게시물ID:").foregroundColor(.gray)
+                Spacer()
+                Text(" \(article.id)")
+            }
+            HStack {
+                Text("작성자 닉네임:").foregroundColor(.gray)
+                Spacer()
+                Text(" \(article.writerNickname)")
+            }
+            HStack {
+                Text("작성자 ID:").foregroundColor(.gray)
+                Spacer()
+                Text(" \(article.writerID)")
+            }
+            HStack {
+                Text("생성일자:").foregroundColor(.gray)
+                Spacer()
+                Text(" \(dateFormatter(article.createdAt))")
+            }
+            HStack {
+                Text("카테고리:").foregroundColor(.gray)
+                Spacer()
+                Text(" \(article.category)")
+            }
+            HStack {
+                Text("내용:").foregroundColor(.gray)
+                Spacer()
+                Text(" \(article.content)")
+            }
+            HStack {
+                Text("좋아요 수:").foregroundColor(.gray)
+                Spacer()
+                Text(" \(article.likeCount)")
+            }
+            HStack {
+                Text("댓글 수:").foregroundColor(.gray)
+                Spacer()
+                Text(" \(article.commentCount)")
+            }
         }
         .onAppear {
                     articleLoadImages()

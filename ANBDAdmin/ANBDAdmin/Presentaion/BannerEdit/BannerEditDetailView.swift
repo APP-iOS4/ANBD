@@ -38,9 +38,16 @@ struct BannerEditDetailView: View {
                     }
                 }
             }
-            Text("배너 ID:").foregroundColor(.gray) + Text(" \(banner.id)")
-            Text("생성일자:").foregroundColor(.gray) + Text(" \(dateFormatter(banner.createdAt))")
-            
+            HStack {
+                Text("배너 ID:").foregroundColor(.gray)
+                Spacer()
+                Text(" \(banner.id)")
+            }
+            HStack {
+                Text("생성일자:").foregroundColor(.gray)
+                Spacer()
+                Text(" \(dateFormatter(banner.createdAt))")
+            }
         }
         .navigationBarTitle(banner.id)
         .toolbar {

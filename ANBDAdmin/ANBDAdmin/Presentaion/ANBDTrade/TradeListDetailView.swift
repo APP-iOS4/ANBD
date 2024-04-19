@@ -35,17 +35,56 @@ struct TradeListDetailView: View {
                                 ProgressView()
                             }
                         }
-            Text("이미지 ID:").foregroundColor(.gray) + Text(" \(trade.imagePaths )")
-            Text("제목:").foregroundColor(.gray) + Text(" \(trade.title)")
-            Text("게시물ID:").foregroundColor(.gray) + Text(" \(trade.id)")
-            Text("작성자 닉네임:").foregroundColor(.gray) + Text(" \(trade.writerNickname)")
-            Text("작성자 ID:").foregroundColor(.gray) + Text(" \(trade.writerID)")
-            Text("생성일자:").foregroundColor(.gray) + Text(" \(dateFormatter(trade.createdAt))")
-            Text("카테고리:").foregroundColor(.gray) + Text(" \(trade.category)")
-            Text("내 물건:").foregroundColor(.gray) + Text(" \(trade.myProduct)")
-            Text("바꾸고 싶은 물건:").foregroundColor(.gray) + Text(" \(String(describing: trade.wantProduct))")
-            Text("내용:").foregroundColor(.gray) + Text(" \(trade.content)")
-            
+            HStack {
+                Text("이미지 ID:").foregroundColor(.gray)
+                Spacer()
+                Text(" \(trade.imagePaths)")
+            }
+            HStack {
+                Text("제목:").foregroundColor(.gray)
+                Spacer()
+                Text(" \(trade.title)")
+            }
+            HStack {
+                Text("게시물ID:").foregroundColor(.gray)
+                Spacer()
+                Text(" \(trade.id)")
+            }
+            HStack {
+                Text("작성자 닉네임:").foregroundColor(.gray)
+                Spacer()
+                Text(" \(trade.writerNickname)")
+            }
+            HStack {
+                Text("작성자 ID:").foregroundColor(.gray)
+                Spacer()
+                Text(" \(trade.writerID)")
+            }
+            HStack {
+                Text("생성일자:").foregroundColor(.gray)
+                Spacer()
+                Text(" \(dateFormatter(trade.createdAt))")
+            }
+            HStack {
+                Text("카테고리:").foregroundColor(.gray)
+                Spacer()
+                Text(" \(trade.category)")
+            }
+            HStack {
+                Text("내 물건:").foregroundColor(.gray)
+                Spacer()
+                Text(" \(trade.myProduct)")
+            }
+            HStack {
+                Text("바꾸고 싶은 물건:").foregroundColor(.gray)
+                Spacer()
+                Text(" \(String(describing: trade.wantProduct))")
+            }
+            HStack {
+                Text("내용:").foregroundColor(.gray)
+                Spacer()
+                Text(" \(trade.content)")
+            }            
         }
         .onAppear {
                     tradeLoadImages()

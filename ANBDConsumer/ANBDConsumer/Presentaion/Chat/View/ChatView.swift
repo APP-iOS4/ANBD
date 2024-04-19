@@ -50,6 +50,7 @@ struct ChatView: View {
         .navigationTitle("채팅")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
+            chatViewModel.loadUserInfo()
             chatViewModel.fetchChatRooms()
         }
     }

@@ -12,26 +12,35 @@ import ANBDModel
 @MainActor
 final class ChatViewModel: ObservableObject {
     
-    let userID: String = "A414DC19-A424-4FB8-88E7-B23B06EB67A7"
-    let userNickname: String = "테스트관2"
     private let chatUsecase: ChatUsecase = ChatUsecase()
     private let storageManager = StorageManager.shared
     
+    @Published var user: User?
     @Published var chatRooms: [Channel] = []
     @Published var messages: [Message] = []
     
     var isListener: Bool = false
     
+    /// UserDefaults에서 유저 정보 불러오기
+    func loadUserInfo() {
+        if let user = UserDefaultsClient.shared.userInfo {
+            self.user = user
+        }
+    }
+    
+    
     /// fetch + listener
     func addListener(channelID: String) async throws {
         do {
-            let preMessages = try await chatUsecase.loadMessageList(channelID: channelID, userID: userID)
-            self.messages.insert(contentsOf: preMessages, at: 0)
-            
-            if !isListener {
-                isListener = true
-                chatUsecase.listenNewMessage(channelID: channelID, userID: userID) { [weak self] message in
-                    self?.messages.append(message)
+            if let user {
+                let preMessages = try await chatUsecase.loadMessageList(channelID: channelID, userID: user.id)
+                self.messages.insert(contentsOf: preMessages, at: 0)
+                
+                if !isListener {
+                    isListener = true
+                    chatUsecase.listenNewMessage(channelID: channelID, userID: user.id) { [weak self] message in
+                        self?.messages.append(message)
+                    }
                 }
             }
         } catch {
@@ -42,16 +51,20 @@ final class ChatViewModel: ObservableObject {
     
     /// 전체 채팅방 리스트 불러오기
     func fetchChatRooms() {
-        chatUsecase.loadChannelList(userID: userID) { [weak self] channel in
-            self?.chatRooms = channel
+        if let user {
+            chatUsecase.loadChannelList(userID: user.id) { [weak self] channel in
+                self?.chatRooms = channel
+            }
         }
     }
     
     /// 채팅방 메시지 불러오기 : 20개씩 페이지네이션 
     func fetchMessages(channelID: String) async throws {
         do {
-            let preMessages = try await chatUsecase.loadMessageList(channelID: channelID, userID: userID)
-            self.messages.insert(contentsOf: preMessages, at: 0)
+            if let user {
+                let preMessages = try await chatUsecase.loadMessageList(channelID: channelID, userID: user.id)
+                self.messages.insert(contentsOf: preMessages, at: 0)
+            }
         } catch {
             print("Error: \(error)")
         }
@@ -60,17 +73,19 @@ final class ChatViewModel: ObservableObject {
     /// 메시지 리스너 (실시간 채팅 확인 - 읽음·안읽음, 추가)
     func addMessageListener(channelID: String) {
         if !isListener {
-            isListener = true
-            chatUsecase.listenNewMessage(channelID: channelID, userID: userID) { [weak self] message in
-                self?.messages.append(message)
-                
-    //            if let lastMessageID = self?.messages.last?.id, lastMessageID == message.id, let lastIndex = self?.messages.indices.last {
-    //                /// 읽음 처리
-    //                self?.messages[lastIndex].isRead = true
-    //            } else {
-    //                /// 메시지 전송 (추가)
-    //                self?.messages.append(message)
-    //            }
+            if let user {
+                isListener = true
+                chatUsecase.listenNewMessage(channelID: channelID, userID: user.id) { [weak self] message in
+                    self?.messages.append(message)
+                    
+        //            if let lastMessageID = self?.messages.last?.id, lastMessageID == message.id, let lastIndex = self?.messages.indices.last {
+        //                /// 읽음 처리
+        //                self?.messages[lastIndex].isRead = true
+        //            } else {
+        //                /// 메시지 전송 (추가)
+        //                self?.messages.append(message)
+        //            }
+                }
             }
         }
     }
@@ -88,7 +103,10 @@ final class ChatViewModel: ObservableObject {
     /// 채널 가져오기
     func getChannel(tradeID: String) async throws -> Channel? {
         do {
-            return try await chatUsecase.getChannel(tradeID: tradeID, userID: userID)
+            if let user {
+                return try await chatUsecase.getChannel(tradeID: tradeID, userID: user.id)
+            }
+            return nil
         } catch {
             print("getChannel Error: \(error)")
             return nil
@@ -158,7 +176,9 @@ final class ChatViewModel: ObservableObject {
     /// 안읽은 메시지 개수 초기화
     func resetUnreadCount(channelID: String) async throws {
         do {
-            try await chatUsecase.updateUnreadCount(channelID: channelID, userID: userID)
+            if let user {
+                try await chatUsecase.updateUnreadCount(channelID: channelID, userID: user.id)
+            }
         } catch {
             print("Error: \(error)")
         }
@@ -166,13 +186,16 @@ final class ChatViewModel: ObservableObject {
     
     /// 상대방 닉네임 불러오기
     func getOtherUserNickname(channel: Channel) -> String {
-        return chatUsecase.getOtherUserNickname(userNicknames: channel.userNicknames, userNickname: userNickname)
+        if let user {
+            return chatUsecase.getOtherUserNickname(userNicknames: channel.userNicknames, userNickname: user.nickname)
+        }
+        return "상대방 닉네임을 불러오지 못했습니다."
     }
     
     /// 채팅방 쌓인 메시지 개수 불러오기
     func getUnreadCount(channel: Channel) -> Int {
         var cnt = 0
-        if channel.lastSendId != userID {
+        if let user, channel.lastSendId != user.id {
             cnt = channel.unreadCount
         }
         return cnt

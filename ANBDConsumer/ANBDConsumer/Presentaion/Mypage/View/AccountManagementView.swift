@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import ANBDModel
 
 struct AccountManagementView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
@@ -94,7 +95,9 @@ struct AccountManagementView: View {
         .navigationTitle("내 정보")
         .navigationBarTitleDisplayMode(.inline)
         
-        .fullScreenCover(isPresented: $isShowingEditorView) {
+        .fullScreenCover(isPresented: $isShowingEditorView, onDismiss: {
+            myPageViewModel.loadUserInfo()
+        }) {
             UserInfoEditingView()
         }
         

@@ -54,14 +54,27 @@ final class MyPageViewModel: ObservableObject {
     let mockArticleData: [Article] = []
     let mockTradeData: [Trade] = []
     
-    /// UserDefaults에서 유저 정보 불러오기
     func loadUserInfo() {
         if let user = UserDefaultsClient.shared.userInfo {
             self.user = user
         }
     }
     
-    /// 유저 정보 수정하기
+    // MARK: - 유저 정보 수정
+    func checkDuplicatedNickname() async -> Bool {
+        let isDuplicate = await userUsecase.checkDuplicatedNickname(nickname: editedUserNickname)
+        
+        return isDuplicate
+    }
+    
+    func validateUpdatingComplete() -> Bool {
+        if (editedUserNickname.isEmpty || editedUserNickname == self.user.nickname) && (tempUserFavoriteLocation != self.user.favoriteLocation) {
+            return true
+        } else {
+            return false
+        }
+    }
+    
     func updateUserInfo(updatedNickname: String, updatedLocation: Location) async {
         do {
             var updatedUser: User = user
@@ -73,14 +86,6 @@ final class MyPageViewModel: ObservableObject {
             UserDefaultsClient.shared.userInfo = updatedUser
         } catch {
             print("\(error.localizedDescription)")
-        }
-    }
-    
-    func validateUpdatingComplete() -> Bool {
-        if (editedUserNickname.isEmpty || editedUserNickname == self.user.nickname) && (tempUserFavoriteLocation != self.user.favoriteLocation) {
-            return true
-        } else {
-            return false
         }
     }
 }

@@ -258,14 +258,14 @@ extension ChatUsecase {
     ///   - message : 현재 들어간 채팅방의 마지막 메시지
     ///   - userID: 내 아이디
     ///
-    public func updateMessageReadStatus(channelID: String, message: Message, userID: String) async throws {
+    public func updateMessageReadStatus(channelID: String, lastMessage: Message, userID: String) async throws {
         if channelID.isEmpty {
             throw ChannelError.invalidChannelID
         } else if userID.isEmpty {
             throw ChannelError.invalidUserInfo
         }
         
-        try await messageRepository.updateMessageReadStatus(channelID: channelID, message: message, userID: userID)
+        try await messageRepository.updateMessageReadStatus(channelID: channelID, lastMessage: lastMessage, userID: userID)
     }
     
     //채팅방 뷰에서 나갈때(Disappear) 할때 리스너 초기화 및 fetchData에 필요한 주소들 초기화하는 메소드

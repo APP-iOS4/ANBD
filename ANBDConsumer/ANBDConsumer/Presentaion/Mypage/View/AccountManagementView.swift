@@ -92,6 +92,9 @@ struct AccountManagementView: View {
             }
         }
         
+        .toolbarRole(.editor)
+        .toolbar(.hidden, for: .tabBar)
+        
         .navigationTitle("내 정보")
         .navigationBarTitleDisplayMode(.inline)
         
@@ -106,7 +109,6 @@ struct AccountManagementView: View {
         }
     }
     
-    @ViewBuilder
     private func detailInfoComponentView(title: String, content: String) -> some View {
         VStack(alignment: .leading, spacing: 15) {
             Text("\(title)")

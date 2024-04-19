@@ -28,7 +28,6 @@ struct UserInfoEditingView: View {
                 VStack(spacing: 40) {
                     if #available(iOS 17.0, *) {
                         userProfilImageButton
-                        
                             .onChange(of: photosPickerItem) { _, _ in
                                 Task {
                                     if let photosPickerItem, let data = try? await photosPickerItem.loadTransferable(type: Data.self) {
@@ -40,7 +39,6 @@ struct UserInfoEditingView: View {
                             }
                     } else {
                         userProfilImageButton
-                        
                             .onChange(of: photosPickerItem, perform: { _ in
                                 Task {
                                     if let photosPickerItem, let data = try? await photosPickerItem.loadTransferable(type: Data.self) {

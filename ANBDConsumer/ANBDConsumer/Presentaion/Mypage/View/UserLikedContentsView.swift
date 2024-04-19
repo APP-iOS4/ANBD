@@ -45,6 +45,9 @@ struct UserLikedContentsView: View {
         }
         .navigationTitle("\(navigationTitile)")
         .navigationBarTitleDisplayMode(.inline)
+        
+        .toolbarRole(.editor)
+        .toolbar(.hidden, for: .tabBar)
     }
     
     private func listEmptyView() -> some View {
@@ -58,12 +61,12 @@ struct UserLikedContentsView: View {
     
     @ViewBuilder
     private func userLikedArticleListView(category: ANBDCategory) -> some View {
-        if myPageViewModel.mockArticleData.isEmpty {
+        if myPageViewModel.userLikedArticles.isEmpty {
             listEmptyView()
         } else {
             ScrollView(.vertical) {
                 LazyVStack {
-                    ForEach(myPageViewModel.mockArticleData.filter({$0.category == category})) { article in
+                    ForEach(myPageViewModel.userLikedArticles.filter({$0.category == category})) { article in
                         NavigationLink(value: article) {
                             ArticleListCell(value: .article(article))
                                 .padding(.vertical, 5)
@@ -81,12 +84,12 @@ struct UserLikedContentsView: View {
     
     @ViewBuilder
     private func userHeartTradeListView(category: ANBDCategory) -> some View {
-        if myPageViewModel.mockTradeData.isEmpty {
+        if myPageViewModel.userHeartedTrades.isEmpty {
             listEmptyView()
         } else {
             ScrollView(.vertical) {
                 LazyVStack {
-                    ForEach(myPageViewModel.mockTradeData.filter({$0.category == category})) { trade in
+                    ForEach(myPageViewModel.userHeartedTrades.filter({$0.category == category})) { trade in
                         NavigationLink(value: trade) {
                             ArticleListCell(value: .trade(trade))
                                 .padding(.vertical, 5)

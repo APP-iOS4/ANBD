@@ -11,14 +11,10 @@ import ANBDModel
 struct UserActivityListView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     
-    // 연습용 임시 제가 이거 임시로 만들었었는데 주말에 연습해본다고!!!
-    // 
-    private let articleUseCase: ArticleUsecase = DefaultArticleUsecase()
-    private let tradeUseCase: TradeUsecase = DefaultTradeUsecase()
-    private let userUseCase: UserUsecase = DefaultUserUsecase()
-    
     @State var category: ANBDCategory
     @State var user: User
+    
+    @State private var isSignedInUser: Bool = false
     
     @State private var articlesWrittenByUser: [Article] = []
     @State private var tradesWrittenByUser: [Trade] = []
@@ -53,6 +49,7 @@ struct UserActivityListView: View {
             .ignoresSafeArea(edges: .bottom)
         }
         .toolbar(.hidden, for: .tabBar)
+        .toolbarRole(.editor)
         
         .navigationTitle("\(user.nickname)님의 ANBD")
         .navigationBarTitleDisplayMode(.inline)
@@ -64,15 +61,15 @@ struct UserActivityListView: View {
              tradesWrittenByUser = try await tradeUseCase.loadTradeList(writerID: user.id)
              }
              */
-            articlesWrittenByUser = myPageViewModel.mockArticleData
-            tradesWrittenByUser = myPageViewModel.mockTradeData
+            articlesWrittenByUser = myPageViewModel.articlesWrittenByUser
+            tradesWrittenByUser = myPageViewModel.tradesWrittenByUser
         }
     }
     
     @ViewBuilder
     private func userArticleListView(category: ANBDCategory) -> some View {
         if articlesWrittenByUser.isEmpty {
-            ListEmptyView(description: "\(user.nickname)님의\n\(category.description) 활동이 없습니다.")
+            ListEmptyView(description: emptyArticleListDescription)
         } else {
             ScrollView(.vertical) {
                 LazyVStack {
@@ -107,7 +104,7 @@ struct UserActivityListView: View {
     private func userTradeListView(category: ANBDCategory) -> some View {
         VStack {
             if tradesWrittenByUser.isEmpty {
-                ListEmptyView(description: "\(user.nickname)님의\n\(category.description) 활동이 없습니다.")
+                ListEmptyView(description: emptyTradeListDescription)
             } else {
                 ScrollView(.vertical) {
                     LazyVStack {
@@ -136,6 +133,27 @@ struct UserActivityListView: View {
                 }
                 .background(.gray50)
             }
+        }
+    }
+}
+
+extension UserActivityListView {
+    // TODO: - 다른 유저 정보 필요
+//    private var navigationTitle: String {
+//        
+//    }
+    
+    private var emptyArticleListDescription: String {
+        switch isSignedInUser {
+        case true: return "\(user.nickname)님의\n\(category.description) 활동이 없습니다."
+        case false: return "수정 필요"
+        }
+    }
+    
+    private var emptyTradeListDescription: String {
+        switch isSignedInUser {
+        case true: return "\(user.nickname)님의\n\(category.description) 활동이 없습니다."
+        case false: return "수정 필요"
         }
     }
 }

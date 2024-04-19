@@ -10,6 +10,7 @@ import ANBDModel
 
 struct TradeDetailView: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
+    // @EnvironmentObject private var myPageViewMode: MyPageViewModel
     @State var trade: Trade
     @State private var isGoingToReportView: Bool = false
     @State private var isShowingCreat: Bool = false
@@ -22,6 +23,8 @@ struct TradeDetailView: View {
     
     @State private var detailImage: Image = Image("DummyPuppy1")
     @State private var imageData: [Data] = []
+    
+    // @State private var writerUser: User?
     
     //임시..
     @State private var isLiked: Bool = false
@@ -60,13 +63,13 @@ struct TradeDetailView: View {
                         
                         //작성자 이미지, 닉네임, 작성시간
                         HStack {
-                            NavigationLink(value: "tradeToUser") {
-                                Image(.dummyImage1)
-                                    .resizable()
-                                    .frame(width: 40, height: 40)
-                                    .scaledToFill()
-                                    .clipShape(Circle())
-                            }
+//                            NavigationLink(value: writerUser) {
+//                                Image(.dummyImage1)
+//                                    .resizable()
+//                                    .frame(width: 40, height: 40)
+//                                    .scaledToFill()
+//                                    .clipShape(Circle())
+//                            }
         
                             VStack(alignment: .leading) {
                                 Text("\(trade.writerNickname)")
@@ -135,6 +138,7 @@ struct TradeDetailView: View {
         .onAppear {
             tradeViewModel.getOneTrade(trade: trade)
             Task {
+                // writerUser = await myPageViewMode.getUserInfo(userID: trade.writerID)
                 imageData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: trade.id, imagePath: trade.imagePaths)
             }
         }

@@ -29,26 +29,30 @@ struct UserListView: View {
                         .font(.title3)
                 }
                 .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
+                Divider()
                 Spacer()
                 VStack(alignment: .leading) {
                     Text("이메일")
                         .font(.title3)
                 }
                 .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
+                Divider()
                 Spacer()
                 VStack(alignment: .leading) {
                     Text("유저권한")
                         .font(.title3)
                 }
                 .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
+                Divider()
                 Spacer()
                 VStack(alignment: .leading) {
                     Text("프로필 사진")
                         .font(.title3)
                 }
-                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
                 Spacer()
             }
+            .frame(maxWidth: .infinity, maxHeight: 30)
             .padding(.horizontal, 15)
             .padding(.vertical, 5)
             ScrollView {
@@ -97,7 +101,7 @@ struct UserListView: View {
                                         }
                                     }
                                 }
-                                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                                .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
                                 Spacer()
                             }
                             .frame(maxWidth: .infinity, minHeight: 50)

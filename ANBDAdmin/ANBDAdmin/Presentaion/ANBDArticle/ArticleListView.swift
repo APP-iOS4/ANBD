@@ -28,20 +28,23 @@ struct ArticleListView: View {
                         .font(.title3)
                 }
                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
+                Divider()
                 Spacer()
                 VStack(alignment: .leading) {
                     Text("작성자 닉네임")
                         .font(.title3)
                 }
-                .frame(minWidth: 0, maxWidth: 258, alignment: .leading)
+                .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
+                Divider()
                 Spacer()
                 VStack(alignment: .leading) {
                     Text("생성일자")
                         .font(.title3)
                 }
-                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                 Spacer()
             }
+            .frame(maxWidth: .infinity, maxHeight: 30)
             .padding(.horizontal, 15)
             .padding(.vertical, 5)
             ScrollView{
@@ -55,14 +58,14 @@ struct ArticleListView: View {
                                         .font(.title3)
                                         .foregroundColor(.black)
                                 }
-                                .frame(minWidth: 0, maxWidth: 250, alignment: .leading)
+                                .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
                                     Text("\(article.writerNickname)")
                                         .foregroundColor(.black)
                                 }
-                                .frame(minWidth: 0, maxWidth: 250, alignment: .leading)
+                                .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {

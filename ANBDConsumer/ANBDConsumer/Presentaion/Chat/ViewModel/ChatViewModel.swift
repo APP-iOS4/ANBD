@@ -19,7 +19,8 @@ final class ChatViewModel: ObservableObject {
     @Published var chatRooms: [Channel] = []
     @Published var messages: [Message] = []
     
-    var isListener: Bool = false
+    private var isListener: Bool = false
+    private var isLeaveChatRoom: Bool = false
     
     /// UserDefaults에서 유저 정보 불러오기
     func loadUserInfo() {
@@ -33,8 +34,14 @@ final class ChatViewModel: ObservableObject {
     func addListener(channelID: String) async throws {
         do {
             if let user {
-                let preMessages = try await chatUsecase.loadMessageList(channelID: channelID, userID: user.id)
-                self.messages.insert(contentsOf: preMessages, at: 0)
+                if !isLeaveChatRoom {
+                    var preMessages = try await chatUsecase.loadMessageList(channelID: channelID, userID: user.id)
+                    if let leaveMessageIndex = preMessages.lastIndex(where: { $0.leaveUsers.contains(user.id) }) {
+                        isLeaveChatRoom = true
+                        preMessages.removeSubrange(0...leaveMessageIndex)
+                    }
+                    self.messages.insert(contentsOf: preMessages, at: 0)
+                }
                 
                 if !isListener {
                     isListener = true
@@ -169,8 +176,28 @@ final class ChatViewModel: ObservableObject {
     /// 채팅방 onDisappear시, 메시지 데이터 초기화
     func resetMessageData() {
         isListener = false
+        isLeaveChatRoom = false
         chatUsecase.initializeListener()
         messages = []
+    }
+    
+    
+    /// 채널 리스너 해제
+    /// 기존 : 채팅방 나가기 -> 기존 채팅 메시지 값을 leaveUser 내 ID 추가 (ㅠㅠ)
+    /// 변경 : 채팅방 나가기 -> 나간 시점에서 마지막 메시지만 leaveID 추가 우아 !! -> viewModel 오 .....................아 ....대박 운관님 대박 .............................
+    func resetChannelListener() {
+        chatUsecase.initializeChannelsListener()
+    }
+    
+    /// 채팅방 나가기
+    func leaveChatRoom(channelID: String, lastMessageID: String) async throws {
+        do {
+            if let user {
+                try await chatUsecase.leaveChatRoom(channelID: channelID, lastMessageID: lastMessageID, userID: user.id)
+            }
+        } catch {
+            print("leaveChatRoom ERROR: \(error)")
+        }
     }
     
     /// 안읽은 메시지 개수 초기화

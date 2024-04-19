@@ -40,9 +40,9 @@ struct ChatDetailView: View {
                     .padding(.vertical, 5)
                     .padding(.horizontal, 15)
                 
-//                messageHeaderView
-//                    .padding(.vertical, 5)
-//                    .padding(.horizontal, 15)
+                //                messageHeaderView
+                //                    .padding(.vertical, 5)
+                //                    .padding(.horizontal, 15)
                 
                 Divider()
                 
@@ -102,8 +102,13 @@ struct ChatDetailView: View {
             
             if isShowingCustomAlertView {
                 CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertView, viewType: .leaveChatRoom) {
-                    print("채팅방 나가기 ~~")
-                    dismiss()
+                    Task {
+                        print("채팅방 나가기")
+                        if let channel, let lastMessage = chatViewModel.messages.last {
+                            try await chatViewModel.leaveChatRoom(channelID: channel.id, lastMessageID: lastMessage.id)
+                        }
+                        dismiss()
+                    }
                 }
             }
         }

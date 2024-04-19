@@ -8,6 +8,7 @@
 import SwiftUI
 import ANBDModel
 import FirebaseStorage
+import CachedAsyncImage
 
 struct TradeListDetailView: View {
     @Environment(\.presentationMode) var tradepresentationMode
@@ -23,7 +24,7 @@ struct TradeListDetailView: View {
             Text("이미지:").foregroundColor(.gray)
             ForEach(tradeImageUrls.indices, id: \.self) { index in
                             if let url = tradeImageUrls[index] {
-                                AsyncImage(url: url) { image in
+                                CachedAsyncImage(url: url) { image in
                                     image.resizable()
                                         .scaledToFit()
                                         .frame(height: 300)

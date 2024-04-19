@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ANBDModel
+import CachedAsyncImage
 
 struct BannerEditView: View {
     @StateObject private var bannerEditViewModel = BannerEditViewModel()
@@ -26,7 +27,7 @@ struct BannerEditView: View {
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
                                 if let imageUrl = URL(string: banner.thumbnailImageURLString) {
-                                    AsyncImage(url: imageUrl) { phase in
+                                    CachedAsyncImage(url: imageUrl) { phase in
                                         switch phase {
                                         case .empty:
                                             ProgressView()

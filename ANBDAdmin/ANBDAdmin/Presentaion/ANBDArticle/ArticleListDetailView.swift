@@ -8,6 +8,7 @@
 import SwiftUI
 import ANBDModel
 import FirebaseStorage
+import CachedAsyncImage
 
 struct ArticleListDetailView: View {
     @Environment(\.presentationMode) var articlePresentationMode
@@ -22,7 +23,7 @@ struct ArticleListDetailView: View {
             Text("이미지:").foregroundColor(.gray)
             ForEach(articleImageUrls.indices, id: \.self) { index in
                             if let url = articleImageUrls[index] {
-                                AsyncImage(url: url) { image in
+                                CachedAsyncImage(url: url) { image in
                                     image.resizable()
                                         .scaledToFit()
                                         .frame(height: 300)

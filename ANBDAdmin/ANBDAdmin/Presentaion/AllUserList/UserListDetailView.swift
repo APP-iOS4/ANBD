@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ANBDModel
+import CachedAsyncImage
 
 struct UserListDetailView: View {
     @Environment(\.presentationMode) var userLevelEditPresentationMode
@@ -30,7 +31,7 @@ struct UserListDetailView: View {
         List {
             if let imageUrl = URL(string: user.profileImage) {
                 Text("프로필 이미지:").foregroundColor(.gray)
-                AsyncImage(url: imageUrl) { phase in
+                CachedAsyncImage(url: imageUrl) { phase in
                     switch phase {
                     case .empty:
                         ProgressView()
@@ -60,7 +61,6 @@ struct UserListDetailView: View {
                         Picker("Select new user level", selection: $initialUserLevel) {
                             Text("Banned").tag(UserLevel.banned)
                             Text("Consumer").tag(UserLevel.consumer)
-                            Text("Admin").tag(UserLevel.admin)
                         }
                         .pickerStyle(.segmented)
                         .padding()

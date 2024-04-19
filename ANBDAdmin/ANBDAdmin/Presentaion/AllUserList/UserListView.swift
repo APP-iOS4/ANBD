@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ANBDModel
+import CachedAsyncImage
 
 struct UserListView: View {
     @StateObject private var userListViewModel = UserListViewModel()
@@ -82,7 +83,7 @@ struct UserListView: View {
                                 Spacer()
                                 VStack(alignment: .leading) {
                                     if let imageUrl = URL(string: user.profileImage) {
-                                        AsyncImage(url: imageUrl) { phase in
+                                        CachedAsyncImage(url: imageUrl) { phase in
                                             switch phase {
                                             case .empty:
                                                 ProgressView()

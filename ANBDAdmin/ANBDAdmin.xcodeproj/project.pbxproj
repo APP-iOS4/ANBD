@@ -33,6 +33,7 @@
 		82FB37C82BD1070300F0B78A /* TextFieldWithTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82FB37C72BD1070300F0B78A /* TextFieldWithTitle.swift */; };
 		82FB37CB2BD1074900F0B78A /* BlueSquareButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82FB37CA2BD1074900F0B78A /* BlueSquareButton.swift */; };
 		82FB37CE2BD1125700F0B78A /* CustomAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82FB37CD2BD1125700F0B78A /* CustomAlertView.swift */; };
+		82FB37D92BD2141600F0B78A /* CachedAsyncImage in Frameworks */ = {isa = PBXBuildFile; productRef = 82FB37D82BD2141600F0B78A /* CachedAsyncImage */; };
 		CB7BEDD32BBD4EE300C0F298 /* ANBDAdminApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7BEDD22BBD4EE300C0F298 /* ANBDAdminApp.swift */; };
 		CB7BEDD72BBD4EE500C0F298 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB7BEDD62BBD4EE500C0F298 /* Assets.xcassets */; };
 		CB7BEDED2BBD537A00C0F298 /* Pretendard-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CB7BEDE82BBD537A00C0F298 /* Pretendard-Bold.otf */; };
@@ -88,6 +89,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CB7BEE412BBD588000C0F298 /* ANBDModel in Frameworks */,
+				82FB37D92BD2141600F0B78A /* CachedAsyncImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -147,12 +149,12 @@
 			children = (
 				820741B12BC8EF0600CB4584 /* ANBDAdminAppHomeView.swift */,
 				82FB378D2BD0FE7300F0B78A /* Auth */,
-				820741C62BCDFC2E00CB4584 /* BannerEdit */,
+				820741B02BC8EF0600CB4584 /* AllUserList */,
 				820741A42BC8EF0600CB4584 /* ANBDArticle */,
 				820741A72BC8EF0600CB4584 /* ANBDTrade */,
 				820741AA2BC8EF0600CB4584 /* ReportedArticle */,
 				820741AD2BC8EF0600CB4584 /* ReportedComment */,
-				820741B02BC8EF0600CB4584 /* AllUserList */,
+				820741C62BCDFC2E00CB4584 /* BannerEdit */,
 				82D917792BCE42FF0054FF5D /* Inquiry */,
 			);
 			path = Presentaion;
@@ -188,6 +190,7 @@
 		82FB37C02BD1056800F0B78A /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				820741842BC8EEAE00CB4584 /* dateFormatter.swift */,
 				82FB37C12BD105A400F0B78A /* UserDefaultsClient.swift */,
 				82FB37C32BD1062400F0B78A /* ANBDFont.swift */,
 			);
@@ -291,7 +294,6 @@
 		CB7BEE082BBD55A900C0F298 /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				820741842BC8EEAE00CB4584 /* dateFormatter.swift */,
 				82FB37C02BD1056800F0B78A /* Util */,
 			);
 			path = Common;
@@ -322,6 +324,7 @@
 			name = ANBDAdmin;
 			packageProductDependencies = (
 				CB7BEE402BBD588000C0F298 /* ANBDModel */,
+				82FB37D82BD2141600F0B78A /* CachedAsyncImage */,
 			);
 			productName = ANBDAdmin;
 			productReference = CB7BEDCF2BBD4EE300C0F298 /* ANBDAdmin.app */;
@@ -351,6 +354,9 @@
 				Base,
 			);
 			mainGroup = CB7BEDC62BBD4EE300C0F298;
+			packageReferences = (
+				82FB37D72BD2141600F0B78A /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */,
+			);
 			productRefGroup = CB7BEDD02BBD4EE300C0F298 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -625,7 +631,23 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		82FB37D72BD2141600F0B78A /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/lorenzofiamingo/swiftui-cached-async-image";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		82FB37D82BD2141600F0B78A /* CachedAsyncImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 82FB37D72BD2141600F0B78A /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */;
+			productName = CachedAsyncImage;
+		};
 		CB7BEE402BBD588000C0F298 /* ANBDModel */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ANBDModel;

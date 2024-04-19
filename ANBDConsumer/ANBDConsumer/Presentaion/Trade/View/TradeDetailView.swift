@@ -33,25 +33,18 @@ struct TradeDetailView: View {
                     VStack(alignment: .leading) {
                         //이미지
                         TabView() {
-//                            ForEach(trade.imagePaths, id: \.self) { item in
-//                                Image(item)
-//                                    .resizable()
-//                                    .scaledToFill()
-//                                    .onTapGesture {
-//                                        detailImage = item
-//                                        isShowingImageDetailView.toggle()
-//                                    }
-//                            }
-                            if let uiImage = UIImage(data: imageData.first ?? Data()) {
-                                Image(uiImage: uiImage)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .onTapGesture {
-                                        detailImage = Image(uiImage: uiImage)
-                                        isShowingImageDetailView.toggle()
-                                    }
-                            } else {
-                                ProgressView()
+                            ForEach(imageData, id: \.self) { photoData in
+                                if let image = UIImage(data: photoData) {
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .scaledToFill()
+                                        .onTapGesture {
+                                            detailImage = Image(uiImage: image)
+                                            isShowingImageDetailView.toggle()
+                                        }
+                                } else {
+                                    ProgressView()
+                                }
                             }
                         }
                         .frame(height: 300)
@@ -67,13 +60,13 @@ struct TradeDetailView: View {
                                     .scaledToFill()
                                     .clipShape(Circle())
                             }
-        
+                            
                             VStack(alignment: .leading) {
-                                Text("\(trade.writerNickname)")
+                                Text("\(tradeViewModel.trade.writerNickname)")
                                     .font(ANBDFont.SubTitle1)
                                     .foregroundStyle(.gray900)
                                 
-                                Text("\(trade.createdAt.relativeTimeNamed)")
+                                Text("\(tradeViewModel.trade.createdAt.relativeTimeNamed)")
                                     .font(ANBDFont.body2)
                                     .foregroundStyle(.gray600)
                             }
@@ -81,8 +74,8 @@ struct TradeDetailView: View {
                             Spacer()
                             
                             if let user = UserDefaultsClient.shared.userInfo {
-                                if user.id == trade.writerID {
-                                    TradeStateChangeView(tradeState: $trade.tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert, fontSize: 17)
+                                if user.id == tradeViewModel.trade.writerID {
+                                    TradeStateChangeView(tradeState: $tradeViewModel.trade.tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert, fontSize: 17)
                                 }
                             }
                         }//HStack
@@ -92,17 +85,17 @@ struct TradeDetailView: View {
                         Divider()
                         
                         VStack(alignment: .leading) {
-                            Text("\(trade.title)")
+                            Text("\(tradeViewModel.trade.title)")
                                 .font(ANBDFont.Heading3)
                                 .foregroundStyle(.gray900)
                                 .fontWeight(.bold)
                                 .padding(.bottom, 1)
-                            Text("\(trade.itemCategory.rawValue) · \(trade.location.description)")
+                            Text("\(tradeViewModel.trade.itemCategory.rawValue) · \(tradeViewModel.trade.location.description)")
                                 .font(ANBDFont.pretendardMedium(13))
                                 .foregroundStyle(.gray500)
                                 .padding(.bottom)
                             
-                            Text("\(trade.content)")
+                            Text("\(tradeViewModel.trade.content)")
                                 .font(ANBDFont.body1)
                                 .foregroundStyle(.gray900)
                         }//VStack
@@ -117,7 +110,7 @@ struct TradeDetailView: View {
                 CustomAlertView(isShowingCustomAlert: $isShowingStateChangeCustomAlert, viewType: .changeState) {
                     Task {
                         print("상태 변경!")
-                        await tradeViewModel.updateState(trade: trade)
+                        await tradeViewModel.updateState(trade: tradeViewModel.trade)
                     }
                 }
             }
@@ -125,7 +118,7 @@ struct TradeDetailView: View {
                 CustomAlertView(isShowingCustomAlert: $isShowingDeleteCustomAlert, viewType: .tradeDelete) {
                     Task {
                         print("삭제!")
-                        await tradeViewModel.deleteTrade(trade: trade)
+                        await tradeViewModel.deleteTrade(trade: tradeViewModel.trade)
                         await tradeViewModel.reloadAllTrades()
                         self.dismiss()
                     }
@@ -135,7 +128,7 @@ struct TradeDetailView: View {
         .onAppear {
             tradeViewModel.getOneTrade(trade: trade)
             Task {
-                imageData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: trade.id, imagePath: trade.imagePaths)
+                imageData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: tradeViewModel.trade.id, imagePath: tradeViewModel.trade.imagePaths)
             }
         }
         .toolbar(.hidden, for: .tabBar)
@@ -151,14 +144,8 @@ struct TradeDetailView: View {
                 }
             }
         }
-        .fullScreenCover(isPresented: $isShowingCreat, onDismiss: {
-            print("dismiss")
-            Task {
-                await tradeViewModel.loadOneTrade(trade: trade)
-                trade = tradeViewModel.trade
-            }
-        }) {
-            TradeCreateView(isShowingCreate: $isShowingCreat, isNewProduct: false, trade: trade)
+        .fullScreenCover(isPresented: $isShowingCreat) {
+            TradeCreateView(isShowingCreate: $isShowingCreat, isNewProduct: false, trade: tradeViewModel.trade)
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
             ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
@@ -168,11 +155,11 @@ struct TradeDetailView: View {
         .toolbarRole(.editor)
         .confirmationDialog("", isPresented: $isShowingConfirm) {
             if let user = UserDefaultsClient.shared.userInfo {
-                if user.id == trade.writerID {
+                if user.id == tradeViewModel.trade.writerID {
                     Button("수정하기") {
                         isShowingCreat.toggle()
-                        tradeViewModel.selectedLocation = trade.location
-                        tradeViewModel.selectedItemCategory = trade.itemCategory
+                        tradeViewModel.selectedLocation = tradeViewModel.trade.location
+                        tradeViewModel.selectedItemCategory = tradeViewModel.trade.itemCategory
                     }
                     
                     Button("삭제하기", role: .destructive) {
@@ -203,18 +190,18 @@ extension TradeDetailView {
             
             VStack(alignment: .leading) {
                 
-                switch trade.category {
+                switch tradeViewModel.trade.category {
                 case .nanua:
                     Text("나눠쓰기")
                         .fontWeight(.bold)
-                    Text("\(trade.myProduct)")
+                    Text("\(tradeViewModel.trade.myProduct)")
                 case .baccua:
                     Text("바꿔쓰기")
                         .fontWeight(.bold)
                     HStack {
-                        Text("\(trade.myProduct)")
+                        Text("\(tradeViewModel.trade.myProduct)")
                         Image(systemName: "arrow.left.and.right")
-                        if let want = trade.wantProduct {
+                        if let want = tradeViewModel.trade.wantProduct {
                             Text("\(want)")
                         } else {
                             Text("제시")
@@ -232,8 +219,8 @@ extension TradeDetailView {
             
             Spacer()
             
-            if let user = UserDefaultsClient.shared.userInfo { 
-                if user.id != trade.writerID {
+            if let user = UserDefaultsClient.shared.userInfo {
+                if user.id != tradeViewModel.trade.writerID {
                     NavigationLink(value: "tradeToChat") {
                         RoundedRectangle(cornerRadius: 14)
                             .foregroundStyle(.accent)

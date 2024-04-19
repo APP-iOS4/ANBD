@@ -84,15 +84,19 @@ final class DefaultMessageRepository: MessageRepository {
                             print("컴플리션 에러")
                             return
                         }
-                        //상대방이 보낸 메시지를 실시간으로 감지할떄
-                        //메시지의 상태를 읽음으로 바꾸고 , 안읽은 메시지를 수를 초기화
-//                        if mesaage.userID != userID {
-//                            self.chatDB.document(channelID).collection("messages").document(mesaage.id).updateData(["isRead" : true])
-//                            self.chatDB.document(channelID).updateData(["unreadCount" : 0])
-//                        }
+                        
                         completion(mesaage)
                     }
-//                    if (diff.type == .modified) {print("modified:\(diff.document.data())")}
+                    if (diff.type == .modified) {
+                        guard let mesaage = try? diff.document.data(as: Message.self) else {
+                            print("컴플리션 에러")
+                            return
+                        }
+                        
+                        if mesaage.leaveUsers.isEmpty {
+                            completion(mesaage)
+                        }
+                    }
 //                    if (diff.type == .removed) {print("removed:\(diff.document.data())")}
                 }
             }

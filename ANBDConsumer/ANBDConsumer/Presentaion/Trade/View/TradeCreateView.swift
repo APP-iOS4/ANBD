@@ -116,7 +116,7 @@ extension TradeCreateView {
                                     .frame(width : 80 , height: 80)
                                     .cornerRadius(10)
                                     .clipped()
-                                    .padding(10)
+                                    .padding(5)
                                 
                             }
                             
@@ -139,7 +139,7 @@ extension TradeCreateView {
                 }
                 .padding(.bottom, 30)
             }//Horizontal ScrollView
-            .padding(.trailing, 20)
+            .padding(.horizontal, 10)
         }
     }
     fileprivate var wholeView: some View {
@@ -361,17 +361,22 @@ extension TradeCreateView {
                                 await tradeViewModel.createTrade(category: category, itemCategory: tradeViewModel.selectedItemCategory, location: tradeViewModel.selectedLocation, title: title, content: content, myProduct: myProduct, wantProduct: wantProduct, images: selectedPhotosData)
                                 
                                 await tradeViewModel.reloadAllTrades()
+                                
+                                tradeViewModel.selectedLocation = .seoul
+                                tradeViewModel.selectedItemCategory = .digital
                             }
                         } else {
                             if let trade = trade {
                                 Task {
-//                                    await tradeViewModel.updateTrade(trade: trade, images: selectedPhotosData)
-//                                    await tradeViewModel.reloadAllTrades()
+                                    await tradeViewModel.updateTrade(category: category, title: title, content: content, myProduct: myProduct, wantProduct: wantProduct, images: selectedPhotosData)
+                                    await tradeViewModel.reloadAllTrades()
+                                    
+                                    tradeViewModel.selectedLocation = .seoul
+                                    tradeViewModel.selectedItemCategory = .digital
                                 }
                             }
                         }
-                        tradeViewModel.selectedLocation = .seoul
-                        tradeViewModel.selectedItemCategory = .digital
+                        
                         self.isShowingCreate.toggle()
                     }
                     .padding(20)
@@ -399,6 +404,9 @@ extension TradeCreateView {
                     self.category = trade.category
                     self.wantProduct = trade.wantProduct ?? ""
                     self.content = trade.content
+                    Task {
+                        selectedPhotosData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: trade.id, imagePath: trade.imagePaths)
+                    }
                 }
             }
         }

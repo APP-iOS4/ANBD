@@ -54,7 +54,7 @@ final class DefaultMessageRepository: MessageRepository {
         startDoc = snapshot.documents.first
         lastDoc = snapshot.documents.last
         
-        return snapshot.documents.compactMap {try? $0.data(as: Message.self)}.filter{!$0.leaveUsers.contains(userID)}
+        return snapshot.documents.compactMap {try? $0.data(as: Message.self)}
     }
     
     func readNewMessage(channelID: String , userID: String , completion: @escaping ((Message) -> Void)) {
@@ -102,12 +102,12 @@ final class DefaultMessageRepository: MessageRepository {
             }
     }
     
-    func updateMessageReadStatus(channelID: String, message: Message, userID: String) async throws {
+    func updateMessageReadStatus(channelID: String, lastMessage: Message, userID: String) async throws {
         //내가 보낸 메시지가 아닐때만
-        guard message.userID != userID else {
+        guard lastMessage.userID != userID else {
             return
         }
-        guard let _ = try? await chatDB.document(channelID).collection("messages").document(message.id).updateData([
+        guard let _ = try? await chatDB.document(channelID).collection("messages").document(lastMessage.id).updateData([
             "isRead" : true
         ]) else {
             throw DBError.getMessageDocumentError

@@ -81,8 +81,14 @@ struct ArticleCreateView: View {
     //MARK: - articleCreate 서브뷰
     private var articleCreateView: some View {
         VStack {
-            InstructionsView()
-            
+            if title.isEmpty && content.isEmpty {
+                InstructionsView()
+            } else {
+                Divider()
+                    .padding(.vertical, 5)
+            }
+
+
             VStack {
                 TextField("제목을 입력하세요", text: $title)
                 
@@ -179,24 +185,22 @@ struct ArticleCreateView: View {
             .frame(height: 40)
             .padding(.leading, 10)
         }
+        .onAppear {
+            if !isNewArticle {
+                if let article = article {
+                    Task {
+                        selectedImageData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
+                    }
+                }
+            }
+        }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
                     Task {
                         if isNewArticle {
-                            guard let user = UserDefaultsClient.shared.userInfo else {
-                                return
-                            }
-                            // dump(article)
-                            // dump(user)
-                            let newArticle = Article(writerID: user.id,
-                                                     writerNickname: user.nickname,
-                                                     category: category,
-                                                     title: title,
-                                                     content: content,
-                                                     thumbnailImagePath: "",
-                                                     imagePaths: [])
-                            await articleViewModel.writeArticle(article: newArticle, imageDatas: selectedImageData)
+                            await articleViewModel.writeArticle(category: category, title: title, content: content, imageDatas: selectedImageData)
+                            await articleViewModel.reloadAllArticles()
                         } else {
                             if var article = article {
                                 article.title = self.title
@@ -204,25 +208,26 @@ struct ArticleCreateView: View {
                                 article.category = self.category
                                 
                                 await articleViewModel.updateArticle(article: article, imageDatas: selectedImageData)
-
+                                await articleViewModel.reloadAllArticles()
+                                await articleViewModel.loadArticle(article: article)
                             }
                         }
                         await articleViewModel.refreshSortedArticleList(category: category, by: .latest, limit: 10)
                         isShowingCreateView = false
                     }
-                    isShowingCreateView.toggle()
+                    self.isShowingCreateView.toggle()
                 } label: {
                     Text("완료")
                 }
-                .disabled(title.isEmpty || content.isEmpty)
+                .disabled(title.isEmpty || content.isEmpty || selectedImageData.isEmpty)
             }
             ToolbarItem(placement: .cancellationAction) {
                 Button {
                     if !isNewArticle {
                         if let article = article {
-                            let hasTitleChanged = title != article.title
-                            let hasContentChanged = content != article.content
-                            if hasTitleChanged || hasContentChanged {
+                            let isTitleChanged = title != article.title
+                            let isContentChanged = content != article.content
+                            if isTitleChanged || isContentChanged {
                                 isShowingCustomAlert.toggle()
                             } else {
                                 isShowingCreateView.toggle()

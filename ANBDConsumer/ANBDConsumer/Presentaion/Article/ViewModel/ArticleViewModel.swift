@@ -8,24 +8,35 @@
 import SwiftUI
 import ANBDModel
 
+@MainActor
 final class ArticleViewModel: ObservableObject {
     
-    private let articleUseCase: ArticleUsecase = DefaultArticleUsecase()
+    let articleUseCase: ArticleUsecase = DefaultArticleUsecase()
     private let storageManager = StorageManager.shared
-    @Published var articles: [Article] = []
-
+    
     @Published var articlePath: NavigationPath = NavigationPath()
-
+    
+    @Published private(set) var articles: [Article] = []
+    @Published private(set) var filteredArticles: [Article] = []
+    
+    @Published var article: Article = Article(id: "",
+                                              writerID: "",
+                                              writerNickname: "",
+                                              createdAt: Date(),
+                                              category: .accua,
+                                              title: "",
+                                              content: "",
+                                              thumbnailImagePath: "",
+                                              imagePaths: [],
+                                              likeCount: 0,
+                                              commentCount: 0)
+    
     @Published var sortOption: ArticleOrder = .latest
     
-    @Published private(set) var filteredArticles: [Article] = []
     @Published private var isLiked: Bool = false
-
-    let mockArticleData: [Article] = [
-    ]
     
     init() {
-
+        
     }
     
     func filteringArticles(category: ANBDCategory) {
@@ -51,23 +62,14 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
-//    func filteringArticles(category: ANBDCategory) async {
-//        do {
-//            filteredArticles.append(
-//                contentsOf: try await articleUseCase.loadArticleList(category: category, by: .latest, limit: 10)
-//                )
-//            print(filteredArticles)
-//        } catch {
-//            print(error.localizedDescription)
-//        }
-//    } 
-    
     @MainActor
     func refreshSortedArticleList(category: ANBDCategory, by order: ArticleOrder, limit: Int) async {
         do {
-            filteredArticles.append(
-                contentsOf:  try await articleUseCase.refreshSortedArticleList(category: category, by: sortOption, limit: 10)
-                )
+            filteredArticles.removeAll()
+            
+            let newArticles = try await articleUseCase.refreshSortedArticleList(category: category, by: order, limit: limit)
+            filteredArticles.append(contentsOf: newArticles)
+            
             print(filteredArticles)
         } catch {
             print(error.localizedDescription)
@@ -76,6 +78,7 @@ final class ArticleViewModel: ObservableObject {
     
     func loadDetailImages(path: StoragePath, containerID: String, imagePath: [String]) async throws -> [Data] {
         var detailImages: [Data] = []
+        
         
         for image in imagePath {
             do {
@@ -94,7 +97,20 @@ final class ArticleViewModel: ObservableObject {
         return detailImages
     }
     
-    func writeArticle(article: Article, imageDatas: [Data]) async {
+    func writeArticle(category: ANBDCategory, title: String, content: String, imageDatas: [Data]) async {
+        
+        guard let user = UserDefaultsClient.shared.userInfo else {
+            return
+        }
+        // dump(article)
+        // dump(user)
+        let newArticle = Article(writerID: user.id,
+                                 writerNickname: user.nickname,
+                                 category: category,
+                                 title: title,
+                                 content: content,
+                                 thumbnailImagePath: "",
+                                 imagePaths: [])
         
         //이미지 리사이징
         var newImages: [Data] = []
@@ -104,17 +120,40 @@ final class ArticleViewModel: ObservableObject {
         }
         
         do {
-            try await articleUseCase.writeArticle(article: article, imageDatas: newImages)
+            try await articleUseCase.writeArticle(article: newArticle, imageDatas: newImages)
         } catch {
             print(error.localizedDescription)
         }
     }
     
-    func updateArticle(article: Article, imageDatas: [Data]) async {
+    func updateArticle(/*category: ANBDCategory, title: String, content: String*/article: Article, imageDatas: [Data]) async {
+        
+        //        self.article.category = category
+        //        self.article.title = title
+        //        self.article.content = content
+        
+        //이미지 리사이징
+        var newImages: [Data] = []
+        for image in imageDatas {
+            let imageData = await UIImage(data: image)?.byPreparingThumbnail(ofSize: .init(width: 1024, height: 1024))?.jpegData(compressionQuality: 0.5)
+            newImages.append(imageData ?? Data())
+        }
+        
         do {
-            try await articleUseCase.updateArticle(article: article, imageDatas: imageDatas)
+            try await articleUseCase.updateArticle(article: article, imageDatas: newImages)
+            //            article = try await articleUseCase.loadArticle(articleID: article.id)
         } catch {
             print(error.localizedDescription)
+        }
+    }
+    
+    func loadArticle(article: Article) async {
+        do {
+            let loadedArticle = try await articleUseCase.loadArticle(articleID: article.id)
+            self.article = loadedArticle
+        } catch {
+            print(error.localizedDescription)
+            print("실패실패실패실패실패시랲")
         }
     }
     

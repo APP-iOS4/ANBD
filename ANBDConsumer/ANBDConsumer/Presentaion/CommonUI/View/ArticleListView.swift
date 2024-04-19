@@ -35,7 +35,6 @@ struct ArticleListView: View {
                         HStack {
                             Spacer()
                             Text("해당하는 정보 공유 게시글이 없습니다.")
-                                .foregroundStyle(.gray400)
                                 .font(ANBDFont.body1)
                             Spacer()
                         }
@@ -69,7 +68,7 @@ struct ArticleListView: View {
                         Button {
                             articleViewModel.sortOption = .latest
                             Task {
-                                await articleViewModel.refreshSortedArticleList(category: category, by: .latest, limit:10)
+                                await articleViewModel.refreshSortedArticleList(category: category, by: .latest, limit: 10)
                             }
                         } label: {
                             Label("최신순", systemImage: articleViewModel.sortOption == .latest ? "checkmark" : "")
@@ -78,7 +77,7 @@ struct ArticleListView: View {
                         Button {
                             articleViewModel.sortOption = .mostLike
                             Task {
-                                await articleViewModel.refreshSortedArticleList(category: category, by: .mostLike, limit:10)
+                                await articleViewModel.refreshSortedArticleList(category: category, by: .mostLike, limit: 10)
                             }
                         } label: {
                             Label("좋아요순", systemImage: articleViewModel.sortOption == .mostLike ? "checkmark" : "")
@@ -87,7 +86,7 @@ struct ArticleListView: View {
                         Button {
                             articleViewModel.sortOption = .mostComment
                             Task {
-                                await articleViewModel.refreshSortedArticleList(category: category, by: .mostComment, limit:10)
+                                await articleViewModel.refreshSortedArticleList(category: category, by: .mostComment, limit: 10)
                             }
                         } label: {
                             Label("댓글순", systemImage: articleViewModel.sortOption == .mostComment ? "checkmark" : "")

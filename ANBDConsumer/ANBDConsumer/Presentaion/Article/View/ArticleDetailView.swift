@@ -98,9 +98,9 @@ struct ArticleDetailView: View {
                             HStack {
                                 Button {
                                     Task {
-                                        //                                        await articleViewModel.toggleLikeArticle(articleID: article.id)
+                                        // await articleViewModel.toggleLikeArticle(articleID: article.id)
                                         isLiked.toggle()
-                                        //                                        await articleViewModel.updateLikeCount(articleID: article.id, increment: isLiked)
+                                        // await articleViewModel.updateLikeCount(articleID: article.id, increment: isLiked)
                                     }
                                 } label: {
                                     Image(systemName: isLiked ? "hand.thumbsup.fill" : "hand.thumbsup")
@@ -282,6 +282,7 @@ struct ArticleDetailView: View {
                 Button(role: .destructive) {
                     Task {
                         await articleViewModel.deleteArticle(article: article)
+                        await articleViewModel.reloadAllArticles()
                     }
                     isShowingCustomAlertArticle.toggle()
                 } label: {
@@ -303,6 +304,14 @@ struct ArticleDetailView: View {
         .fullScreenCover(isPresented: $isShowingCreateView) {
             ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, isNewArticle: false, article: article)
         }
+//        .fullScreenCover(isPresented: $isShowingCreateView, onDismiss: {
+//            Task {
+//                await articleViewModel.loadArticle(article: article)
+//                imageData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
+//            }
+//        }) {
+//            ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, isNewArticle: false, article: article)
+//        }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
             ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
         }

@@ -71,11 +71,17 @@ final class DefaultChatRepository: ChatRepository {
         else {
             throw DBError.getChannelDocumentError
         }
-        for document in querySnapshot.documents {
-            let channel = try? document.data(as: Channel.self)
-            return channel
+        
+        guard let document = querySnapshot.documents.first else {
+            return nil
         }
-        return nil
+        
+        let channel = try? document.data(as: Channel.self)
+        return channel
+//        for document in querySnapshot.documents {
+//            let channel = try? document.data(as: Channel.self)
+//            return channel
+//        }
     }
     
     func readTradeInChannel(channelID: String) async throws -> Trade? {
@@ -140,20 +146,14 @@ final class DefaultChatRepository: ChatRepository {
         
     }
     
-    func updateLeftChatUser(channelID: String, userID: String) async throws {
+    func updateLeftChatUser(channelID: String, lastMessageID: String, userID: String) async throws {
         guard let _ = try? await chatDB.document(channelID).updateData([
             "leaveUsers": FieldValue.arrayUnion([userID])
         ]) else {
             throw DBError.updateChannelDocumentError        }
         
-        guard let querySnapshot = try? await chatDB.document(channelID).collection("messages").getDocuments() else {
-            throw DBError.getChannelDocumentError
-        }
-        
-        for document in querySnapshot.documents {
-            try await chatDB.document(channelID).collection("messages").document(document.documentID).updateData([
-                "leaveUsers": FieldValue.arrayUnion([userID])
-            ])
+        guard let _ = try? await chatDB.document(channelID).collection("messages").document(lastMessageID).updateData(["leaveUsers": FieldValue.arrayUnion([userID])]) else {
+            throw DBError.updateMessageDocumentError
         }
     }
     

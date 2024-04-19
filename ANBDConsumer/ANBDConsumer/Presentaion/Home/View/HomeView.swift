@@ -282,7 +282,7 @@ struct HomeView: View {
                             Image(uiImage: uiImage)
                                 .resizable()
                                 .frame(height: 140)
-                                .scaledToFill()
+                                .scaledToFit()
                         }
                     } else {
                         ProgressView()

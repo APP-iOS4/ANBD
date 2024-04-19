@@ -11,8 +11,9 @@ import ANBDModel
 struct CategoryBottomSheet: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @Binding var isShowingCategory: Bool
+    var category: ANBDCategory
     
-    @State private var tmpSelectedItemCategories: Set<ItemCategory> = []
+    @State private var tmpSelectedItemCategories: [ItemCategory] = []
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -29,9 +30,11 @@ struct CategoryBottomSheet: View {
                 ForEach(ItemCategory.allCases, id: \.self) { item in
                     Button(action: {
                         if tmpSelectedItemCategories.contains(item) {
-                            tmpSelectedItemCategories.remove(item)
+                            if let firstIndex = tmpSelectedItemCategories.firstIndex(of: item) {
+                                tmpSelectedItemCategories.remove(at: firstIndex)
+                            }
                         } else {
-                            tmpSelectedItemCategories.insert(item)
+                            tmpSelectedItemCategories.append(item)
                         }
                     }, label: {
                         CheckboxView(isChecked: tmpSelectedItemCategories.contains(item), text: item.rawValue)
@@ -59,7 +62,10 @@ struct CategoryBottomSheet: View {
                 
                 Button(action: {
                     tradeViewModel.selectedItemCategories = tmpSelectedItemCategories
-                    isShowingCategory.toggle()
+                    Task {
+                        await tradeViewModel.loadFilteredTrades(category:category)
+                        isShowingCategory.toggle()
+                    }
                 }, label: {
                     ZStack {
                         RoundedRectangle(cornerRadius: 10)
@@ -80,7 +86,7 @@ struct CategoryBottomSheet: View {
 }
 
 
-#Preview {
-    CategoryBottomSheet(isShowingCategory: .constant(true))
-        .environmentObject(TradeViewModel())
-}
+//#Preview {
+//    CategoryBottomSheet(isShowingCategory: .constant(true))
+//        .environmentObject(TradeViewModel())
+//}

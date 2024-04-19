@@ -40,7 +40,6 @@ final class ArticleViewModel: ObservableObject {
     func loadAllArticles() async {
         do {
             try await self.articles.append(contentsOf: articleUseCase.loadArticleList(limit: 10))
-            print("read")
         } catch {
             print(error.localizedDescription)
         }
@@ -48,7 +47,6 @@ final class ArticleViewModel: ObservableObject {
     
     func reloadAllArticles() async {
         do {
-            print("read")
             self.articles = try await articleUseCase.refreshAllArticleList(limit: 10)
         } catch {
             print(error.localizedDescription)

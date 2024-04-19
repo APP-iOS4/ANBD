@@ -113,6 +113,7 @@ struct ChatDetailView: View {
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
+        .toolbarRole(.editor)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {
@@ -126,7 +127,7 @@ struct ChatDetailView: View {
             }
         }
         .confirmationDialog("", isPresented: $isShowingConfirmSheet) {
-            Button("채팅 신고하기", role: .destructive) {
+            Button("채팅 신고하기") {
                 isGoingToReportView.toggle()
             }
             
@@ -217,13 +218,12 @@ struct ChatDetailView: View {
                     Text(trade == nil ? "삭제된 게시물" : trade?.title ?? "Unknown")
                         .lineLimit(1)
                         .font(ANBDFont.SubTitle3)
-                        .padding(.bottom, 10)
+                        .padding(.bottom, 3)
                     
                     Text(tradeProductString)
                         .foregroundStyle(.gray400)
                         .font(ANBDFont.Caption3)
                 }
-                .padding(.vertical, 8)
                 
                 Spacer()
                 
@@ -231,9 +231,7 @@ struct ChatDetailView: View {
                     VStack(alignment: .leading) {
                         // TODO: TradeStateChangeView 수정해야 함 : tradeState 매개변수가 아니라 trade 전체 넘겨주기
                         TradeStateChangeView(tradeState: $tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert)
-                            .padding(.bottom, 10)
                         
-//                        Spacer()
                         Text(tradeProductString)
                             .foregroundStyle(.clear)
                             .font(ANBDFont.Caption3)
@@ -445,7 +443,9 @@ extension ChatDetailView {
                 }
             }
             .onAppear {
-                isMine = message.userID == chatViewModel.userID
+                if let user = chatViewModel.user {
+                    isMine = message.userID == user.id
+                }
                 
                 if let imagePath = message.imagePath {
                     Task {
@@ -478,51 +478,17 @@ extension ChatDetailView {
     
     /// 메시지 전송 함수
     private func sendMessage() {
-        let newMessage = Message(userID: chatViewModel.userID, userNickname: chatViewModel.userNickname, content: message)
-        
-        Task {
-            /// 채널이 없을 때
-            if channel == nil, let trade {
-                let newChannel = Channel(participants: [trade.writerID, chatViewModel.userID],
-                                         participantNicknames: [trade.writerNickname, chatViewModel.userNickname],
-                                         lastMessage: "",
-                                         lastSendDate: .now,
-                                         lastSendId: chatViewModel.userID,
-                                         unreadCount: 0,
-                                         tradeId: trade.id)
-                
-                channel = try await chatViewModel.makeChannel(channel: newChannel)
-                
-                if let channel {
-                    try await chatViewModel.addListener(channelID: channel.id)
-                }
-            }
+        if let user = chatViewModel.user {
+            let newMessage = Message(userID: user.id, userNickname: user.nickname, content: message)
             
-            /// 채널 생성 후
-            if let channel = channel {
-                print(channel.id)
-                try await chatViewModel.sendMessage(message: newMessage, channelID: channel.id)
-            }
-        }
-        
-    }
-    
-    /// 사진 메시지 전송 함수
-    private func sendImageMessage(image: PhotosPickerItem) {
-        Task {
-            if let data = try? await image.loadTransferable(type: Data.self) {
-                selectedPhoto = data
-            }
-            
-            let newMessage = Message(userID: chatViewModel.userID, userNickname: chatViewModel.userNickname)
-            if let imageData = selectedPhoto {
+            Task {
                 /// 채널이 없을 때
                 if channel == nil, let trade {
-                    let newChannel = Channel(participants: [trade.writerID, chatViewModel.userID],
-                                             participantNicknames: [trade.writerNickname, chatViewModel.userNickname],
+                    let newChannel = Channel(participants: [trade.writerID, user.id],
+                                             participantNicknames: [trade.writerNickname, user.nickname],
                                              lastMessage: "",
                                              lastSendDate: .now,
-                                             lastSendId: chatViewModel.userID,
+                                             lastSendId: user.id,
                                              unreadCount: 0,
                                              tradeId: trade.id)
                     
@@ -533,9 +499,47 @@ extension ChatDetailView {
                     }
                 }
                 
-                /// 채널 있
+                /// 채널 생성 후
                 if let channel = channel {
-                    try await chatViewModel.sendImageMessage(message: newMessage, imageData: imageData, channelID: channel.id)
+                    print(channel.id)
+                    try await chatViewModel.sendMessage(message: newMessage, channelID: channel.id)
+                }
+            }
+        }
+    }
+    
+    /// 사진 메시지 전송 함수
+    private func sendImageMessage(image: PhotosPickerItem) {
+        Task {
+            if let data = try? await image.loadTransferable(type: Data.self) {
+                selectedPhoto = data
+            }
+            
+            if let user = chatViewModel.user {
+                let newMessage = Message(userID: user.id, userNickname: user.nickname)
+                
+                if let imageData = selectedPhoto {
+                    /// 채널이 없을 때
+                    if channel == nil, let trade {
+                        let newChannel = Channel(participants: [trade.writerID, user.id],
+                                                 participantNicknames: [trade.writerNickname, user.nickname],
+                                                 lastMessage: "",
+                                                 lastSendDate: .now,
+                                                 lastSendId: user.id,
+                                                 unreadCount: 0,
+                                                 tradeId: trade.id)
+                        
+                        channel = try await chatViewModel.makeChannel(channel: newChannel)
+                        
+                        if let channel {
+                            try await chatViewModel.addListener(channelID: channel.id)
+                        }
+                    }
+                    
+                    /// 채널 있
+                    if let channel = channel {
+                        try await chatViewModel.sendImageMessage(message: newMessage, imageData: imageData, channelID: channel.id)
+                    }
                 }
             }
             selectedImage = nil

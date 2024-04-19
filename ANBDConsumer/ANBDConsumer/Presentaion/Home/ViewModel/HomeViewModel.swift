@@ -20,12 +20,20 @@ final class HomeViewModel: ObservableObject {
     
     @Published var bannerItemList: [Banner] = []
     
-    @Published var accuaArticle: Article = .init(writerID: "", writerNickname: "", category: .accua, title: "",content: "", thumbnailImagePath: "", imagePaths: [])
-    @Published var dasiArticle: Article = .init(writerID: "", writerNickname: "", category: .accua, title: "",content: "", thumbnailImagePath: "", imagePaths: [])
-    
+    @Published var accuaArticle: Article?
+    @Published var dasiArticle: Article?
     @Published var nanuaTrades: [Trade] = []
     @Published var baccuaTrades: [Trade] = []
     
+    
+    init() {
+        Task {
+            await loadArticle(category: .accua)
+            await loadArticle(category: .dasi)
+            await loadTrades(category: .nanua)
+            await loadTrades(category: .baccua)
+        }
+    }
     
     /// 광고 · 배너 가져오기
     func loadBanners() async {
@@ -37,20 +45,21 @@ final class HomeViewModel: ObservableObject {
     }
     
     /// 아껴쓰기 · 다시쓰기 최신 1개씩 가져오기
-    func loadArticle(category: ANBDCategory) async {
+    private func loadArticle(category: ANBDCategory) async {
         do {
             if category == .accua {
-                try await accuaArticle = articleUsecase.loadRecentArticle(category: .accua)
+                accuaArticle = try await articleUsecase.loadRecentArticle(category: .accua)
             } else if category == .dasi {
-                try await dasiArticle = articleUsecase.loadRecentArticle(category: .dasi)
+                dasiArticle = try await articleUsecase.loadRecentArticle(category: .dasi)
             }
         } catch {
-            
+            print("=== ERROR: LOAD ARTICLE ===")
+            print("\(error)")
         }
     }
     
     /// 나눠쓰기 · 바꿔쓰기 최신순으로 각각 4개, 2개씩 가져오기
-    func loadTrades(category: ANBDCategory) async {
+    private func loadTrades(category: ANBDCategory) async {
         do {
             if category == .nanua {
                 try await nanuaTrades = tradeUsecase.loadRecentTradeList(category: .nanua)

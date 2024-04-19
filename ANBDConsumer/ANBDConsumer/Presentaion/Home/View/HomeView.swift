@@ -111,14 +111,11 @@ struct HomeView: View {
         VStack {
             sectionHeaderView(.accua)
             
-            NavigationLink(value: homeViewModel.accuaArticle) {
-                ArticleCellView(article: homeViewModel.accuaArticle)
-                    .frame(width: geo.size.width * 0.9, height: 130)
-            }
-        }
-        .onAppear {
-            Task {
-                await homeViewModel.loadArticle(category: .accua)
+            if let article = homeViewModel.accuaArticle {
+                NavigationLink(value: homeViewModel.accuaArticle) {
+                    ArticleCellView(article: article)
+                        .frame(width: geo.size.width * 0.9, height: 130)
+                }
             }
         }
     }
@@ -141,11 +138,6 @@ struct HomeView: View {
             }
             .scrollIndicators(.hidden)
         }
-        .onAppear {
-            Task {
-                await homeViewModel.loadTrades(category: .nanua)
-            }
-        }
     }
     
     // MARK: - 바꿔쓰기 Section
@@ -159,11 +151,6 @@ struct HomeView: View {
                 }
             }
         }
-        .onAppear {
-            Task {
-                await homeViewModel.loadTrades(category: .baccua)
-            }
-        }
     }
     
     // MARK: - 다시쓰기 Section
@@ -172,19 +159,16 @@ struct HomeView: View {
             sectionHeaderView(.dasi)
             
             NavigationLink(value: homeViewModel.dasiArticle) {
-                ArticleCellView(article: homeViewModel.dasiArticle)
-                    .frame(width: geo.size.width * 0.9, height: 130)
-            }
-        }
-        .onAppear {
-            Task {
-                await homeViewModel.loadArticle(category: .dasi)
+                if let dasiArticle = homeViewModel.dasiArticle {
+                    ArticleCellView(article: dasiArticle)
+                        .frame(width: geo.size.width * 0.9, height: 130)
+                }
             }
         }
     }
     
     // MARK: - ANBD 각 섹션 헤더 View
-    private func sectionHeaderView(_ category: ANBDCategory) -> some View {
+    func sectionHeaderView(_ category: ANBDCategory) -> some View {
         VStack(alignment: .leading) {
             HStack {
                 switch category {
@@ -242,16 +226,23 @@ struct HomeView: View {
         
         var body: some View {
             ZStack(alignment: .bottomLeading) {
-                if let imageData {
-                    if let uiImage = UIImage(data: imageData) {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(height: 130)
+                VStack {
+                    if let imageData {
+                        if let uiImage = UIImage(data: imageData) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(height: 130)
+                        }
+                    } else {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                            Spacer()
+                        }
                     }
-                } else {
-                    ProgressView()
                 }
+                .frame(height: 130)
                 
                 LinearGradient(
                     gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.4)]),
@@ -285,16 +276,19 @@ struct HomeView: View {
         
         var body: some View {
             ZStack(alignment: .bottomLeading) {
-                if let imageData {
-                    if let uiImage = UIImage(data: imageData) {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(height: 130)
+                VStack {
+                    if let imageData {
+                        if let uiImage = UIImage(data: imageData) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .frame(height: 140)
+                                .scaledToFit()
+                        }
+                    } else {
+                        ProgressView()
                     }
-                } else {
-                    ProgressView()
                 }
+                .frame(width: 140, height: 140)
                 
                 LinearGradient(
                     gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.4)]),
@@ -309,6 +303,7 @@ struct HomeView: View {
                     .foregroundStyle(.white)
                     .font(ANBDFont.SubTitle1)
             }
+            .frame(width: 140, height: 140)
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .onAppear {
                 Task {
@@ -325,42 +320,3 @@ struct HomeView: View {
             .environmentObject(HomeViewModel())
     }
 }
-//
-//
-//struct TestCell: View {
-//    let article: Article
-//    
-//    @State private var thumbnailImageData: Data?
-//    
-//    var body: some View {
-//        HStack {
-//            if let thumbnailImageData,
-//               let uiImage = UIImage(data: thumbnailImageData) {
-//                Image(uiImage: uiImage)
-//                    .resizable()
-//                    .frame(width: 100, height: 100)
-//            }
-//            
-//            VStack {
-//                Text(article.title)
-//                Text(article.content)
-//                Text("\(article.likeCount)")
-//                Text("\(article.commentCount)")
-//            }
-//        }
-//        .onAppear {
-//            Task {
-//                do {
-//                    let image = try await StorageManager.shared.downloadImage(
-//                        path: .article,
-//                        containerID: "\(article.id)/thumbnail",
-//                        imagePath: article.thumbnailImagePath
-//                    )
-//                    thumbnailImageData = image
-//                } catch {
-//                    
-//                }
-//            }
-//        }
-//    }
-//}

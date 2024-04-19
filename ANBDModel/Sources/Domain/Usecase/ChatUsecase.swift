@@ -23,9 +23,10 @@ public protocol ChatUsecaseProtocol {
     func sendMessage(message: Message , channelID: String) async throws
     func sendImageMessage(message: Message, imageData: Data ,channelID:String) async throws
     func updateUnreadCount(channelID: String , userID: String) async throws
-    func leaveChatRoom(channelID: String , userID: String) async throws
+    func leaveChatRoom(channelID: String , lastMessageID: String, userID: String) async throws
     func downloadImage(messageID : String , imagePath : String) async throws -> Data
     func initializeListener()
+    func initializeChannelsListener()
 }
 
 @available(iOS 15, *)
@@ -135,39 +136,6 @@ public struct ChatUsecase : ChatUsecaseProtocol {
         return try await chatRepository.readTradeInChannel(channelID: channelID)
     }
     
-    //메세지를 보내는 메소드
-    ///
-    /// - Parameters:
-    ///   - message: 보내려는 메시지(imagePath는 입력 x)
-    ///   - channelID : 메시지를 보내려는 채널 ID
-    public func sendMessage(message: Message, channelID: String) async throws {
-        if channelID.isEmpty {
-            throw MessageError.invalidChannelID
-        }
-        
-        try await chatRepository.updateChannel(message: message, channelID: channelID)
-        try await messageRepository.createMessage(message: message, channelID: channelID)
-    }
-    
-    //이미지 메시지를 보내는 메소드
-    ///
-    /// - Parameters:
-    ///   - message: 보내려는 메시지(content는 입력 x)
-    ///   - imageData: 보내려는 이미지 데이터
-    ///   - channelID : 메시지를 보내려는 채널 ID
-    public func sendImageMessage(message: Message, imageData: Data, channelID: String) async throws {
-        if channelID.isEmpty {
-            throw MessageError.invalidChannelID
-        }
-        
-        var newMessage = message
-        let imageData = await UIImage(data: imageData)?.byPreparingThumbnail(ofSize: .init(width: 1024, height: 1024))?.jpegData(compressionQuality: 0.5)
-        if let imageData {
-            newMessage.imagePath = try await storage.uploadImage(path: .chat, containerID: message.id, imageData: imageData)
-        }
-        try await sendMessage(message: newMessage, channelID: channelID)
-    }
-    
     //안읽은 메시지 수 업데이트하는 메소드
     //채팅방뷰에서 onAppear,onDisappear에서 사용
     ///
@@ -189,19 +157,23 @@ public struct ChatUsecase : ChatUsecaseProtocol {
     /// - Parameters:
     ///   - channelID: 현재 채팅방 채널ID
     ///   - userID: 내 ID
-    public func leaveChatRoom(channelID: String, userID: String) async throws {
+    public func leaveChatRoom(channelID: String, lastMessageID: String, userID: String) async throws {
         if channelID.isEmpty {
             throw ChannelError.invalidChannelID
         } else if userID.isEmpty {
             throw ChannelError.invalidUserInfo
         }
         
-        try await chatRepository.updateLeftChatUser(channelID: channelID, userID: userID)
+        try await chatRepository.updateLeftChatUser(channelID: channelID, lastMessageID: lastMessageID, userID: userID)
         
         if try await chatRepository.readLeftBothUser(channelID: channelID) {
             try await chatRepository.deleteChannel(channelID: channelID)
             try await messageRepository.deleteMessageList(channelId: channelID)
         }
+    }
+    
+    public func initializeChannelsListener() {
+        chatRepository.deleteListener()
     }
     
     //이미지 다운로드
@@ -246,6 +218,39 @@ extension ChatUsecase {
         }
     }
     
+    //메세지를 보내는 메소드
+    ///
+    /// - Parameters:
+    ///   - message: 보내려는 메시지(imagePath는 입력 x)
+    ///   - channelID : 메시지를 보내려는 채널 ID
+    public func sendMessage(message: Message, channelID: String) async throws {
+        if channelID.isEmpty {
+            throw MessageError.invalidChannelID
+        }
+        
+        try await chatRepository.updateChannel(message: message, channelID: channelID)
+        try await messageRepository.createMessage(message: message, channelID: channelID)
+    }
+    
+    //이미지 메시지를 보내는 메소드
+    ///
+    /// - Parameters:
+    ///   - message: 보내려는 메시지(content는 입력 x)
+    ///   - imageData: 보내려는 이미지 데이터
+    ///   - channelID : 메시지를 보내려는 채널 ID
+    public func sendImageMessage(message: Message, imageData: Data, channelID: String) async throws {
+        if channelID.isEmpty {
+            throw MessageError.invalidChannelID
+        }
+        
+        var newMessage = message
+        let imageData = await UIImage(data: imageData)?.byPreparingThumbnail(ofSize: .init(width: 1024, height: 1024))?.jpegData(compressionQuality: 0.5)
+        if let imageData {
+            newMessage.imagePath = try await storage.uploadImage(path: .chat, containerID: message.id, imageData: imageData)
+        }
+        try await sendMessage(message: newMessage, channelID: channelID)
+    }
+    
     //채팅방에 들어갈때 최초로 한번 안읽었던 메시지에 대한 읽음 처리
     ///
     /// - Parameters:
@@ -253,14 +258,14 @@ extension ChatUsecase {
     ///   - message : 현재 들어간 채팅방의 마지막 메시지
     ///   - userID: 내 아이디
     ///
-    public func updateMessageReadStatus(channelID: String, message: Message, userID: String) async throws {
+    public func updateMessageReadStatus(channelID: String, lastMessage: Message, userID: String) async throws {
         if channelID.isEmpty {
             throw ChannelError.invalidChannelID
         } else if userID.isEmpty {
             throw ChannelError.invalidUserInfo
         }
         
-        try await messageRepository.updateMessageReadStatus(channelID: channelID, message: message, userID: userID)
+        try await messageRepository.updateMessageReadStatus(channelID: channelID, lastMessage: lastMessage, userID: userID)
     }
     
     //채팅방 뷰에서 나갈때(Disappear) 할때 리스너 초기화 및 fetchData에 필요한 주소들 초기화하는 메소드

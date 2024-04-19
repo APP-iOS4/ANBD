@@ -153,11 +153,11 @@ struct ArticleListView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(isFromHomeView ? .hidden : .visible, for: .tabBar)
         .sheet(isPresented: $isShowingLocation) {
-                    LocationBottomSheet(isShowingLocation: $isShowingLocation)
+            LocationBottomSheet(isShowingLocation: $isShowingLocation, category: category)
                         .presentationDetents([.fraction(0.6)])
                 }
                 .sheet(isPresented: $isShowingItemCategory) {
-                    CategoryBottomSheet(isShowingCategory: $isShowingItemCategory)
+                    CategoryBottomSheet(isShowingCategory: $isShowingItemCategory, category: category)
                         .presentationDetents([.fraction(0.6)])
                 }
     }

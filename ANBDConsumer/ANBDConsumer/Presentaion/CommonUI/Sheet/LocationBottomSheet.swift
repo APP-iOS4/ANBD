@@ -11,8 +11,9 @@ import ANBDModel
 struct LocationBottomSheet: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @Binding var isShowingLocation: Bool
+    var category: ANBDCategory
     
-    @State private var tmpSelectedLocation: Set<Location> = []
+    @State private var tmpSelectedLocation: [Location] = []
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -29,9 +30,11 @@ struct LocationBottomSheet: View {
                 ForEach(Location.allCases, id: \.self) { item in
                     Button(action: {
                         if tmpSelectedLocation.contains(item) {
-                            tmpSelectedLocation.remove(item)
+                            if let firstIndex = tmpSelectedLocation.firstIndex(of: item) {
+                                tmpSelectedLocation.remove(at: firstIndex)
+                            }
                         } else {
-                            tmpSelectedLocation.insert(item)
+                            tmpSelectedLocation.append(item)
                         }
                     }, label: {
                         CheckboxView(isChecked: tmpSelectedLocation.contains(item), text: item.description)
@@ -59,8 +62,11 @@ struct LocationBottomSheet: View {
                 
                 Button(action: {
                     tradeViewModel.selectedLocations = tmpSelectedLocation
+                    Task {
+                        await tradeViewModel.loadFilteredTrades(category:category)
+                        isShowingLocation.toggle()
+                    }
                     
-                    isShowingLocation.toggle()
                 }, label: {
                     ZStack {
                         RoundedRectangle(cornerRadius: 10)
@@ -80,7 +86,7 @@ struct LocationBottomSheet: View {
     }
 }
 
-#Preview {
-    LocationBottomSheet(isShowingLocation: .constant(true))
-        .environmentObject(TradeViewModel())
-}
+//#Preview {
+//    LocationBottomSheet(isShowingLocation: .constant(true))
+//        .environmentObject(TradeViewModel())
+//}

@@ -59,8 +59,8 @@ final class TradeViewModel: ObservableObject {
     //read
     func loadAllTrades() async {
         do {
-            try await self.trades.append(contentsOf: tradeUseCase.loadTradeList(limit: 10))
-            print("read")
+            try await self.trades.append(contentsOf: tradeUseCase.loadTradeList(limit: 20))
+
         } catch {
             print(error.localizedDescription)
         }
@@ -68,8 +68,7 @@ final class TradeViewModel: ObservableObject {
     
     func reloadAllTrades() async {
         do {
-            print("read")
-            self.trades = try await tradeUseCase.refreshAllTradeList(limit: 10)
+            self.trades = try await tradeUseCase.refreshAllTradeList(limit: 20)
         } catch {
             print(error.localizedDescription)
         }
@@ -172,11 +171,12 @@ final class TradeViewModel: ObservableObject {
     func updateState(trade: Trade) async {
         
         do {
-            if trade.tradeState == .trading {
-                try await tradeUseCase.updateTradeState(tradeID: trade.id, tradeState: .finish)
+            self.trade = trade
+            if self.trade.tradeState == .trading {
+                try await tradeUseCase.updateTradeState(tradeID: self.trade.id, tradeState: .finish)
                 self.trade.tradeState = .finish
             } else {
-                try await tradeUseCase.updateTradeState(tradeID: trade.id, tradeState: .trading)
+                try await tradeUseCase.updateTradeState(tradeID: self.trade.id, tradeState: .trading)
                 self.trade.tradeState = .trading
             }
         } catch {

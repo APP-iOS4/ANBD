@@ -230,8 +230,14 @@ extension AuthenticationViewModel {
                 }
         
         if (UserDefaultsClient.shared.userInfo == nil) || user.userLevel != ANBDModel.UserLevel.admin{
-            authState = false
-            errorMessage = "접근 권한이 없습니다"
+            switch (UserDefaultsClient.shared.userInfo, user.userLevel) {
+            case (nil, _):
+                authState = false
+                errorMessage = ""
+            default:
+                authState = false
+                errorMessage = "접근 권한이 없습니다"
+            }
         } else {
             authState = true
         }

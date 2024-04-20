@@ -18,7 +18,7 @@ public protocol CommentUsecase {
 @available(iOS 15, *)
 public struct DefaultCommentUsecase: CommentUsecase {
     
-    let commentRepository: CommentRepository = DefaultCommentRepository()
+    private let commentRepository: CommentRepository = CommentRepositoryImpl()
     
     public init() { }
     

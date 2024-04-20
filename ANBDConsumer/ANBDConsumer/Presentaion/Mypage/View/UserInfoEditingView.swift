@@ -63,8 +63,20 @@ struct UserInfoEditingView: View {
                         .autocorrectionDisabled(true)
                         .font(ANBDFont.SubTitle1)
                         .foregroundStyle(Color.gray900)
+                        .onChange(of: myPageViewModel.editedUserNickname) { _ in
+                            myPageViewModel.editedUserNickname = myPageViewModel.checkNicknameLength(myPageViewModel.editedUserNickname)
+                        }
                         
                         Divider()
+                        
+                        HStack {
+                            Spacer()
+                            
+                            Text("\(myPageViewModel.editedUserNickname.count) / 20")
+                                .padding(.horizontal, 5)
+                                .font(ANBDFont.body2)
+                                .foregroundStyle(.gray400)
+                        }
                     }
                     .padding(.horizontal, 20)
                     

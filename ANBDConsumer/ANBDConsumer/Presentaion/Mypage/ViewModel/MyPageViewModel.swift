@@ -110,6 +110,14 @@ final class MyPageViewModel: ObservableObject {
         return isDuplicate
     }
     
+    func checkNicknameLength(_ nickname: String) -> String {
+        if nickname.count > 20 {
+            return String(nickname.prefix(20))
+        } else {
+            return nickname
+        }
+    }
+    
     func validateUpdatingComplete() -> Bool {
         if (editedUserNickname.isEmpty || editedUserNickname == self.user.nickname) && (tempUserFavoriteLocation != self.user.favoriteLocation) {
             return true

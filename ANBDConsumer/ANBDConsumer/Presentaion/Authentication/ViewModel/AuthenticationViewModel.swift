@@ -305,6 +305,14 @@ extension AuthenticationViewModel {
         return isDuplicate
     }
     
+    func checkNicknameLength(_ nickname: String) -> String {
+        if nickname.count > 20 {
+            return String(nickname.prefix(20))
+        } else {
+            return nickname
+        }
+    }
+    
     func withdrawal(completion: @escaping () -> Void) async throws {
         do {
             try await signOut(completion: { })

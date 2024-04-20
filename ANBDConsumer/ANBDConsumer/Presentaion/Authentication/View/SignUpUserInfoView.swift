@@ -46,6 +46,19 @@ struct SignUpUserInfoView: View {
                     }
                 }
                 .padding(.bottom)
+                .onChange(of: authenticationViewModel.signUpNicknameString) { _ in
+                    authenticationViewModel.signUpNicknameString = authenticationViewModel.checkNicknameLength(authenticationViewModel.signUpNicknameString)
+                }
+                
+                HStack {
+                    Spacer()
+                    
+                    Text("\(authenticationViewModel.signUpNicknameString.count) / 20")
+                        .padding(.horizontal, 5)
+                        .font(ANBDFont.body2)
+                        .foregroundStyle(.gray400)
+                }
+                .padding(.top, -15)
                 
                 if !authenticationViewModel.errorMessage.isEmpty {
                     Text(authenticationViewModel.errorMessage)

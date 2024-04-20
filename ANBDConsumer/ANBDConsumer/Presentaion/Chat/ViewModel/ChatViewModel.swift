@@ -13,7 +13,7 @@ import ANBDModel
 final class ChatViewModel: ObservableObject {
     
     @Published var chatPath: NavigationPath = NavigationPath()
-    @Published var reportType: ReportView.ReportViewType = .chat
+    @Published var reportType: ReportType = .chatRoom
     
     private let chatUsecase: ChatUsecase = ChatUsecase()
     private let storageManager = StorageManager.shared

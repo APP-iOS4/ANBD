@@ -187,7 +187,7 @@ struct ArticleDetailView: View {
                                         }
                                     }
                                     .navigationDestination(isPresented: $isGoingToReportView) {
-                                        ReportView(reportViewType: .user)
+                                        ReportView(reportViewType: .users)
                                     }
                                 }
                                 .padding(.horizontal, 10)

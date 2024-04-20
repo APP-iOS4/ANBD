@@ -19,7 +19,7 @@ final class HomeViewModel: ObservableObject {
     /// path관련 변수들
     @Published var homePath: NavigationPath = NavigationPath()
     @Published var chatDetailTrade: Trade?
-    @Published var reportType: ReportView.ReportViewType = .trade
+    @Published var reportType: ReportType = .trade
     
     
     /// Home에서 보여주는 아이템들

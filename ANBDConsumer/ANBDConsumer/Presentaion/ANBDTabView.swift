@@ -160,7 +160,7 @@ struct ANBDTabView: View {
                         case .accountManagement:
                             AccountManagementView()
                         case .report:
-                            ReportView(reportViewType: .user)
+                            ReportView(reportViewType: .users)
                         }
                     }
             }

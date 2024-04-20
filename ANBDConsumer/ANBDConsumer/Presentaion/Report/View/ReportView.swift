@@ -6,10 +6,13 @@
 //
 
 import SwiftUI
+import ANBDModel
 
 struct ReportView: View {
     
-    var reportViewType: ReportViewType = .article
+    @EnvironmentObject private var reportViewModel: ReportViewModel
+    
+    var reportViewType: ReportType = .article
     @State private var reportReason: String = ""
     
     var body: some View {
@@ -49,7 +52,11 @@ struct ReportView: View {
             Spacer()
             
             Button(action: {
-                
+                if !reportReason.isEmpty {
+                    Task {
+                        try await reportViewModel.submitReport(reportType: reportViewType, reportReason: reportReason)
+                    }
+                }
             }, label: {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
@@ -67,23 +74,26 @@ struct ReportView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
         .toolbarRole(.editor)
+        .onAppear {
+            reportViewModel.loadUserInfo()
+        }
     }
 }
 
 extension ReportView {
-    enum ReportViewType {
-        case article, trade, chat, user
-    }
-    
     private var reportTitle: String {
         switch reportViewType {
         case .article:
             return "게시글"
         case .trade:
             return "게시물"
-        case .chat:
+        case .comment:
+            return "댓글"
+        case .messages:
+            return "메시지"
+        case .chatRoom:
             return "채팅"
-        case .user:
+        case .users:
             return "사용자"
         }
     }
@@ -92,5 +102,6 @@ extension ReportView {
 #Preview {
     NavigationStack {
         ReportView()
+            .environmentObject(ReportViewModel())
     }
 }

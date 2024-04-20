@@ -12,6 +12,7 @@ struct ANBDTabView: View {
     @EnvironmentObject private var homeViewModel: HomeViewModel
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
+    @EnvironmentObject private var chatViewModel: ChatViewModel
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     
     @State private var articleCategory: ANBDCategory = .accua
@@ -26,7 +27,6 @@ struct ANBDTabView: View {
                         switch category {
                         case .accua, .dasi:
                             ArticleListView(category: category, isFromHomeView: true)
-                                .toolbarRole(.editor)
                                 .onAppear {
                                     Task {
                                         articleViewModel.filteringArticles(category: category)
@@ -35,7 +35,6 @@ struct ANBDTabView: View {
                             
                         case .nanua, .baccua:
                             ArticleListView(category: category, isArticle: false, isFromHomeView: true)
-                                .toolbarRole(.editor)
                                 .onAppear {
                                     tradeViewModel.filteringTrades(category: category)
                                 }
@@ -45,17 +44,19 @@ struct ANBDTabView: View {
                         ArticleDetailView(article: article)
                     }
                     .navigationDestination(for: Trade.self) { trade in
-                        TradeDetailView(trade: trade)
+                        TradeDetailView(trade: trade, anbdViewType: .home)
                     }
                     .navigationDestination(for: String.self) { str in
-                        if str == "" {
+                        SearchResultView(category: tradeCategory, searchText: str)
+                    }
+                    .navigationDestination(for: ANBDNavigationPaths.self) { path in
+                        switch path {
+                        case .searchView:
                             SearchView()
-                        } else if str == "tradeToChat" {
-                            ChatDetailView()
-                        } else if str == "tradeToReport" {
-                            ReportView(reportViewType: .trade)
-                        } else {
-                            SearchResultView(category: tradeCategory, searchText: str)
+                        case .chatDetailView:
+                            ChatDetailView(trade: homeViewModel.chatDetailTrade, anbdViewType: .home)
+                        case .reportView:
+                            ReportView(reportViewType: homeViewModel.reportType)
                         }
                     }
             }
@@ -94,15 +95,7 @@ struct ANBDTabView: View {
                         TradeDetailView(trade: trade)
                     }
                     .navigationDestination(for: String.self) { str in
-                        if str == "" {
-                            SearchView()
-                        } else if str == "tradeToChat" {
-                            ChatDetailView()
-                        } else if str == "tradeToReport" {
-                            ReportView(reportViewType: .trade)
-                        } else {
-                            SearchResultView(category: tradeCategory, searchText: str)
-                        }
+                        SearchResultView(category: tradeCategory, searchText: str)
                     }
 //                    .navigationDestination(for: User.self) { user in
 //                        UserPageView(writerUser: user)
@@ -110,16 +103,36 @@ struct ANBDTabView: View {
                     .navigationDestination(for: ANBDCategory.self) { category in
                         UserActivityListView(category: category, user: myPageViewModel.user)
                     }
+                    .navigationDestination(for: ANBDNavigationPaths.self) { path in
+                        switch path {
+                        case .searchView:
+                            SearchView()
+                        case .chatDetailView:
+                            ChatDetailView(trade: homeViewModel.chatDetailTrade, anbdViewType: .trade)
+                        case .reportView:
+                            ReportView(reportViewType: homeViewModel.reportType)
+                        }
+                    }
             }
             .tabItem {
                 Label("나눔·거래", systemImage: "arrow.3.trianglepath")
             }
             
             /// Chat
-            NavigationStack {
+            NavigationStack(path: $chatViewModel.chatPath) {
                 ChatView()
                     .navigationDestination(for: Channel.self) { channel in
                         ChatDetailView(channel: channel)
+                    }
+                    .navigationDestination(for: Trade.self) { trade in
+                        TradeDetailView(trade: trade, anbdViewType: .chat)
+                    }
+                    .navigationDestination(for: ANBDNavigationPaths.self) { path in
+                        if path == .reportView {
+                            ReportView(reportViewType: chatViewModel.reportType)
+                        } else if path == .chatDetailView {
+                            ChatDetailView(trade: homeViewModel.chatDetailTrade, anbdViewType: .chat)
+                        }
                     }
             }
             .tabItem {

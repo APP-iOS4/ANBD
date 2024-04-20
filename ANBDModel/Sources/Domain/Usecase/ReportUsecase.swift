@@ -15,11 +15,11 @@ public protocol ReportUsecase {
 }
 
 @available(iOS 15, *)
-public final class DefaultReportUsecase: ReportUsecase {
-    
-    let reportRepository: ReportRepository = DefaultReportRepository()
+public struct DefaultReportUsecase: ReportUsecase {
     
     public init() {}
+    
+    private let reportRepository: ReportRepository = DefaultReportRepository()
     
     public func submitReport(report: Report) async throws {
         try await reportRepository.createReport(report: report)

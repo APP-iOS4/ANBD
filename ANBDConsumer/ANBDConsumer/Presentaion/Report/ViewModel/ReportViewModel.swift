@@ -21,10 +21,10 @@ final class ReportViewModel: ObservableObject {
     }
     
     /// 신고하기
-    func submitReport(reportType: ReportType, reportReason: String) async throws {
+    func submitReport(reportType: ReportType, reportReason: String, reportedObjectID: String, reportChannelID: String?) async throws {
         do {
             if let user {
-                let report = Report(type: reportType, reportReason: reportReason, reportedUser: user.id)
+                let report = Report(type: reportType, reportReason: reportReason, reportedUser: user.id, reportedObjectID: reportedObjectID, reportedChannelID: reportChannelID)
                 try await reportUsecase.submitReport(report: report)
             }
         } catch {

@@ -15,6 +15,12 @@ public struct Report : Identifiable, Codable , Hashable {
     public let type: ReportType
     public let reportReason: String
     public let reportedUser: String
+
+    public let reportedObjectID: String
+    
+    //메시진 신고일때만 하나의 reportedObjectID 더 필요함
+    public var reportedChannelID: String? = nil
+    
     private var createDate: Date = Date()
     
     private static var dateFormatter: DateFormatter = {
@@ -28,10 +34,12 @@ public struct Report : Identifiable, Codable , Hashable {
         return Report.dateFormatter.string(from: createDate)
     }
     
-    public init(type: ReportType, reportReason: String, reportedUser: String) {
+    public init(type: ReportType, reportReason: String, reportedUser: String , reportedObjectID: String, reportedChannelID: String? = nil) {
         self.id = UUID().uuidString
         self.type = type
         self.reportReason = reportReason
         self.reportedUser = reportedUser
+        self.reportedObjectID = reportedObjectID
+        self.reportedChannelID = reportedChannelID
     }
 }

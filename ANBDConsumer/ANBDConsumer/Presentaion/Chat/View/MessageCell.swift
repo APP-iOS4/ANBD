@@ -20,6 +20,7 @@ extension ChatDetailView {
         @State var imageData: Data?
         @State private var isMine: Bool = false
         var anbdViewType: ANBDViewType = .chat
+        var channelID: String
         
         @Binding var isShowingImageDetailView: Bool
         @Binding var detailImage: Image
@@ -53,6 +54,12 @@ extension ChatDetailView {
                             Button("메시지 신고하기", role: .destructive) {
                                 homeViewModel.reportType = .messages
                                 chatViewModel.reportType = .messages
+                                
+                                homeViewModel.reportedObjectID = message.id
+                                chatViewModel.reportedObjectID = message.id
+                                
+                                homeViewModel.reportedChannelID = channelID
+                                chatViewModel.reportedChannelID = channelID
                                 
                                 switch anbdViewType {
                                 case .home:

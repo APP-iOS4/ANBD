@@ -13,6 +13,8 @@ struct ReportView: View {
     @EnvironmentObject private var reportViewModel: ReportViewModel
     
     var reportViewType: ReportType = .article
+    var reportedObjectID: String
+    var reportedChannelID: String?
     @State private var reportReason: String = ""
     
     var body: some View {
@@ -54,7 +56,7 @@ struct ReportView: View {
             Button(action: {
                 if !reportReason.isEmpty {
                     Task {
-                        try await reportViewModel.submitReport(reportType: reportViewType, reportReason: reportReason)
+                        try await reportViewModel.submitReport(reportType: reportViewType, reportReason: reportReason, reportedObjectID: reportedObjectID, reportChannelID: reportedChannelID)
                     }
                 }
             }, label: {
@@ -101,7 +103,7 @@ extension ReportView {
 
 #Preview {
     NavigationStack {
-        ReportView()
+        ReportView(reportedObjectID: "")
             .environmentObject(ReportViewModel())
     }
 }

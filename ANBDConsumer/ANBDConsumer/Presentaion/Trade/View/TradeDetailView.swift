@@ -177,6 +177,9 @@ struct TradeDetailView: View {
                         homeViewModel.reportType = .trade
                         chatViewModel.reportType = .trade
                         
+                        homeViewModel.reportedObjectID = trade.id
+                        chatViewModel.reportedObjectID = trade.id
+                        
                         switch anbdViewType {
                         case .home:
                             homeViewModel.homePath.append(ANBDNavigationPaths.reportView)

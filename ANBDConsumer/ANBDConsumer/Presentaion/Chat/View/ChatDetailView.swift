@@ -11,6 +11,7 @@ import ANBDModel
 
 struct ChatDetailView: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
+    @EnvironmentObject private var tradeViewModel: TradeViewModel
     @EnvironmentObject private var homeViewModel: HomeViewModel
     @Environment(\.dismiss) private var dismiss
     
@@ -19,6 +20,8 @@ struct ChatDetailView: View {
     @State var trade: Trade? = nil
     @State private var imageData: Data?
     @State private var tradeState: TradeState = .trading
+    
+    var anbdViewType: ANBDViewType = .chat
     
     /// 보낼 메시지 관련 변수
     @State private var message: String = ""
@@ -30,7 +33,6 @@ struct ChatDetailView: View {
     @State private var isShowingCustomAlertView: Bool = false
     @State private var isShowingImageDetailView: Bool = false
     @State private var detailImage: Image = Image("DummyPuppy3")
-    @State private var isGoingToReportView: Bool = false
     @State private var isShowingStateChangeCustomAlert: Bool = false
     
     var body: some View {
@@ -136,7 +138,17 @@ struct ChatDetailView: View {
         }
         .confirmationDialog("", isPresented: $isShowingConfirmSheet) {
             Button("채팅 신고하기") {
-                isGoingToReportView.toggle()
+                homeViewModel.reportType = .chat
+                chatViewModel.reportType = .chat
+                
+                switch anbdViewType {
+                case .home:
+                    homeViewModel.homePath.append(ANBDNavigationPaths.reportView)
+                case .trade:
+                    tradeViewModel.tradePath.append(ANBDNavigationPaths.reportView)
+                case .chat:
+                    chatViewModel.chatPath.append(ANBDNavigationPaths.reportView)
+                }
             }
             
             Button("채팅방 나가기", role: .destructive) {
@@ -145,9 +157,6 @@ struct ChatDetailView: View {
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
             ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
-        }
-        .navigationDestination(isPresented: $isGoingToReportView) {
-            ReportView(reportViewType: .chat)
         }
         .onAppear {
             Task {
@@ -179,7 +188,6 @@ struct ChatDetailView: View {
         }
         .onDisappear {
             chatViewModel.resetMessageData()
-            homeViewModel.isGoingToChatDetailView = false
         }
     }
     

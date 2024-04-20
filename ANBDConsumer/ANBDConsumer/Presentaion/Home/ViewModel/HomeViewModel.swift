@@ -16,25 +16,19 @@ final class HomeViewModel: ObservableObject {
     private let tradeUsecase: TradeUsecase = DefaultTradeUsecase()
     private let bannerUsecase: BannerUsecase = DefaultBannerUsecase()
     
+    /// path관련 변수들
     @Published var homePath: NavigationPath = NavigationPath()
+    @Published var chatDetailTrade: Trade?
+    @Published var reportType: ReportView.ReportViewType = .trade
     
+    
+    /// Home에서 보여주는 아이템들
     @Published var bannerItemList: [Banner] = []
-    
     @Published var accuaArticle: Article?
     @Published var dasiArticle: Article?
     @Published var nanuaTrades: [Trade] = []
     @Published var baccuaTrades: [Trade] = []
     
-    @Published var isGoingToChatDetailView: Bool = false
-    
-    init() {
-        Task {
-            await loadArticle(category: .accua)
-            await loadArticle(category: .dasi)
-            await loadTrades(category: .nanua)
-            await loadTrades(category: .baccua)
-        }
-    }
     
     /// 광고 · 배너 가져오기
     func loadBanners() async {

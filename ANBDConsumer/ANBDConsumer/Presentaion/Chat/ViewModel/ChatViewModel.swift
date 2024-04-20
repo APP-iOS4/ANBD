@@ -12,6 +12,9 @@ import ANBDModel
 @MainActor
 final class ChatViewModel: ObservableObject {
     
+    @Published var chatPath: NavigationPath = NavigationPath()
+    @Published var reportType: ReportView.ReportViewType = .chat
+    
     private let chatUsecase: ChatUsecase = ChatUsecase()
     private let storageManager = StorageManager.shared
     
@@ -74,38 +77,7 @@ final class ChatViewModel: ObservableObject {
             }
         }
     }
-    
-    /// 채팅방 메시지 불러오기 : 20개씩 페이지네이션 
-    func fetchMessages(channelID: String) async throws {
-        do {
-            if let user {
-                let preMessages = try await chatUsecase.loadMessageList(channelID: channelID, userID: user.id)
-                self.messages.insert(contentsOf: preMessages, at: 0)
-            }
-        } catch {
-            print("Error: \(error)")
-        }
-    }
-    
-    /// 메시지 리스너 (실시간 채팅 확인 - 읽음·안읽음, 추가)
-    func addMessageListener(channelID: String) {
-        if !isListener {
-            if let user {
-                isListener = true
-                chatUsecase.listenNewMessage(channelID: channelID, userID: user.id) { [weak self] message in
-                    self?.messages.append(message)
-                    
-//                    if let lastMessageID = self?.messages.last?.id, lastMessageID == message.id, let lastIndex = self?.messages.indices.last {
-//                        /// 읽음 처리
-//                        self?.messages[lastIndex].isRead = true
-//                    } else {
-//                        /// 메시지 전송 (추가)
-//                        self?.messages.append(message)
-//                    }
-                }
-            }
-        }
-    }
+
     
     /// 채널 생성 (처음 채팅을 남길 때) : ChannelID 반환
     func makeChannel(channel: Channel) async throws -> Channel {

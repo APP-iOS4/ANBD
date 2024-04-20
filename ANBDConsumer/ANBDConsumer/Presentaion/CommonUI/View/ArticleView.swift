@@ -30,7 +30,26 @@ struct ArticleView: View {
 //                        }
                         articleViewModel.filteringArticles(category: category)
                     } else {
-                        tradeViewModel.filteringTrades(category: category)
+                        Task {
+                            await tradeViewModel.loadFilteredTrades(category:category)
+                            tradeViewModel.filteringTrades(category: category)
+                        }
+                    }
+                }
+                .onChange(of: tradeViewModel.selectedLocations) {
+                    if !isArticle {
+                        Task {
+                            await tradeViewModel.loadFilteredTrades(category:category)
+                            tradeViewModel.filteringTrades(category: category)
+                        }
+                    }
+                }
+                .onChange(of: tradeViewModel.selectedItemCategories) {
+                    if !isArticle {
+                        Task {
+                            await tradeViewModel.loadFilteredTrades(category:category)
+                            tradeViewModel.filteringTrades(category: category)
+                        }
                     }
                 }
         } else {
@@ -43,9 +62,28 @@ struct ArticleView: View {
                         articleViewModel.filteringArticles(category: category)
                         
                     } else {
-                        tradeViewModel.filteringTrades(category: category)
+                        Task {
+                            await tradeViewModel.loadFilteredTrades(category:category)
+                            tradeViewModel.filteringTrades(category: category)
+                        }
                     }
                 })
+                .onChange(of: tradeViewModel.selectedLocations) { _ in
+                    if !isArticle {
+                        Task {
+                            await tradeViewModel.loadFilteredTrades(category:category)
+                            tradeViewModel.filteringTrades(category: category)
+                        }
+                    }
+                }
+                .onChange(of: tradeViewModel.selectedItemCategories) { _ in
+                    if !isArticle {
+                        Task {
+                            await tradeViewModel.loadFilteredTrades(category:category)
+                            tradeViewModel.filteringTrades(category: category)
+                        }
+                    }
+                }
         }
     }
     
@@ -95,14 +133,11 @@ struct ArticleView: View {
                     isArticle = false
                     Task {
                         await tradeViewModel.loadAllTrades()
-                        tradeViewModel.filteringTrades(category: category)
+                        await tradeViewModel.loadFilteredTrades(category:category)
+                        //tradeViewModel.filteringTrades(category: category)
                     }
                 }
             }
-        }
-        .onDisappear {
-            tradeViewModel.selectedLocations = []
-            tradeViewModel.selectedItemCategories = []
         }
         .navigationTitle(isArticle ? "정보 공유" : "나눔 · 거래")
         .navigationBarTitleDisplayMode(.inline)

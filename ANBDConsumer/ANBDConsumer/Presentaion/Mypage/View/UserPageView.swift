@@ -10,32 +10,37 @@ import ANBDModel
 
 struct UserPageView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
-        
-    @State private var isShowingPolicyView = false
-    @State private var isShowingReportDialog = false
+    @EnvironmentObject private var tradeViewModel: TradeViewModel
+    
+    var writerUser: User
+    
+    @State private var userProfileImageData = Data()
     
     @State private var category: ANBDCategory = .accua
     
-    // 임시 분기처리를 위한 프로퍼티
-    var isSignedInUser: Bool
+    @State private var isSignedInUser: Bool = false
+    
+    @State private var isShowingPolicyView = false
+    @State private var isShowingReportView = false
     
     var body: some View {
         VStack(spacing: 20) {
             // UserInfo
             HStack {
-                Image(uiImage: isSignedInUser ? myPageViewModel.userProfileImage : UIImage(named: "DefaultUserProfileImage")!)
+                Image(uiImage: UIImage(data: userProfileImageData) ?? UIImage(named: "DefaultUserProfileImage")!)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 90, height: 90)
                     .clipShape(.circle)
                     .padding(.horizontal)
                 
-                VStack(alignment: .leading, spacing: 10) {
-                    Text(isSignedInUser ? "\(myPageViewModel.user.nickname) 님" : "불량마루")
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("\(userNickname)")
                         .foregroundStyle(Color.gray900)
                         .font(ANBDFont.pretendardBold(24))
+                        .padding(.bottom, 10)
                     
-                    Text("선호 지역 : \(myPageViewModel.user.favoriteLocation.description)")
+                    Text("선호 지역 : \(userFavoriteLocation.description)")
                         .foregroundStyle(Color.gray400)
                         .font(ANBDFont.Caption3)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -122,37 +127,43 @@ struct UserPageView: View {
                     .ignoresSafeArea()
             }
         }
+        .toolbarRole(.editor)
         .toolbar {
             if !isSignedInUser {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {
-                        isShowingReportDialog.toggle()
-                    }, label: {
+                    Menu {
+                        Button(role: .destructive) {
+                            tradeViewModel.tradePath.append("tradeToReport")
+                        } label: {
+                            Label("신고하기", systemImage: "exclamationmark.bubble")
+                        }
+                    } label: {
                         Image(systemName: "ellipsis")
                             .font(.system(size: 13))
                             .rotationEffect(.degrees(90))
                             .foregroundStyle(.gray900)
-                    })
+                    }
                 }
             }
         }
         
-        .navigationTitle("마이페이지")
+        .navigationTitle("\(navigationTitle)")
         .navigationBarTitleDisplayMode(.inline)
         
-        .confirmationDialog("유저 신고하기", isPresented: $isShowingReportDialog) {
-            Button("신고하기", role: .destructive) {
-                // 유저 신고하기 메서드
-                print("유저 신고하기")
-            }
+        .fullScreenCover(isPresented: $isShowingReportView) {
+            ReportView()
         }
         
         .onAppear {
             myPageViewModel.loadUserInfo()
+            isSignedInUser = myPageViewModel.checkSignInedUser(userID: writerUser.id)
+            Task {
+                userProfileImageData = await myPageViewModel.loadUserProfileImage(containerID: "",
+                                                                                  imagePath: myPageViewModel.user.profileImage)
+            }
         }
     }
     
-    @ViewBuilder
     private func activityInfoComponent(title: String, count: Int, category: ANBDCategory) -> some View {
         NavigationLink(value: category) {
             VStack(alignment: .center, spacing: 5) {
@@ -167,7 +178,6 @@ struct UserPageView: View {
         }
     }
     
-    @ViewBuilder
     private func listButtonView(title: String) -> some View {
         Text("\(title)")
             .foregroundStyle(Color.gray900)
@@ -177,9 +187,41 @@ struct UserPageView: View {
     }
 }
 
+extension UserPageView {
+    private var navigationTitle: String {
+        switch isSignedInUser {
+        case true: return "마이페이지"
+        case false: return "사용자 정보"
+        }
+    }
+    
+    private var userProfileImage: UIImage {
+        switch isSignedInUser {
+        case true:
+            return UIImage(data: userProfileImageData) ?? UIImage(named: "DefaultUserProfileImage")!
+        case false:
+            return UIImage(named: "DefaultUserProfileImage")!
+        }
+    }
+    
+    private var userNickname: String {
+        switch isSignedInUser {
+        case true: return myPageViewModel.user.nickname
+        case false: return writerUser.nickname
+        }
+    }
+    
+    private var userFavoriteLocation: Location {
+        switch isSignedInUser {
+        case true: return myPageViewModel.user.favoriteLocation
+        case false: return writerUser.favoriteLocation
+        }
+    }
+}
+
 #Preview {
     NavigationStack {
-        UserPageView(isSignedInUser: true)
+        UserPageView(writerUser: MyPageViewModel.mockUser)
             .environmentObject(MyPageViewModel())
     }
 }

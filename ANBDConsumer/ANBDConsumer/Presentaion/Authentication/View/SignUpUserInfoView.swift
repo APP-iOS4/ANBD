@@ -67,6 +67,7 @@ struct SignUpUserInfoView: View {
                 BlueSquareButton(title: "다음", isDisabled: !authenticationViewModel.isValidSignUpNickname) {
                     Task {
                         if await authenticationViewModel.checkDuplicatedNickname() {
+                            downKeyboard()
                             isShwoingDuplicatedNicknameAlert.toggle()
                         } else {
                             nextButtonAction()

@@ -15,8 +15,8 @@ final class TradeViewModel: ObservableObject {
     @Published var tradePath: NavigationPath = NavigationPath()
     
     /// 필터링 옵션 : Location · ItemCateogry
-    @Published var selectedLocations: Set<Location> = []
-    @Published var selectedItemCategories: Set<ItemCategory> = []
+    @Published var selectedLocations: [Location] = []
+    @Published var selectedItemCategories: [ItemCategory] = []
     
     @Published private(set) var trades: [Trade] = []
     @Published private(set) var filteredTrades: [Trade] = []
@@ -69,6 +69,36 @@ final class TradeViewModel: ObservableObject {
     func reloadAllTrades() async {
         do {
             self.trades = try await tradeUseCase.refreshAllTradeList(limit: 20)
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func loadFilteredTrades(category: ANBDCategory) async {
+        do {
+            if self.selectedLocations.isEmpty && self.selectedItemCategories.isEmpty {
+                //print("둘다 엠티여요")
+                self.filteredTrades = try await tradeUseCase.loadFilteredTradeList(category: category, location: nil, itemCategory: nil, limit: 10)
+            } else if self.selectedLocations.isEmpty {
+                //print("지역 엠티여요")
+                self.filteredTrades = try await tradeUseCase.loadFilteredTradeList(category: category, location: nil, itemCategory: self.selectedItemCategories, limit: 10)
+            } else if self.selectedItemCategories.isEmpty {
+                //print("카테고리 엠티여요")
+                self.filteredTrades = try await tradeUseCase.loadFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: nil, limit: 10)
+            } else {
+                //print("둘다 풀")
+                self.filteredTrades = try await tradeUseCase.loadFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: self.selectedItemCategories, limit: 10)
+            }
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    //페이지네이션 한다면 -> 개선 필요
+    func loadMoreFilteredTrades(category: ANBDCategory, location: [Location]?, itemCategory: [ItemCategory]?) async {
+        do {
+            self.filteredTrades.append(contentsOf: try await tradeUseCase.loadFilteredTradeList(category: category, location: location, itemCategory: itemCategory, limit: 10)
+                                       )
         } catch {
             print(error.localizedDescription)
         }

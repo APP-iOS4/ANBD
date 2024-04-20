@@ -52,7 +52,7 @@ struct HomeView: View {
             }
             
             ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink(value: "") {
+                NavigationLink(value: ANBDNavigationPaths.searchView) {
                     Image(systemName: "magnifyingglass")
                         .resizable()
                         .frame(width: 20)

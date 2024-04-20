@@ -15,19 +15,19 @@ public protocol ReportUsecase {
 }
 
 @available(iOS 15, *)
-final class DefaultReportUsecase: ReportUsecase {
+public struct DefaultReportUsecase: ReportUsecase {
     
-    let reportRepository: ReportRepository = DefaultReportRepository()
+    private let reportRepository: ReportRepository = DefaultReportRepository()
     
-    func submitReport(report: Report) async throws {
+    public func submitReport(report: Report) async throws {
         try await reportRepository.createReport(report: report)
     }
     
-    func loadReport() async throws -> [Report] {
+    public func loadReport() async throws -> [Report] {
         try await reportRepository.readReport()
     }
     
-    func removeReport(reportID: String) async throws {
+    public func removeReport(reportID: String) async throws {
         try await reportRepository.deleteReport(reportID: reportID)
     }
     

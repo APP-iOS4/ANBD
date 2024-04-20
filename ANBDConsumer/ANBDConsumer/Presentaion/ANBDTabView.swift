@@ -52,8 +52,6 @@ struct ANBDTabView: View {
                             SearchView()
                         } else if str == "tradeToChat" {
                             ChatDetailView()
-                        } else if str == "tradeToUser" {
-                            UserPageView(isSignedInUser: false)
                         } else if str == "tradeToReport" {
                             ReportView(reportViewType: .trade)
                         } else {
@@ -100,13 +98,17 @@ struct ANBDTabView: View {
                             SearchView()
                         } else if str == "tradeToChat" {
                             ChatDetailView()
-                        } else if str == "tradeToUser" {
-                            UserPageView(isSignedInUser: false)
                         } else if str == "tradeToReport" {
                             ReportView(reportViewType: .trade)
                         } else {
                             SearchResultView(category: tradeCategory, searchText: str)
                         }
+                    }
+//                    .navigationDestination(for: User.self) { user in
+//                        UserPageView(writerUser: user)
+//                    }
+                    .navigationDestination(for: ANBDCategory.self) { category in
+                        UserActivityListView(category: category, user: myPageViewModel.user)
                     }
             }
             .tabItem {
@@ -126,33 +128,26 @@ struct ANBDTabView: View {
             
             /// Mypage
             NavigationStack(path: $myPageViewModel.myPageNaviPath) {
-                UserPageView(isSignedInUser: true)
+                UserPageView(writerUser: myPageViewModel.user)
                     .navigationDestination(for: Article.self) { article in
                         ArticleDetailView(article: article)
-                            .toolbarRole(.editor)
                     }
                     .navigationDestination(for: Trade.self) { trade in
                         TradeDetailView(trade: trade)
-                            .toolbarRole(.editor)
                     }
                     .navigationDestination(for: ANBDCategory.self) { category in
                         UserActivityListView(category: category, user: myPageViewModel.user)
-                            .toolbarRole(.editor)
                     }
                     .navigationDestination(for: MyPageViewModel.MyPageNaviPaths.self) { path in
                         switch path {
                         case .userLikedArticleList:
                             UserLikedContentsView(category: .accua)
-                                .toolbarRole(.editor)
-                                .toolbar(.hidden, for: .tabBar)
                         case .userHeartedTradeList:
                             UserLikedContentsView(category: .nanua)
-                                .toolbarRole(.editor)
-                                .toolbar(.hidden, for: .tabBar)
                         case .accountManagement:
                             AccountManagementView()
-                                .toolbarRole(.editor)
-                                .toolbar(.hidden, for: .tabBar)
+                        case .report:
+                            ReportView(reportViewType: .user)
                         }
                     }
             }

@@ -45,64 +45,28 @@ struct UserLikedContentsView: View {
         }
         .navigationTitle("\(navigationTitile)")
         .navigationBarTitleDisplayMode(.inline)
+        
+        .toolbarRole(.editor)
+        .toolbar(.hidden, for: .tabBar)
     }
     
-    @ViewBuilder
     private func listEmptyView() -> some View {
-        VStack {
-            switch category {
-            case .accua, .dasi:
-                Spacer()
-                
-                Image(systemName: "tray")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 60)
-                    .padding(.bottom, 10)
-                
-                HStack {
-                    Spacer()
-                    
-                    Text("\(myPageViewModel.user.nickname)님이 좋아요한\n\(category.description) 게시글이 없습니다.")
-                        .multilineTextAlignment(.center)
-                        .font(ANBDFont.body1)
-                    
-                    Spacer()
-                }
-                Spacer()
-                
-            case .nanua, .baccua:
-                Spacer()
-                
-                Image(systemName: "tray")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 60)
-                    .padding(.bottom, 10)
-                
-                HStack {
-                    Spacer()
-                    
-                    Text("\(myPageViewModel.user.nickname)님이 찜한\n\(category.description) 거래가 없습니다.")
-                        .multilineTextAlignment(.center)
-                        .font(ANBDFont.body1)
-                    
-                    Spacer()
-                }
-                Spacer()
-            }
+        switch category {
+        case .accua, .dasi:
+            ListEmptyView(description: "\(myPageViewModel.user.nickname)님이 좋아요한\n\(category.description) 게시글이 없습니다.")
+        case .nanua, .baccua:
+            ListEmptyView(description: "\(myPageViewModel.user.nickname)님이 찜한\n\(category.description) 거래가 없습니다.")
         }
-        .foregroundStyle(Color.gray400)
     }
     
     @ViewBuilder
     private func userLikedArticleListView(category: ANBDCategory) -> some View {
-        if myPageViewModel.mockArticleData.isEmpty {
+        if myPageViewModel.userLikedArticles.isEmpty {
             listEmptyView()
         } else {
             ScrollView(.vertical) {
                 LazyVStack {
-                    ForEach(myPageViewModel.mockArticleData.filter({$0.category == category})) { article in
+                    ForEach(myPageViewModel.userLikedArticles.filter({$0.category == category})) { article in
                         NavigationLink(value: article) {
                             ArticleListCell(value: .article(article))
                                 .padding(.vertical, 5)
@@ -120,12 +84,12 @@ struct UserLikedContentsView: View {
     
     @ViewBuilder
     private func userHeartTradeListView(category: ANBDCategory) -> some View {
-        if myPageViewModel.mockTradeData.isEmpty {
+        if myPageViewModel.userHeartedTrades.isEmpty {
             listEmptyView()
         } else {
             ScrollView(.vertical) {
                 LazyVStack {
-                    ForEach(myPageViewModel.mockTradeData.filter({$0.category == category})) { trade in
+                    ForEach(myPageViewModel.userHeartedTrades.filter({$0.category == category})) { trade in
                         NavigationLink(value: trade) {
                             ArticleListCell(value: .trade(trade))
                                 .padding(.vertical, 5)

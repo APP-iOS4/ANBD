@@ -72,6 +72,7 @@ struct SignUpEmailView: View {
                 BlueSquareButton(title: "다음", isDisabled: !authenticationViewModel.isValidSignUpEmail) {
                     Task {
                         if await authenticationViewModel.checkDuplicatedEmail() {
+                            downKeyboard()
                             isShowingDuplicatedEmailAlert.toggle()
                         } else {
                             nextButtonAction()

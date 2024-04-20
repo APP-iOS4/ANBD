@@ -259,8 +259,10 @@ extension AuthenticationViewModel {
     
     func signIn() async throws {
         do {
-            UserDefaultsClient.shared.userInfo = try await authUsecase.signIn(email: loginEmailString,
-                                                                              password: loginPasswordString)
+            let signedInUser = try await authUsecase.signIn(email: loginEmailString,
+                                                          password: loginPasswordString)
+            
+            UserDefaultsClient.shared.userInfo = signedInUser
         } catch {
             print("\(error.localizedDescription)")
         }
@@ -278,14 +280,16 @@ extension AuthenticationViewModel {
     
     func signUp() async throws {
         do {
-            UserDefaultsClient.shared.userInfo = try await authUsecase.signUp(email: signUpEmailString,
-                                                                              password: signUpPasswordString,
-                                                                              nickname: signUpNicknameString,
-                                                                              favoriteLocation: signUpUserFavoriteLoaction,
-                                                                              isOlderThanFourteen: isOlderThanFourteen,
-                                                                              isAgreeService: isAgreeService,
-                                                                              isAgreeCollectInfo: isAgreeCollectInfo,
-                                                                              isAgreeMarketing: isAgreeMarketing)
+            let signedUpUser = try await authUsecase.signUp(email: signUpEmailString,
+                                                            password: signUpPasswordString,
+                                                            nickname: signUpNicknameString,
+                                                            favoriteLocation: signUpUserFavoriteLoaction,
+                                                            isOlderThanFourteen: isOlderThanFourteen,
+                                                            isAgreeService: isAgreeService,
+                                                            isAgreeCollectInfo: isAgreeCollectInfo,
+                                                            isAgreeMarketing: isAgreeMarketing)
+            
+            UserDefaultsClient.shared.userInfo = signedUpUser
         } catch {
             print("\(error.localizedDescription)")
         }

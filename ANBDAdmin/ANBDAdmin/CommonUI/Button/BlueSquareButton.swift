@@ -41,7 +41,7 @@ struct BlueSquareButton: View {
                 .foregroundStyle(!isDisabled ? .accent : .gray200)
                 .overlay {
                     Text(title)
-                        .font(ANBDFont.pretendardMedium(16))
+                        .font(ANBDFont.SubTitle1)
                         .foregroundStyle(.white)
                 }
         }

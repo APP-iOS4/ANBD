@@ -29,16 +29,6 @@ struct ANBDAdminAppHomeView: View {
                 } label: {
                     Text("유저 목록").bold()
                 }
-                DisclosureGroup(isExpanded: $isReportedItemsExpanded) {
-                    NavigationLink(destination: ReportedArticleListView().font(.title3)) {
-                        Text("신고된 게시물")
-                    }
-                    NavigationLink(destination: ReportedCommentListView().font(.title3)) {
-                        Text("신고된 댓글")
-                    }
-                } label: {
-                    Text("신고된 작성물").bold()
-                }
                 DisclosureGroup(isExpanded: $isBoardListExpanded) {
                     NavigationLink(destination: ArticleListView().font(.title3)) {
                         Text("게시물")
@@ -51,6 +41,9 @@ struct ANBDAdminAppHomeView: View {
                 }
                 NavigationLink(destination: BannerEditView().font(.title3)) {
                     Text("배너 관리").bold()
+                }
+                NavigationLink(destination: ReportedListView().font(.title3)) {
+                    Text("신고함")
                 }
                 NavigationLink(destination: InquiryView().font(.title3)) {
                     Text("문의함").bold()

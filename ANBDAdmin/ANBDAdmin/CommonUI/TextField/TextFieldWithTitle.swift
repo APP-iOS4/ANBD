@@ -25,13 +25,15 @@ struct TextFieldWithTitle: View {
     var body: some View {
         VStack(alignment: .leading) {
             Text("\(title)")
-                .font(ANBDFont.SubTitle3)
+                .font(ANBDFont.SubTitle1)
                 .foregroundStyle(Color.gray900)
+                .frame(height: 50)
             
             if fieldType == .normal {
                 TextFieldUIKit(placeholder: placeholder, text: $inputText)
-                    .font(ANBDFont.body2)
+                    .font(ANBDFont.Heading3)
                     .padding(.horizontal, 4)
+                    .frame(height: 50)
             } else {
                 HStack {
                     Group {
@@ -41,7 +43,8 @@ struct TextFieldWithTitle: View {
                             TextFieldUIKit(placeholder: placeholder, text: $inputText)
                         }
                     }
-                    .font(ANBDFont.body2)
+                    .frame(height: 50)
+                    .font(ANBDFont.Heading3)
                     .padding(.horizontal, 4)
                     
                     Button(action: {
@@ -49,7 +52,7 @@ struct TextFieldWithTitle: View {
                     }, label: {
                         Image(systemName: isMasked ? "eye.slash" : "eye")
                     })
-                    .frame(height: 20)
+                    .frame(height: 50)
                     .tint(Color.gray400)
                 }
             }

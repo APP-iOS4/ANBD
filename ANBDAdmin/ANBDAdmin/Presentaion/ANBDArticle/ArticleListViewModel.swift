@@ -27,4 +27,7 @@ class ArticleListViewModel: ObservableObject {
             }
         }
     }
+    func loadArticle(articleID: String) async throws -> Article {
+        try await articleUsecase.loadArticle(articleID: articleID)
+    }
 }

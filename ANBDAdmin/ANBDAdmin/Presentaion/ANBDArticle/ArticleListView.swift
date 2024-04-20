@@ -11,16 +11,25 @@ import CachedAsyncImage
 
 struct ArticleListView: View {
     @StateObject private var articleListViewModel = ArticleListViewModel()
-    @State private var searchArticleText = "" // 검색 텍스트 추적하는 변수
-    
+    @State private var searchArticleText = ""
+    @State private var searchedArticle: Article?
+
     var body: some View {
         VStack {
-            TextField("제목이나 ID값으로 검색...", text: $searchArticleText)
-                .textCase(.lowercase)
-                .padding(7)
-                .background(Color(.systemGray6))
-                .cornerRadius(8)
-                .padding(.horizontal, 10)
+            TextField("제목이나 ID값으로 검색...", text: $searchArticleText, onCommit: {
+                            Task {
+                                do {
+                                    searchedArticle = try await articleListViewModel .loadArticle(articleID: searchArticleText)
+                                } catch {
+                                    print(error)
+                                }
+                            }
+                        })
+                        .textCase(.lowercase)
+                        .padding(7)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                        .padding(.horizontal, 10)
             HStack{
                 Spacer()
                 VStack(alignment: .leading) {

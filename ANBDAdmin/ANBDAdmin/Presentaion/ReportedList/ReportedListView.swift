@@ -7,12 +7,8 @@
 
 import SwiftUI
 
-struct ReportedCommentListView: View {
+struct ReportedListView: View {
     var body: some View {
-        Text("신고된 댓글 리스트")
+        Text("신고 로그")
     }
-}
-
-#Preview {
-    ReportedCommentListView()
 }

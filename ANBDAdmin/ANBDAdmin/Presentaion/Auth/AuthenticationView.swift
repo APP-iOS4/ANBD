@@ -30,14 +30,15 @@ struct AuthenticationView: View {
                             Text("아껴쓰고 나눠쓰고 바꿔쓰고 다시쓰고.")
                                 .font(.largeTitle)
                         }
-                        .padding(.vertical, 80)
-                        .padding(.top, 100)
+                        .padding(.vertical, 50)
+                        .padding(.top, 50)
                         
                         VStack(spacing: 50) {
                             TextFieldWithTitle(fieldType: .normal,
                                                title: "이메일",
                                                placeholder: "예) anbd@anbd.co.kr",
                                                inputText: $authenticationViewModel.loginEmailString)
+                            .frame(height: 100)
                             .focused($focus, equals: .email)
                             .keyboardType(.emailAddress)
                             .submitLabel(.next)
@@ -51,6 +52,7 @@ struct AuthenticationView: View {
                                                title: "비밀번호",
                                                placeholder: "8~16자 (숫자, 영문, 특수기호 중 2개 이상)",
                                                inputText: $authenticationViewModel.loginPasswordString)
+                            .frame(height: 100)
                             .focused($focus, equals: .password)
                             .submitLabel(.go)
                             .onSubmit {
@@ -95,7 +97,7 @@ struct AuthenticationView: View {
                                             Spacer()
                                             
                                             Text("Google로 시작하기")
-                                                .font(ANBDFont.body1)
+                                                .font(ANBDFont.SubTitle1)
                                                 .foregroundStyle(Color.gray900)
                                                 .padding(.trailing, 30)
                                             
@@ -111,7 +113,7 @@ struct AuthenticationView: View {
                         
                         Spacer()
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal, 50)
                     
                     .toolbar {
                         ToolbarItemGroup(placement: .keyboard) {

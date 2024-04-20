@@ -23,60 +23,7 @@ extension ChatDetailView {
         @Binding var isShowingStateChangeCustomAlert: Bool
         
         var body: some View {
-            HStack {
-                if trade == nil {
-                    Image(systemName: "exclamationmark.square.fill")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 60, height: 60)
-                        .padding(.trailing, 10)
-                        .foregroundStyle(.gray500)
-                } else {
-                    if let imageData {
-                        if let uiImage = UIImage(data: imageData) {
-                            Image(uiImage: uiImage)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 70, height: 70)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                                .padding(.trailing, 10)
-                        }
-                    } else {
-                        Image("ANBDWarning")
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 70, height: 70)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                            .padding(.trailing, 10)
-                    }
-                }
-                
-                VStack(alignment: .leading) {
-                    HStack(alignment: .top) {
-                        Text(trade == nil ? "삭제된 게시물" : trade?.title ?? "Unknown")
-                            .lineLimit(2)
-                            .multilineTextAlignment(.leading)
-                            .font(ANBDFont.SubTitle3)
-                        
-                        Spacer()
-                        
-                        if let trade, let user = chatViewModel.user {
-                            if trade.writerID == user.id {
-                                TradeStateChangeView(tradeState: $tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert)
-                                    .padding(.trailing, 10)
-                            }
-                        }
-                    }
-                    .padding(.bottom, 8)
-                    
-                    Text(tradeProductString)
-                        .foregroundStyle(.gray400)
-                        .font(ANBDFont.Caption3)
-                }
-                .padding(.vertical)
-            }
-            .foregroundStyle(.gray900)
-            .onTapGesture {
+            Button(action: {
                 switch anbdViewType {
                 case .home, .trade:
                     dismiss()
@@ -85,8 +32,61 @@ extension ChatDetailView {
                         chatViewModel.chatPath.append(trade)
                     }
                 }
-            }
-            
+            }, label: {
+                HStack {
+                    if trade == nil {
+                        Image(systemName: "exclamationmark.square.fill")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 60, height: 60)
+                            .padding(.trailing, 10)
+                            .foregroundStyle(.gray500)
+                    } else {
+                        if let imageData {
+                            if let uiImage = UIImage(data: imageData) {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 70, height: 70)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    .padding(.trailing, 10)
+                            }
+                        } else {
+                            Image("ANBDWarning")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 70, height: 70)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .padding(.trailing, 10)
+                        }
+                    }
+                    
+                    VStack(alignment: .leading) {
+                        HStack(alignment: .top) {
+                            Text(trade == nil ? "삭제된 게시물" : trade?.title ?? "Unknown")
+                                .lineLimit(2)
+                                .multilineTextAlignment(.leading)
+                                .font(ANBDFont.SubTitle3)
+                            
+                            Spacer()
+                            
+                            if let trade, let user = chatViewModel.user {
+                                if trade.writerID == user.id {
+                                    TradeStateChangeView(tradeState: $tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert)
+                                        .padding(.trailing, 10)
+                                }
+                            }
+                        }
+                        .padding(.bottom, 8)
+                        
+                        Text(tradeProductString)
+                            .foregroundStyle(.gray400)
+                            .font(ANBDFont.Caption3)
+                    }
+                    .padding(.vertical)
+                }
+                .foregroundStyle(.gray900)
+            })
         }
         
         /// Trade 상품 String

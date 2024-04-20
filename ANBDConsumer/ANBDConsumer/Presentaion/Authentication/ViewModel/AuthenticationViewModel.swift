@@ -16,7 +16,6 @@ enum AgreeType {
     case agreeMarketing
 }
 
-@MainActor
 final class AuthenticationViewModel: ObservableObject {
     private let authUsecase: AuthUsecase = DefaultAuthUsecase()
     

@@ -120,13 +120,13 @@ final class MyPageViewModel: ObservableObject {
     
     func updateUserInfo(updatedNickname: String, updatedLocation: Location) async {
         do {
-            var updatedUser: User = user
+            var updatedUser: User = UserStore.shared.user
             
             updatedUser.nickname = updatedNickname
             updatedUser.favoriteLocation = updatedLocation
             
             try await userUsecase.updateUserInfo(user: updatedUser)
-            userDefaultsClient.userInfo = updatedUser
+            UserStore.shared.user = updatedUser
         } catch {
             print("\(error.localizedDescription)")
         }

@@ -28,7 +28,7 @@ struct UserInfoEditingView: View {
                 VStack(spacing: 40) {
                     if #available(iOS 17.0, *) {
                         userProfilImageButton
-                            .onChange(of: photosPickerItem) { 
+                            .onChange(of: photosPickerItem) {
                                 Task {
                                     if let photosPickerItem, let data = try? await photosPickerItem.loadTransferable(type: Data.self) {
                                         if let image = await UIImage(data: data)?.byPreparingThumbnail(ofSize: .init(width: 512, height: 512)) {
@@ -130,9 +130,8 @@ struct UserInfoEditingView: View {
             .navigationTitle("수정하기")
             .navigationBarTitleDisplayMode(.inline)
             
-            
             .onAppear {
-                myPageViewModel.editedUserNickname = myPageViewModel.user.nickname
+                myPageViewModel.editedUserNickname = UserStore.shared.user.nickname
             }
         }
     }

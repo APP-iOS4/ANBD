@@ -36,7 +36,7 @@ public protocol TradeUsecase {
 @available(iOS 15, *)
 public struct DefaultTradeUsecase: TradeUsecase {
     
-    private let tradeRepository: TradeRepository = DefaultTradeRepository()
+    private let tradeRepository: TradeRepository = TradeRepositoryImpl()
     
     public init() { }
     

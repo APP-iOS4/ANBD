@@ -131,7 +131,7 @@ struct ANBDTabView: View {
                         if path == .reportView {
                             ReportView(reportViewType: chatViewModel.reportType)
                         } else if path == .chatDetailView {
-                            ChatDetailView(trade: homeViewModel.chatDetailTrade)
+                            ChatDetailView(trade: homeViewModel.chatDetailTrade, anbdViewType: .chat)
                         }
                     }
             }

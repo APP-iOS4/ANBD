@@ -38,7 +38,7 @@ struct ChatDetailView: View {
     var body: some View {
         ZStack {
             VStack {
-                ChatHeaderView(trade: trade, imageData: imageData, tradeState: $tradeState, isShowingStateChangeCustomAlert: $isShowingStateChangeCustomAlert)
+                ChatHeaderView(trade: trade, imageData: imageData, anbdViewType: anbdViewType, tradeState: $tradeState, isShowingStateChangeCustomAlert: $isShowingStateChangeCustomAlert)
                     .padding(.vertical, 5)
                     .padding(.horizontal, 15)
                 

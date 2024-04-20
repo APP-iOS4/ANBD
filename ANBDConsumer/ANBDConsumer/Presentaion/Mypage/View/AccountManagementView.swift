@@ -63,7 +63,7 @@ struct AccountManagementView: View {
                 CustomAlertView(isShowingCustomAlert: $isShowingSignOutAlertView, viewType: .signOut) {
                     Task {
                         try await authenticationViewModel.signOut {
-                            UserDefaultsClient.shared.userInfo = nil
+                            UserDefaultsClient.shared.removeUserID()
                             authenticationViewModel.checkAuthState()
                         }
                     }
@@ -74,7 +74,7 @@ struct AccountManagementView: View {
                 CustomAlertView(isShowingCustomAlert: $isShowingWithdrawalAlertView, viewType: .withdrawal) {
                     Task {
                         try await authenticationViewModel.withdrawal {
-                            UserDefaultsClient.shared.userInfo = nil
+                            UserDefaultsClient.shared.removeUserID()
                             authenticationViewModel.checkAuthState()
                         }
                     }

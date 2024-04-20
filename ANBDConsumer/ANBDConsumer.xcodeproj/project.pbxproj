@@ -17,6 +17,7 @@
 		424CA0112BC3B8AA00F83F8D /* PolicyDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0102BC3B8AA00F83F8D /* PolicyDetailView.swift */; };
 		424CA0132BC3C0E200F83F8D /* TermsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0122BC3C0E200F83F8D /* TermsView.swift */; };
 		424CA0152BC3C45E00F83F8D /* SignUpCompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0142BC3C45E00F83F8D /* SignUpCompleteView.swift */; };
+		426EE0312BD37CCD00006C2C /* UserStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426EE0302BD37CCD00006C2C /* UserStore.swift */; };
 		427C923B2BCE4CFA0083B4A9 /* UserDefaultsClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 427C923A2BCE4CFA0083B4A9 /* UserDefaultsClient.swift */; };
 		428E613F2BC8BDE400808340 /* UserLikedContentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 428E613E2BC8BDE400808340 /* UserLikedContentsView.swift */; };
 		42C151712BD1014400917F30 /* ListEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C151702BD1014400917F30 /* ListEmptyView.swift */; };
@@ -86,6 +87,7 @@
 		424CA0102BC3B8AA00F83F8D /* PolicyDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolicyDetailView.swift; sourceTree = "<group>"; };
 		424CA0122BC3C0E200F83F8D /* TermsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsView.swift; sourceTree = "<group>"; };
 		424CA0142BC3C45E00F83F8D /* SignUpCompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpCompleteView.swift; sourceTree = "<group>"; };
+		426EE0302BD37CCD00006C2C /* UserStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStore.swift; sourceTree = "<group>"; };
 		427C923A2BCE4CFA0083B4A9 /* UserDefaultsClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsClient.swift; sourceTree = "<group>"; };
 		428E613E2BC8BDE400808340 /* UserLikedContentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLikedContentsView.swift; sourceTree = "<group>"; };
 		42C151702BD1014400917F30 /* ListEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListEmptyView.swift; sourceTree = "<group>"; };
@@ -403,6 +405,7 @@
 				CB7BEE202BBD568A00C0F298 /* ANBDFont.swift */,
 				CB198CEF2BBF8E84000C2709 /* Category.swift */,
 				427C923A2BCE4CFA0083B4A9 /* UserDefaultsClient.swift */,
+				426EE0302BD37CCD00006C2C /* UserStore.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -662,6 +665,7 @@
 				428E613F2BC8BDE400808340 /* UserLikedContentsView.swift in Sources */,
 				CB198D102BC38BA0000C2709 /* LocationBottomSheet.swift in Sources */,
 				CB7BEE232BBD56B900C0F298 /* View+Extension.swift in Sources */,
+				426EE0312BD37CCD00006C2C /* UserStore.swift in Sources */,
 				CB198D1E2BC3A7BC000C2709 /* TextFieldModifier.swift in Sources */,
 				CB7BEE232BBD56B900C0F298 /* View+Extension.swift in Sources */,
 				A8640B3E2BC3DCBE00232F9C /* CapsuleButtonView.swift in Sources */,

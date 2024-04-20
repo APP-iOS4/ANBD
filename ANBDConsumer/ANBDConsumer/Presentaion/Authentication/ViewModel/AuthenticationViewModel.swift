@@ -16,6 +16,7 @@ enum AgreeType {
     case agreeMarketing
 }
 
+@MainActor
 final class AuthenticationViewModel: ObservableObject {
     private let authUsecase: AuthUsecase = DefaultAuthUsecase()
     
@@ -206,12 +207,8 @@ extension AuthenticationViewModel {
 
 // MARK: Sign Up Method
 extension AuthenticationViewModel {
-    func submitSignUp() {
-        authState = true
-    }
-    
     func checkAuthState() {
-        if UserDefaultsClient.shared.userInfo == nil {
+        if UserDefaultsClient.shared.userID == nil {
             authState = false
         } else {
             authState = true
@@ -259,9 +256,10 @@ extension AuthenticationViewModel {
     func signIn() async throws {
         do {
             let signedInUser = try await authUsecase.signIn(email: loginEmailString,
-                                                          password: loginPasswordString)
+                                                            password: loginPasswordString)
             
-            UserDefaultsClient.shared.userInfo = signedInUser
+            UserDefaultsClient.shared.userID = signedInUser.id
+            UserStore.shared.user = signedInUser
         } catch {
             print("\(error.localizedDescription)")
         }
@@ -288,7 +286,8 @@ extension AuthenticationViewModel {
                                                             isAgreeCollectInfo: isAgreeCollectInfo,
                                                             isAgreeMarketing: isAgreeMarketing)
             
-            UserDefaultsClient.shared.userInfo = signedUpUser
+            UserDefaultsClient.shared.userID = signedUpUser.id
+            UserStore.shared.user = signedUpUser
         } catch {
             print("\(error.localizedDescription)")
         }
@@ -309,10 +308,7 @@ extension AuthenticationViewModel {
     func withdrawal(completion: @escaping () -> Void) async throws {
         do {
             try await signOut(completion: { })
-            
-            if let user = UserDefaultsClient.shared.userInfo {
-                try await authUsecase.withdrawal(userID: user.id)
-            }
+            try await authUsecase.withdrawal(userID: UserStore.shared.user.id)
             
             completion()
         } catch {

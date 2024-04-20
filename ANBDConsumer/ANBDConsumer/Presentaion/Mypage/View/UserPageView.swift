@@ -35,19 +35,19 @@ struct UserPageView: View {
                     .padding(.horizontal)
                 
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("\(userNickname)")
+                    Text("\(writerUser.nickname)")
                         .foregroundStyle(Color.gray900)
                         .font(ANBDFont.pretendardBold(24))
                         .padding(.bottom, 10)
                     
-                    Text("선호 지역 : \(userFavoriteLocation.description)")
+                    Text("선호 지역 : \(writerUser.favoriteLocation.description)")
                         .foregroundStyle(Color.gray400)
                         .font(ANBDFont.Caption3)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
                     if isSignedInUser {
                         HStack {
-                            Text(verbatim: "\(myPageViewModel.user.email)")
+                            Text(verbatim: "\(writerUser.email)")
                                 .foregroundStyle(Color.gray400)
                             
                             Spacer()
@@ -155,7 +155,6 @@ struct UserPageView: View {
         }
         
         .onAppear {
-            myPageViewModel.loadUserInfo()
             isSignedInUser = myPageViewModel.checkSignInedUser(userID: writerUser.id)
             Task {
                 userProfileImageData = await myPageViewModel.loadUserProfileImage(containerID: "",
@@ -201,20 +200,6 @@ extension UserPageView {
             return UIImage(data: userProfileImageData) ?? UIImage(named: "DefaultUserProfileImage")!
         case false:
             return UIImage(named: "DefaultUserProfileImage")!
-        }
-    }
-    
-    private var userNickname: String {
-        switch isSignedInUser {
-        case true: return myPageViewModel.user.nickname
-        case false: return writerUser.nickname
-        }
-    }
-    
-    private var userFavoriteLocation: Location {
-        switch isSignedInUser {
-        case true: return myPageViewModel.user.favoriteLocation
-        case false: return writerUser.favoriteLocation
         }
     }
 }

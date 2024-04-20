@@ -59,7 +59,7 @@ final class MyPageViewModel: ObservableObject {
     }
     
     func checkSignInedUser(userID: String) -> Bool {
-        if userID == user.id {
+        if userID == UserStore.shared.user.id {
             return true
         } else {
             return false

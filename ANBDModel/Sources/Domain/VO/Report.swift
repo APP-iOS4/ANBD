@@ -15,6 +15,7 @@ public struct Report : Identifiable, Codable , Hashable {
     public let type: ReportType
     public let reportReason: String
     public let reportedUser: String
+
     public let reportedObjectID: String
     
     //메시진 신고일때만 하나의 reportedObjectID 더 필요함

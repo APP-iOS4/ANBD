@@ -29,7 +29,7 @@ public protocol ArticleUsecase {
 @available(iOS 15, *)
 public struct DefaultArticleUsecase: ArticleUsecase {
     
-    private let articleRepository: ArticleRepository = DefaultArticleRepository()
+    private let articleRepository: ArticleRepository = ArticleRepositoryImpl()
     
     public init() { }
     

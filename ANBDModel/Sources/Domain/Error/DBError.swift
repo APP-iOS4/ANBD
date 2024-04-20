@@ -10,37 +10,42 @@ import Foundation
 public enum DBError: Int, Error {
     case unknownError = 5000
     
-    case setUserDocumentError = 5001
+    case setDocumentError = 5001
+    case getDocumentError
+    case updateDocumentError
+    case deleteDocumentError
+    
+    case setUserDocumentError = 5005
     case getUserDocumentError
     case updateUserDocumentError
     case deleteUserDocumentError
     
-    case setArticleDocumentError = 5005
+    case setArticleDocumentError = 5009
     case getArticleDocumentError
     case updateArticleDocumentError
     case deleteArticleDocumentError
     
-    case setCommentDocumentError = 5009
+    case setCommentDocumentError = 5013
     case getCommentDocumentError
     case updateCommentDocumentError
     case deleteCommentDocumentError
     
-    case setTradeDocumentError = 5013
+    case setTradeDocumentError = 5017
     case getTradeDocumentError
     case updateTradeDocumentError
     case deleteTradeDocumentError
     
-    case setChannelDocumentError = 5017
+    case setChannelDocumentError = 5021
     case getChannelDocumentError
     case updateChannelDocumentError
     case deleteChannelDocumentError
     
-    case setMessageDocumentError = 5021
+    case setMessageDocumentError = 5025
     case getMessageDocumentError
     case updateMessageDocumentError
     case deleteMessageDocumentError
     
-    case setBannerDocumentError = 5025
+    case setBannerDocumentError = 5029
     case getBannerDocumentError
     case updateBannerDocumentError
     case deleteBannerDocumentError
@@ -48,6 +53,11 @@ public enum DBError: Int, Error {
     public var message: String {
         switch self {
         case .unknownError: "알 수 없는 에러"
+            
+        case .setDocumentError: "Document 추가 실패"
+        case .getDocumentError: "Document 읽기 실패"
+        case .updateDocumentError: "Document 수정 실패"
+        case .deleteDocumentError: "Document 삭제 실패"
             
         case .setUserDocumentError: "User document 추가 실패"
         case .getUserDocumentError: "User document 읽기 실패"

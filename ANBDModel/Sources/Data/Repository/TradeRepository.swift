@@ -9,15 +9,15 @@ import Foundation
 import FirebaseAuth
 
 @available(iOS 15, *)
-final class DefaultTradeRepository: TradeRepository {
+struct TradeRepositoryImpl: TradeRepository {
     
-    private let tradeDataSource: any TradeDataSource
+    private let tradeDataSource: any Postable<Trade>
     private let userDataSource: UserDataSource
     
     private let storage = StorageManager.shared
     
     init(
-        tradeDataSource: any TradeDataSource = DefaultTradeDataSource(),
+        tradeDataSource: any Postable<Trade> = PostDataSource<Trade>(database: .tradeDatabase),
         userDataSource: UserDataSource = DefaultUserDataSource()
     ) {
         self.tradeDataSource = tradeDataSource

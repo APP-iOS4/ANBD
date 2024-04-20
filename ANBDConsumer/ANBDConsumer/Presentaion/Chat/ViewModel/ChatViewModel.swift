@@ -44,9 +44,19 @@ final class ChatViewModel: ObservableObject {
                 }
                 
                 if !isListener {
+                    if let lastMessage = messages.last {
+                        try await chatUsecase.updateMessageReadStatus(channelID: channelID, lastMessage: lastMessage, userID: user.id)
+                    }
+                
                     isListener = true
                     chatUsecase.listenNewMessage(channelID: channelID, userID: user.id) { [weak self] message in
-                        self?.messages.append(message)
+                        if let lastMessageID = self?.messages.last?.id, lastMessageID == message.id, let lastIndex = self?.messages.indices.last {
+                            /// 읽음 처리
+                            self?.messages[lastIndex].isRead = true
+                        } else {
+                            /// 메시지 전송 (추가)
+                            self?.messages.append(message)
+                        }
                     }
                 }
             }
@@ -85,13 +95,13 @@ final class ChatViewModel: ObservableObject {
                 chatUsecase.listenNewMessage(channelID: channelID, userID: user.id) { [weak self] message in
                     self?.messages.append(message)
                     
-        //            if let lastMessageID = self?.messages.last?.id, lastMessageID == message.id, let lastIndex = self?.messages.indices.last {
-        //                /// 읽음 처리
-        //                self?.messages[lastIndex].isRead = true
-        //            } else {
-        //                /// 메시지 전송 (추가)
-        //                self?.messages.append(message)
-        //            }
+//                    if let lastMessageID = self?.messages.last?.id, lastMessageID == message.id, let lastIndex = self?.messages.indices.last {
+//                        /// 읽음 처리
+//                        self?.messages[lastIndex].isRead = true
+//                    } else {
+//                        /// 메시지 전송 (추가)
+//                        self?.messages.append(message)
+//                    }
                 }
             }
         }
@@ -183,8 +193,6 @@ final class ChatViewModel: ObservableObject {
     
     
     /// 채널 리스너 해제
-    /// 기존 : 채팅방 나가기 -> 기존 채팅 메시지 값을 leaveUser 내 ID 추가 (ㅠㅠ)
-    /// 변경 : 채팅방 나가기 -> 나간 시점에서 마지막 메시지만 leaveID 추가 우아 !! -> viewModel 오 .....................아 ....대박 운관님 대박 .............................
     func resetChannelListener() {
         chatUsecase.initializeChannelsListener()
     }

@@ -25,6 +25,7 @@ final class HomeViewModel: ObservableObject {
     @Published var nanuaTrades: [Trade] = []
     @Published var baccuaTrades: [Trade] = []
     
+    @Published var isGoingToChatDetailView: Bool = false
     
     init() {
         Task {
@@ -45,7 +46,7 @@ final class HomeViewModel: ObservableObject {
     }
     
     /// 아껴쓰기 · 다시쓰기 최신 1개씩 가져오기
-    private func loadArticle(category: ANBDCategory) async {
+    func loadArticle(category: ANBDCategory) async {
         do {
             if category == .accua {
                 accuaArticle = try await articleUsecase.loadRecentArticle(category: .accua)
@@ -59,7 +60,7 @@ final class HomeViewModel: ObservableObject {
     }
     
     /// 나눠쓰기 · 바꿔쓰기 최신순으로 각각 4개, 2개씩 가져오기
-    private func loadTrades(category: ANBDCategory) async {
+    func loadTrades(category: ANBDCategory) async {
         do {
             if category == .nanua {
                 try await nanuaTrades = tradeUsecase.loadRecentTradeList(category: .nanua)

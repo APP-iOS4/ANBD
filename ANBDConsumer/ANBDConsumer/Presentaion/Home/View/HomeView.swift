@@ -118,6 +118,11 @@ struct HomeView: View {
                 }
             }
         }
+        .onAppear {
+            Task {
+                await homeViewModel.loadArticle(category: .accua)
+            }
+        }
     }
     
     // MARK: - 나눠쓰기 Section
@@ -138,6 +143,11 @@ struct HomeView: View {
             }
             .scrollIndicators(.hidden)
         }
+        .onAppear {
+            Task {
+                await homeViewModel.loadTrades(category: .nanua)
+            }
+        }
     }
     
     // MARK: - 바꿔쓰기 Section
@@ -149,6 +159,11 @@ struct HomeView: View {
                 NavigationLink(value: trade) {
                     ArticleListCell(value: .trade(trade))
                 }
+            }
+        }
+        .onAppear {
+            Task {
+                await homeViewModel.loadTrades(category: .baccua)
             }
         }
     }
@@ -163,6 +178,11 @@ struct HomeView: View {
                     ArticleCellView(article: dasiArticle)
                         .frame(width: geo.size.width * 0.9, height: 130)
                 }
+            }
+        }
+        .onAppear {
+            Task {
+                await homeViewModel.loadArticle(category: .dasi)
             }
         }
     }

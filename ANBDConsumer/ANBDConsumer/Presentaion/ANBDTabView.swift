@@ -45,13 +45,15 @@ struct ANBDTabView: View {
                         ArticleDetailView(article: article)
                     }
                     .navigationDestination(for: Trade.self) { trade in
-                        TradeDetailView(trade: trade)
+                        if homeViewModel.isGoingToChatDetailView {
+                            ChatDetailView(trade: trade)
+                        } else {
+                            TradeDetailView(trade: trade)
+                        }
                     }
                     .navigationDestination(for: String.self) { str in
                         if str == "" {
                             SearchView()
-                        } else if str == "tradeToChat" {
-                            ChatDetailView()
                         } else if str == "tradeToUser" {
                             UserPageView(isSignedInUser: false)
                         } else if str == "tradeToReport" {
@@ -118,6 +120,9 @@ struct ANBDTabView: View {
                 ChatView()
                     .navigationDestination(for: Channel.self) { channel in
                         ChatDetailView(channel: channel)
+                    }
+                    .navigationDestination(for: Trade.self) { trade in
+                        TradeDetailView(trade: trade)
                     }
             }
             .tabItem {

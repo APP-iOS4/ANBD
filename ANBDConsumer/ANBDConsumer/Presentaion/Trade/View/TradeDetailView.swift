@@ -9,6 +9,7 @@ import SwiftUI
 import ANBDModel
 
 struct TradeDetailView: View {
+    @EnvironmentObject private var homeViewModel: HomeViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @State var trade: Trade
     @State private var isGoingToReportView: Bool = false
@@ -221,7 +222,7 @@ extension TradeDetailView {
             
             if let user = UserDefaultsClient.shared.userInfo {
                 if user.id != tradeViewModel.trade.writerID {
-                    NavigationLink(value: "tradeToChat") {
+                    NavigationLink(value: trade) {
                         RoundedRectangle(cornerRadius: 14)
                             .foregroundStyle(.accent)
                             .overlay {
@@ -231,6 +232,9 @@ extension TradeDetailView {
                             }
                             .frame(width: 100, height: 45)
                             .padding()
+                            .onTapGesture {
+                                homeViewModel.isGoingToChatDetailView = true
+                            }
                     }
                 }
             }

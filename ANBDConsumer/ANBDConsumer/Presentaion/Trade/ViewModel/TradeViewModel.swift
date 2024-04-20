@@ -8,7 +8,6 @@
 import ANBDModel
 import SwiftUI
 
-@MainActor
 final class TradeViewModel: ObservableObject {
     private let storageManager = StorageManager.shared
     private let tradeUseCase: TradeUsecase = DefaultTradeUsecase()
@@ -56,7 +55,8 @@ final class TradeViewModel: ObservableObject {
     
     
     
-    //read
+    //MARK: - READ
+    @MainActor
     func loadAllTrades() async {
         do {
             try await self.trades.append(contentsOf: tradeUseCase.loadTradeList(limit: 20))
@@ -66,6 +66,7 @@ final class TradeViewModel: ObservableObject {
         }
     }
     
+    @MainActor
     func reloadAllTrades() async {
         do {
             self.trades = try await tradeUseCase.refreshAllTradeList(limit: 20)
@@ -74,6 +75,7 @@ final class TradeViewModel: ObservableObject {
         }
     }
     
+    @MainActor
     func loadFilteredTrades(category: ANBDCategory) async {
         do {
             if self.selectedLocations.isEmpty && self.selectedItemCategories.isEmpty {
@@ -104,6 +106,7 @@ final class TradeViewModel: ObservableObject {
         }
     }
     
+    @MainActor
     func loadOneTrade(trade: Trade) async {
         do {
             self.trade = try await tradeUseCase.loadTrade(tradeID: trade.id)
@@ -169,6 +172,7 @@ final class TradeViewModel: ObservableObject {
         }
     }
     
+    @MainActor
     func updateTrade(category: ANBDCategory, title: String, content: String, myProduct: String, wantProduct: String, images: [Data]) async {
         
         self.trade.category = category
@@ -198,6 +202,7 @@ final class TradeViewModel: ObservableObject {
         }
     }
     
+    @MainActor
     func updateState(trade: Trade) async {
         
         do {

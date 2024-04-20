@@ -10,7 +10,7 @@ import ANBDModel
 
 struct TradeDetailView: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
-    @State var trade: Trade
+    var trade: Trade
     @State private var isGoingToReportView: Bool = false
     @State private var isShowingCreat: Bool = false
     @State private var isGoingToProfileView: Bool = false

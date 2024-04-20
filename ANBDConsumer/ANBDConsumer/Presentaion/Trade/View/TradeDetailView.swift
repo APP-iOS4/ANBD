@@ -9,10 +9,13 @@ import SwiftUI
 import ANBDModel
 
 struct TradeDetailView: View {
+    @EnvironmentObject private var homeViewModel: HomeViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
+    @EnvironmentObject private var chatViewModel: ChatViewModel
     // @EnvironmentObject private var myPageViewMode: MyPageViewModel
     @State var trade: Trade
-    @State private var isGoingToReportView: Bool = false
+    var anbdViewType: ANBDViewType = .trade
+    
     @State private var isShowingCreat: Bool = false
     @State private var isGoingToProfileView: Bool = false
     @State private var isShowingConfirm: Bool = false
@@ -171,7 +174,17 @@ struct TradeDetailView: View {
                     }
                 } else {
                     Button("신고하기", role: .destructive) {
-                        tradeViewModel.tradePath.append("tradeToReport")
+                        homeViewModel.reportType = .trade
+                        chatViewModel.reportType = .trade
+                        
+                        switch anbdViewType {
+                        case .home:
+                            homeViewModel.homePath.append(ANBDNavigationPaths.reportView)
+                        case .trade:
+                            tradeViewModel.tradePath.append(ANBDNavigationPaths.reportView)
+                        case .chat:
+                            chatViewModel.chatPath.append(ANBDNavigationPaths.reportView)
+                        }
                     }
                 }
             }
@@ -225,17 +238,27 @@ extension TradeDetailView {
             
             if let user = UserDefaultsClient.shared.userInfo {
                 if user.id != tradeViewModel.trade.writerID {
-                    NavigationLink(value: "tradeToChat") {
-                        RoundedRectangle(cornerRadius: 14)
-                            .foregroundStyle(.accent)
-                            .overlay {
-                                Text("채팅하기")
-                                    .font(ANBDFont.pretendardMedium(16))
-                                    .foregroundStyle(.white)
+                    RoundedRectangle(cornerRadius: 14)
+                        .foregroundStyle(.accent)
+                        .overlay {
+                            Text("채팅하기")
+                                .font(ANBDFont.pretendardMedium(16))
+                                .foregroundStyle(.white)
+                        }
+                        .frame(width: 100, height: 45)
+                        .padding()
+                        .onTapGesture {
+                            homeViewModel.chatDetailTrade = trade
+                            
+                            switch anbdViewType {
+                            case .home:
+                                homeViewModel.homePath.append(ANBDNavigationPaths.chatDetailView)
+                            case .trade:
+                                tradeViewModel.tradePath.append(ANBDNavigationPaths.chatDetailView)
+                            case .chat:
+                                dismiss()
                             }
-                            .frame(width: 100, height: 45)
-                            .padding()
-                    }
+                        }
                 }
             }
         }

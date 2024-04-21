@@ -32,12 +32,14 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 @main
 struct ANBDAdminApp: App {
+    @StateObject private var authenticationViewModel = AuthenticationViewModel()
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
     var body: some Scene {
         WindowGroup {
-            AdminHomeView()
+            AuthenticationView()
+                .environmentObject(authenticationViewModel)
         }
     }
 }

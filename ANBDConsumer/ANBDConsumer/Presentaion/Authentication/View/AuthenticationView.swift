@@ -57,10 +57,9 @@ struct AuthenticationView: View {
                         if !authenticationViewModel.errorMessage.isEmpty {
                             Text(authenticationViewModel.errorMessage)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.top, 8)
+                                .padding(.top, -12)
                                 .font(ANBDFont.Caption1)
                                 .foregroundStyle(.heartRed)
-                                .padding(.top, -20)
                         }
                     }
                     .padding(.bottom, 30)

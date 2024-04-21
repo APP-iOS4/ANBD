@@ -56,15 +56,16 @@ struct UserInfoEditingView: View {
                             .foregroundStyle(Color.gray400)
                             .padding(.bottom, 5)
                         
-                        textFieldUIKit(placeholder: "닉네임을 입력해주세요.",
-                                       text: $myPageViewModel.editedUserNickname)
-                        .focused($focus, equals: .nickname)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled(true)
-                        .font(ANBDFont.SubTitle1)
-                        .foregroundStyle(Color.gray900)
-                        .onChange(of: myPageViewModel.editedUserNickname) { _ in
-                            myPageViewModel.editedUserNickname = myPageViewModel.checkNicknameLength(myPageViewModel.editedUserNickname)
+                        if #available(iOS 17.0, *) {
+                            nicknameTextField
+                            .onChange(of: myPageViewModel.editedUserNickname) {
+                                myPageViewModel.editedUserNickname = myPageViewModel.checkNicknameLength(myPageViewModel.editedUserNickname)
+                            }
+                        } else {
+                            nicknameTextField
+                            .onChange(of: myPageViewModel.editedUserNickname) { _ in
+                                myPageViewModel.editedUserNickname = myPageViewModel.checkNicknameLength(myPageViewModel.editedUserNickname)
+                            }
                         }
                         
                         Divider()
@@ -184,6 +185,16 @@ struct UserInfoEditingView: View {
         }
         
         .photosPicker(isPresented: $isShowingPhotosPicker, selection: $photosPickerItem)
+    }
+    
+    private var nicknameTextField: some View {
+        textFieldUIKit(placeholder: "닉네임을 입력해주세요.",
+                       text: $myPageViewModel.editedUserNickname)
+        .focused($focus, equals: .nickname)
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled(true)
+        .font(ANBDFont.SubTitle1)
+        .foregroundStyle(Color.gray900)
     }
 }
 

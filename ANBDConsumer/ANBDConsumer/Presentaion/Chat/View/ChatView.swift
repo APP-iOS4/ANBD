@@ -53,6 +53,9 @@ struct ChatView: View {
             chatViewModel.loadUserInfo()
             chatViewModel.fetchChatRooms()
         }
+        .onDisappear {
+            chatViewModel.resetChannelListener()
+        }
     }
 }
 

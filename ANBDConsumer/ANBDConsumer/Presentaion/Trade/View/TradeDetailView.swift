@@ -9,9 +9,13 @@ import SwiftUI
 import ANBDModel
 
 struct TradeDetailView: View {
+    @EnvironmentObject private var homeViewModel: HomeViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
+    @EnvironmentObject private var chatViewModel: ChatViewModel
+    // @EnvironmentObject private var myPageViewMode: MyPageViewModel
     @State var trade: Trade
-    @State private var isGoingToReportView: Bool = false
+    var anbdViewType: ANBDViewType = .trade
+    
     @State private var isShowingCreat: Bool = false
     @State private var isGoingToProfileView: Bool = false
     @State private var isShowingConfirm: Bool = false
@@ -22,6 +26,8 @@ struct TradeDetailView: View {
     
     @State private var detailImage: Image = Image("DummyPuppy1")
     @State private var imageData: [Data] = []
+    
+    // @State private var writerUser: User?
     
     //임시..
     @State private var isLiked: Bool = false
@@ -53,14 +59,14 @@ struct TradeDetailView: View {
                         
                         //작성자 이미지, 닉네임, 작성시간
                         HStack {
-                            NavigationLink(value: "tradeToUser") {
-                                Image(.dummyImage1)
-                                    .resizable()
-                                    .frame(width: 40, height: 40)
-                                    .scaledToFill()
-                                    .clipShape(Circle())
-                            }
-                            
+//                            NavigationLink(value: writerUser) {
+//                                Image(.dummyImage1)
+//                                    .resizable()
+//                                    .frame(width: 40, height: 40)
+//                                    .scaledToFill()
+//                                    .clipShape(Circle())
+//                            }
+
                             VStack(alignment: .leading) {
                                 Text("\(tradeViewModel.trade.writerNickname)")
                                     .font(ANBDFont.SubTitle1)
@@ -128,7 +134,8 @@ struct TradeDetailView: View {
         .onAppear {
             tradeViewModel.getOneTrade(trade: trade)
             Task {
-                imageData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: tradeViewModel.trade.id, imagePath: tradeViewModel.trade.imagePaths)
+                // writerUser = await myPageViewMode.getUserInfo(userID: trade.writerID)
+                imageData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: trade.id, imagePath: trade.imagePaths)
             }
         }
         .toolbar(.hidden, for: .tabBar)
@@ -167,7 +174,17 @@ struct TradeDetailView: View {
                     }
                 } else {
                     Button("신고하기", role: .destructive) {
-                        tradeViewModel.tradePath.append("tradeToReport")
+                        homeViewModel.reportType = .trade
+                        chatViewModel.reportType = .trade
+                        
+                        switch anbdViewType {
+                        case .home:
+                            homeViewModel.homePath.append(ANBDNavigationPaths.reportView)
+                        case .trade:
+                            tradeViewModel.tradePath.append(ANBDNavigationPaths.reportView)
+                        case .chat:
+                            chatViewModel.chatPath.append(ANBDNavigationPaths.reportView)
+                        }
                     }
                 }
             }
@@ -221,17 +238,27 @@ extension TradeDetailView {
             
             if let user = UserDefaultsClient.shared.userInfo {
                 if user.id != tradeViewModel.trade.writerID {
-                    NavigationLink(value: "tradeToChat") {
-                        RoundedRectangle(cornerRadius: 14)
-                            .foregroundStyle(.accent)
-                            .overlay {
-                                Text("채팅하기")
-                                    .font(ANBDFont.pretendardMedium(16))
-                                    .foregroundStyle(.white)
+                    RoundedRectangle(cornerRadius: 14)
+                        .foregroundStyle(.accent)
+                        .overlay {
+                            Text("채팅하기")
+                                .font(ANBDFont.pretendardMedium(16))
+                                .foregroundStyle(.white)
+                        }
+                        .frame(width: 100, height: 45)
+                        .padding()
+                        .onTapGesture {
+                            homeViewModel.chatDetailTrade = trade
+                            
+                            switch anbdViewType {
+                            case .home:
+                                homeViewModel.homePath.append(ANBDNavigationPaths.chatDetailView)
+                            case .trade:
+                                tradeViewModel.tradePath.append(ANBDNavigationPaths.chatDetailView)
+                            case .chat:
+                                dismiss()
                             }
-                            .frame(width: 100, height: 45)
-                            .padding()
-                    }
+                        }
                 }
             }
         }

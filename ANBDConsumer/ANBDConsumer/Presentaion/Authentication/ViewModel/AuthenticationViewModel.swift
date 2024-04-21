@@ -69,7 +69,7 @@ final class AuthenticationViewModel: ObservableObject {
     init() {
         $loginEmailString
             .removeDuplicates()
-            .debounce(for: .seconds(0.4), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.65), scheduler: DispatchQueue.main)
             .sink { [weak self] email in
                 guard let self = self else { return }
                 self.loginEmailStringDebounced = email
@@ -78,7 +78,7 @@ final class AuthenticationViewModel: ObservableObject {
         
         $loginPasswordString
             .removeDuplicates()
-            .debounce(for: .seconds(0.4), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.65), scheduler: DispatchQueue.main)
             .sink { [weak self] password in
                 guard let self = self else { return }
                 self.loginPasswordStringDebounced = password
@@ -95,7 +95,7 @@ final class AuthenticationViewModel: ObservableObject {
         
         $signUpEmailString
             .removeDuplicates()
-            .debounce(for: .seconds(0.05), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.02), scheduler: DispatchQueue.main)
             .sink { [weak self] email in
                 guard let self = self else { return }
                 self.signUpEmailStringDebounced = email
@@ -104,7 +104,7 @@ final class AuthenticationViewModel: ObservableObject {
         
         $signUpPasswordString
             .removeDuplicates()
-            .debounce(for: .seconds(0.1), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.65), scheduler: DispatchQueue.main)
             .sink { [weak self] password in
                 guard let self = self else { return }
                 self.signUpPasswordStringDebounced = password
@@ -113,7 +113,7 @@ final class AuthenticationViewModel: ObservableObject {
         
         $signUpPasswordCheckString
             .removeDuplicates()
-            .debounce(for: .seconds(0.05), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.65), scheduler: DispatchQueue.main)
             .sink { [weak self] password in
                 guard let self = self else { return }
                 self.signUpPasswordCheckStringDebounced = password
@@ -122,7 +122,7 @@ final class AuthenticationViewModel: ObservableObject {
         
         $signUpNicknameString
             .removeDuplicates()
-            .debounce(for: .seconds(0.05), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.65), scheduler: DispatchQueue.main)
             .sink { [weak self] nickname in
                 guard let self = self else { return }
                 self.signUpNicknameStringDebounced = nickname
@@ -207,12 +207,8 @@ extension AuthenticationViewModel {
 
 // MARK: Sign Up Method
 extension AuthenticationViewModel {
-    func submitSignUp() {
-        authState = true
-    }
-    
     func checkAuthState() {
-        if UserDefaultsClient.shared.userInfo == nil {
+        if UserDefaultsClient.shared.userID == nil {
             authState = false
         } else {
             authState = true
@@ -259,8 +255,11 @@ extension AuthenticationViewModel {
     
     func signIn() async throws {
         do {
-            UserDefaultsClient.shared.userInfo = try await authUsecase.signIn(email: loginEmailString,
-                                                                              password: loginPasswordString)
+            let signedInUser = try await authUsecase.signIn(email: loginEmailString,
+                                                            password: loginPasswordString)
+            
+            UserDefaultsClient.shared.userID = signedInUser.id
+            UserStore.shared.user = signedInUser
         } catch {
             print("\(error.localizedDescription)")
         }
@@ -278,14 +277,17 @@ extension AuthenticationViewModel {
     
     func signUp() async throws {
         do {
-            UserDefaultsClient.shared.userInfo = try await authUsecase.signUp(email: signUpEmailString,
-                                                                              password: signUpPasswordString,
-                                                                              nickname: signUpNicknameString,
-                                                                              favoriteLocation: signUpUserFavoriteLoaction,
-                                                                              isOlderThanFourteen: isOlderThanFourteen,
-                                                                              isAgreeService: isAgreeService,
-                                                                              isAgreeCollectInfo: isAgreeCollectInfo,
-                                                                              isAgreeMarketing: isAgreeMarketing)
+            let signedUpUser = try await authUsecase.signUp(email: signUpEmailString,
+                                                            password: signUpPasswordString,
+                                                            nickname: signUpNicknameString,
+                                                            favoriteLocation: signUpUserFavoriteLoaction,
+                                                            isOlderThanFourteen: isOlderThanFourteen,
+                                                            isAgreeService: isAgreeService,
+                                                            isAgreeCollectInfo: isAgreeCollectInfo,
+                                                            isAgreeMarketing: isAgreeMarketing)
+            
+            UserDefaultsClient.shared.userID = signedUpUser.id
+            UserStore.shared.user = signedUpUser
         } catch {
             print("\(error.localizedDescription)")
         }
@@ -303,13 +305,18 @@ extension AuthenticationViewModel {
         return isDuplicate
     }
     
+    func checkNicknameLength(_ nickname: String) -> String {
+        if nickname.count > 20 {
+            return String(nickname.prefix(20))
+        } else {
+            return nickname
+        }
+    }
+    
     func withdrawal(completion: @escaping () -> Void) async throws {
         do {
             try await signOut(completion: { })
-            
-            if let user = UserDefaultsClient.shared.userInfo {
-                try await authUsecase.withdrawal(userID: user.id)
-            }
+            try await authUsecase.withdrawal(userID: UserStore.shared.user.id)
             
             completion()
         } catch {

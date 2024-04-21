@@ -9,17 +9,17 @@ import Foundation
 import FirebaseAuth
 
 @available(iOS 15, *)
-final class DefaultArticleRepository: ArticleRepository {
+struct ArticleRepositoryImpl: ArticleRepository {
     
-    private let articleDataSource: any ArticleDataSource
-    private let commentDataSource: CommentDataSource
+    private let articleDataSource: any Postable<Article>
+    private let commentDataSource: any Postable<Comment>
     private let userDataSource: UserDataSource
     
     private let storage = StorageManager.shared
     
     init(
-        articleDataSource: any ArticleDataSource = DefaultArticleDataSource(),
-        commentDataSource: CommentDataSource = DefaultCommentDataSource(),
+        articleDataSource: any Postable<Article> = PostDataSource<Article>(database: .articleDatabase),
+        commentDataSource: any Postable<Comment> = PostDataSource<Comment>(database: .commentDatabase),
         userDataSource: UserDataSource = DefaultUserDataSource()
     ) {
         self.articleDataSource = articleDataSource
@@ -139,7 +139,7 @@ final class DefaultArticleRepository: ArticleRepository {
     
     // MARK: Delete
     func deleteArticle(article: Article) async throws {
-        try await commentDataSource.deleteCommentList(articleID: article.id)
+        try await commentDataSource.deleteItemList(articleID: article.id)
         
         if !article.thumbnailImagePath.isEmpty {
             try await storage.deleteImage(

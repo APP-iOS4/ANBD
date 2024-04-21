@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import ANBDModel
 
 struct AccountManagementView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
@@ -15,18 +16,20 @@ struct AccountManagementView: View {
     @State private var isShowingSignOutAlertView = false
     @State private var isShowingWithdrawalAlertView = false
     
+    @State private var refreshView = false
+    
     var body: some View {
         ZStack {
             VStack(spacing: 40) {
                 detailInfoComponentView(title: "가입한 계정",
-                                        content: "\(myPageViewModel.user.email)")
+                                        content: UserStore.shared.user.email)
                 .padding(.top, 30)
                 
                 detailInfoComponentView(title: "닉네임",
-                                        content: myPageViewModel.user.nickname)
+                                        content: UserStore.shared.user.nickname)
                 
                 detailInfoComponentView(title: "선호하는 거래 지역",
-                                        content: myPageViewModel.user.favoriteLocation.description)
+                                        content: UserStore.shared.user.favoriteLocation.description)
                 
                 VStack {
                     Rectangle()
@@ -62,8 +65,9 @@ struct AccountManagementView: View {
                 CustomAlertView(isShowingCustomAlert: $isShowingSignOutAlertView, viewType: .signOut) {
                     Task {
                         try await authenticationViewModel.signOut {
-                            UserDefaultsClient.shared.userInfo = nil
+                            UserDefaultsClient.shared.removeUserID()
                             authenticationViewModel.checkAuthState()
+                            myPageViewModel.myPageNaviPath.removeLast()
                         }
                     }
                 }
@@ -73,8 +77,9 @@ struct AccountManagementView: View {
                 CustomAlertView(isShowingCustomAlert: $isShowingWithdrawalAlertView, viewType: .withdrawal) {
                     Task {
                         try await authenticationViewModel.withdrawal {
-                            UserDefaultsClient.shared.userInfo = nil
+                            UserDefaultsClient.shared.removeUserID()
                             authenticationViewModel.checkAuthState()
+                            myPageViewModel.myPageNaviPath.removeLast()
                         }
                     }
                 }
@@ -83,7 +88,7 @@ struct AccountManagementView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {
-                    myPageViewModel.tempUserFavoriteLocation = myPageViewModel.user.favoriteLocation
+                    myPageViewModel.tempUserFavoriteLocation = UserStore.shared.user.favoriteLocation
                     isShowingEditorView.toggle()
                 }, label: {
                     Text("수정")
@@ -91,19 +96,19 @@ struct AccountManagementView: View {
             }
         }
         
+        .toolbarRole(.editor)
+        .toolbar(.hidden, for: .tabBar)
+        
         .navigationTitle("내 정보")
         .navigationBarTitleDisplayMode(.inline)
         
-        .fullScreenCover(isPresented: $isShowingEditorView) {
+        .fullScreenCover(isPresented: $isShowingEditorView, onDismiss: {
+            refreshView.toggle()
+        }) {
             UserInfoEditingView()
-        }
-        
-        .onAppear {
-            myPageViewModel.loadUserInfo()
         }
     }
     
-    @ViewBuilder
     private func detailInfoComponentView(title: String, content: String) -> some View {
         VStack(alignment: .leading, spacing: 15) {
             Text("\(title)")
@@ -116,6 +121,7 @@ struct AccountManagementView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 25)
+        .id(refreshView)
     }
 }
 

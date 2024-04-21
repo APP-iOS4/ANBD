@@ -13,70 +13,93 @@ struct UserInfoEditingView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     @Environment(\.dismiss) private var dismiss
     
+    @FocusState private var focus: FocusableField?
+    
     @State private var isShowingProfileImageEditingDialog = false
     @State private var isShowingPhotosPicker = false
-    @State private var isShowingMenuList: Bool = false
+    @State private var isShowingMenuList = false
+    @State private var isShwoingDuplicatedNicknameAlert = false
     
     @State private var photosPickerItem: PhotosPickerItem?
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 40) {
-                if #available(iOS 17.0, *) {
-                    userProfilImageButton
-                    
-                        .onChange(of: photosPickerItem) { _, _ in
-                            Task {
-                                if let photosPickerItem, let data = try? await photosPickerItem.loadTransferable(type: Data.self) {
-                                    if let image = await UIImage(data: data)?.byPreparingThumbnail(ofSize: .init(width: 512, height: 512)) {
-                                        myPageViewModel.userProfileImage = image
+            ZStack {
+                VStack(spacing: 40) {
+                    if #available(iOS 17.0, *) {
+                        userProfilImageButton
+                            .onChange(of: photosPickerItem) {
+                                Task {
+                                    if let photosPickerItem, let data = try? await photosPickerItem.loadTransferable(type: Data.self) {
+                                        if let image = await UIImage(data: data)?.byPreparingThumbnail(ofSize: .init(width: 512, height: 512)) {
+                                            myPageViewModel.userProfileImage = image
+                                        }
                                     }
                                 }
+                            }
+                    } else {
+                        userProfilImageButton
+                            .onChange(of: photosPickerItem, perform: { _ in
+                                Task {
+                                    if let photosPickerItem, let data = try? await photosPickerItem.loadTransferable(type: Data.self) {
+                                        if let image = await UIImage(data: data)?.byPreparingThumbnail(ofSize: .init(width: 512, height: 512)) {
+                                            myPageViewModel.userProfileImage = image
+                                        }
+                                    }
+                                }
+                            })
+                    }
+                    
+                    VStack(alignment: .leading) {
+                        Text("닉네임")
+                            .font(ANBDFont.SubTitle2)
+                            .foregroundStyle(Color.gray400)
+                            .padding(.bottom, 5)
+                        
+                        if #available(iOS 17.0, *) {
+                            nicknameTextField
+                            .onChange(of: myPageViewModel.editedUserNickname) {
+                                myPageViewModel.editedUserNickname = myPageViewModel.checkNicknameLength(myPageViewModel.editedUserNickname)
+                            }
+                        } else {
+                            nicknameTextField
+                            .onChange(of: myPageViewModel.editedUserNickname) { _ in
+                                myPageViewModel.editedUserNickname = myPageViewModel.checkNicknameLength(myPageViewModel.editedUserNickname)
                             }
                         }
-                } else {
-                    userProfilImageButton
+                        
+                        Divider()
+                        
+                        HStack {
+                            Spacer()
+                            
+                            Text("\(myPageViewModel.editedUserNickname.count) / 20")
+                                .padding(.horizontal, 5)
+                                .font(ANBDFont.body2)
+                                .foregroundStyle(.gray400)
+                        }
+                    }
+                    .padding(.horizontal, 20)
                     
-                        .onChange(of: photosPickerItem, perform: { _ in
-                            Task {
-                                if let photosPickerItem, let data = try? await photosPickerItem.loadTransferable(type: Data.self) {
-                                    if let image = await UIImage(data: data)?.byPreparingThumbnail(ofSize: .init(width: 512, height: 512)) {
-                                        myPageViewModel.userProfileImage = image
-                                    }
-                                }
-                            }
-                        })
+                    VStack(alignment: .leading) {
+                        Text("선호하는 거래 지역")
+                            .font(ANBDFont.SubTitle2)
+                            .foregroundStyle(Color.gray400)
+                            .padding(.bottom, 5)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        LocationPickerMenu(isShowingMenuList: $isShowingMenuList, selectedItem: $myPageViewModel.tempUserFavoriteLocation)
+                    }
+                    .padding(.horizontal, 20)
+                    
+                    Spacer()
                 }
                 
-                VStack(alignment: .leading) {
-                    Text("닉네임")
-                        .font(ANBDFont.SubTitle2)
-                        .foregroundStyle(Color.gray400)
-                        .padding(.bottom, 5)
-                    
-                    textFieldUIKit(placeholder: "닉네임을 입력해주세요.",
-                                   text: $myPageViewModel.editedUserNickname)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled(true)
-                    .font(ANBDFont.SubTitle1)
-                    .foregroundStyle(Color.gray900)
-                    
-                    Divider()
+                if isShwoingDuplicatedNicknameAlert {
+                    CustomAlertView(isShowingCustomAlert: $isShwoingDuplicatedNicknameAlert, viewType: .duplicatedNickname) {
+                        focus = .nickname
+                    }
                 }
-                .padding(.horizontal, 20)
-                
-                VStack(alignment: .leading) {
-                    Text("선호하는 거래 지역")
-                        .font(ANBDFont.SubTitle2)
-                        .foregroundStyle(Color.gray400)
-                        .padding(.bottom, 5)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    LocationPickerMenu(isShowingMenuList: $isShowingMenuList, selectedItem: myPageViewModel.tempUserFavoriteLocation)
-                }
-                .padding(.horizontal, 20)
-                
-                Spacer()
             }
             .toolbar {
                 ToolbarItemGroup(placement: .keyboard) {
@@ -99,12 +122,17 @@ struct UserInfoEditingView: View {
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
-                        dismiss()
-                        
-//                        Task {
-//                            await myPageViewModel.updateUserInfo(updatedNickname: myPageViewModel.editedUserNickname,
-//                                                                 updatedLocation: myPageViewModel.tempUserFavoriteLocation)
-//                        }
+                        Task {
+                            if await myPageViewModel.checkDuplicatedNickname() {
+                                downKeyboard()
+                                isShwoingDuplicatedNicknameAlert.toggle()
+                            } else {
+                                dismiss()
+                                
+                                await myPageViewModel.updateUserInfo(updatedNickname: myPageViewModel.editedUserNickname,
+                                                                     updatedLocation: myPageViewModel.tempUserFavoriteLocation)
+                            }
+                        }
                     }, label: {
                         Text("완료")
                     })
@@ -115,9 +143,8 @@ struct UserInfoEditingView: View {
             .navigationTitle("수정하기")
             .navigationBarTitleDisplayMode(.inline)
             
-            
             .onAppear {
-                myPageViewModel.editedUserNickname = myPageViewModel.user.nickname
+                myPageViewModel.editedUserNickname = UserStore.shared.user.nickname
             }
         }
     }
@@ -158,6 +185,22 @@ struct UserInfoEditingView: View {
         }
         
         .photosPicker(isPresented: $isShowingPhotosPicker, selection: $photosPickerItem)
+    }
+    
+    private var nicknameTextField: some View {
+        textFieldUIKit(placeholder: "닉네임을 입력해주세요.",
+                       text: $myPageViewModel.editedUserNickname)
+        .focused($focus, equals: .nickname)
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled(true)
+        .font(ANBDFont.SubTitle1)
+        .foregroundStyle(Color.gray900)
+    }
+}
+
+extension UserInfoEditingView {
+    enum FocusableField {
+        case nickname
     }
     
     private func textFieldUIKit(placeholder: String, text: Binding<String>) -> some View {

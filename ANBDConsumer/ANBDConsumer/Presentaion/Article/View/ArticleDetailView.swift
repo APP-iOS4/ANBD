@@ -200,7 +200,7 @@ struct ArticleDetailView: View {
                                             .foregroundStyle(.gray900)
                                     }
                                     .navigationDestination(isPresented: $isGoingToReportView) {
-                                        ReportView(reportViewType: .user)
+                                        ReportView(reportViewType: .users, reportedObjectID: "")
                                     }
                                 }
                                 .padding(.horizontal, 10)
@@ -334,7 +334,7 @@ struct ArticleDetailView: View {
             CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: comment)
         }
         .navigationDestination(isPresented: $isGoingToReportView) {
-            ReportView(reportViewType: .article)
+            ReportView(reportViewType: .article, reportedObjectID: "")
         }
         .navigationTitle("정보 공유")
         .navigationBarTitleDisplayMode(.inline)

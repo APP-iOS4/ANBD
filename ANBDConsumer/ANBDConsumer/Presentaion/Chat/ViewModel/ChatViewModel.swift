@@ -13,7 +13,9 @@ import ANBDModel
 final class ChatViewModel: ObservableObject {
     
     @Published var chatPath: NavigationPath = NavigationPath()
-    @Published var reportType: ReportView.ReportViewType = .chat
+    @Published var reportType: ReportType = .chatRoom
+    @Published var reportedObjectID: String = ""
+    @Published var reportedChannelID: String?
     
     private let chatUsecase: ChatUsecase = ChatUsecase()
     private let storageManager = StorageManager.shared

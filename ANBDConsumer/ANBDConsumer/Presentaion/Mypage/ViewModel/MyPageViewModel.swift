@@ -47,6 +47,7 @@ final class MyPageViewModel: ObservableObject {
     @Published private(set) var articlesWrittenByUser: [Article] = []
     @Published private(set) var tradesWrittenByUser: [Trade] = []
     
+    // 최종적으로 여기 담기는거지!요
     @Published private(set) var accuaArticlesWrittenByUser: [Article] = []
     @Published private(set) var dasiArticlesWrittenByUser: [Article] = []
     @Published private(set) var nanuaTradesWrittenByUser: [Trade] = []
@@ -104,7 +105,14 @@ final class MyPageViewModel: ObservableObject {
     @MainActor
     func loadArticlesWrittenByUser(userID: String, limit: Int = 10) async {
         do {
+            // 이거 왜 109번 처럼 Append로 넣어야 정상적인 작동을 하는지 궁금해요!
+            // articlesWrittenByUser = try await articleUsecase.loadArticleList(writerID: userID, limit: limit)
+            
+            // 그걸 불러와서 뷰 모델의 articlesWrittenByUser의 여기에 담는거죠?
+            // 혹시 잘 보고 있으면 >< 한번 쳐주셈
             try await articlesWrittenByUser.append(contentsOf: articleUsecase.loadArticleList(writerID: userID, limit: limit))
+            
+            // articlesWrittenByUser += try await articleUsecase.loadArticleList(writerID: userID, limit: limit)
         } catch {
             print("Error load articles written by user: \(error.localizedDescription)")
         }
@@ -125,6 +133,8 @@ final class MyPageViewModel: ObservableObject {
     }
     
     func filterANBDListWrittenByUser() {
+        
+        // 그럼 담은 걸 아 다로 구분하기 위해 이 메서드에서 구분하고 최종적으로
         accuaArticlesWrittenByUser = articlesWrittenByUser.filter({ $0.category == .accua})
         dasiArticlesWrittenByUser = articlesWrittenByUser.filter({ $0.category == .dasi})
         

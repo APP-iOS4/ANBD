@@ -12,6 +12,10 @@ struct UserPageView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     
+    // 이 유저 페이지는 마이페이지 눌렀을 때도 보이고 다른 유저 프로필 눌렀을 떄도 보여야 해서
+    // 17번 줄의 변수로 유저 정보를 받아서 들어와용
+    // 쥬리 이거????? 넵 그래서 이것도 프린트로 확인해보면
+    // ㅒ
     var writerUser: User
     
     @State private var userProfileImageData = Data()
@@ -157,10 +161,22 @@ struct UserPageView: View {
             isSignedInUser = myPageViewModel.checkSignInedUser(userID: writerUser.id)
             
             Task {
+                // 유저 정보가 들어오면 그걸 바탕으로 그 유저의 게시글들을 다 불러오죠
+                //이미 찍어보긴 했는데 봅시당!
                 await myPageViewModel.loadArticlesWrittenByUser(userID: writerUser.id)
                 await myPageViewModel.loadTradesWrittenByUser(userID: writerUser.id)
                 
+                
+                
+                // 쥬리 여기서!
                 myPageViewModel.filterANBDListWrittenByUser()
+                
+                print("\(myPageViewModel.articlesWrittenByUser)")
+                print("\(myPageViewModel.tradesWrittenByUser)")
+                
+                print("🦷\(writerUser.nickname)")
+                
+                // 요래?
                 
                 userProfileImageData = await myPageViewModel.loadUserProfileImage(containerID: "",
                                                                                   imagePath: myPageViewModel.user.profileImage)
@@ -176,6 +192,7 @@ struct UserPageView: View {
                     .foregroundStyle(Color.gray500)
                     .font(ANBDFont.SubTitle3)
                 
+                // 그래서 그냥 유저페이지 뷰에서 저기 담긴 걸 이렇게 보여주는거구!!!
                 Group {
                     switch category {
                     case .accua:

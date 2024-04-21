@@ -64,24 +64,23 @@ struct UserPageView: View {
             }
             .padding()
             
-            // User Activities
             HStack(spacing: 12) {
-                activityInfoComponent(title: "아껴 쓴 개수", count: 0, category: .accua)
+                activityInfoComponent(title: "아껴 쓴 개수", category: .accua)
                 
                 Divider()
                     .frame(height: 60)
                 
-                activityInfoComponent(title: "나눠 쓴 개수", count: 0, category: .nanua)
+                activityInfoComponent(title: "나눠 쓴 개수", category: .nanua)
                 
                 Divider()
                     .frame(height: 60)
                 
-                activityInfoComponent(title: "바꿔 쓴 개수", count: 0, category: .baccua)
+                activityInfoComponent(title: "바꿔 쓴 개수", category: .baccua)
                 
                 Divider()
                     .frame(height: 60)
                 
-                activityInfoComponent(title: "다시 쓴 개수", count: 0, category: .dasi)
+                activityInfoComponent(title: "다시 쓴 개수", category: .dasi)
             }
             
             if isSignedInUser {
@@ -156,14 +155,20 @@ struct UserPageView: View {
         
         .onAppear {
             isSignedInUser = myPageViewModel.checkSignInedUser(userID: writerUser.id)
+            
             Task {
+                await myPageViewModel.loadArticlesWrittenByUser(userID: writerUser.id)
+                await myPageViewModel.loadTradesWrittenByUser(userID: writerUser.id)
+                
+                myPageViewModel.filterANBDListWrittenByUser()
+                
                 userProfileImageData = await myPageViewModel.loadUserProfileImage(containerID: "",
                                                                                   imagePath: myPageViewModel.user.profileImage)
             }
         }
     }
     
-    private func activityInfoComponent(title: String, count: Int, category: ANBDCategory) -> some View {
+    private func activityInfoComponent(title: String, category: ANBDCategory) -> some View {
         NavigationLink(value: category) {
             VStack(alignment: .center, spacing: 5) {
                 
@@ -171,8 +176,19 @@ struct UserPageView: View {
                     .foregroundStyle(Color.gray500)
                     .font(ANBDFont.SubTitle3)
                 
-                Text("\(count)")
-                    .font(ANBDFont.pretendardSemiBold(22))
+                Group {
+                    switch category {
+                    case .accua:
+                        Text("\(myPageViewModel.accuaArticlesWrittenByUser.count)")
+                    case .nanua:
+                        Text("\(myPageViewModel.nanuaTradesWrittenByUser.count)")
+                    case .baccua:
+                        Text("\(myPageViewModel.baccuaTradesWrittenByUser.count)")
+                    case .dasi:
+                        Text("\(myPageViewModel.dasiArticlesWrittenByUser.count)")
+                    }
+                }
+                .font(ANBDFont.pretendardSemiBold(22))
             }
         }
     }

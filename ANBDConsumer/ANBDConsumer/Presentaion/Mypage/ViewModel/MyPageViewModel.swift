@@ -24,8 +24,9 @@ final class MyPageViewModel: ObservableObject {
                                likeTrades: [])
     
     private let userUsecase: UserUsecase = DefaultUserUsecase()
+    private let articleUsecase: ArticleUsecase = DefaultArticleUsecase()
+    private let tradeUsecase: TradeUsecase = DefaultTradeUsecase()
     
-    private let userDefaultsClient = UserDefaultsClient.shared
     private let storageManager = StorageManager.shared
     
     @Published var userProfileImage: UIImage = UIImage(named: "DefaultUserProfileImage.001.png")!
@@ -46,6 +47,11 @@ final class MyPageViewModel: ObservableObject {
     @Published private(set) var articlesWrittenByUser: [Article] = []
     @Published private(set) var tradesWrittenByUser: [Trade] = []
     
+    @Published private(set) var accuaArticlesWrittenByUser: [Article] = []
+    @Published private(set) var dasiArticlesWrittenByUser: [Article] = []
+    @Published private(set) var nanuaTradesWrittenByUser: [Trade] = []
+    @Published private(set) var baccuaTradesWrittenByUser: [Trade] = []
+    
     @Published private(set) var userLikedArticles: [Article] = []
     @Published private(set) var userHeartedTrades: [Trade] = []
     
@@ -54,9 +60,7 @@ final class MyPageViewModel: ObservableObject {
     
     @Published var myPageNaviPath = NavigationPath()
     
-    init() {
-        self.loadUserInfo()
-    }
+    init() { }
     
     func checkSignInedUser(userID: String) -> Bool {
         if userID == UserStore.shared.user.id {
@@ -78,12 +82,6 @@ final class MyPageViewModel: ObservableObject {
         }
     }
     
-    func loadUserInfo() {
-        if let user = userDefaultsClient.userInfo {
-            self.user = user
-        }
-    }
-    
     func loadUserProfileImage(containerID: String, imagePath: String) async -> Data {
         var userProfilImageData: Data = Data()
         
@@ -102,6 +100,51 @@ final class MyPageViewModel: ObservableObject {
         
         return userProfilImageData
     }
+    
+    @MainActor
+    func loadArticlesWrittenByUser(userID: String, limit: Int = 10) async {
+        do {
+            try await articlesWrittenByUser.append(contentsOf: articleUsecase.loadArticleList(writerID: userID, limit: limit))
+        } catch {
+            print("Error load articles written by user: \(error.localizedDescription)")
+        }
+    }
+    
+    @MainActor
+    func loadTradesWrittenByUser(userID: String, limit: Int = 10) async {
+        do {
+            try await tradesWrittenByUser.append(contentsOf: tradeUsecase.loadTradeList(writerID: userID, limit: limit))
+        } catch {
+            print("Error load Trades written by user: \(error.localizedDescription)")
+        }
+    }
+    
+    func clearANBDListWrittenByUser() {
+        articlesWrittenByUser = []
+        tradesWrittenByUser = []
+    }
+    
+    func filterANBDListWrittenByUser() {
+        accuaArticlesWrittenByUser = articlesWrittenByUser.filter({ $0.category == .accua})
+        dasiArticlesWrittenByUser = articlesWrittenByUser.filter({ $0.category == .dasi})
+        
+        nanuaTradesWrittenByUser = tradesWrittenByUser.filter({ $0.category == .nanua})
+        baccuaTradesWrittenByUser = tradesWrittenByUser.filter({ $0.category == .baccua})
+    }
+    
+//    func filterList(by category: ANBDCategory, user: User) -> [Any] {
+//        switch category {
+//        case .accua:
+//            let filteredList = user.likeArticles.filter({ $0.category == category })
+//            return
+//        case .nanua:
+//            <#code#>
+//        case .baccua:
+//            <#code#>
+//        case .dasi:
+//            <#code#>
+//        }
+//    }
     
     // MARK: - 유저 정보 수정
     func checkDuplicatedNickname() async -> Bool {

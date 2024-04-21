@@ -31,13 +31,16 @@ struct ANBDAdminAppHomeView: View {
                 }
                 DisclosureGroup(isExpanded: $isBoardListExpanded) {
                     NavigationLink(destination: ArticleListView().font(.title3)) {
-                        Text("게시물")
+                        Text("게시글")
                     }
                     NavigationLink(destination: TradeListView().font(.title3)) {
                         Text("거래글")
                     }
                 } label: {
                     Text("게시판 목록").bold()
+                }
+                NavigationLink(destination: EmptyView().font(.title3)) { // 임시 뷰
+                    Text("댓글 목록").bold()
                 }
                 NavigationLink(destination: BannerEditView().font(.title3)) {
                     Text("배너 관리").bold()

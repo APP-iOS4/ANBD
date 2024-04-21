@@ -13,8 +13,8 @@ class ArticleListViewModel: ObservableObject {
     var deletedArticleID: String? // 삭제 변수
     let articleUsecase = DefaultArticleUsecase()
 
-    func loadArticles() {
-        if articleList.isEmpty || articleList.contains(where: { $0.id == deletedArticleID })  {
+    func firstLoadArticles() {
+        if articleList.isEmpty {
             Task {
                 do {
                     let articles = try await articleUsecase.loadArticleList()
@@ -28,6 +28,19 @@ class ArticleListViewModel: ObservableObject {
         }
     }
     func loadArticle(articleID: String) async throws -> Article {
-        try await articleUsecase.loadArticle(articleID: articleID)
+        return try await articleUsecase.loadArticle(articleID: articleID)
+    }
+    func searchArticle(articleID: String) async {
+        do {
+            let searchedArticle = try await loadArticle(articleID: articleID)
+            DispatchQueue.main.async {
+                self.articleList = [searchedArticle]
+            }
+        } catch {
+            print(error)
+            DispatchQueue.main.async {
+                self.articleList = []
+            }
+        }
     }
 }

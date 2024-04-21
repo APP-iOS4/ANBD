@@ -1,59 +1,57 @@
 //
-//  UserListView.swift
+//  CommentListView.swift
 //  ANBDAdmin
 //
-//  Created by sswv on 4/8/24.
+//  Created by sswv on 4/22/24.
 //
 
 import SwiftUI
-import ANBDModel
-import CachedAsyncImage
+/*
+struct CommentListView: View {
+    @StateObject private var commentListViewModel = CommentListViewModel()
+    @State private var searchCommentText = ""
 
-struct UserListView: View {
-    @StateObject private var userListViewModel = UserListViewModel()
-    @State private var searchUserText = "" // 검색 텍스트 추적하는 변수
-    let userLevel: UserLevel
-    
     var body: some View {
         VStack {
-            TextField("유저의 ID값으로 검색...", text: $searchUserText)
+            TextField("댓글의 ID값으로 검색...", text: $searchCommentText)
                             .textCase(.lowercase)
                             .padding(7)
                             .background(Color(.systemGray6))
                             .cornerRadius(8)
                             .padding(.horizontal, 10)
                             .onSubmit {
-                                if !searchUserText.isEmpty {
+                                if !searchCommentText.isEmpty {
                                     Task {
-                                        await userListViewModel.searchUser(userID: searchUserText)
+                                        await commentListViewModel.searchComment(commentID: searchCommentText)
                                     }
                                 }
                             }
+                            .textInputAutocapitalization(.characters)// 항상 대문자로 입력받음
             HStack{
                 Spacer()
                 VStack(alignment: .leading) {
-                    Text("닉네임")
+                    Text("댓글이 달린 게시물 제목")
                         .font(.title3)
                 }
                 .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
                 Divider()
                 Spacer()
                 VStack(alignment: .leading) {
-                    Text("이메일")
+                    Text("댓글 내용")
                         .font(.title3)
                 }
                 .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
                 Divider()
                 Spacer()
                 VStack(alignment: .leading) {
-                    Text("유저권한")
+                    Text("작성자 닉네임")
                         .font(.title3)
                 }
                 .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
                 Divider()
                 Spacer()
                 VStack(alignment: .leading) {
-                    Text("프로필 사진")
+                    Text("생성일자")
                         .font(.title3)
                 }
                 .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
@@ -62,16 +60,14 @@ struct UserListView: View {
             .frame(maxWidth: .infinity, maxHeight: 30)
             .padding(.horizontal, 15)
             .padding(.vertical, 5)
-            ScrollView {
-                LazyVStack{
-                    ForEach(userListViewModel.userList.filter({
-                        ($0.userLevel == userLevel)
-                    }), id: \.id) { user in
-                        NavigationLink(destination: UserListDetailView(user: user, initialUserLevel: userLevel)) {
+            ScrollView{
+                LazyVStack {
+                    ForEach(commentListViewModel.commentList, id: \.id) { comment in
+                        NavigationLink(destination: CommentListDetailView(comment: comment, deletedCommentID: $commentListViewModel.deletedCommentID)) {
                             HStack{
                                 Spacer()
                                 VStack(alignment: .leading) {
-                                    Text("\(user.nickname)")
+                                    Text("\(comment.nickname)")
                                         .font(.title3)
                                         .foregroundColor(.black)
                                 }
@@ -79,34 +75,22 @@ struct UserListView: View {
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
-                                    Text("\(user.email)")
+                                    Text("\(comment.email)")
                                         .foregroundColor(.black)
                                 }
                                 .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
-                                    Text("\(user.userLevel)")
+                                    Text("\(comment.userLevel)")
                                         .foregroundColor(.black)
                                 }
                                 .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
-                                    if let imageUrl = URL(string: user.profileImage) {
-                                        CachedAsyncImage(url: imageUrl) { phase in
-                                            switch phase {
-                                            case .empty:
-                                                ProgressView()
-                                            case .success(let image):
-                                                image.resizable().frame(width: 40, height: 40)
-                                            case .failure:
-                                                Text("Failed to load image")
-                                            @unknown default:
-                                                EmptyView()
-                                            }
-                                        }
-                                    }
+                                    Text("\(dateFormatter(comment.createdAt))")
+                                        .foregroundColor(.black)
                                 }
                                 .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
                                 Spacer()
@@ -119,12 +103,21 @@ struct UserListView: View {
                     }
                 }
                 .onAppear {
-                    userListViewModel.loadUsers()
+                    commentListViewModel.loadComments()
                 }
-                .navigationBarTitle("유저 목록")
+                .navigationBarTitle("게시물 목록")
+                .toolbar {
+                            Button(action: {
+                                commentListViewModel.loadComments()
+                            }) {
+                                Image(systemName: "arrow.clockwise")
+                            }
+                        }
             }
             .padding(.top, 10)
             .background(Color(.systemGroupedBackground))
         }
     }
 }
+
+*/

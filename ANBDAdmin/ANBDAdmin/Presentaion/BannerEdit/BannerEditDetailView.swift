@@ -51,22 +51,22 @@ struct BannerEditDetailView: View {
         }
         .navigationBarTitle(banner.id)
         .toolbar {
-                    Button("Delete") {
+                    Button("삭제") {
                         bannerDeleteShowingAlert = true // 경고를 표시
                     }
                 }
                 .alert(isPresented: $bannerDeleteShowingAlert) { // 경고를 표시
                     Alert(
-                        title: Text("Delete"),
-                        message: Text("Are you sure you want to delete this trade?"),
-                        primaryButton: .destructive(Text("Delete")) {
+                        title: Text("삭제"),
+                        message: Text("해당 배너를 삭제하시겠습니까?"),
+                        primaryButton: .destructive(Text("삭제")) {
                             Task {
                                 do {
                                     try await bannerUsecase.deleteBanner(bannerID: banner.id)
                                     deletedBannerID = banner.id
                                     bannerDeletePresentationMode.wrappedValue.dismiss()
                                 } catch {
-                                    print("게시물을 삭제하는데 실패했습니다: \(error)")
+                                    print("배너를 삭제하는데 실패했습니다: \(error)")
                                 }
                             }
                         },

@@ -11,16 +11,24 @@ import CachedAsyncImage
 
 struct TradeListView: View {
     @StateObject private var tradeListViewModel = TradeListViewModel()
-    @State private var searchTradeText = "" // 검색 텍스트 추적하는 변수
+    @State private var searchTradeText = ""
     
     var body: some View {
         VStack {
             TextField("제목이나 ID값으로 검색...", text: $searchTradeText)
-                .textCase(.lowercase)
-                .padding(7)
-                .background(Color(.systemGray6))
-                .cornerRadius(8)
-                .padding(.horizontal, 10)
+                            .textCase(.lowercase)
+                            .padding(7)
+                            .background(Color(.systemGray6))
+                            .cornerRadius(8)
+                            .padding(.horizontal, 10)
+                            .onSubmit {
+                                if !searchTradeText.isEmpty {
+                                    Task {
+                                        await tradeListViewModel.searchTrade(tradeID: searchTradeText)
+                                    }
+                                }
+                            }
+                            .textInputAutocapitalization(.characters)// 항상 대문자로 입력받음
             HStack{
                 Spacer()
                 VStack(alignment: .leading) {
@@ -49,7 +57,7 @@ struct TradeListView: View {
             .padding(.vertical, 5)
             ScrollView {
                 LazyVStack{
-                    ForEach(tradeListViewModel.tradeList.filter({ searchTradeText.isEmpty ? true : $0.title.contains(searchTradeText) || $0.id.contains(searchTradeText) }), id: \.id) { trade in
+                    ForEach(tradeListViewModel.tradeList, id: \.id) { trade in
                         NavigationLink(destination: TradeListDetailView(trade: trade, deletedTradeID: $tradeListViewModel.deletedTradeID)) {
                             HStack{
                                 Spacer()
@@ -84,9 +92,16 @@ struct TradeListView: View {
                 }
                 
                 .onAppear {
-                    tradeListViewModel.loadTrades()
+                    tradeListViewModel.firstLoadTrades()
                 }
                 .navigationBarTitle("거래글 목록")
+                .toolbar {
+                            Button(action: {
+                                //새로고침 함수 뷰모델에 작성예정
+                            }) {
+                                Image(systemName: "arrow.clockwise")
+                            }
+                        }
             }
             .padding(.top, 10)
             .background(Color(.systemGroupedBackground))

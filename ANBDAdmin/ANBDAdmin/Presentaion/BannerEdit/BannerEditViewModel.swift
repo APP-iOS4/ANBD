@@ -16,16 +16,14 @@ class BannerEditViewModel: ObservableObject {
     
     
     func loadBanners() {
-        if bannerList.isEmpty || bannerList.contains(where: { $0.id == deletedBannerID })  {
-            Task {
-                do {
-                    let banners = try await bannerUsecase.loadBannerList()
-                    DispatchQueue.main.async {
-                        self.bannerList = banners
-                    }
-                } catch {
-                    print("게시물 목록을 가져오는데 실패했습니다: \(error)")
+        Task {
+            do {
+                let banners = try await bannerUsecase.loadBannerList()
+                DispatchQueue.main.async {
+                    self.bannerList = banners
                 }
+            } catch {
+                print("게시물 목록을 가져오는데 실패했습니다: \(error)")
             }
         }
     }

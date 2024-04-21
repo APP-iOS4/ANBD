@@ -24,4 +24,20 @@ class UserListViewModel: ObservableObject {
             }
         }
     }
+    func loadUser(userID: String) async throws -> User {
+        return try await userUsecase.getUserInfo(userID: userID)
+    }
+    func searchUser(userID: String) async {
+        do {
+            let searchedUser = try await loadUser(userID: userID)
+            DispatchQueue.main.async {
+                self.userList = [searchedUser]
+            }
+        } catch {
+            print(error)
+            DispatchQueue.main.async {
+                self.userList = []
+            }
+        }
+    }
 }

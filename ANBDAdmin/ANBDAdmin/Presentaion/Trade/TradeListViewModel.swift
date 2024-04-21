@@ -14,8 +14,8 @@ class TradeListViewModel: ObservableObject {
     var deletedTradeID: String? // 삭제 변수
     let tradeUsecase = DefaultTradeUsecase()
 
-    func loadTrades() {
-        if tradeList.isEmpty || tradeList.contains(where: { $0.id == deletedTradeID })  {
+    func firstLoadTrades() {
+        if tradeList.isEmpty {
             Task {
                 do {
                     let trades = try await tradeUsecase.loadTradeList()
@@ -25,6 +25,22 @@ class TradeListViewModel: ObservableObject {
                 } catch {
                     print("게시물 목록을 가져오는데 실패했습니다: \(error)")
                 }
+            }
+        }
+    }
+    func loadTrade(tradeID: String) async throws -> Trade {
+        return try await tradeUsecase.loadTrade(tradeID: tradeID)
+    }
+    func searchTrade(tradeID: String) async {
+        do {
+            let searchedTrade = try await loadTrade(tradeID: tradeID)
+            DispatchQueue.main.async {
+                self.tradeList = [searchedTrade]
+            }
+        } catch {
+            print(error)
+            DispatchQueue.main.async {
+                self.tradeList = []
             }
         }
     }

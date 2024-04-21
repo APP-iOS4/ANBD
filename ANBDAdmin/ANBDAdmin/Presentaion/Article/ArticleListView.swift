@@ -1,5 +1,5 @@
 //
-//  UserListDetailView.swift
+//  ArticleListDetailView.swift
 //  ANBDAdmin
 //
 //  Created by sswv on 4/8/24.
@@ -12,24 +12,23 @@ import CachedAsyncImage
 struct ArticleListView: View {
     @StateObject private var articleListViewModel = ArticleListViewModel()
     @State private var searchArticleText = ""
-    @State private var searchedArticle: Article?
 
     var body: some View {
         VStack {
-            TextField("제목이나 ID값으로 검색...", text: $searchArticleText, onCommit: {
-                            Task {
-                                do {
-                                    searchedArticle = try await articleListViewModel .loadArticle(articleID: searchArticleText)
-                                } catch {
-                                    print(error)
+            TextField("제목이나 ID값으로 검색...", text: $searchArticleText)
+                            .textCase(.lowercase)
+                            .padding(7)
+                            .background(Color(.systemGray6))
+                            .cornerRadius(8)
+                            .padding(.horizontal, 10)
+                            .onSubmit {
+                                if !searchArticleText.isEmpty {
+                                    Task {
+                                        await articleListViewModel.searchArticle(articleID: searchArticleText)
+                                    }
                                 }
                             }
-                        })
-                        .textCase(.lowercase)
-                        .padding(7)
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                        .padding(.horizontal, 10)
+                            .textInputAutocapitalization(.characters)// 항상 대문자로 입력받음
             HStack{
                 Spacer()
                 VStack(alignment: .leading) {
@@ -58,7 +57,7 @@ struct ArticleListView: View {
             .padding(.vertical, 5)
             ScrollView{
                 LazyVStack {
-                    ForEach(articleListViewModel.articleList.filter({ searchArticleText.isEmpty ? true : $0.title.contains(searchArticleText) || $0.id.contains(searchArticleText) }), id: \.id) { article in
+                    ForEach(articleListViewModel.articleList, id: \.id) { article in
                         NavigationLink(destination: ArticleListDetailView(article: article, deletedArticleID: $articleListViewModel.deletedArticleID)) {
                             HStack{
                                 Spacer()
@@ -92,9 +91,16 @@ struct ArticleListView: View {
                     }
                 }
                 .onAppear {
-                    articleListViewModel.loadArticles()
+                    articleListViewModel.firstLoadArticles()
                 }
-                .navigationBarTitle("게시물 목록")
+                .navigationBarTitle("게시글 목록")
+                .toolbar {
+                            Button(action: {
+                                //새로고침 함수 뷰모델에 작성예정
+                            }) {
+                                Image(systemName: "arrow.clockwise")
+                            }
+                        }         
             }
             .padding(.top, 10)
             .background(Color(.systemGroupedBackground))

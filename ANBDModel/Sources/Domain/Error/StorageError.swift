@@ -11,7 +11,7 @@ public enum StorageError: Int, Error {
     case invalidContainerID = 4050
     case invalidImagePath
     case invalidImageData
-    case uploadError = 5029
+    case uploadError = 5033
     case downloadError
     case updateError
     case deleteError

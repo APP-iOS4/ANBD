@@ -26,26 +26,27 @@ struct SignUpUserInfoView: View {
                     .padding(.top, 16)
                     .padding(.bottom, 70)
                 
-                TextFieldWithTitle(fieldType: .normal,
-                                   title: "닉네임",
-                                   placeholder: "2~20자의 닉네임을 입력해주세요.",
-                                   inputText: $authenticationViewModel.signUpNicknameString)
-                .focused($focus, equals: .nickname)
-                .textInputAutocapitalization(.never)
-                .autocorrectionDisabled(true)
-                .submitLabel(.go)
-                .onSubmit {
-                    guard authenticationViewModel.isValidSignUpNickname else { return }
-                    
-                    Task {
-                        if await authenticationViewModel.checkDuplicatedNickname() {
-                            isShwoingDuplicatedNicknameAlert.toggle()
-                        } else {
-                            nextButtonAction()
-                        }
+                if #available(iOS 17.0, *) {
+                    textFieldWithTitle
+                    .onChange(of: authenticationViewModel.signUpNicknameString) {
+                        authenticationViewModel.signUpNicknameString = authenticationViewModel.checkNicknameLength(authenticationViewModel.signUpNicknameString)
+                    }
+                } else {
+                    textFieldWithTitle
+                    .onChange(of: authenticationViewModel.signUpNicknameString) { _ in
+                        authenticationViewModel.signUpNicknameString = authenticationViewModel.checkNicknameLength(authenticationViewModel.signUpNicknameString)
                     }
                 }
-                .padding(.bottom)
+                
+                HStack {
+                    Spacer()
+                    
+                    Text("\(authenticationViewModel.signUpNicknameString.count) / 20")
+                        .padding(.horizontal, 5)
+                        .font(ANBDFont.body2)
+                        .foregroundStyle(.gray400)
+                }
+                .padding(.top, -15)
                 
                 if !authenticationViewModel.errorMessage.isEmpty {
                     Text(authenticationViewModel.errorMessage)
@@ -60,13 +61,14 @@ struct SignUpUserInfoView: View {
                     .foregroundStyle(Color.gray900)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
-                LocationPickerMenu(isShowingMenuList: $isShowingMenuList, selectedItem: authenticationViewModel.signUpUserFavoriteLoaction)
+                LocationPickerMenu(isShowingMenuList: $isShowingMenuList, selectedItem: $authenticationViewModel.signUpUserFavoriteLoaction)
                 
                 Spacer()
                 
                 BlueSquareButton(title: "다음", isDisabled: !authenticationViewModel.isValidSignUpNickname) {
                     Task {
                         if await authenticationViewModel.checkDuplicatedNickname() {
+                            downKeyboard()
                             isShwoingDuplicatedNicknameAlert.toggle()
                         } else {
                             nextButtonAction()
@@ -101,6 +103,29 @@ struct SignUpUserInfoView: View {
         .onAppear {
             focus = .nickname
         }
+    }
+    
+    private var textFieldWithTitle: some View {
+        TextFieldWithTitle(fieldType: .normal,
+                           title: "닉네임",
+                           placeholder: "2~20자의 닉네임을 입력해주세요.",
+                           inputText: $authenticationViewModel.signUpNicknameString)
+        .focused($focus, equals: .nickname)
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled(true)
+        .submitLabel(.go)
+        .onSubmit {
+            guard authenticationViewModel.isValidSignUpNickname else { return }
+            
+            Task {
+                if await authenticationViewModel.checkDuplicatedNickname() {
+                    isShwoingDuplicatedNicknameAlert.toggle()
+                } else {
+                    nextButtonAction()
+                }
+            }
+        }
+        .padding(.bottom)
     }
     
     private func nextButtonAction() {

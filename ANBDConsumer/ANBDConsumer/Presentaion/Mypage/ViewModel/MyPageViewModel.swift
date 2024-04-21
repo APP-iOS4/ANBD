@@ -11,10 +11,10 @@ import ANBDModel
 
 final class MyPageViewModel: ObservableObject {
     static let mockUser = User(id: "abcd1234",
-                               nickname: "김마루",
+                               nickname: "알수 없음",
                                profileImage: "DefaultUserProfileImage",
-                               email: "sjybext@naver.com",
-                               favoriteLocation: .jeju,
+                               email: "anbd@anbd.com",
+                               favoriteLocation: .seoul,
                                userLevel: .consumer,
                                isOlderThanFourteen: true,
                                isAgreeService: true,
@@ -24,6 +24,9 @@ final class MyPageViewModel: ObservableObject {
                                likeTrades: [])
     
     private let userUsecase: UserUsecase = DefaultUserUsecase()
+    
+    private let userDefaultsClient = UserDefaultsClient.shared
+    private let storageManager = StorageManager.shared
     
     @Published var userProfileImage: UIImage = UIImage(named: "DefaultUserProfileImage.001.png")!
     
@@ -40,8 +43,8 @@ final class MyPageViewModel: ObservableObject {
                                likeArticles: [],
                                likeTrades: [])
     
-    @Published private(set) var userArticles: [Article] = []
-    @Published private(set) var userTrades: [Trade] = []
+    @Published private(set) var articlesWrittenByUser: [Article] = []
+    @Published private(set) var tradesWrittenByUser: [Trade] = []
     
     @Published private(set) var userLikedArticles: [Article] = []
     @Published private(set) var userHeartedTrades: [Trade] = []
@@ -51,28 +54,67 @@ final class MyPageViewModel: ObservableObject {
     
     @Published var myPageNaviPath = NavigationPath()
     
-    let mockArticleData: [Article] = []
-    let mockTradeData: [Trade] = []
+    init() {
+        self.loadUserInfo()
+    }
     
-    /// UserDefaults에서 유저 정보 불러오기
+    func checkSignInedUser(userID: String) -> Bool {
+        if userID == UserStore.shared.user.id {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    func getUserInfo(userID: String) async -> User {
+        do {
+            let getUser = try await userUsecase.getUserInfo(userID: userID)
+            
+            return getUser
+        } catch {
+            print("\(error.localizedDescription)")
+            
+            return MyPageViewModel.mockUser
+        }
+    }
+    
     func loadUserInfo() {
-        if let user = UserDefaultsClient.shared.userInfo {
+        if let user = userDefaultsClient.userInfo {
             self.user = user
         }
     }
     
-    /// 유저 정보 수정하기
-    func updateUserInfo(updatedNickname: String, updatedLocation: Location) async {
+    func loadUserProfileImage(containerID: String, imagePath: String) async -> Data {
+        var userProfilImageData: Data = Data()
+        
         do {
-            var updatedUser: User = user
-            
-            updatedUser.nickname = updatedNickname
-            updatedUser.favoriteLocation = updatedLocation
-            
-            try await userUsecase.updateUserInfo(user: updatedUser)
-            UserDefaultsClient.shared.userInfo = updatedUser
+            userProfilImageData = try await storageManager.downloadImage(path: .profile,
+                                                                         containerID: containerID,
+                                                                         imagePath: imagePath)
         } catch {
             print("\(error.localizedDescription)")
+            
+            let defaultUserProfileImage = UIImage(named: "DefaultUserProfileImage")
+            let defaultUserProfileImageData = defaultUserProfileImage?.pngData()
+            
+            userProfilImageData = defaultUserProfileImageData ?? Data()
+        }
+        
+        return userProfilImageData
+    }
+    
+    // MARK: - 유저 정보 수정
+    func checkDuplicatedNickname() async -> Bool {
+        let isDuplicate = await userUsecase.checkDuplicatedNickname(nickname: editedUserNickname)
+        
+        return isDuplicate
+    }
+    
+    func checkNicknameLength(_ nickname: String) -> String {
+        if nickname.count > 20 {
+            return String(nickname.prefix(20))
+        } else {
+            return nickname
         }
     }
     
@@ -83,6 +125,20 @@ final class MyPageViewModel: ObservableObject {
             return false
         }
     }
+    
+    func updateUserInfo(updatedNickname: String, updatedLocation: Location) async {
+        do {
+            var updatedUser: User = UserStore.shared.user
+            
+            updatedUser.nickname = updatedNickname
+            updatedUser.favoriteLocation = updatedLocation
+            
+            try await userUsecase.updateUserInfo(user: updatedUser)
+            UserStore.shared.user = updatedUser
+        } catch {
+            print("\(error.localizedDescription)")
+        }
+    }
 }
 
 extension MyPageViewModel {
@@ -90,5 +146,6 @@ extension MyPageViewModel {
         case userLikedArticleList
         case userHeartedTradeList
         case accountManagement
+        case report
     }
 }

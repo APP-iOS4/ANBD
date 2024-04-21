@@ -75,7 +75,6 @@ final class TradeViewModel: ObservableObject {
         }
     }
     
-    @MainActor
     func loadFilteredTrades(category: ANBDCategory) async {
         do {
             if self.selectedLocations.isEmpty && self.selectedItemCategories.isEmpty {

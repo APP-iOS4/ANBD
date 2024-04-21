@@ -16,24 +16,21 @@ final class HomeViewModel: ObservableObject {
     private let tradeUsecase: TradeUsecase = DefaultTradeUsecase()
     private let bannerUsecase: BannerUsecase = DefaultBannerUsecase()
     
+    /// path관련 변수들
     @Published var homePath: NavigationPath = NavigationPath()
+    @Published var chatDetailTrade: Trade?
+    @Published var reportType: ReportType = .trade
+    @Published var reportedObjectID: String = ""
+    @Published var reportedChannelID: String?
     
+    
+    /// Home에서 보여주는 아이템들
     @Published var bannerItemList: [Banner] = []
-    
     @Published var accuaArticle: Article?
     @Published var dasiArticle: Article?
     @Published var nanuaTrades: [Trade] = []
     @Published var baccuaTrades: [Trade] = []
     
-    
-    init() {
-        Task {
-            await loadArticle(category: .accua)
-            await loadArticle(category: .dasi)
-            await loadTrades(category: .nanua)
-            await loadTrades(category: .baccua)
-        }
-    }
     
     /// 광고 · 배너 가져오기
     func loadBanners() async {
@@ -45,7 +42,7 @@ final class HomeViewModel: ObservableObject {
     }
     
     /// 아껴쓰기 · 다시쓰기 최신 1개씩 가져오기
-    private func loadArticle(category: ANBDCategory) async {
+    func loadArticle(category: ANBDCategory) async {
         do {
             if category == .accua {
                 accuaArticle = try await articleUsecase.loadRecentArticle(category: .accua)
@@ -59,7 +56,7 @@ final class HomeViewModel: ObservableObject {
     }
     
     /// 나눠쓰기 · 바꿔쓰기 최신순으로 각각 4개, 2개씩 가져오기
-    private func loadTrades(category: ANBDCategory) async {
+    func loadTrades(category: ANBDCategory) async {
         do {
             if category == .nanua {
                 try await nanuaTrades = tradeUsecase.loadRecentTradeList(category: .nanua)

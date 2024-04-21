@@ -126,7 +126,7 @@ struct TradeDetailView: View {
             }
         }//ZStack
         .onAppear {
-            tradeViewModel.getOneTrade(trade: trade)
+            //tradeViewModel.getOneTrade(trade: trade)
             Task {
                 imageData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: tradeViewModel.trade.id, imagePath: tradeViewModel.trade.imagePaths)
             }

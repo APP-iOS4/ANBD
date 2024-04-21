@@ -9,14 +9,14 @@ import Foundation
 import FirebaseFirestore
 
 @available(iOS 15, *)
-struct DefaultCommentRepository: CommentRepository {
+struct CommentRepositoryImpl: CommentRepository {
     
-    private let commentDataSource: CommentDataSource
-    private let articleDataSource: any ArticleDataSource
+    private let commentDataSource: any Postable<Comment>
+    private let articleDataSource: any Postable<Article>
     
     init(
-        commentDataSource: CommentDataSource = DefaultCommentDataSource(),
-        articleDataSource: any ArticleDataSource = DefaultArticleDataSource()
+        commentDataSource: any Postable<Comment> = PostDataSource<Comment>(database: .commentDatabase),
+        articleDataSource: any Postable<Article> = PostDataSource<Article>(database: .articleDatabase)
     ) {
         self.commentDataSource = commentDataSource
         self.articleDataSource = articleDataSource
@@ -24,11 +24,10 @@ struct DefaultCommentRepository: CommentRepository {
     
     
     // MARK: Create
-    /// CommentDB에 댓글 정보를 추가합니다.
     func createComment(articleID: String, comment: Comment) async throws {
         var articleInfo = try await articleDataSource.readItem(itemID: articleID)
         
-        try await commentDataSource.createComment(comment: comment)
+        try await commentDataSource.createItem(item: comment)
         articleInfo.commentCount += 1
         
         try await articleDataSource.updateItem(item: articleInfo)
@@ -36,36 +35,25 @@ struct DefaultCommentRepository: CommentRepository {
     
     
     // MARK: Read
-    /// commentID가 일치하는 댓글을 반환한다.
-    func readCommentList(commentID: String) async throws -> Comment {
-        let comment = try await commentDataSource.readComment(commentID: commentID)
+    func readComment(commentID: String) async throws -> Comment {
+        let comment = try await commentDataSource.readItem(itemID: commentID)
         return comment
     }
     
-    /// articleID가 일치하는 댓글 목록을 반환한다.
     func readCommentList(articleID: String) async throws -> [Comment] {
-        let commentList = try await commentDataSource.readCommentList(articleID: articleID)
+        let commentList = try await commentDataSource.readItemList(articleID: articleID)
         return commentList
     }
     
-    /// writerID가 일치하는 댓글 목록을 반환한다.
-    func readCommentList(writerID: String) async throws -> [Comment] {
-        let commentList = try await commentDataSource.readCommentList(writerID: writerID)
-        return commentList
-    }
-    
-    /// [관리자용]
-    /// 전체 댓글 목록을 반환한다.
-    func readCommentList() async throws -> [Comment] {
-        let commentList = try await commentDataSource.readCommentList()
+    func readCommentList(writerID: String, limit: Int) async throws -> [Comment] {
+        let commentList = try await commentDataSource.readItemList(writerID: writerID, limit: limit)
         return commentList
     }
     
     
     // MARK: Update
-    /// 댓글 정보를 수정한다.
     func updateComment(comment: Comment) async throws {
-        try await commentDataSource.updateComment(comment: comment)
+        try await commentDataSource.updateItem(item: comment)
     }
     
     
@@ -73,14 +61,14 @@ struct DefaultCommentRepository: CommentRepository {
     func deleteComment(articleID: String, commentID: String) async throws {
         var articleInfo = try await articleDataSource.readItem(itemID: articleID)
         
-        try await commentDataSource.deleteComment(commentID: commentID)
+        try await commentDataSource.deleteItem(itemID: commentID)
         articleInfo.commentCount -= 1
         
         try await articleDataSource.updateItem(item: articleInfo)
     }
     
     func deleteCommentList(articleID: String) async throws {
-        try await commentDataSource.deleteCommentList(articleID: articleID)
+        try await commentDataSource.deleteItemList(articleID: articleID)
     }
     
 }

@@ -12,6 +12,8 @@ import ANBDModel
 final class ArticleViewModel: ObservableObject {
     
     let articleUseCase: ArticleUsecase = DefaultArticleUsecase()
+    let commentUseCase: CommentUsecase = DefaultCommentUsecase()
+    
     private let storageManager = StorageManager.shared
     
     @Published var articlePath: NavigationPath = NavigationPath()
@@ -30,6 +32,18 @@ final class ArticleViewModel: ObservableObject {
                                               imagePaths: [],
                                               likeCount: 0,
                                               commentCount: 0)
+    
+    @Published private(set) var comments: [Comment] = []
+    
+    @Published var comment: Comment = Comment(id: "",
+                                              articleID: "",
+                                              writerID: "",
+                                              writerNickname: "",
+                                              writerProfileImageURL: "",
+                                              createdAt: Date(),
+                                              content: "")
+
+    @Published var commentText: String = ""
     
     @Published var sortOption: ArticleOrder = .latest
     
@@ -151,7 +165,7 @@ final class ArticleViewModel: ObservableObject {
             self.article = loadedArticle
         } catch {
             print(error.localizedDescription)
-            print("실패실패실패실패실패시랲")
+            print("실패실패실패실패실패")
         }
     }
     
@@ -209,6 +223,59 @@ final class ArticleViewModel: ObservableObject {
             return "좋아요순"
         case .mostComment:
             return "댓글순"
+        }
+    }
+    
+    // MARK: - Comment
+    func writeComment(articleID: String, content: String) async {
+        
+        guard let user = UserDefaultsClient.shared.userInfo else {
+            return
+        }
+        
+        let newComment = Comment(articleID: articleID,
+                                 writerID: user.id,
+                                 writerNickname: user.nickname,
+                                 writerProfileImageURL: user.profileImage,
+                                 content: content)
+        
+        comments.append(newComment)
+        print("\(newComment.content)")
+        
+        do {
+            try await commentUseCase.writeComment(articleID: articleID, comment: newComment)
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func loadCommentList(articleID: String) async {
+        do {
+            let loadedComment = try await commentUseCase.loadCommentList(articleID: articleID)
+            self.comments = loadedComment
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func updateComment(comment: Comment) async {
+        do {
+            try await commentUseCase.updateComment(comment: comment)
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func deleteComment(articleID: String, commentID: String) async {
+        do {
+            try await commentUseCase.deleteComment(articleID: articleID, commentID: commentID)
+            print("articleID: \(article.id), \(articleID)")
+            print("commentID: \(comment.id), \(commentID)")
+        } catch {
+            print(error.localizedDescription)
+            print("댓글 삭제 실패")
+            print("articleID: \(article.id), \(articleID)")
+            print("commentID: \(comment.id), \(commentID)")
         }
     }
     

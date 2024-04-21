@@ -42,7 +42,7 @@ struct ANBDTabView: View {
                         }
                     }
                     .navigationDestination(for: Article.self) { article in
-                        ArticleDetailView(article: article)
+                        ArticleDetailView(article: article, comment: articleViewModel.comment)
                     }
                     .navigationDestination(for: Trade.self) { trade in
                         TradeDetailView(trade: trade)
@@ -69,7 +69,7 @@ struct ANBDTabView: View {
             NavigationStack(path: $articleViewModel.articlePath) {
                 ArticleView(category: $articleCategory)
                     .navigationDestination(for: Article.self) { article in
-                        ArticleDetailView(article: article)
+                        ArticleDetailView(article: article, comment: articleViewModel.comment)
                     }
                     .navigationDestination(for: Trade.self) { trade in
                         TradeDetailView(trade: trade)
@@ -90,7 +90,7 @@ struct ANBDTabView: View {
             NavigationStack(path: $tradeViewModel.tradePath) {
                 ArticleView(category: $tradeCategory)
                     .navigationDestination(for: Article.self) { article in
-                        ArticleDetailView(article: article)
+                        ArticleDetailView(article: article, comment: articleViewModel.comment)
                     }
                     .navigationDestination(for: Trade.self) { trade in
                         TradeDetailView(trade: trade)
@@ -128,7 +128,7 @@ struct ANBDTabView: View {
             NavigationStack(path: $myPageViewModel.myPageNaviPath) {
                 UserPageView(isSignedInUser: true)
                     .navigationDestination(for: Article.self) { article in
-                        ArticleDetailView(article: article)
+                        ArticleDetailView(article: article, comment: articleViewModel.comment)
                             .toolbarRole(.editor)
                     }
                     .navigationDestination(for: Trade.self) { trade in

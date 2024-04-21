@@ -28,6 +28,8 @@ struct ArticleCreateView: View {
     
     @State private var isShowingCustomAlert: Bool = false
     
+    @State var isAnimation = false
+    
     @Environment(\.dismiss) private var dismiss
     
     var isNewArticle: Bool
@@ -81,14 +83,7 @@ struct ArticleCreateView: View {
     //MARK: - articleCreate 서브뷰
     private var articleCreateView: some View {
         VStack {
-            if title.isEmpty && content.isEmpty {
-                InstructionsView()
-            } else {
-                Divider()
-                    .padding(.vertical, 5)
-            }
-
-
+            InstructionsView()
             VStack {
                 TextField("제목을 입력하세요", text: $title)
                 

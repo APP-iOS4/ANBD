@@ -30,8 +30,22 @@ final class UserDefaultsClient: ObservableObject {
         }
     }
     
+    var userID: String? {
+        get {
+            UserDefaults.standard.string(forKey: Keys.userID.id)
+        }
+        set {
+            UserDefaults.standard.setValue(newValue, forKey: Keys.userID.id)
+        }
+    }
+    
+    func removeUserID() {
+        UserDefaults.standard.removeObject(forKey: Keys.userID.id)
+    }
+    
     enum Keys: CaseIterable {
         case userInfo
+        case userID
         
         var id: String {
             "\(self)"

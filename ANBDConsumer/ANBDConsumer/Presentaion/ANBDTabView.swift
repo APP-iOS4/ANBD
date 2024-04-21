@@ -141,7 +141,7 @@ struct ANBDTabView: View {
             
             /// Mypage
             NavigationStack(path: $myPageViewModel.myPageNaviPath) {
-                UserPageView(writerUser: myPageViewModel.user)
+                UserPageView(writerUser: UserStore.shared.user)
                     .navigationDestination(for: Article.self) { article in
                         ArticleDetailView(article: article)
                     }

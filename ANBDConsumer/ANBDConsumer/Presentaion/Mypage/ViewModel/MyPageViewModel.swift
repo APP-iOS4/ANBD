@@ -59,7 +59,7 @@ final class MyPageViewModel: ObservableObject {
     }
     
     func checkSignInedUser(userID: String) -> Bool {
-        if userID == user.id {
+        if userID == UserStore.shared.user.id {
             return true
         } else {
             return false
@@ -110,6 +110,14 @@ final class MyPageViewModel: ObservableObject {
         return isDuplicate
     }
     
+    func checkNicknameLength(_ nickname: String) -> String {
+        if nickname.count > 20 {
+            return String(nickname.prefix(20))
+        } else {
+            return nickname
+        }
+    }
+    
     func validateUpdatingComplete() -> Bool {
         if (editedUserNickname.isEmpty || editedUserNickname == self.user.nickname) && (tempUserFavoriteLocation != self.user.favoriteLocation) {
             return true
@@ -120,13 +128,13 @@ final class MyPageViewModel: ObservableObject {
     
     func updateUserInfo(updatedNickname: String, updatedLocation: Location) async {
         do {
-            var updatedUser: User = user
+            var updatedUser: User = UserStore.shared.user
             
             updatedUser.nickname = updatedNickname
             updatedUser.favoriteLocation = updatedLocation
             
             try await userUsecase.updateUserInfo(user: updatedUser)
-            userDefaultsClient.userInfo = updatedUser
+            UserStore.shared.user = updatedUser
         } catch {
             print("\(error.localizedDescription)")
         }

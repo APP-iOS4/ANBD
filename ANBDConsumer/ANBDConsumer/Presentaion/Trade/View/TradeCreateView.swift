@@ -317,7 +317,7 @@ extension TradeCreateView {
                             .font(.system(size: 18))
                             .fontWeight(.bold)
                         
-                        LocationPickerMenu(isShowingMenuList: $isShowingLocationMenuList, selectedItem: tradeViewModel.selectedLocation)
+                        LocationPickerMenu(isShowingMenuList: $isShowingLocationMenuList, selectedItem: $tradeViewModel.selectedLocation)
                             .onTapGesture {
                                 self.isShowingCategoryMenuList = false
                             }

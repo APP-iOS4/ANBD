@@ -132,7 +132,7 @@ struct TradeDetailView: View {
             }
         }//ZStack
         .onAppear {
-            tradeViewModel.getOneTrade(trade: trade)
+            //tradeViewModel.getOneTrade(trade: trade)
             Task {
                 // writerUser = await myPageViewMode.getUserInfo(userID: trade.writerID)
                 imageData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: trade.id, imagePath: trade.imagePaths)

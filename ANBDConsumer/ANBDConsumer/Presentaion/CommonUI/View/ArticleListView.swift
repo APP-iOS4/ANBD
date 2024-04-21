@@ -123,6 +123,9 @@ struct ArticleListView: View {
                                 NavigationLink(value: item) {
                                     ArticleListCell(value: .trade(item))
                                 }
+                                .simultaneousGesture(TapGesture().onEnded({
+                                    tradeViewModel.getOneTrade(trade: item)
+                                }))
                                 .padding(.vertical, 5)
                                 Divider()
                             }

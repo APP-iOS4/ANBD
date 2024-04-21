@@ -110,10 +110,11 @@ final class ArticleViewModel: ObservableObject {
     }
     
     func writeArticle(category: ANBDCategory, title: String, content: String, imageDatas: [Data]) async {
+        let user = UserStore.shared.user
         
-        guard let user = UserDefaultsClient.shared.userInfo else {
-            return
-        }
+//        guard let user = UserDefaultsClient.shared.userInfo else {
+//            return
+//        }
         // dump(article)
         // dump(user)
         let newArticle = Article(writerID: user.id,
@@ -228,10 +229,10 @@ final class ArticleViewModel: ObservableObject {
     
     // MARK: - Comment
     func writeComment(articleID: String, content: String) async {
-        
-        guard let user = UserDefaultsClient.shared.userInfo else {
-            return
-        }
+        let user = UserStore.shared.user
+//        guard let user = UserDefaultsClient.shared.userInfo else {
+//            return
+//        }
         
         let newComment = Comment(articleID: articleID,
                                  writerID: user.id,

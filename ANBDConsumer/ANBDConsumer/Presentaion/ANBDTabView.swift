@@ -97,9 +97,9 @@ struct ANBDTabView: View {
                     .navigationDestination(for: String.self) { str in
                         SearchResultView(category: tradeCategory, searchText: str)
                     }
-//                    .navigationDestination(for: User.self) { user in
-//                        UserPageView(writerUser: user)
-//                    }
+                //                    .navigationDestination(for: User.self) { user in
+                //                        UserPageView(writerUser: user)
+                //                    }
                     .navigationDestination(for: ANBDCategory.self) { category in
                         UserActivityListView(category: category, user: myPageViewModel.user)
                     }
@@ -144,7 +144,7 @@ struct ANBDTabView: View {
                 UserPageView(writerUser: UserStore.shared.user)
                     .navigationDestination(for: Article.self) { article in
                         ArticleDetailView(article: article, comment: articleViewModel.comment)
-                            .toolbarRole(.editor)
+                    }
                     .navigationDestination(for: Trade.self) { trade in
                         TradeDetailView(trade: trade)
                     }

@@ -41,7 +41,7 @@ struct ANBDTabView: View {
                         }
                     }
                     .navigationDestination(for: Article.self) { article in
-                        ArticleDetailView(article: article)
+                        ArticleDetailView(article: article, comment: articleViewModel.comment)
                     }
                     .navigationDestination(for: Trade.self) { trade in
                         TradeDetailView(trade: trade, anbdViewType: .home)
@@ -56,7 +56,7 @@ struct ANBDTabView: View {
                         case .chatDetailView:
                             ChatDetailView(trade: homeViewModel.chatDetailTrade, anbdViewType: .home)
                         case .reportView:
-                            ReportView(reportViewType: homeViewModel.reportType)
+                            ReportView(reportViewType: homeViewModel.reportType, reportedObjectID: homeViewModel.reportedObjectID, reportedChannelID: homeViewModel.reportedChannelID)
                         }
                     }
             }
@@ -68,7 +68,7 @@ struct ANBDTabView: View {
             NavigationStack(path: $articleViewModel.articlePath) {
                 ArticleView(category: $articleCategory)
                     .navigationDestination(for: Article.self) { article in
-                        ArticleDetailView(article: article)
+                        ArticleDetailView(article: article, comment: articleViewModel.comment)
                     }
                     .navigationDestination(for: Trade.self) { trade in
                         TradeDetailView(trade: trade)
@@ -89,7 +89,7 @@ struct ANBDTabView: View {
             NavigationStack(path: $tradeViewModel.tradePath) {
                 ArticleView(category: $tradeCategory)
                     .navigationDestination(for: Article.self) { article in
-                        ArticleDetailView(article: article)
+                        ArticleDetailView(article: article, comment: articleViewModel.comment)
                     }
                     .navigationDestination(for: Trade.self) { trade in
                         TradeDetailView(trade: trade)
@@ -97,9 +97,9 @@ struct ANBDTabView: View {
                     .navigationDestination(for: String.self) { str in
                         SearchResultView(category: tradeCategory, searchText: str)
                     }
-//                    .navigationDestination(for: User.self) { user in
-//                        UserPageView(writerUser: user)
-//                    }
+                //                    .navigationDestination(for: User.self) { user in
+                //                        UserPageView(writerUser: user)
+                //                    }
                     .navigationDestination(for: ANBDCategory.self) { category in
                         UserActivityListView(category: category, user: myPageViewModel.user)
                     }
@@ -110,7 +110,7 @@ struct ANBDTabView: View {
                         case .chatDetailView:
                             ChatDetailView(trade: homeViewModel.chatDetailTrade, anbdViewType: .trade)
                         case .reportView:
-                            ReportView(reportViewType: homeViewModel.reportType)
+                            ReportView(reportViewType: homeViewModel.reportType, reportedObjectID: homeViewModel.reportedObjectID, reportedChannelID: homeViewModel.reportedChannelID)
                         }
                     }
             }
@@ -129,7 +129,7 @@ struct ANBDTabView: View {
                     }
                     .navigationDestination(for: ANBDNavigationPaths.self) { path in
                         if path == .reportView {
-                            ReportView(reportViewType: chatViewModel.reportType)
+                            ReportView(reportViewType: chatViewModel.reportType, reportedObjectID: chatViewModel.reportedObjectID, reportedChannelID: chatViewModel.reportedChannelID)
                         } else if path == .chatDetailView {
                             ChatDetailView(trade: homeViewModel.chatDetailTrade, anbdViewType: .chat)
                         }
@@ -143,7 +143,7 @@ struct ANBDTabView: View {
             NavigationStack(path: $myPageViewModel.myPageNaviPath) {
                 UserPageView(writerUser: UserStore.shared.user)
                     .navigationDestination(for: Article.self) { article in
-                        ArticleDetailView(article: article)
+                        ArticleDetailView(article: article, comment: articleViewModel.comment)
                     }
                     .navigationDestination(for: Trade.self) { trade in
                         TradeDetailView(trade: trade)
@@ -160,7 +160,7 @@ struct ANBDTabView: View {
                         case .accountManagement:
                             AccountManagementView()
                         case .report:
-                            ReportView(reportViewType: .user)
+                            ReportView(reportViewType: .users, reportedObjectID: "")
                         }
                     }
             }

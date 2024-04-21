@@ -39,6 +39,7 @@ struct ANBDConsumerApp: App {
     @StateObject private var authenticationViewModel = AuthenticationViewModel()
     @StateObject private var searchViewModel = SearchViewModel()
     @StateObject private var chatViewModel = ChatViewModel()
+    @StateObject private var reportViewModel = ReportViewModel()
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
@@ -53,6 +54,7 @@ struct ANBDConsumerApp: App {
                 .environmentObject(authenticationViewModel)
                 .environmentObject(searchViewModel)
                 .environmentObject(chatViewModel)
+                .environmentObject(reportViewModel)
         }
     }
 }

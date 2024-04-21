@@ -48,7 +48,7 @@ struct ChatDetailView: View {
                 ScrollView {
                     LazyVStack {
                         ForEach(chatViewModel.messages.reversed()) { message in
-                            MessageCell(message: message, isLast: message == chatViewModel.messages.last, isShowingImageDetailView: $isShowingImageDetailView, detailImage: $detailImage)
+                            MessageCell(message: message, isLast: message == chatViewModel.messages.last, anbdViewType: anbdViewType, channelID: channel?.id ?? "ChannelID", isShowingImageDetailView: $isShowingImageDetailView, detailImage: $detailImage)
                                 .padding(.vertical, 1)
                                 .padding(.horizontal, 20)
                         }
@@ -138,8 +138,11 @@ struct ChatDetailView: View {
         }
         .confirmationDialog("", isPresented: $isShowingConfirmSheet) {
             Button("채팅 신고하기") {
-                homeViewModel.reportType = .chat
-                chatViewModel.reportType = .chat
+                homeViewModel.reportType = .chatRoom
+                chatViewModel.reportType = .chatRoom
+                
+                homeViewModel.reportedObjectID = channel?.id ?? "Unknown ChannelID"
+                chatViewModel.reportedObjectID = channel?.id ?? "Unknown ChannelID"
                 
                 switch anbdViewType {
                 case .home:

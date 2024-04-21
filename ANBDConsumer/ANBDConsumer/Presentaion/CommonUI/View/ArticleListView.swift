@@ -22,91 +22,105 @@ struct ArticleListView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            if isArticle {
-                Menu {
-                    Button {
-                        articleViewModel.sortOption = .latest
-                        Task {
-                            await articleViewModel.refreshSortedArticleList(category: category, by: .latest, limit:10)
-                        }
-                    } label: {
-                        Label("최신순", systemImage: articleViewModel.sortOption == .latest ? "checkmark" : "")
-                    }
-                    
-                    Button {
-                        articleViewModel.sortOption = .mostLike
-                        Task {
-                            await articleViewModel.refreshSortedArticleList(category: category, by: .mostLike, limit:10)
-                        }
-                    } label: {
-                        Label("좋아요순", systemImage: articleViewModel.sortOption == .mostLike ? "checkmark" : "")
-                    }
-                    
-                    Button {
-                        articleViewModel.sortOption = .mostComment
-                        Task {
-                            await articleViewModel.refreshSortedArticleList(category: category, by: .mostComment, limit:10)
-                        }
-                    } label: {
-                        Label("댓글순", systemImage: articleViewModel.sortOption == .mostComment ? "checkmark" : "")
-                    }
-                } label: {
-                    CapsuleButtonView(text: articleViewModel.getSortOptionLabel(), isForFiltering: true)
-                }
-                .frame(width: 100)
-                .padding(.leading, 10)
-            } else {
-                HStack {
-                    /// 지역 필터링
-                    Button(action: {
-                        isShowingLocation.toggle()
-                    }, label: {
-                        if tradeViewModel.selectedLocations.isEmpty {
-                            CapsuleButtonView(text: "지역", isForFiltering: true)
-                        } else {
-                            CapsuleButtonView(text: tradeViewModel.selectedLocations.count > 1 ? "지역 \(tradeViewModel.selectedLocations.count)" : "\(tradeViewModel.selectedLocations.first?.description ?? "Unknown")", isForFiltering: true, buttonColor: .accent, fontColor: .white)
-                        }
-                    })
-                    
-                    /// 카테고리 필터링
-                    Button(action: {
-                        isShowingItemCategory.toggle()
-                    }, label: {
-                        if tradeViewModel.selectedItemCategories.isEmpty {
-                            CapsuleButtonView(text: "카테고리", isForFiltering: true)
-                        } else {
-                            CapsuleButtonView(text: tradeViewModel.selectedItemCategories.count > 1 ? "카테고리 \(tradeViewModel.selectedItemCategories.count)" : "\(tradeViewModel.selectedItemCategories.first?.rawValue ?? "Unknown")", isForFiltering: true, buttonColor: .accent, fontColor: .white)
-                        }
-                    })
-                }
-                .padding(.horizontal)
-            }
-
             if isArticle && articleViewModel.filteredArticles.isEmpty {
                     VStack {
                         Spacer()
+                        
+                        Image(systemName: "tray")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 60)
+                            .padding(.bottom, 10)
+                        
                         HStack {
                             Spacer()
                             Text("해당하는 정보 공유 게시글이 없습니다.")
-                                .foregroundStyle(.gray400)
                                 .font(ANBDFont.body1)
                             Spacer()
                         }
                         Spacer()
                     }
+                    .foregroundStyle(.gray400)
+
             } else if !isArticle && tradeViewModel.filteredTrades.isEmpty {
                 VStack {
                     Spacer()
+                    
+                    Image(systemName: "tray")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 60)
+                        .padding(.bottom, 10)
+                    
                     HStack {
                         Spacer()
                         Text("해당하는 나눔 · 거래 게시글이 없습니다.")
-                            .foregroundStyle(.gray400)
                             .font(ANBDFont.body1)
                         Spacer()
                     }
                     Spacer()
                 }
+                .foregroundStyle(.gray400)
+                
             } else {
+                if isArticle {
+                    Menu {
+                        Button {
+                            articleViewModel.sortOption = .latest
+                            Task {
+                                await articleViewModel.refreshSortedArticleList(category: category, by: .latest, limit: 10)
+                            }
+                        } label: {
+                            Label("최신순", systemImage: articleViewModel.sortOption == .latest ? "checkmark" : "")
+                        }
+                        
+                        Button {
+                            articleViewModel.sortOption = .mostLike
+                            Task {
+                                await articleViewModel.refreshSortedArticleList(category: category, by: .mostLike, limit: 10)
+                            }
+                        } label: {
+                            Label("좋아요순", systemImage: articleViewModel.sortOption == .mostLike ? "checkmark" : "")
+                        }
+                        
+                        Button {
+                            articleViewModel.sortOption = .mostComment
+                            Task {
+                                await articleViewModel.refreshSortedArticleList(category: category, by: .mostComment, limit: 10)
+                            }
+                        } label: {
+                            Label("댓글순", systemImage: articleViewModel.sortOption == .mostComment ? "checkmark" : "")
+                        }
+                    } label: {
+                        CapsuleButtonView(text: articleViewModel.getSortOptionLabel(), isForFiltering: true)
+                    }
+                    .padding(EdgeInsets(top: 7, leading: 17, bottom: 10, trailing: 0))
+                } else {
+                    HStack {
+                        /// 지역 필터링
+                        Button(action: {
+                            isShowingLocation.toggle()
+                        }, label: {
+                            if tradeViewModel.selectedLocations.isEmpty {
+                                CapsuleButtonView(text: "지역", isForFiltering: true)
+                            } else {
+                                CapsuleButtonView(text: tradeViewModel.selectedLocations.count > 1 ? "지역 \(tradeViewModel.selectedLocations.count)" : "\(tradeViewModel.selectedLocations.first?.description ?? "Unknown")", isForFiltering: true, buttonColor: .accent, fontColor: .white)
+                            }
+                        })
+                        
+                        /// 카테고리 필터링
+                        Button(action: {
+                            isShowingItemCategory.toggle()
+                        }, label: {
+                            if tradeViewModel.selectedItemCategories.isEmpty {
+                                CapsuleButtonView(text: "카테고리", isForFiltering: true)
+                            } else {
+                                CapsuleButtonView(text: tradeViewModel.selectedItemCategories.count > 1 ? "카테고리 \(tradeViewModel.selectedItemCategories.count)" : "\(tradeViewModel.selectedItemCategories.first?.rawValue ?? "Unknown")", isForFiltering: true, buttonColor: .accent, fontColor: .white)
+                            }
+                        })
+                    }
+                    .padding(EdgeInsets(top: 7, leading: 17, bottom: 10, trailing: 0))
+                }
                 ScrollView {
                     LazyVStack {
                         if isArticle {
@@ -123,6 +137,9 @@ struct ArticleListView: View {
                                 NavigationLink(value: item) {
                                     ArticleListCell(value: .trade(item))
                                 }
+                                .simultaneousGesture(TapGesture().onEnded({
+                                    tradeViewModel.getOneTrade(trade: item)
+                                }))
                                 .padding(.vertical, 5)
                                 Divider()
                             }

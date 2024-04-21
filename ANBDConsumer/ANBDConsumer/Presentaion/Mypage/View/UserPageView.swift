@@ -154,7 +154,7 @@ struct UserPageView: View {
         .navigationBarTitleDisplayMode(.inline)
         
         .fullScreenCover(isPresented: $isShowingReportView) {
-            ReportView()
+            ReportView(reportedObjectID: writerUser.id)
         }
         
         .onAppear {

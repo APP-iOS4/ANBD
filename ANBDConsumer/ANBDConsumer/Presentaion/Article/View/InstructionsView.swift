@@ -19,11 +19,11 @@ struct InstructionsView: View {
                     .font(ANBDFont.SubTitle2)
                 
                 Text("명예훼손, 광고/홍보 목적의 글은 올리실 수 없어요.")
-                    .font(ANBDFont.body1)
+                    .font(ANBDFont.pretendardMedium(15))
             }
             .foregroundStyle(.gray50)
         }
-        .padding(5)
+        .padding(.horizontal)
     }
 }
 

@@ -132,7 +132,7 @@ struct TradeDetailView: View {
             }
         }//ZStack
         .onAppear {
-            tradeViewModel.getOneTrade(trade: trade)
+            //tradeViewModel.getOneTrade(trade: trade)
             Task {
                 // writerUser = await myPageViewMode.getUserInfo(userID: trade.writerID)
                 imageData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: trade.id, imagePath: trade.imagePaths)
@@ -176,6 +176,9 @@ struct TradeDetailView: View {
                     Button("신고하기", role: .destructive) {
                         homeViewModel.reportType = .trade
                         chatViewModel.reportType = .trade
+                        
+                        homeViewModel.reportedObjectID = trade.id
+                        chatViewModel.reportedObjectID = trade.id
                         
                         switch anbdViewType {
                         case .home:

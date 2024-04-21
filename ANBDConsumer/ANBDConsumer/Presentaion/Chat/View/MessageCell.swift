@@ -10,6 +10,8 @@ import ANBDModel
 
 extension ChatDetailView {
     struct MessageCell: View {
+        @EnvironmentObject private var homeViewModel: HomeViewModel
+        @EnvironmentObject private var tradeViewModel: TradeViewModel
         @EnvironmentObject private var chatViewModel: ChatViewModel
         @Environment(\.colorScheme) private var colorScheme: ColorScheme
         
@@ -17,6 +19,8 @@ extension ChatDetailView {
         var isLast: Bool = false
         @State var imageData: Data?
         @State private var isMine: Bool = false
+        var anbdViewType: ANBDViewType = .chat
+        var channelID: String
         
         @Binding var isShowingImageDetailView: Bool
         @Binding var detailImage: Image
@@ -46,6 +50,27 @@ extension ChatDetailView {
                         .font(ANBDFont.Caption3)
                         .background(isMine ? Color.accentColor : .gray50)
                         .clipShape(RoundedRectangle(cornerRadius: 15))
+                        .contextMenu {
+                            Button("메시지 신고하기", role: .destructive) {
+                                homeViewModel.reportType = .messages
+                                chatViewModel.reportType = .messages
+                                
+                                homeViewModel.reportedObjectID = message.id
+                                chatViewModel.reportedObjectID = message.id
+                                
+                                homeViewModel.reportedChannelID = channelID
+                                chatViewModel.reportedChannelID = channelID
+                                
+                                switch anbdViewType {
+                                case .home:
+                                    homeViewModel.homePath.append(ANBDNavigationPaths.reportView)
+                                case .trade:
+                                    tradeViewModel.tradePath.append(ANBDNavigationPaths.reportView)
+                                case .chat:
+                                    chatViewModel.chatPath.append(ANBDNavigationPaths.reportView)
+                                }
+                            }
+                        }
                 }
                 
                 // 이미지
@@ -61,6 +86,21 @@ extension ChatDetailView {
                                 .frame(width: 150)
                                 .clipShape(RoundedRectangle(cornerRadius: 15))
                         })
+                        .contextMenu {
+                            Button("메시지 신고하기", role: .destructive) {
+                                homeViewModel.reportType = .messages
+                                chatViewModel.reportType = .messages
+                                
+                                switch anbdViewType {
+                                case .home:
+                                    homeViewModel.homePath.append(ANBDNavigationPaths.reportView)
+                                case .trade:
+                                    tradeViewModel.tradePath.append(ANBDNavigationPaths.reportView)
+                                case .chat:
+                                    chatViewModel.chatPath.append(ANBDNavigationPaths.reportView)
+                                }
+                            }
+                        }
                     }
                 }
                 

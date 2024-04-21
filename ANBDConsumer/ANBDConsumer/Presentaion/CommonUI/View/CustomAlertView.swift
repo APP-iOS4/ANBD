@@ -109,6 +109,7 @@ extension CustomAlertView {
         case articleDelete
         case commentDelete
         case writingCancel
+        case report
     }
     
     private var title: String {
@@ -135,6 +136,8 @@ extension CustomAlertView {
             return "댓글 삭제"
         case .writingCancel:
             return "작성 취소"
+        case .report:
+            return "신고"
         }
     }
     
@@ -162,6 +165,8 @@ extension CustomAlertView {
             return "해당 댓글을 삭제하시겠습니까?\n삭제한 댓글은 복구되지 않습니다." 
         case .writingCancel:
             return "작성하던 내용을 삭제하고\n돌아가시겠습니까?"
+        case .report:
+            return "해당 내역을 신고하시겠습니까?"
         }
     }
     
@@ -187,6 +192,8 @@ extension CustomAlertView {
             return "삭제하기"
         case .commentDelete:
             return "삭제하기"
+        case .report:
+            return "신고하기"
         }
     }
     
@@ -212,6 +219,8 @@ extension CustomAlertView {
             return .heartRed
         case .commentDelete:
             return .heartRed
+        case .report:
+            return .heartRed
         }
     }
     
@@ -236,6 +245,8 @@ extension CustomAlertView {
         case .articleDelete:
             return .medium
         case .commentDelete:
+            return .medium
+        case .report:
             return .medium
         }
     }

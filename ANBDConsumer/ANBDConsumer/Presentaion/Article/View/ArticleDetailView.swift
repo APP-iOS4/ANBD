@@ -173,7 +173,7 @@ struct ArticleDetailView: View {
                                     
                                     Menu {
                                         
-                                        if comment.writerID == UserDefaultsClient.shared.userInfo!.id {
+                                        if comment.writerID == UserStore.shared.user.id {
                                             // 본인 댓글 = 수정, 삭제 | 다른 사람 게시물 = 신고
                                             Button {
                                                 isShowingCommentEditView.toggle()
@@ -273,7 +273,7 @@ struct ArticleDetailView: View {
                     
                     //                    }
                     
-                    if article.writerID == UserDefaultsClient.shared.userInfo!.id {
+                    if article.writerID == UserStore.shared.user.id {
                         // 본인 게시물 = 수정, 삭제 | 다른 사람 게시물 = 신고
                         Button {
                             isShowingCreateView.toggle()

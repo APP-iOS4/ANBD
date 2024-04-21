@@ -73,7 +73,7 @@ struct SignUpUserInfoView: View {
                     .foregroundStyle(Color.gray900)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
-                LocationPickerMenu(isShowingMenuList: $isShowingMenuList, selectedItem: authenticationViewModel.signUpUserFavoriteLoaction)
+                LocationPickerMenu(isShowingMenuList: $isShowingMenuList, selectedItem: $authenticationViewModel.signUpUserFavoriteLoaction)
                 
                 Spacer()
                 

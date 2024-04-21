@@ -60,6 +60,7 @@ struct AuthenticationView: View {
                                 .padding(.top, 8)
                                 .font(ANBDFont.Caption1)
                                 .foregroundStyle(.heartRed)
+                                .padding(.top, -20)
                         }
                     }
                     .padding(.bottom, 30)

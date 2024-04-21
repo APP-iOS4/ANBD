@@ -15,6 +15,7 @@ public protocol ChatUsecaseProtocol {
     func loadChannelList(userID: String, completion : @escaping (_ channels: [Channel]) -> Void)
     func loadMessageList(channelID: String, userID: String ) async throws -> [Message]
     func getChannel(tradeID : String , userID: String) async throws -> Channel?
+    func getMessage(channelID: String, messageID: String ) async throws -> Message
     func getTradeInChannel(channelID: String)  async throws -> Trade?
     func getOtherUserNickname(userNicknames: [String], userNickname : String) -> String
     func getOtherUserID(users: [String], userID: String) -> String
@@ -204,6 +205,20 @@ extension ChatUsecase {
         }
         
         return try await messageRepository.readMessageList(channelID: channelID, userID: userID)
+    }
+    
+    //원하는 메시지 정보 불러오기
+    ///
+    /// - Parameters:
+    ///   - channelID: 채널 ID
+    ///   - messageID : 메시지 ID
+    /// - Returns: 메시지
+    ///
+    public func getMessage(channelID: String, messageID: String) async throws -> Message {
+        if channelID.isEmpty {
+            throw ChannelError.invalidChannelID
+        }
+        return try await messageRepository.readMessage(channelID: channelID, messageID: messageID)
     }
     
     //채팅방 들어가면 새롭게 추가되는 채팅들에 대한 Listner

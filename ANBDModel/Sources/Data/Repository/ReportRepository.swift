@@ -22,8 +22,10 @@ final class DefaultReportRepository: ReportRepository {
         }
     }
     
-    func readReport() async throws -> [Report]{
+    func readReport(reportType: ReportType) async throws -> [Report]{
+        
         let commonQuery = reportDB
+            .whereField("type", isEqualTo: reportType.rawValue)
             .order(by: "createdAt" ,descending: true)
             .limit(toLast: 20)
         

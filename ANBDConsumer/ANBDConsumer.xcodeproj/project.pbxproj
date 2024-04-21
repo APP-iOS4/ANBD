@@ -77,6 +77,7 @@
 		D75C3A4F2BBFB40200ED948C /* ArticleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75C3A4E2BBFB40200ED948C /* ArticleDetailView.swift */; };
 		D75C3A512BBFD9DB00ED948C /* ArticleCreateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75C3A502BBFD9DB00ED948C /* ArticleCreateView.swift */; };
 		D75C3A532BC1377400ED948C /* ArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75C3A522BC1377400ED948C /* ArticleView.swift */; };
+		D77D22FB2BD3B6790049190E /* CommentEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77D22FA2BD3B6790049190E /* CommentEditView.swift */; };
 		D7E56D702BC39373000AA1BE /* InstructionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E56D6F2BC39373000AA1BE /* InstructionsView.swift */; };
 		D7E56D722BC425AE000AA1BE /* ArticleListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E56D712BC425AE000AA1BE /* ArticleListView.swift */; };
 /* End PBXBuildFile section */
@@ -153,6 +154,7 @@
 		D75C3A4E2BBFB40200ED948C /* ArticleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleDetailView.swift; sourceTree = "<group>"; };
 		D75C3A502BBFD9DB00ED948C /* ArticleCreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleCreateView.swift; sourceTree = "<group>"; };
 		D75C3A522BC1377400ED948C /* ArticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleView.swift; sourceTree = "<group>"; };
+		D77D22FA2BD3B6790049190E /* CommentEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentEditView.swift; sourceTree = "<group>"; };
 		D7E56D6F2BC39373000AA1BE /* InstructionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstructionsView.swift; sourceTree = "<group>"; };
 		D7E56D712BC425AE000AA1BE /* ArticleListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -533,6 +535,7 @@
 				D75C3A502BBFD9DB00ED948C /* ArticleCreateView.swift */,
 				D75C3A4E2BBFB40200ED948C /* ArticleDetailView.swift */,
 				D7E56D6F2BC39373000AA1BE /* InstructionsView.swift */,
+				D77D22FA2BD3B6790049190E /* CommentEditView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -711,6 +714,7 @@
 				CB7BEE232BBD56B900C0F298 /* View+Extension.swift in Sources */,
 				426EE0312BD37CCD00006C2C /* UserStore.swift in Sources */,
 				CB198D1E2BC3A7BC000C2709 /* TextFieldModifier.swift in Sources */,
+				D77D22FB2BD3B6790049190E /* CommentEditView.swift in Sources */,
 				CB7BEE232BBD56B900C0F298 /* View+Extension.swift in Sources */,
 				A8640B3E2BC3DCBE00232F9C /* CapsuleButtonView.swift in Sources */,
 				424CA0132BC3C0E200F83F8D /* TermsView.swift in Sources */,

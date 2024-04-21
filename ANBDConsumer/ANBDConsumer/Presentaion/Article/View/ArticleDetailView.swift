@@ -12,28 +12,27 @@ struct ArticleDetailView: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     
     var article: Article
-    
+    var comment: Comment
     @State private var isLiked: Bool = false
     @State private var isWriter: Bool = true
     
     @State private var isShowingComment: Bool = false
-    @State private var comments: [Comment] = []
     @State private var commentText: String = ""
     
+    @State private var isShowingImageDetailView: Bool = false
     @State private var isShowingCreateView: Bool = false
     @State private var isGoingToReportView: Bool = false
     @State private var isGoingToProfileView: Bool = false
     @State private var isShowingArticleConfirmSheet: Bool = false
     @State private var isShowingCustomAlertArticle: Bool = false
     @State private var isShowingCustomAlertComment: Bool = false
+    @State private var isShowingCommentEditView: Bool = false
+
+    
+    @State private var detailImage: Image = Image("DummyPuppy1")
+    @State private var imageData: [Data] = []
     
     @Environment(\.dismiss) private var dismiss
-    
-    struct Comment: Identifiable {
-        let id: UUID = UUID()
-        let userName: String
-        let content: String
-    }
     
     var body: some View {
         ZStack {
@@ -66,7 +65,7 @@ struct ArticleDetailView: View {
                                 }
                             }
                             .navigationDestination(isPresented: $isGoingToProfileView) {
-//                                UserPageView(isSignedInUser: false)
+                                //                                UserPageView(isSignedInUser: false)
                             }
                             .padding(.bottom, 20)
                             
@@ -78,17 +77,25 @@ struct ArticleDetailView: View {
                                 .font(ANBDFont.body1)
                                 .padding(.bottom, 10)
                             
-                            Image("\(article.imagePaths)")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .padding(.bottom, 10)
-                            
+                            ForEach(imageData, id: \.self) { photoData in
+                                if let image = UIImage(data: photoData) {
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .scaledToFill()
+                                        .onTapGesture {
+                                            detailImage = Image(uiImage: image)
+                                            isShowingImageDetailView.toggle()
+                                        }
+                                } else {
+                                    ProgressView()
+                                }
+                            }
                             HStack {
                                 Button {
                                     Task {
-//                                        await articleViewModel.toggleLikeArticle(articleID: article.id)
+                                        await articleViewModel.toggleLikeArticle(articleID: article.id)
                                         isLiked.toggle()
-//                                        await articleViewModel.updateLikeCount(articleID: article.id, increment: isLiked)
+                                        await articleViewModel.updateLikeCount(articleID: article.id, increment: isLiked)
                                     }
                                 } label: {
                                     Image(systemName: isLiked ? "hand.thumbsup.fill" : "hand.thumbsup")
@@ -114,38 +121,45 @@ struct ArticleDetailView: View {
                         .padding(.horizontal, 20)
                     
                     VStack(alignment: .leading) {
-                        if comments.isEmpty {
+                        if articleViewModel.comments.isEmpty {
                             Text("아직 댓글이 없습니다.\n가장 먼저 댓글을 남겨보세요.")
                                 .font(ANBDFont.SubTitle2)
                                 .foregroundStyle(.gray300)
                                 .multilineTextAlignment(.center)
                         } else {
-                            Text("댓글 \(comments.count)")
+                            Text("댓글 \(articleViewModel.comments.count)")
                                 .font(ANBDFont.SubTitle3)
                                 .padding(.bottom)
                                 .padding(.leading, 5)
                             
-                            ForEach(comments) { comment in
+                            ForEach(articleViewModel.comments) { comment in
                                 HStack(alignment: .top) {
                                     Button {
                                         isGoingToProfileView.toggle()
                                     } label: {
-                                        ZStack {
-                                            Circle()
-                                                .fill(Color.gray100)
-                                                .frame(width: 40)
-                                            
-                                            Text("🐳")
-                                                .font(.system(size: 25))
-                                        }
+                                        Image("\(comment.writerProfileImageURL)")
+                                            .resizable()
+                                            .frame(width: 40, height: 40)
+                                            .scaledToFill()
+                                            .clipShape(Circle())
+                                        /*
+                                         ZStack {
+                                         Circle()
+                                         .fill(Color.gray100)
+                                         .frame(width: 40)
+                                         
+                                         Text("🐳")
+                                         .font(.system(size: 25))
+                                         }
+                                         */
                                     }
                                     
                                     VStack(alignment: .leading) {
                                         HStack {
-                                            Text("\(comment.userName)")
+                                            Text("\(comment.writerNickname)")
                                                 .font(ANBDFont.SubTitle3)
                                             
-                                            Text("5분 전")
+                                            Text("\(comment.createdAt.relativeTimeNamed)")
                                                 .font(ANBDFont.Caption1)
                                                 .foregroundStyle(.gray400)
                                         }
@@ -156,35 +170,34 @@ struct ArticleDetailView: View {
                                     .foregroundStyle(.gray900)
                                     
                                     Spacer()
-                                    Button {
-                                        isShowingComment.toggle()
-                                    } label: {
-                                        Image(systemName: "ellipsis")
-                                            .font(.system(size: 13))
-                                            .rotationEffect(.degrees(90))
-                                            .foregroundStyle(.gray900)
-                                    }
-                                    .confirmationDialog("", isPresented: $isShowingComment) {
-                                        if isWriter {
-                                            // 본인 댓글 = 수정, 삭제 | 다른 사람 댓글 = 신고
+                                    
+                                    Menu {
+                                        
+                                        if comment.writerID == UserDefaultsClient.shared.userInfo!.id {
+                                            // 본인 댓글 = 수정, 삭제 | 다른 사람 게시물 = 신고
                                             Button {
-                                                // 수정하기 기능 추가
+                                                isShowingCommentEditView.toggle()
                                             } label: {
-                                                Text("수정하기")
+                                                Label("수정하기", systemImage: "square.and.pencil")
                                             }
                                             
                                             Button(role: .destructive) {
                                                 isShowingCustomAlertComment.toggle()
                                             } label: {
-                                                Text("삭제하기")
+                                                Label("삭제하기", systemImage: "trash")
                                             }
                                         } else {
                                             Button(role: .destructive) {
                                                 isGoingToReportView.toggle()
                                             } label: {
-                                                Text("신고하기")
+                                                Label("신고하기", systemImage: "exclamationmark.bubble")
                                             }
                                         }
+                                    } label: {
+                                        Image(systemName: "ellipsis")
+                                            .font(.system(size: 13))
+                                            .rotationEffect(.degrees(90))
+                                            .foregroundStyle(.gray900)
                                     }
                                     .navigationDestination(isPresented: $isGoingToReportView) {
                                         ReportView(reportViewType: .users, reportedObjectID: "")
@@ -212,6 +225,10 @@ struct ArticleDetailView: View {
                 
             } else if isShowingCustomAlertComment {
                 CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertComment, viewType: .commentDelete) {
+                    //                    Task {
+                    //                        await articleViewModel.deleteComment(articleID: article.id, commentID: comment.id)
+                    //                        await articleViewModel.loadArticle(article: article)
+                    //                    }
                 }
                 .zIndex(2)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -230,8 +247,10 @@ struct ArticleDetailView: View {
                             .padding(20)
                     }
                     Button {
-                        let newComment = Comment(userName: "김기표", content: commentText)
-                        comments.append(newComment)
+                        Task {
+                            await articleViewModel.writeComment(articleID: article.id, content: commentText)
+                            await articleViewModel.loadCommentList(articleID: article.id)
+                        }
                         commentText = ""
                     } label: {
                         Image(systemName: "paperplane.fill")
@@ -248,8 +267,39 @@ struct ArticleDetailView: View {
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    isShowingArticleConfirmSheet.toggle()
+                Menu {
+                    
+                    //                    guard let userID = UserDefaultsClient.shared.userInfo.id else {
+                    
+                    //                    }
+                    
+                    if article.writerID == UserDefaultsClient.shared.userInfo!.id {
+                        // 본인 게시물 = 수정, 삭제 | 다른 사람 게시물 = 신고
+                        Button {
+                            isShowingCreateView.toggle()
+                        } label: {
+                            Label("수정하기", systemImage: "square.and.pencil")
+                        }
+                        
+                        Button(role: .destructive) {
+                            Task {
+                                await articleViewModel.deleteArticle(article: article)
+                                await articleViewModel.reloadAllArticles()
+                            }
+                            isShowingCustomAlertArticle.toggle()
+                        } label: {
+                            Label("삭제하기", systemImage: "trash")
+                        }
+                    } else {
+                        Button(role: .destructive) {
+                            isGoingToReportView.toggle()
+                        } label: {
+                            Label("신고하기", systemImage: "exclamationmark.bubble")
+                        }
+                    }
+                    //                }
+                    //                Button {
+                    //                    isShowingArticleConfirmSheet.toggle()
                 } label: {
                     Image(systemName: "ellipsis")
                         .font(.system(size: 13))
@@ -258,33 +308,30 @@ struct ArticleDetailView: View {
                 }
             }
         }
-        .confirmationDialog("", isPresented: $isShowingArticleConfirmSheet) {
-            if isWriter {
-                // 본인 게시물 = 수정, 삭제 | 다른 사람 게시물 = 신고
-                Button {
-                    isShowingCreateView.toggle()
-                } label: {
-                    Text("수정하기")
-                }
-                
-                Button(role: .destructive) {
-                    Task {
-                        await articleViewModel.deleteArticle(article: article)
-                    }
-                    isShowingCustomAlertArticle.toggle()
-                } label: {
-                    Text("삭제하기")
-                }
-            } else {
-                Button(role: .destructive) {
-                    isGoingToReportView.toggle()
-                } label: {
-                    Text("신고하기")
-                }
+        //        .confirmationDialog("", isPresented: $isShowingArticleConfirmSheet) {
+        //        }
+        .onAppear {
+            Task {
+                imageData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
+                await articleViewModel.loadCommentList(articleID: article.id)
             }
         }
         .fullScreenCover(isPresented: $isShowingCreateView) {
             ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, isNewArticle: false, article: article)
+        }
+        //        .fullScreenCover(isPresented: $isShowingCreateView, onDismiss: {
+        //            Task {
+        //                await articleViewModel.loadArticle(article: article)
+        //                imageData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
+        //            }
+        //        }) {
+        //            ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, isNewArticle: false, article: article)
+        //        }
+        .fullScreenCover(isPresented: $isShowingImageDetailView) {
+            ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
+        }
+        .fullScreenCover(isPresented: $isShowingCommentEditView) {
+            CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: comment)
         }
         .navigationDestination(isPresented: $isGoingToReportView) {
             ReportView(reportViewType: .article, reportedObjectID: "")
@@ -295,6 +342,6 @@ struct ArticleDetailView: View {
     }
 }
 
-#Preview {
-    ArticleDetailView(article: Article(writerID: "IDID", writerNickname: "닉네임", category: .accua, title: "제목제목", content: "내용", thumbnailImagePath: ""))
-}
+//#Preview {
+//    ArticleDetailView(article: Article(writerID: "IDID", writerNickname: "닉네임", category: .accua, title: "제목제목", content: "내용", thumbnailImagePath: ""))
+//}

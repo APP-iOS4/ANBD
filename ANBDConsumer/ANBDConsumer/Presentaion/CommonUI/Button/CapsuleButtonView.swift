@@ -27,7 +27,7 @@ struct CapsuleButtonView: View {
             }
         }
         .font(ANBDFont.Caption3)
-        .padding()
+        .padding(.horizontal)
         .foregroundStyle(fontColor)
         .background {
             if buttonColor != .clear {

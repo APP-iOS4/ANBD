@@ -28,7 +28,7 @@ struct UserInfoEditingView: View {
                 VStack(spacing: 40) {
                     if #available(iOS 17.0, *) {
                         userProfilImageButton
-                            .onChange(of: photosPickerItem) { _, _ in
+                            .onChange(of: photosPickerItem) {
                                 Task {
                                     if let photosPickerItem, let data = try? await photosPickerItem.loadTransferable(type: Data.self) {
                                         if let image = await UIImage(data: data)?.byPreparingThumbnail(ofSize: .init(width: 512, height: 512)) {
@@ -56,15 +56,28 @@ struct UserInfoEditingView: View {
                             .foregroundStyle(Color.gray400)
                             .padding(.bottom, 5)
                         
-                        textFieldUIKit(placeholder: "닉네임을 입력해주세요.",
-                                       text: $myPageViewModel.editedUserNickname)
-                        .focused($focus, equals: .nickname)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled(true)
-                        .font(ANBDFont.SubTitle1)
-                        .foregroundStyle(Color.gray900)
+                        if #available(iOS 17.0, *) {
+                            nicknameTextField
+                            .onChange(of: myPageViewModel.editedUserNickname) {
+                                myPageViewModel.editedUserNickname = myPageViewModel.checkNicknameLength(myPageViewModel.editedUserNickname)
+                            }
+                        } else {
+                            nicknameTextField
+                            .onChange(of: myPageViewModel.editedUserNickname) { _ in
+                                myPageViewModel.editedUserNickname = myPageViewModel.checkNicknameLength(myPageViewModel.editedUserNickname)
+                            }
+                        }
                         
                         Divider()
+                        
+                        HStack {
+                            Spacer()
+                            
+                            Text("\(myPageViewModel.editedUserNickname.count) / 20")
+                                .padding(.horizontal, 5)
+                                .font(ANBDFont.body2)
+                                .foregroundStyle(.gray400)
+                        }
                     }
                     .padding(.horizontal, 20)
                     
@@ -75,7 +88,7 @@ struct UserInfoEditingView: View {
                             .padding(.bottom, 5)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        LocationPickerMenu(isShowingMenuList: $isShowingMenuList, selectedItem: myPageViewModel.tempUserFavoriteLocation)
+                        LocationPickerMenu(isShowingMenuList: $isShowingMenuList, selectedItem: $myPageViewModel.tempUserFavoriteLocation)
                     }
                     .padding(.horizontal, 20)
                     
@@ -130,9 +143,8 @@ struct UserInfoEditingView: View {
             .navigationTitle("수정하기")
             .navigationBarTitleDisplayMode(.inline)
             
-            
             .onAppear {
-                myPageViewModel.editedUserNickname = myPageViewModel.user.nickname
+                myPageViewModel.editedUserNickname = UserStore.shared.user.nickname
             }
         }
     }
@@ -173,6 +185,16 @@ struct UserInfoEditingView: View {
         }
         
         .photosPicker(isPresented: $isShowingPhotosPicker, selection: $photosPickerItem)
+    }
+    
+    private var nicknameTextField: some View {
+        textFieldUIKit(placeholder: "닉네임을 입력해주세요.",
+                       text: $myPageViewModel.editedUserNickname)
+        .focused($focus, equals: .nickname)
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled(true)
+        .font(ANBDFont.SubTitle1)
+        .foregroundStyle(Color.gray900)
     }
 }
 

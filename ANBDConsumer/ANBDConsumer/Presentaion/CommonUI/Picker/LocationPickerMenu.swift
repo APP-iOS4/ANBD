@@ -13,7 +13,7 @@ struct LocationPickerMenu: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     
     @Binding var isShowingMenuList: Bool
-    @State var selectedItem: Location = .seoul
+    @Binding var selectedItem: Location
     
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -107,5 +107,5 @@ extension LocationPickerMenu {
 }
 
 #Preview {
-    LocationPickerMenu(isShowingMenuList: .constant(false), selectedItem: .seoul)
+    LocationPickerMenu(isShowingMenuList: .constant(false), selectedItem: .constant(.seoul))
 }

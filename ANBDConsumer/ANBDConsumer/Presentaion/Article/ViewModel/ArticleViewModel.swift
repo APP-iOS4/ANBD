@@ -11,8 +11,9 @@ import ANBDModel
 @MainActor
 final class ArticleViewModel: ObservableObject {
     
-    let articleUseCase: ArticleUsecase = DefaultArticleUsecase()
-    let commentUseCase: CommentUsecase = DefaultCommentUsecase()
+    private let articleUseCase: ArticleUsecase = DefaultArticleUsecase()
+    private let commentUseCase: CommentUsecase = DefaultCommentUsecase()
+    private let user = UserStore.shared.user
     
     private let storageManager = StorageManager.shared
     
@@ -114,13 +115,7 @@ final class ArticleViewModel: ObservableObject {
     }
     
     func writeArticle(category: ANBDCategory, title: String, content: String, imageDatas: [Data]) async {
-        let user = UserStore.shared.user
-        
-//        guard let user = UserDefaultsClient.shared.userInfo else {
-//            return
-//        }
-        // dump(article)
-        // dump(user)
+
         let newArticle = Article(writerID: user.id,
                                  writerNickname: user.nickname,
                                  category: category,
@@ -233,21 +228,6 @@ final class ArticleViewModel: ObservableObject {
     
     // MARK: - Comment
     func writeComment(articleID: String, commentText: String) async {
-//        let user = UserStore.shared.user
-//        guard let user = UserDefaultsClient.shared.userInfo else {
-//            return
-//        }
-        
-//        let newComment = Comment(articleID: articleID,
-//                                 writerID: user.id,
-//                                 writerNickname: user.nickname,
-//                                 writerProfileImageURL: user.profileImage,
-//                                 content: content)
-        
-//        comments.append(newComment)
-//        print("\(newComment.content)")
-        
-        let user = UserStore.shared.user
         
         let newComment = Comment(articleID: articleID,
                                  writerID: user.id,

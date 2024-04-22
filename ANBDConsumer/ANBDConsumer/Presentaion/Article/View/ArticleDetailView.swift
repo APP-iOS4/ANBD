@@ -11,7 +11,7 @@ import ANBDModel
 struct ArticleDetailView: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     @EnvironmentObject private var myPageViewMode: MyPageViewModel
-
+    
     var article: Article
     var comment: Comment
     @State private var isLiked: Bool = false
@@ -28,14 +28,15 @@ struct ArticleDetailView: View {
     @State private var isShowingCustomAlertArticle: Bool = false
     @State private var isShowingCustomAlertComment: Bool = false
     @State private var isShowingCommentEditView: Bool = false
-
+    
     
     @State private var detailImage: Image = Image("DummyPuppy1")
     @State private var imageData: [Data] = []
-    
-//    @State private var writerUser: User?
-//    @State private var commentUser: User?
-    
+    /*
+     User 네비 관련 주석
+     @State private var writerUser: User?
+     @State private var commentUser: User?
+     */
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -46,15 +47,17 @@ struct ArticleDetailView: View {
                     HStack {
                         VStack(alignment: .leading) {
                             HStack {
-//                                NavigationLink(value: writerUser) {
-//                                    Image(writerUser?.profileImage ?? "DummyImage1")
-//                                    Image(.defaultUserProfile)
-//                                        .resizable()
-//                                        .frame(width: 40, height: 40)
-//                                        .scaledToFill()
-//                                        .clipShape(Circle())
-//                                }
-                                
+                                /*
+                                 User 네비 관련 주석
+                                 NavigationLink(value: writerUser) {
+                                 Image(writerUser?.profileImage ?? "DummyImage1")
+                                 Image(.defaultUserProfile)
+                                 .resizable()
+                                 .frame(width: 40, height: 40)
+                                 .scaledToFill()
+                                 .clipShape(Circle())
+                                 }
+                                 */
                                 VStack(alignment: .leading) {
                                     Text("\(article.writerNickname)")
                                         .font(ANBDFont.SubTitle3)
@@ -63,9 +66,6 @@ struct ArticleDetailView: View {
                                         .font(ANBDFont.Caption1)
                                         .foregroundStyle(.gray400)
                                 }
-                            }
-                            .navigationDestination(isPresented: $isGoingToProfileView) {
-                                //                                UserPageView(isSignedInUser: false)
                             }
                             .padding(.bottom, 20)
                             
@@ -135,15 +135,17 @@ struct ArticleDetailView: View {
                             
                             ForEach(articleViewModel.comments) { comment in
                                 HStack(alignment: .top) {
-//                                    NavigationLink(value: commentUser) {
-    //                                    Image(writerUser?.profileImage ?? "DummyImage1")
-//                                        Image(.defaultUserProfile)
-//                                            .resizable()
-//                                            .frame(width: 40, height: 40)
-//                                            .scaledToFill()
-//                                            .clipShape(Circle())
-//                                    }
-                                    
+                                    /*
+                                     User 네비 관련 주석
+                                     NavigationLink(value: commentUser) {
+                                     Image(writerUser?.profileImage ?? "DummyImage1")
+                                     Image(.defaultUserProfile)
+                                     .resizable()
+                                     .frame(width: 40, height: 40)
+                                     .scaledToFill()
+                                     .clipShape(Circle())
+                                     }
+                                     */
                                     VStack(alignment: .leading) {
                                         HStack {
                                             Text("\(comment.writerNickname)")
@@ -164,7 +166,6 @@ struct ArticleDetailView: View {
                                     Menu {
                                         
                                         if comment.writerID == UserStore.shared.user.id {
-                                            // 본인 댓글 = 수정, 삭제 | 다른 사람 게시물 = 신고
                                             Button {
                                                 isShowingCommentEditView.toggle()
                                             } label: {
@@ -215,10 +216,13 @@ struct ArticleDetailView: View {
                 
             } else if isShowingCustomAlertComment {
                 CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertComment, viewType: .commentDelete) {
-                    //                    Task {
-                    //                        await articleViewModel.deleteComment(articleID: article.id, commentID: comment.id)
-                    //                        await articleViewModel.loadArticle(article: article)
-                    //                    }
+                    /*
+                     댓글 삭제 오류나서 일단 주석 !
+                     Task {
+                     await articleViewModel.deleteComment(articleID: article.id, commentID: comment.id)
+                     await articleViewModel.loadArticle(article: article)
+                     }
+                     */
                 }
                 .zIndex(2)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -257,13 +261,7 @@ struct ArticleDetailView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
-                    
-                    //                    guard let userID = UserDefaultsClient.shared.userInfo.id else {
-                    
-                    //                    }
-                    
                     if article.writerID == UserStore.shared.user.id {
-                        // 본인 게시물 = 수정, 삭제 | 다른 사람 게시물 = 신고
                         Button {
                             isShowingCreateView.toggle()
                         } label: {
@@ -286,9 +284,6 @@ struct ArticleDetailView: View {
                             Label("신고하기", systemImage: "exclamationmark.bubble")
                         }
                     }
-                    //                }
-                    //                Button {
-                    //                    isShowingArticleConfirmSheet.toggle()
                 } label: {
                     Image(systemName: "ellipsis")
                         .font(.system(size: 13))
@@ -297,13 +292,11 @@ struct ArticleDetailView: View {
                 }
             }
         }
-        //        .confirmationDialog("", isPresented: $isShowingArticleConfirmSheet) {
-        //        }
         .onAppear {
             // articleViewModel.getOneArticle(article: article)
             Task {
-//                writerUser = await myPageViewMode.getUserInfo(userID: article.writerID)
-//                commentUser = await myPageViewMode.getUserInfo(userID: comment.writerID)
+                //                writerUser = await myPageViewMode.getUserInfo(userID: article.writerID)
+                //                commentUser = await myPageViewMode.getUserInfo(userID: comment.writerID)
                 
                 imageData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
                 await articleViewModel.loadCommentList(articleID: article.id)
@@ -313,14 +306,15 @@ struct ArticleDetailView: View {
             ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, isNewArticle: false, article: article)
         }
         /*
-        .fullScreenCover(isPresented: $isShowingCreateView, onDismiss: {
-            Task {
-                await articleViewModel.loadArticle(article: article)
-                imageData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
-            }
-        }) {
-            ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, isNewArticle: false, article: article)
-        }
+         수정하고 완료했을 때 로드시키고 싶었는데 실패해서 일단 주석해둠 !
+         .fullScreenCover(isPresented: $isShowingCreateView, onDismiss: {
+         Task {
+         await articleViewModel.loadArticle(article: article)
+         imageData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
+         }
+         }) {
+         ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, isNewArticle: false, article: article)
+         }
          */
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
             ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)

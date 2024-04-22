@@ -126,7 +126,7 @@ struct ArticleListCell: View {
                         .multilineTextAlignment(.leading)
                     
                     HStack {
-                        Text("\(trade.writerNickname)")
+                        Text("\(trade.location.description)")
                         
                         Text("・")
                             .padding(.leading, -5)

@@ -8,6 +8,8 @@
 import ANBDModel
 import SwiftUI
 
+//임시로..
+@MainActor
 final class TradeViewModel: ObservableObject {
     private let storageManager = StorageManager.shared
     private let tradeUseCase: TradeUsecase = DefaultTradeUsecase()

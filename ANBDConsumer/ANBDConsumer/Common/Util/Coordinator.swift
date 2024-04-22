@@ -42,7 +42,7 @@ final class Coordinator: ObservableObject {
     @Published var reportType: ReportType = .trade
     @Published var reportedObjectID: String = ""
     @Published var reportedChannelID: String?
-    @Published var user: User = .init(id: "", nickname: "", email: "", favoriteLocation: .busan, isOlderThanFourteen: true, isAgreeService: true, isAgreeCollectInfo: true, isAgreeMarketing: true)
+    @Published var user: User?
     @Published var searchText: String = ""
     @Published var channel: Channel?
     
@@ -77,7 +77,9 @@ final class Coordinator: ObservableObject {
             ReportView(reportViewType: reportType, reportedObjectID: reportedObjectID, reportedChannelID: reportedChannelID)
             
         case .userPageView:
-            UserPageView(writerUser: user)
+            if let user = user {
+                UserPageView(writerUser: user)
+            }
         }
     }
     

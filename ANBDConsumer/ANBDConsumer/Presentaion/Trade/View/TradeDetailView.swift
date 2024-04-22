@@ -60,13 +60,23 @@ struct TradeDetailView: View {
                         
                         //작성자 이미지, 닉네임, 작성시간
                         HStack {
-                            NavigationLink(value: writerUser) {
-                                Image(.dummyImage1)
-                                    .resizable()
-                                    .frame(width: 40, height: 40)
-                                    .scaledToFill()
-                                    .clipShape(Circle())
-                            }
+//                            NavigationLink(value: writerUser) {
+//                                Image(.dummyImage1)
+//                                    .resizable()
+//                                    .frame(width: 40, height: 40)
+//                                    .scaledToFill()
+//                                    .clipShape(Circle())
+//                            }
+                            
+                            Image(.dummyImage1)
+                                .resizable()
+                                .frame(width: 40, height: 40)
+                                .scaledToFill()
+                                .clipShape(Circle())
+                                .onTapGesture {
+                                    coordinator.user = writerUser
+                                    coordinator.appendPath(.userPageView)
+                                }
                             
                             VStack(alignment: .leading) {
                                 Text("\(tradeViewModel.trade.writerNickname)")
@@ -245,16 +255,19 @@ extension TradeDetailView {
                     .frame(width: 100, height: 45)
                     .padding()
                     .onTapGesture {
-                        homeViewModel.chatDetailTrade = trade
-                        
-//                        switch anbdViewType {
-//                        case .home:
-//                            homeViewModel.homePath.append(ANBDNavigationPaths.chatDetailView)
-//                        case .trade:
-//                            tradeViewModel.tradePath.append(ANBDNavigationPaths.chatDetailView)
-//                        case .chat:
-//                            dismiss()
-//                        }
+                        coordinator.trade = trade
+                        switch coordinator.selectedTab {
+                        case .home:
+                            coordinator.homePath.append(Page.chatDetailView)
+                        case .article:
+                            return
+                        case .trade:
+                            coordinator.tradePath.append(Page.chatDetailView)
+                        case .chat:
+                            coordinator.pop()
+                        case .mypage:
+                            return
+                        }
                     }
             }
             

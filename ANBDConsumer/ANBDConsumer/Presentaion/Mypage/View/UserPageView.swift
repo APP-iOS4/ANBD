@@ -160,14 +160,7 @@ struct UserPageView: View {
             isSignedInUser = myPageViewModel.checkSignInedUser(userID: writerUser.id)
             
             Task {
-                await myPageViewModel.loadArticlesWrittenByUser(userID: writerUser.id)
-                await myPageViewModel.loadTradesWrittenByUser(userID: writerUser.id)
-                myPageViewModel.filterANBDListWrittenByUser()
-                
-                myPageViewModel.otherUserNickname = await myPageViewModel.getUserInfo(userID: writerUser.id).nickname
-                
-//                userProfileImageData = await myPageViewModel.loadUserProfileImage(containerID: "",
-//                                                                                  imagePath: myPageViewModel.user.profileImage)
+                myPageViewModel.user = await myPageViewModel.getUserInfo(userID: writerUser.id)
             }
         }
     }
@@ -183,13 +176,13 @@ struct UserPageView: View {
                 Group {
                     switch category {
                     case .accua:
-                        Text("\(myPageViewModel.accuaArticlesWrittenByUser.count)")
+                        Text("\(myPageViewModel.user.accuaCount)")
                     case .nanua:
-                        Text("\(myPageViewModel.nanuaTradesWrittenByUser.count)")
+                        Text("\(myPageViewModel.user.nanuaCount)")
                     case .baccua:
-                        Text("\(myPageViewModel.baccuaTradesWrittenByUser.count)")
+                        Text("\(myPageViewModel.user.baccuaCount)")
                     case .dasi:
-                        Text("\(myPageViewModel.dasiArticlesWrittenByUser.count)")
+                        Text("\(myPageViewModel.user.dasiCount)")
                     }
                 }
                 .font(ANBDFont.pretendardSemiBold(22))

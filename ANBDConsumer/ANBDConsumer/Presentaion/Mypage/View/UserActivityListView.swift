@@ -13,8 +13,6 @@ struct UserActivityListView: View {
     
     @State var category: ANBDCategory
     
-    @State private var isSignedInUser: Bool = false
-    
     var body: some View {
         VStack {
             CategoryDividerView(category: $category, isFromSearchView: true)
@@ -40,14 +38,20 @@ struct UserActivityListView: View {
         .toolbar(.hidden, for: .tabBar)
         .toolbarRole(.editor)
         
-        .navigationTitle("\(myPageViewModel.otherUserNickname)님의 ANBD")
+        .navigationTitle("\(myPageViewModel.user.nickname)님의 ANBD")
         .navigationBarTitleDisplayMode(.inline)
+        
+        .onAppear {
+            Task {
+                await myPageViewModel.loadAllUserActivityList(by: myPageViewModel.user.id)
+            }
+        }
     }
     
     @ViewBuilder
     private func userArticleListView(list: [Article]) -> some View {
         if list.isEmpty {
-            ListEmptyView(description: "\(myPageViewModel.otherUserNickname)님의\n\(category.description) 활동이 없습니다.")
+            ListEmptyView(description: "\(myPageViewModel.user.nickname)님의\n\(category.description) 활동이 없습니다.")
         } else {
             ScrollView(.vertical) {
                 LazyVStack {
@@ -82,7 +86,7 @@ struct UserActivityListView: View {
     private func userTradeListView(list: [Trade]) -> some View {
         VStack {
             if list.isEmpty {
-                ListEmptyView(description: "\(myPageViewModel.otherUserNickname)님의\n\(category.description) 활동이 없습니다.")
+                ListEmptyView(description: "\(myPageViewModel.user.nickname)님의\n\(category.description) 활동이 없습니다.")
             } else {
                 ScrollView(.vertical) {
                     LazyVStack {
@@ -115,11 +119,11 @@ struct UserActivityListView: View {
     }
 }
 
-//#Preview {
-//    NavigationStack {
-//        UserActivityListView(category: .accua)
-//            .environmentObject(MyPageViewModel())
-//            .environmentObject(ArticleViewModel())
-//            .environmentObject(TradeViewModel())
-//    }
-//}
+#Preview {
+    NavigationStack {
+        UserActivityListView(category: .accua)
+            .environmentObject(MyPageViewModel())
+            .environmentObject(ArticleViewModel())
+            .environmentObject(TradeViewModel())
+    }
+}

@@ -21,7 +21,11 @@ final class MyPageViewModel: ObservableObject {
                                isAgreeCollectInfo: true,
                                isAgreeMarketing: true,
                                likeArticles: [],
-                               likeTrades: [])
+                               likeTrades: [],
+                               accuaCount: 0,
+                               nanuaCount: 0,
+                               baccuaCount: 0,
+                               dasiCount: 0)
     
     private let userUsecase: UserUsecase = DefaultUserUsecase()
     private let articleUsecase: ArticleUsecase = DefaultArticleUsecase()
@@ -42,10 +46,11 @@ final class MyPageViewModel: ObservableObject {
                                isAgreeCollectInfo: false,
                                isAgreeMarketing: false,
                                likeArticles: [],
-                               likeTrades: [])
-    
-    @Published private(set) var articlesWrittenByUser: [Article] = []
-    @Published private(set) var tradesWrittenByUser: [Trade] = []
+                               likeTrades: [],
+                               accuaCount: 0,
+                               nanuaCount: 0,
+                               baccuaCount: 0,
+                               dasiCount: 0)
     
     @Published private(set) var accuaArticlesWrittenByUser: [Article] = []
     @Published private(set) var dasiArticlesWrittenByUser: [Article] = []
@@ -111,30 +116,37 @@ final class MyPageViewModel: ObservableObject {
         return userProfilImageData
     }
     
-    @MainActor
-    func loadArticlesWrittenByUser(userID: String, limit: Int = 10) async {
+    func loadArticleList(of category: ANBDCategory, by userID: String, limit: Int = 10) async -> [Article] {
         do {
-            articlesWrittenByUser = try await articleUsecase.refreshWriterIDArticleList(writerID: userID, category: nil, limit: limit)
+            let list = try await articleUsecase.refreshWriterIDArticleList(writerID: userID, category: category, limit: limit)
+            
+            return list
         } catch {
-            print("Error load to articles written by user: \(error.localizedDescription)")
+            print("Error load to list of \(category): \(error.localizedDescription)")
+            
+            return []
+        }
+    }
+    
+    func loadTradeList(of category: ANBDCategory, by userID: String, limit: Int = 10) async -> [Trade] {
+        do {
+            let list = try await tradeUsecase.refreshWriterIDTradeList(writerID: userID, category: category, limit: limit)
+            
+            return list
+        } catch {
+            print("Error load to list of \(category): \(error.localizedDescription)")
+            
+            return []
         }
     }
     
     @MainActor
-    func loadTradesWrittenByUser(userID: String, limit: Int = 10) async {
-        do {
-            tradesWrittenByUser = try await tradeUsecase.refreshWriterIDTradeList(writerID: userID, category: nil, limit: limit)
-        } catch {
-            print("Error load to trades written by user: \(error.localizedDescription)")
-        }
-    }
-    
-    func filterANBDListWrittenByUser() {
-        accuaArticlesWrittenByUser = articlesWrittenByUser.filter({ $0.category == .accua})
-        dasiArticlesWrittenByUser = articlesWrittenByUser.filter({ $0.category == .dasi})
+    func loadAllUserActivityList(by userID: String) async {
+        accuaArticlesWrittenByUser = await loadArticleList(of: .accua, by: userID)
+        dasiArticlesWrittenByUser = await loadArticleList(of: .dasi, by: userID)
         
-        nanuaTradesWrittenByUser = tradesWrittenByUser.filter({ $0.category == .nanua})
-        baccuaTradesWrittenByUser = tradesWrittenByUser.filter({ $0.category == .baccua})
+        nanuaTradesWrittenByUser = await loadTradeList(of: .nanua, by: userID)
+        baccuaTradesWrittenByUser = await loadTradeList(of: .baccua, by: userID)
     }
     
     func loadUserLikedArticles(user: User) async {

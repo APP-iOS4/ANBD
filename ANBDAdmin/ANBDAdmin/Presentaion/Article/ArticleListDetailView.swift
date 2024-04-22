@@ -22,18 +22,18 @@ struct ArticleListDetailView: View {
         List {
             Text("이미지:").foregroundColor(.gray)
             ForEach(articleImageUrls.indices, id: \.self) { index in
-                            if let url = articleImageUrls[index] {
-                                CachedAsyncImage(url: url) { image in
-                                    image.resizable()
-                                        .scaledToFit()
-                                        .frame(height: 300)
-                                } placeholder: {
-                                    ProgressView()
-                                }
-                            } else {
-                                ProgressView()
-                            }
-                        }
+                if let url = articleImageUrls[index] {
+                    CachedAsyncImage(url: url) { image in
+                        image.resizable()
+                            .scaledToFit()
+                            .frame(height: 300)
+                    } placeholder: {
+                        ProgressView()
+                    }
+                } else {
+                    ProgressView()
+                }
+            }
             HStack {
                 Text("이미지 ID:").foregroundColor(.gray)
                 Spacer()
@@ -86,51 +86,51 @@ struct ArticleListDetailView: View {
             }
         }
         .onAppear {
-                    articleLoadImages()
-                }
+            articleLoadImages()
+        }
         .navigationBarTitle(article.title)
         .toolbar {
-                    Button("삭제") {
-                        articleDeleteShowingAlert = true // 경고를 표시
+            Button("삭제") {
+                articleDeleteShowingAlert = true // 경고를 표시
+            }
+        }
+        .alert(isPresented: $articleDeleteShowingAlert) { // 경고를 표시
+            Alert(
+                title: Text("삭제"),
+                message: Text("해당게시글을 삭제하시겠습니까?"),
+                primaryButton: .destructive(Text("삭제")) {
+                    Task {
+                        do {
+                            try await articleUsecase.deleteArticle(article: article)
+                            deletedArticleID = article.id
+                            articlePresentationMode.wrappedValue.dismiss()
+                        } catch {
+                            print("게시글을 삭제하는데 실패했습니다: \(error)")
+                        }
                     }
-                }
-                .alert(isPresented: $articleDeleteShowingAlert) { // 경고를 표시
-                    Alert(
-                        title: Text("삭제"),
-                        message: Text("해당게시글을 삭제하시겠습니까?"),
-                        primaryButton: .destructive(Text("삭제")) {
-                            Task {
-                                do {
-                                    try await articleUsecase.deleteArticle(article: article)
-                                    deletedArticleID = article.id
-                                    articlePresentationMode.wrappedValue.dismiss()
-                                } catch {
-                                    print("게시글을 삭제하는데 실패했습니다: \(error)")
-                                }
-                            }
-                        },
-                        secondaryButton: .cancel()
-                    )
-                }
+                },
+                secondaryButton: .cancel()
+            )
+        }
         
     }
     func articleLoadImages() {
-            let storage = Storage.storage()
-            let storageRef = storage.reference()
-
-            for path in article.imagePaths {
-                let fullPath = "Article/\(article.id)/\(path)"
-                let imageRef = storageRef.child(fullPath)
-                
-                imageRef.downloadURL { url, error in
-                    if let error = error {
-                        print("Error downloading image URL: \(error)")
-                    } else {
-                        articleImageUrls.append(url)
-                    }
+        let storage = Storage.storage()
+        let storageRef = storage.reference()
+        
+        for path in article.imagePaths {
+            let fullPath = "Article/\(article.id)/\(path)"
+            let imageRef = storageRef.child(fullPath)
+            
+            imageRef.downloadURL { url, error in
+                if let error = error {
+                    print("Error downloading image URL: \(error)")
+                } else {
+                    articleImageUrls.append(url)
                 }
             }
         }
+    }
 }
 
 

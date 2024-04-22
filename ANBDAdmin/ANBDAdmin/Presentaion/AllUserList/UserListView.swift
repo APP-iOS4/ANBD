@@ -17,18 +17,18 @@ struct UserListView: View {
     var body: some View {
         VStack {
             TextField("유저의 ID값으로 검색...", text: $searchUserText)
-                            .textCase(.lowercase)
-                            .padding(7)
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                            .padding(.horizontal, 10)
-                            .onSubmit {
-                                if !searchUserText.isEmpty {
-                                    Task {
-                                        await userListViewModel.searchUser(userID: searchUserText)
-                                    }
-                                }
-                            }
+                .textCase(.lowercase)
+                .padding(7)
+                .background(Color(.systemGray6))
+                .cornerRadius(8)
+                .padding(.horizontal, 10)
+                .onSubmit {
+                    if !searchUserText.isEmpty {
+                        Task {
+                            await userListViewModel.searchUser(userID: searchUserText)
+                        }
+                    }
+                }
             HStack{
                 Spacer()
                 VStack(alignment: .leading) {

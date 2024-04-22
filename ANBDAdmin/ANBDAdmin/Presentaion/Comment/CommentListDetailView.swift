@@ -51,28 +51,28 @@ struct CommentListDetailView: View {
         }
         .navigationBarTitle("\(comment.writerNickname) 님의 댓글")
         .toolbar {
-                    Button("삭제") {
-                        commentDeleteShowingAlert = true // 경고를 표시
+            Button("삭제") {
+                commentDeleteShowingAlert = true // 경고를 표시
+            }
+        }
+        .alert(isPresented: $commentDeleteShowingAlert) { // 경고를 표시
+            Alert(
+                title: Text("삭제"),
+                message: Text("해당 댓글을 삭제하시겠습니까?"),
+                primaryButton: .destructive(Text("삭제")) {
+                    Task {
+                        do {
+                            try await commentUsecase.deleteComment(articleID: comment.articleID, commentID: comment.id)
+                            deletedCommentID = comment.id
+                            commentPresentationMode.wrappedValue.dismiss()
+                        } catch {
+                            print("댓글을 삭제하는데 실패했습니다: \(error)")
+                        }
                     }
-                }
-                .alert(isPresented: $commentDeleteShowingAlert) { // 경고를 표시
-                    Alert(
-                        title: Text("삭제"),
-                        message: Text("해당 댓글을 삭제하시겠습니까?"),
-                        primaryButton: .destructive(Text("삭제")) {
-                            Task {
-                                do {
-                                    try await commentUsecase.deleteComment(articleID: comment.articleID, commentID: comment.id)
-                                    deletedCommentID = comment.id
-                                    commentPresentationMode.wrappedValue.dismiss()
-                                } catch {
-                                    print("댓글을 삭제하는데 실패했습니다: \(error)")
-                                }
-                            }
-                        },
-                        secondaryButton: .cancel()
-                    )
-                }
+                },
+                secondaryButton: .cancel()
+            )
+        }
     }
 }
 

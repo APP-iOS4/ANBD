@@ -12,15 +12,15 @@ class ArticleListViewModel: ObservableObject {
     @Published var articleList: [Article] = []
     var deletedArticleID: String? // 삭제 변수
     let articleUsecase = DefaultArticleUsecase()
-
+    
     func firstLoadArticles() {
         if articleList.isEmpty {
             Task {
                 do {
                     let articles = try await articleUsecase.loadArticleList()
-                                    DispatchQueue.main.async {
-                                        self.articleList = articles
-                                    }
+                    DispatchQueue.main.async {
+                        self.articleList = articles
+                    }
                 } catch {
                     print("게시물 목록을 가져오는데 실패했습니다: \(error)")
                 }

@@ -33,7 +33,7 @@ enum ANBDFont {
     static func pretendardBold(_ size: CGFloat) -> Font {
         return Font.custom("Pretendard-Bold", size: size)
     }
-
+    
     /// Pretendard-SemiBold 폰트
     ///
     /// 원하는 사이즈를 입력해서 쓰면 됩니다.

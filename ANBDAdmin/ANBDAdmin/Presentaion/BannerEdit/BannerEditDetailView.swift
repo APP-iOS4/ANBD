@@ -15,7 +15,7 @@ struct BannerEditDetailView: View {
     let bannerUsecase = DefaultBannerUsecase()
     @Binding var deletedBannerID: String?
     @State private var bannerDeleteShowingAlert = false // 경고 표시 상태를 추적 변수
-
+    
     
     var body: some View {
         List {
@@ -51,27 +51,27 @@ struct BannerEditDetailView: View {
         }
         .navigationBarTitle(banner.id)
         .toolbar {
-                    Button("삭제") {
-                        bannerDeleteShowingAlert = true // 경고를 표시
+            Button("삭제") {
+                bannerDeleteShowingAlert = true // 경고를 표시
+            }
+        }
+        .alert(isPresented: $bannerDeleteShowingAlert) { // 경고를 표시
+            Alert(
+                title: Text("삭제"),
+                message: Text("해당 배너를 삭제하시겠습니까?"),
+                primaryButton: .destructive(Text("삭제")) {
+                    Task {
+                        do {
+                            try await bannerUsecase.deleteBanner(bannerID: banner.id)
+                            deletedBannerID = banner.id
+                            bannerDeletePresentationMode.wrappedValue.dismiss()
+                        } catch {
+                            print("배너를 삭제하는데 실패했습니다: \(error)")
+                        }
                     }
-                }
-                .alert(isPresented: $bannerDeleteShowingAlert) { // 경고를 표시
-                    Alert(
-                        title: Text("삭제"),
-                        message: Text("해당 배너를 삭제하시겠습니까?"),
-                        primaryButton: .destructive(Text("삭제")) {
-                            Task {
-                                do {
-                                    try await bannerUsecase.deleteBanner(bannerID: banner.id)
-                                    deletedBannerID = banner.id
-                                    bannerDeletePresentationMode.wrappedValue.dismiss()
-                                } catch {
-                                    print("배너를 삭제하는데 실패했습니다: \(error)")
-                                }
-                            }
-                        },
-                        secondaryButton: .cancel()
-                    )
-                }
+                },
+                secondaryButton: .cancel()
+            )
+        }
     }
 }

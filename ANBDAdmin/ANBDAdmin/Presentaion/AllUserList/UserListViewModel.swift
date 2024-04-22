@@ -11,7 +11,7 @@ import ANBDModel
 class UserListViewModel: ObservableObject {
     @Published var userList: [User] = []
     let userUsecase = DefaultUserUsecase()
-
+    
     func loadUsers() {
         Task {
             do {

@@ -65,17 +65,17 @@ final class AuthenticationViewModel: ObservableObject {
     @Published private(set) var errorMessage: String = ""
     
     @Published var user = User(id: "",
-                                   nickname: "",
-                                   profileImage: "",
-                                   email: "",
-                                   favoriteLocation: .seoul,
-                                   userLevel: .consumer,
-                                   isOlderThanFourteen: false,
-                                   isAgreeService: false,
-                                   isAgreeCollectInfo: false,
-                                   isAgreeMarketing: false,
-                                   likeArticles: [],
-                                   likeTrades: [])
+                               nickname: "",
+                               profileImage: "",
+                               email: "",
+                               favoriteLocation: .seoul,
+                               userLevel: .consumer,
+                               isOlderThanFourteen: false,
+                               isAgreeService: false,
+                               isAgreeCollectInfo: false,
+                               isAgreeMarketing: false,
+                               likeArticles: [],
+                               likeTrades: [])
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -226,8 +226,8 @@ extension AuthenticationViewModel {
     
     func checkAuthState() {
         if let user = UserDefaultsClient.shared.userInfo {
-                    self.user = user
-                }
+            self.user = user
+        }
         
         if (UserDefaultsClient.shared.userInfo == nil) || user.userLevel != ANBDModel.UserLevel.admin{
             switch (UserDefaultsClient.shared.userInfo, user.userLevel) {

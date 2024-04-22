@@ -16,19 +16,19 @@ struct TradeListView: View {
     var body: some View {
         VStack {
             TextField("제목이나 ID값으로 검색...", text: $searchTradeText)
-                            .textCase(.lowercase)
-                            .padding(7)
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                            .padding(.horizontal, 10)
-                            .onSubmit {
-                                if !searchTradeText.isEmpty {
-                                    Task {
-                                        await tradeListViewModel.searchTrade(tradeID: searchTradeText)
-                                    }
-                                }
-                            }
-                            .textInputAutocapitalization(.characters)// 항상 대문자로 입력받음
+                .textCase(.lowercase)
+                .padding(7)
+                .background(Color(.systemGray6))
+                .cornerRadius(8)
+                .padding(.horizontal, 10)
+                .onSubmit {
+                    if !searchTradeText.isEmpty {
+                        Task {
+                            await tradeListViewModel.searchTrade(tradeID: searchTradeText)
+                        }
+                    }
+                }
+                .textInputAutocapitalization(.characters)// 항상 대문자로 입력받음
             HStack{
                 Spacer()
                 VStack(alignment: .leading) {
@@ -84,9 +84,9 @@ struct TradeListView: View {
                                 Spacer()
                             }
                             .frame(maxWidth: .infinity, minHeight: 50)
-                                    .background(Color.white)
-                                    .cornerRadius(10)
-                                    .padding(.horizontal)
+                            .background(Color.white)
+                            .cornerRadius(10)
+                            .padding(.horizontal)
                         }
                     }
                 }
@@ -96,12 +96,12 @@ struct TradeListView: View {
                 }
                 .navigationBarTitle("거래글 목록")
                 .toolbar {
-                            Button(action: {
-                                //새로고침 함수 뷰모델에 작성예정
-                            }) {
-                                Image(systemName: "arrow.clockwise")
-                            }
-                        }
+                    Button(action: {
+                        //새로고침 함수 뷰모델에 작성예정
+                    }) {
+                        Image(systemName: "arrow.clockwise")
+                    }
+                }
             }
             .padding(.top, 10)
             .background(Color(.systemGroupedBackground))

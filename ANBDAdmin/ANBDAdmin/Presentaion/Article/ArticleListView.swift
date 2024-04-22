@@ -12,23 +12,23 @@ import CachedAsyncImage
 struct ArticleListView: View {
     @StateObject private var articleListViewModel = ArticleListViewModel()
     @State private var searchArticleText = ""
-
+    
     var body: some View {
         VStack {
             TextField("제목이나 ID값으로 검색...", text: $searchArticleText)
-                            .textCase(.lowercase)
-                            .padding(7)
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
-                            .padding(.horizontal, 10)
-                            .onSubmit {
-                                if !searchArticleText.isEmpty {
-                                    Task {
-                                        await articleListViewModel.searchArticle(articleID: searchArticleText)
-                                    }
-                                }
-                            }
-                            .textInputAutocapitalization(.characters)// 항상 대문자로 입력받음
+                .textCase(.lowercase)
+                .padding(7)
+                .background(Color(.systemGray6))
+                .cornerRadius(8)
+                .padding(.horizontal, 10)
+                .onSubmit {
+                    if !searchArticleText.isEmpty {
+                        Task {
+                            await articleListViewModel.searchArticle(articleID: searchArticleText)
+                        }
+                    }
+                }
+                .textInputAutocapitalization(.characters)// 항상 대문자로 입력받음
             HStack{
                 Spacer()
                 VStack(alignment: .leading) {
@@ -95,12 +95,12 @@ struct ArticleListView: View {
                 }
                 .navigationBarTitle("게시글 목록")
                 .toolbar {
-                            Button(action: {
-                                //새로고침 함수 뷰모델에 작성예정
-                            }) {
-                                Image(systemName: "arrow.clockwise")
-                            }
-                        }         
+                    Button(action: {
+                        //새로고침 함수 뷰모델에 작성예정
+                    }) {
+                        Image(systemName: "arrow.clockwise")
+                    }
+                }         
             }
             .padding(.top, 10)
             .background(Color(.systemGroupedBackground))

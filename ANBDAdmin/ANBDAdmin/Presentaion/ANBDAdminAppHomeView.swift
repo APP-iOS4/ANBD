@@ -53,11 +53,11 @@ struct ANBDAdminAppHomeView: View {
                 }
                 Spacer()
                 Button(action: {
-                                        isShowingSignOutAlertView.toggle()
-                                    }, label: {
-                                        Text("로그아웃")
-                                            .modifier(warningTextModifier())
-                                    })
+                    isShowingSignOutAlertView.toggle()
+                }, label: {
+                    Text("로그아웃")
+                        .modifier(warningTextModifier())
+                })
                 .buttonStyle(.bordered)
             }
             .listStyle(SidebarListStyle())
@@ -66,17 +66,17 @@ struct ANBDAdminAppHomeView: View {
         }
         if isShowingSignOutAlertView {
             InquiryView()
-                        .sheet(isPresented: $isShowingSignOutAlertView) {
-                                CustomAlertView(isShowingCustomAlert: $isShowingSignOutAlertView, viewType: .signOut) {
-                                    Task {
-                                        try await authenticationViewModel.signOut {
-                                            UserDefaultsClient.shared.userInfo = nil
-                                            authenticationViewModel.checkAuthState()
-                                        }
-                                    }
-                                }
+                .sheet(isPresented: $isShowingSignOutAlertView) {
+                    CustomAlertView(isShowingCustomAlert: $isShowingSignOutAlertView, viewType: .signOut) {
+                        Task {
+                            try await authenticationViewModel.signOut {
+                                UserDefaultsClient.shared.userInfo = nil
+                                authenticationViewModel.checkAuthState()
                             }
+                        }
                     }
+                }
+        }
     }
     fileprivate struct warningTextModifier: ViewModifier {
         func body(content: Content) -> some View {

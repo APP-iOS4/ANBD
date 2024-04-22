@@ -122,7 +122,7 @@ final class PostDataSource<T: Codable & Identifiable>: Postable {
             if let category {
                 requestQuery = database
                     .whereField("writerID", isEqualTo: writerID)
-                    .whereField("category", isEqualTo: category)
+                    .whereField("category", isEqualTo: category.rawValue)
                     .order(by: "createdAt", descending: true)
                     .limit(to: limit)
             } else {

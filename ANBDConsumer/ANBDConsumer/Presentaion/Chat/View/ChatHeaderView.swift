@@ -17,7 +17,6 @@ extension ChatDetailView {
         
         var trade: Trade?
         var imageData: Data?
-        var anbdViewType: ANBDTabViewType = .chat
         
         @Binding var tradeState: TradeState
         @Binding var isShowingStateChangeCustomAlert: Bool

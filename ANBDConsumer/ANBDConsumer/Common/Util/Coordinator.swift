@@ -27,6 +27,7 @@ enum Page {
 }
 
 final class Coordinator: ObservableObject {
+    @Published var selectedTab: ANBDTabViewType = .home
     
     /// path
     @Published var homePath: NavigationPath = NavigationPath()
@@ -42,9 +43,9 @@ final class Coordinator: ObservableObject {
     @Published var reportedObjectID: String = ""
     @Published var reportedChannelID: String?
     @Published var user: User = .init(id: "", nickname: "", email: "", favoriteLocation: .busan, isOlderThanFourteen: true, isAgreeService: true, isAgreeCollectInfo: true, isAgreeMarketing: true)
+    @Published var searchText: String = ""
     
     
-    /// append
     @ViewBuilder
     func build(_ page: Page) -> some View {
         switch page {
@@ -54,7 +55,7 @@ final class Coordinator: ObservableObject {
         // TODO: 수정 필요
         case .articleDeatilView:
             if let article = article {
-                EmptyView()
+//                ArticleDetailView(article: article, comment: comment)
             }
             
         case .tradeDetailView:
@@ -76,6 +77,22 @@ final class Coordinator: ObservableObject {
             
         case .userPageView:
             UserPageView(writerUser: user)
+        }
+    }
+    
+    /// append
+    func appendPath(_ page: Page) {
+        switch selectedTab {
+        case .home:
+            homePath.append(page)
+        case .article:
+            articlePath.append(page)
+        case .trade:
+            tradePath.append(page)
+        case .chat:
+            chatPath.append(page)
+        case .mypage:
+            mypagePath.append(page)
         }
     }
     

@@ -126,7 +126,7 @@ struct ArticleListCell: View {
                         .multilineTextAlignment(.leading)
                     
                     HStack {
-                        Text("\(trade.writerNickname)")
+                        Text("\(trade.location.description)")
                         
                         Text("・")
                             .padding(.leading, -5)
@@ -149,6 +149,9 @@ struct ArticleListCell: View {
                             .frame(width: 20)
                             .foregroundStyle(isLiked ? .heartRed : .gray800)
                             .onTapGesture {
+                                Task {
+                                    await tradeViewModel.updateLikeTrade(trade: tradeViewModel.trade)
+                                }
                                 isLiked.toggle()
                             }
                             .padding(.leading, 10)
@@ -158,6 +161,7 @@ struct ArticleListCell: View {
             }
             .frame(height: 100)
             .onAppear {
+                isLiked = UserStore.shared.user.likeTrades.contains(trade.id)
                 Task {
                     do {
                         let image = try await StorageManager.shared.downloadImage(

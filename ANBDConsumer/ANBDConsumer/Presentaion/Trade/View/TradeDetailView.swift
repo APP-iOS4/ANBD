@@ -12,9 +12,16 @@ struct TradeDetailView: View {
     @EnvironmentObject private var homeViewModel: HomeViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @EnvironmentObject private var chatViewModel: ChatViewModel
+<<<<<<< Updated upstream
+    @EnvironmentObject private var myPageViewModel: MyPageViewModel
+    @EnvironmentObject private var coordinator: Coordinator
+    
+=======
+    @EnvironmentObject private var coordinator: Coordinator
+    
     // @EnvironmentObject private var myPageViewMode: MyPageViewModel
+>>>>>>> Stashed changes
     @State var trade: Trade
-    var anbdViewType: ANBDTabViewType = .trade
     
     @State private var isShowingCreat: Bool = false
     @State private var isGoingToProfileView: Bool = false
@@ -27,9 +34,9 @@ struct TradeDetailView: View {
     @State private var detailImage: Image = Image("DummyPuppy1")
     @State private var imageData: [Data] = []
     
-    // @State private var writerUser: User?
+    @State private var writerUser: User?
+    @State private var user = UserStore.shared.user
     
-    //임시..
     @State private var isLiked: Bool = false
     
     var body: some View {
@@ -59,14 +66,14 @@ struct TradeDetailView: View {
                         
                         //작성자 이미지, 닉네임, 작성시간
                         HStack {
-//                            NavigationLink(value: writerUser) {
-//                                Image(.dummyImage1)
-//                                    .resizable()
-//                                    .frame(width: 40, height: 40)
-//                                    .scaledToFill()
-//                                    .clipShape(Circle())
-//                            }
-
+                            NavigationLink(value: writerUser) {
+                                Image(.dummyImage1)
+                                    .resizable()
+                                    .frame(width: 40, height: 40)
+                                    .scaledToFill()
+                                    .clipShape(Circle())
+                            }
+                            
                             VStack(alignment: .leading) {
                                 Text("\(tradeViewModel.trade.writerNickname)")
                                     .font(ANBDFont.SubTitle1)
@@ -79,11 +86,11 @@ struct TradeDetailView: View {
                             
                             Spacer()
                             
-                            if let user = UserDefaultsClient.shared.userInfo {
-                                if user.id == tradeViewModel.trade.writerID {
-                                    TradeStateChangeView(tradeState: $tradeViewModel.trade.tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert, fontSize: 17)
-                                }
+                            
+                            if user.id == tradeViewModel.trade.writerID {
+                                TradeStateChangeView(tradeState: $tradeViewModel.trade.tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert, fontSize: 17)
                             }
+                            
                         }//HStack
                         .padding(5)
                         .padding(.horizontal, 5)
@@ -132,10 +139,11 @@ struct TradeDetailView: View {
             }
         }//ZStack
         .onAppear {
-            //tradeViewModel.getOneTrade(trade: trade)
+            tradeViewModel.getOneTrade(trade: trade)
+            isLiked = user.likeTrades.contains(tradeViewModel.trade.id)
             Task {
-                // writerUser = await myPageViewMode.getUserInfo(userID: trade.writerID)
-                imageData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: trade.id, imagePath: trade.imagePaths)
+                writerUser = await myPageViewModel.getUserInfo(userID: tradeViewModel.trade.writerID)
+                imageData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: tradeViewModel.trade.id, imagePath: tradeViewModel.trade.imagePaths)
             }
         }
         .toolbar(.hidden, for: .tabBar)
@@ -174,20 +182,9 @@ struct TradeDetailView: View {
                     }
                 } else {
                     Button("신고하기", role: .destructive) {
-                        homeViewModel.reportType = .trade
-                        chatViewModel.reportType = .trade
-                        
-                        homeViewModel.reportedObjectID = trade.id
-                        chatViewModel.reportedObjectID = trade.id
-                        
-//                        switch anbdViewType {
-//                        case .home:
-//                            homeViewModel.homePath.append(Page.reportView)
-//                        case .trade:
-//                            tradeViewModel.tradePath.append(Page.reportView)
-//                        case .chat:
-//                            chatViewModel.chatPath.append(Page.reportView)
-//                        }
+                        coordinator.reportType = .trade
+                        coordinator.reportedObjectID = trade.id
+                        coordinator.appendPath(.reportView)
                     }
                 }
             }
@@ -198,11 +195,14 @@ struct TradeDetailView: View {
 extension TradeDetailView {
     private var bottomView: some View {
         HStack {
-            Image(systemName: isLiked ? "heart": "heart.fill")
+            Image(systemName: !isLiked ? "heart": "heart.fill")
                 .font(.system(size: 30))
-                .foregroundStyle(isLiked ? .gray800 : .heartRed)
+                .foregroundStyle(!isLiked ? .gray800 : .heartRed)
                 .padding(.leading, 15)
                 .onTapGesture {
+                    Task {
+                        await tradeViewModel.updateLikeTrade(trade: tradeViewModel.trade)
+                    }
                     isLiked.toggle()
                 }
                 .padding()
@@ -239,31 +239,31 @@ extension TradeDetailView {
             
             Spacer()
             
-            if let user = UserDefaultsClient.shared.userInfo {
-                if user.id != tradeViewModel.trade.writerID {
-                    RoundedRectangle(cornerRadius: 14)
-                        .foregroundStyle(.accent)
-                        .overlay {
-                            Text("채팅하기")
-                                .font(ANBDFont.pretendardMedium(16))
-                                .foregroundStyle(.white)
+            
+            if user.id != tradeViewModel.trade.writerID {
+                RoundedRectangle(cornerRadius: 14)
+                    .foregroundStyle(.accent)
+                    .overlay {
+                        Text("채팅하기")
+                            .font(ANBDFont.pretendardMedium(16))
+                            .foregroundStyle(.white)
+                    }
+                    .frame(width: 100, height: 45)
+                    .padding()
+                    .onTapGesture {
+                        homeViewModel.chatDetailTrade = trade
+                        
+                        switch anbdViewType {
+                        case .home:
+                            homeViewModel.homePath.append(ANBDNavigationPaths.chatDetailView)
+                        case .trade:
+                            tradeViewModel.tradePath.append(ANBDNavigationPaths.chatDetailView)
+                        case .chat:
+                            dismiss()
                         }
-                        .frame(width: 100, height: 45)
-                        .padding()
-                        .onTapGesture {
-                            homeViewModel.chatDetailTrade = trade
-                            
-//                            switch anbdViewType {
-//                            case .home:
-//                                homeViewModel.homePath.append(Page.chatDetailView)
-//                            case .trade:
-//                                tradeViewModel.tradePath.append(Page.chatDetailView)
-//                            case .chat:
-//                                dismiss()
-//                            }
-                        }
-                }
+                    }
             }
+            
         }
     }
 }

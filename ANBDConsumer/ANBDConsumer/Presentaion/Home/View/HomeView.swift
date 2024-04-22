@@ -11,6 +11,7 @@ import ANBDModel
 struct HomeView: View {
     @EnvironmentObject private var coordinator: Coordinator
     @EnvironmentObject private var homeViewModel: HomeViewModel
+    @EnvironmentObject private var tradeViewModel: TradeViewModel
     
     @State private var isShowingWebView: Bool = false
     @State private var blogURL: String = "https://www.naver.com"
@@ -54,12 +55,15 @@ struct HomeView: View {
             }
             
             ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink(value: Page.searchView) {
+                Button(action: {
+                    coordinator.homePath.append(Page.searchView)
+                }, label: {
                     Image(systemName: "magnifyingglass")
                         .resizable()
                         .frame(width: 20)
                         .foregroundStyle(.gray900)
-                }
+                })
+                
             }
         }
         .fullScreenCover(isPresented: $isShowingWebView) {
@@ -139,6 +143,7 @@ struct HomeView: View {
                     ForEach(homeViewModel.nanuaTrades) { trade in
                         Button(action: {
                             coordinator.trade = trade
+                            tradeViewModel.getOneTrade(trade: trade)
                             coordinator.homePath.append(Page.tradeDetailView)
                         }, label: {
                             NanuaCellView(trade: trade)
@@ -165,6 +170,7 @@ struct HomeView: View {
             ForEach(homeViewModel.baccuaTrades) { trade in
                 Button(action: {
                     coordinator.trade = trade
+                    tradeViewModel.getOneTrade(trade: trade)
                     coordinator.homePath.append(Page.tradeDetailView)
                 }, label: {
                     ArticleListCell(value: .trade(trade))
@@ -355,5 +361,6 @@ struct HomeView: View {
         HomeView()
             .environmentObject(Coordinator())
             .environmentObject(HomeViewModel())
+            .environmentObject(TradeViewModel())
     }
 }

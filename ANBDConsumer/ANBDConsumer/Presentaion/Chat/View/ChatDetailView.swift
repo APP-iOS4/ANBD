@@ -21,7 +21,6 @@ struct ChatDetailView: View {
     @State private var imageData: Data?
     @State private var tradeState: TradeState = .trading
     
-    var anbdViewType: ANBDTabViewType = .chat
     
     /// 보낼 메시지 관련 변수
     @State private var message: String = ""
@@ -38,7 +37,7 @@ struct ChatDetailView: View {
     var body: some View {
         ZStack {
             VStack {
-                ChatHeaderView(trade: trade, imageData: imageData, anbdViewType: anbdViewType, tradeState: $tradeState, isShowingStateChangeCustomAlert: $isShowingStateChangeCustomAlert)
+                ChatHeaderView(trade: trade, imageData: imageData, tradeState: $tradeState, isShowingStateChangeCustomAlert: $isShowingStateChangeCustomAlert)
                     .padding(.vertical, 5)
                     .padding(.horizontal, 15)
                 
@@ -48,7 +47,7 @@ struct ChatDetailView: View {
                 ScrollView {
                     LazyVStack {
                         ForEach(chatViewModel.messages.reversed()) { message in
-                            MessageCell(message: message, isLast: message == chatViewModel.messages.last, anbdViewType: anbdViewType, channelID: channel?.id ?? "ChannelID", isShowingImageDetailView: $isShowingImageDetailView, detailImage: $detailImage)
+                            MessageCell(message: message, isLast: message == chatViewModel.messages.last, channelID: channel?.id ?? "ChannelID", isShowingImageDetailView: $isShowingImageDetailView, detailImage: $detailImage)
                                 .padding(.vertical, 1)
                                 .padding(.horizontal, 20)
                         }

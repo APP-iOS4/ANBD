@@ -48,6 +48,13 @@ struct UserLikedContentsView: View {
         
         .toolbarRole(.editor)
         .toolbar(.hidden, for: .tabBar)
+        
+        .onAppear {
+            Task {
+                await myPageViewModel.loadUserLikedArticles(user: UserStore.shared.user)
+                await myPageViewModel.loadUserHeartedTrades(user: UserStore.shared.user)
+            }
+        }
     }
     
     private func listEmptyView() -> some View {

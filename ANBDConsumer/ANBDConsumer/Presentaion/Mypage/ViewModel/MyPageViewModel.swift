@@ -55,6 +55,14 @@ final class MyPageViewModel: ObservableObject {
     @Published private(set) var userLikedArticles: [Article] = []
     @Published private(set) var userHeartedTrades: [Trade] = []
     
+    /*
+     // 좋아요, 찜 기능 완료 후 테스트
+     @Published private(set) var userLikedAccuaArticles: [Article] = []
+     @Published private(set) var userLikedDasiArticles: [Article] = []
+     @Published private(set) var userHeartedNanuaTrades: [Trade] = []
+     @Published private(set) var userHeartedBaccuaTrades: [Trade] = []
+     */
+    
     @Published var editedUserNickname = ""
     @Published var tempUserFavoriteLocation: Location = .seoul
     @Published var otherUserNickname = ""
@@ -108,7 +116,7 @@ final class MyPageViewModel: ObservableObject {
         do {
             articlesWrittenByUser = try await articleUsecase.refreshWriterIDArticleList(writerID: userID, limit: limit)
         } catch {
-            print("Error load articles written by user: \(error.localizedDescription)")
+            print("Error load to articles written by user: \(error.localizedDescription)")
         }
     }
     
@@ -117,7 +125,7 @@ final class MyPageViewModel: ObservableObject {
         do {
             tradesWrittenByUser = try await tradeUsecase.refreshWriterIDTradeList(writerID: userID, limit: limit)
         } catch {
-            print("Error load Trades written by user: \(error.localizedDescription)")
+            print("Error load to trades written by user: \(error.localizedDescription)")
         }
     }
     
@@ -129,19 +137,38 @@ final class MyPageViewModel: ObservableObject {
         baccuaTradesWrittenByUser = tradesWrittenByUser.filter({ $0.category == .baccua})
     }
     
-//    func filterList(by category: ANBDCategory, user: User) -> [Any] {
-//        switch category {
-//        case .accua:
-//            let filteredList = user.likeArticles.filter({ $0.category == category })
-//            return
-//        case .nanua:
-//            <#code#>
-//        case .baccua:
-//            <#code#>
-//        case .dasi:
-//            <#code#>
-//        }
-//    }
+    func loadUserLikedArticles(user: User) async {
+        for articleID in user.likeArticles {
+            do {
+                let article = try await articleUsecase.loadArticle(articleID: articleID)
+                userLikedArticles.append(article)
+            } catch {
+                print("Error load to article that the user likes: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func loadUserHeartedTrades(user: User) async {
+        for tradeID in user.likeTrades {
+            do {
+                let trade = try await tradeUsecase.loadTrade(tradeID: tradeID)
+                userHeartedTrades.append(trade)
+            } catch {
+                print("Error load to trade that the user hearted: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    /*
+     // 좋아요, 찜 기능 완료 후 테스트
+     func filterUserLikedAndHeartedList() {
+     userLikedAccuaArticles = userLikedArticles.filter({ $0.category == .accua})
+     userLikedDasiArticles = userLikedArticles.filter({ $0.category == .dasi})
+     
+     userHeartedNanuaTrades = userHeartedTrades.filter({ $0.category == .nanua})
+     userHeartedBaccuaTrades = userHeartedTrades.filter({ $0.category == .baccua})
+     }
+     */
     
     // MARK: - 유저 정보 수정
     func checkDuplicatedNickname() async -> Bool {

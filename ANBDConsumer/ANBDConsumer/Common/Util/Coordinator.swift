@@ -44,6 +44,7 @@ final class Coordinator: ObservableObject {
     @Published var reportedChannelID: String?
     @Published var user: User = .init(id: "", nickname: "", email: "", favoriteLocation: .busan, isOlderThanFourteen: true, isAgreeService: true, isAgreeCollectInfo: true, isAgreeMarketing: true)
     @Published var searchText: String = ""
+    @Published var channel: Channel?
     
     
     @ViewBuilder
@@ -67,10 +68,10 @@ final class Coordinator: ObservableObject {
             SearchView()
             
         case .searchResultView:
-            SearchResultView(category: category, searchText: "")
+            SearchResultView(category: category, searchText: searchText)
             
         case .chatDetailView:
-            ChatDetailView(trade: trade)
+            ChatDetailView(trade: trade, channel: channel)
             
         case .reportView:
             ReportView(reportViewType: reportType, reportedObjectID: reportedObjectID, reportedChannelID: reportedChannelID)

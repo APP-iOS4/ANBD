@@ -12,15 +12,9 @@ struct TradeDetailView: View {
     @EnvironmentObject private var homeViewModel: HomeViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @EnvironmentObject private var chatViewModel: ChatViewModel
-<<<<<<< Updated upstream
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     @EnvironmentObject private var coordinator: Coordinator
-    
-=======
-    @EnvironmentObject private var coordinator: Coordinator
-    
     // @EnvironmentObject private var myPageViewMode: MyPageViewModel
->>>>>>> Stashed changes
     @State var trade: Trade
     
     @State private var isShowingCreat: Bool = false
@@ -253,14 +247,14 @@ extension TradeDetailView {
                     .onTapGesture {
                         homeViewModel.chatDetailTrade = trade
                         
-                        switch anbdViewType {
-                        case .home:
-                            homeViewModel.homePath.append(ANBDNavigationPaths.chatDetailView)
-                        case .trade:
-                            tradeViewModel.tradePath.append(ANBDNavigationPaths.chatDetailView)
-                        case .chat:
-                            dismiss()
-                        }
+//                        switch anbdViewType {
+//                        case .home:
+//                            homeViewModel.homePath.append(ANBDNavigationPaths.chatDetailView)
+//                        case .trade:
+//                            tradeViewModel.tradePath.append(ANBDNavigationPaths.chatDetailView)
+//                        case .chat:
+//                            dismiss()
+//                        }
                     }
             }
             

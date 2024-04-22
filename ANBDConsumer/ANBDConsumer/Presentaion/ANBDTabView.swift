@@ -40,23 +40,6 @@ struct ANBDTabView: View {
                     .navigationDestination(for: Page.self) { page in
                         coordinator.build(page)
                     }
-//=======
-//                    .navigationDestination(for: Article.self) { article in
-//                        ArticleDetailView(article: article, comment: articleViewModel.comment)
-//                    }
-//                    .navigationDestination(for: Trade.self) { trade in
-//                        TradeDetailView(trade: trade)
-//                    }
-//                //                    .navigationDestination(for: User.self) { user in
-//                //                        UserPageView(writerUser: user)
-//                //                    }
-//                    .navigationDestination(for: String.self) { str in
-//                        if str == "" {
-//                            SearchView()
-//                        } else {
-//                            SearchResultView(category: articleCategory, searchText: str)
-//                        }
-//>>>>>>> develop-consumer
                     
             }
             .tabItem {
@@ -68,36 +51,8 @@ struct ANBDTabView: View {
             /// Trade (나눔 · 거래)
             NavigationStack(path: $coordinator.tradePath) {
                 ArticleView(category: $tradeCategory)
-<<<<<<< Updated upstream
-                    .navigationDestination(for: Article.self) { article in
-                        ArticleDetailView(article: article, comment: articleViewModel.comment)
-                    }
-                    .navigationDestination(for: Trade.self) { trade in
-                        TradeDetailView(trade: trade)
-                    }
-                    .navigationDestination(for: String.self) { str in
-                        SearchResultView(category: tradeCategory, searchText: str)
-                    }
-                    .navigationDestination(for: User.self) { user in
-                        UserPageView(writerUser: user)
-                    }
-                    .navigationDestination(for: ANBDCategory.self) { category in
-                        UserActivityListView(category: category)
-                    }
-                    .navigationDestination(for: Page.self) { path in
-//                        switch path {
-//                        case .searchView:
-//                            SearchView()
-//                        case .chatDetailView:
-//                            ChatDetailView()
-////                            ChatDetailView(trade: homeViewModel.chatDetailTrade, anbdViewType: .trade)
-//                        case .reportView:
-//                            ReportView(reportViewType: homeViewModel.reportType, reportedObjectID: homeViewModel.reportedObjectID, reportedChannelID: homeViewModel.reportedChannelID)
-//                        }
-=======
                     .navigationDestination(for: Page.self) { page in
                         coordinator.build(page)
->>>>>>> Stashed changes
                     }
             }
             .tabItem {
@@ -109,23 +64,8 @@ struct ANBDTabView: View {
             /// Chat
             NavigationStack(path: $coordinator.chatPath) {
                 ChatView()
-<<<<<<< Updated upstream
-                    .navigationDestination(for: Channel.self) { channel in
-                        ChatDetailView(channel: channel)
-                    }
-                    .navigationDestination(for: Trade.self) { trade in
-                        TradeDetailView(trade: trade)
-                    }
-                    .navigationDestination(for: Page.self) { path in
-                        if path == .reportView {
-                            ReportView(reportViewType: chatViewModel.reportType, reportedObjectID: chatViewModel.reportedObjectID, reportedChannelID: chatViewModel.reportedChannelID)
-                        } else if path == .chatDetailView {
-                            ChatDetailView(trade: homeViewModel.chatDetailTrade, anbdViewType: .chat)
-                        }
-=======
                     .navigationDestination(for: Page.self) { page in
                         coordinator.build(page)
->>>>>>> Stashed changes
                     }
             }
             .tabItem {

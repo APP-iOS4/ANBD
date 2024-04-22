@@ -13,6 +13,7 @@ struct ChatDetailView: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @EnvironmentObject private var homeViewModel: HomeViewModel
+    @EnvironmentObject private var coordinator: Coordinator
     @Environment(\.dismiss) private var dismiss
     
     /// 채팅방 구분 변수
@@ -137,6 +138,8 @@ struct ChatDetailView: View {
         }
         .confirmationDialog("", isPresented: $isShowingConfirmSheet) {
             Button("채팅 신고하기") {
+                coordinator.reportType = .chatRoom
+                
                 homeViewModel.reportType = .chatRoom
                 chatViewModel.reportType = .chatRoom
                 

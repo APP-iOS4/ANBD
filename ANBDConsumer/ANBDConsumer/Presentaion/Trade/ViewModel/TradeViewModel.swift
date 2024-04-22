@@ -26,7 +26,6 @@ final class TradeViewModel: ObservableObject {
     @Published var selectedItemCategory: ItemCategory = .digital
     @Published var selectedLocation: Location = .seoul
     
-    
     init() {
         
     }
@@ -137,9 +136,11 @@ final class TradeViewModel: ObservableObject {
         return detailImages
     }
     
+    //MARK: - CREATE
+    
     func createTrade(category: ANBDCategory, itemCategory: ItemCategory, location: Location, title: String, content: String, myProduct: String, wantProduct: String, images: [Data]) async {
         
-        let user = UserDefaultsClient.shared.userInfo
+        let user = UserStore.shared.user
         var want: String = ""
         
         if wantProduct == "" {
@@ -148,7 +149,7 @@ final class TradeViewModel: ObservableObject {
             want = wantProduct
         }
         
-        let newTrade = Trade(writerID: user!.id, writerNickname: user!.nickname, category: category, itemCategory: itemCategory, location: location, title: title, content: content, myProduct: myProduct, wantProduct: want, thumbnailImagePath: "", imagePaths: [])
+        let newTrade = Trade(writerID: user.id, writerNickname: user.nickname, category: category, itemCategory: itemCategory, location: location, title: title, content: content, myProduct: myProduct, wantProduct: want, thumbnailImagePath: "", imagePaths: [])
         
         //이미지 리사이징
         var newImages: [Data] = []
@@ -165,6 +166,8 @@ final class TradeViewModel: ObservableObject {
         }
     }
     
+    //MARK: - DELETE
+    
     func deleteTrade(trade: Trade) async {
         do {
             try await tradeUseCase.deleteTrade(trade: trade)
@@ -172,6 +175,8 @@ final class TradeViewModel: ObservableObject {
             print("삭제 실패: \(error.localizedDescription)")
         }
     }
+    
+    //MARK: - UPDATE
     
     @MainActor
     func updateTrade(category: ANBDCategory, title: String, content: String, myProduct: String, wantProduct: String, images: [Data]) async {
@@ -217,6 +222,16 @@ final class TradeViewModel: ObservableObject {
             }
         } catch {
             print("상태수정 실패: \(error.localizedDescription)")
+        }
+    }
+    
+    @MainActor
+    func updateLikeTrade(trade: Trade) async {
+        do {
+            try await tradeUseCase.likeTrade(tradeID: trade.id)
+            UserStore.shared.user = await UserStore.shared.getUserInfo(userID: UserStore.shared.user.id)
+        } catch {
+            print("좋아요 실패: \(error.localizedDescription)")
         }
     }
 }

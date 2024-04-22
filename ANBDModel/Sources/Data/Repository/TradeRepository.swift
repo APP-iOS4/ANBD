@@ -27,6 +27,12 @@ struct TradeRepositoryImpl: TradeRepository {
     
     // MARK: Create
     func createTrade(trade: Trade, imageDatas: [Data]) async throws {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            throw UserError.invalidUserID
+        }
+        
+        var userInfo = try await userDataSource.readUserInfo(userID: userID)
+        
         let imagePaths = try await storage.uploadImageList(
             path: .trade,
             containerID: trade.id,
@@ -40,6 +46,19 @@ struct TradeRepositoryImpl: TradeRepository {
         }
         
         try await tradeDataSource.createItem(item: newTrade)
+        
+        switch trade.category {
+        case .accua:
+            userInfo.accuaCount += 1
+        case .nanua:
+            userInfo.nanuaCount += 1
+        case .baccua:
+            userInfo.baccuaCount += 1
+        case .dasi:
+            userInfo.dasiCount += 1
+        }
+        
+        try await userDataSource.updateUserPostCount(user: userInfo)
     }
     
     
@@ -157,6 +176,12 @@ struct TradeRepositoryImpl: TradeRepository {
     
     // MARK: Delete
     func deleteTrade(trade: Trade) async throws {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            throw UserError.invalidUserID
+        }
+        
+        var userInfo = try await userDataSource.readUserInfo(userID: userID)
+        
         if !trade.thumbnailImagePath.isEmpty {
             try await storage.deleteImage(
                 path: .trade,
@@ -172,6 +197,19 @@ struct TradeRepositoryImpl: TradeRepository {
         )
         try await tradeDataSource.deleteItem(itemID: trade.id)
         try await userDataSource.updateUserInfoList(tradeID: trade.id)
+        
+        switch trade.category {
+        case .accua:
+            userInfo.accuaCount -= 1
+        case .nanua:
+            userInfo.nanuaCount -= 1
+        case .baccua:
+            userInfo.baccuaCount -= 1
+        case .dasi:
+            userInfo.dasiCount -= 1
+        }
+        
+        try await userDataSource.updateUserPostCount(user: userInfo)
     }
     
     func resetQuery() {

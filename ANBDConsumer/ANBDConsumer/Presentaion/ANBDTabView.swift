@@ -104,7 +104,7 @@ struct ANBDTabView: View {
                 //                        UserPageView(writerUser: user)
                 //                    }
                     .navigationDestination(for: ANBDCategory.self) { category in
-                        UserActivityListView(category: category, user: myPageViewModel.user)
+                        UserActivityListView(category: category)
                     }
                     .navigationDestination(for: ANBDNavigationPaths.self) { path in
                         switch path {
@@ -152,7 +152,7 @@ struct ANBDTabView: View {
                         TradeDetailView(trade: trade)
                     }
                     .navigationDestination(for: ANBDCategory.self) { category in
-                        UserActivityListView(category: category, user: myPageViewModel.user)
+                        UserActivityListView(category: category)
                     }
                     .navigationDestination(for: MyPageViewModel.MyPageNaviPaths.self) { path in
                         switch path {

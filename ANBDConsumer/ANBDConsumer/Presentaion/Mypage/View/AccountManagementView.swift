@@ -66,7 +66,9 @@ struct AccountManagementView: View {
                     Task {
                         try await authenticationViewModel.signOut {
                             UserDefaultsClient.shared.removeUserID()
+                            UserStore.shared.user = MyPageViewModel.mockUser
                             authenticationViewModel.checkAuthState()
+                            
                             myPageViewModel.myPageNaviPath.removeLast()
                         }
                     }
@@ -78,7 +80,9 @@ struct AccountManagementView: View {
                     Task {
                         try await authenticationViewModel.withdrawal {
                             UserDefaultsClient.shared.removeUserID()
+                            UserStore.shared.user = MyPageViewModel.mockUser
                             authenticationViewModel.checkAuthState()
+                            
                             myPageViewModel.myPageNaviPath.removeLast()
                         }
                     }

@@ -12,19 +12,8 @@ struct UserActivityListView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     
     @State var category: ANBDCategory
-    @State var user: User
     
     @State private var isSignedInUser: Bool = false
-    
-    @State private var articlesWrittenByUser: [Article] = []
-    @State private var tradesWrittenByUser: [Trade] = []
-    
-    private var filterdArticlesWrittenByUser: [Article] {
-        return articlesWrittenByUser.filter({$0.category == category})
-    }
-    private var filterdTradesWrittenByUser: [Trade] {
-        return tradesWrittenByUser.filter({$0.category == category})
-    }
     
     var body: some View {
         VStack {
@@ -33,16 +22,16 @@ struct UserActivityListView: View {
                 .padding([.leading, .trailing, .bottom])
             
             TabView(selection: $category) {
-                userArticleListView(category: .accua)
+                userArticleListView(list: myPageViewModel.accuaArticlesWrittenByUser)
                     .tag(ANBDCategory.accua)
                 
-                userTradeListView(category: .nanua)
+                userTradeListView(list: myPageViewModel.nanuaTradesWrittenByUser)
                     .tag(ANBDCategory.nanua)
                 
-                userTradeListView(category: .baccua)
+                userTradeListView(list: myPageViewModel.baccuaTradesWrittenByUser)
                     .tag(ANBDCategory.baccua)
                 
-                userArticleListView(category: .dasi)
+                userArticleListView(list: myPageViewModel.dasiArticlesWrittenByUser)
                     .tag(ANBDCategory.dasi)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
@@ -51,29 +40,18 @@ struct UserActivityListView: View {
         .toolbar(.hidden, for: .tabBar)
         .toolbarRole(.editor)
         
-        .navigationTitle("\(user.nickname)님의 ANBD")
+        .navigationTitle("\(myPageViewModel.otherUserNickname)님의 ANBD")
         .navigationBarTitleDisplayMode(.inline)
-        
-        .onAppear {
-            /*
-             Task {
-             articlesWrittenByUser = try await articleUseCase.loadArticleList(writerID: user.id)
-             tradesWrittenByUser = try await tradeUseCase.loadTradeList(writerID: user.id)
-             }
-             */
-            articlesWrittenByUser = myPageViewModel.articlesWrittenByUser
-            tradesWrittenByUser = myPageViewModel.tradesWrittenByUser
-        }
     }
     
     @ViewBuilder
-    private func userArticleListView(category: ANBDCategory) -> some View {
-        if articlesWrittenByUser.isEmpty {
-            ListEmptyView(description: emptyArticleListDescription)
+    private func userArticleListView(list: [Article]) -> some View {
+        if list.isEmpty {
+            ListEmptyView(description: "\(myPageViewModel.otherUserNickname)님의\n\(category.description) 활동이 없습니다.")
         } else {
             ScrollView(.vertical) {
                 LazyVStack {
-                    ForEach(articlesWrittenByUser.filter({$0.category == category})) { article in
+                    ForEach(list) { article in
                         NavigationLink(value: article) {
                             ArticleListCell(value: .article(article))
                                 .padding(.vertical, 5)
@@ -83,7 +61,7 @@ struct UserActivityListView: View {
                     }
                     
                     HStack {
-                        Text("\(filterdArticlesWrittenByUser.count)")
+                        Text("\(list.count)")
                             .foregroundStyle(Color.accent)
                         Text("건의 \(category.description) 활동을 했어요.")
                     }
@@ -101,14 +79,14 @@ struct UserActivityListView: View {
     }
     
     @ViewBuilder
-    private func userTradeListView(category: ANBDCategory) -> some View {
+    private func userTradeListView(list: [Trade]) -> some View {
         VStack {
-            if tradesWrittenByUser.isEmpty {
-                ListEmptyView(description: emptyTradeListDescription)
+            if list.isEmpty {
+                ListEmptyView(description: "\(myPageViewModel.otherUserNickname)님의\n\(category.description) 활동이 없습니다.")
             } else {
                 ScrollView(.vertical) {
                     LazyVStack {
-                        ForEach(tradesWrittenByUser.filter({$0.category == category})) { trade in
+                        ForEach(list) { trade in
                             NavigationLink(value: trade) {
                                 ArticleListCell(value: .trade(trade))
                                     .padding(.vertical, 5)
@@ -118,7 +96,7 @@ struct UserActivityListView: View {
                         }
                         
                         HStack {
-                            Text("\(filterdTradesWrittenByUser.count)")
+                            Text("\(list.count)")
                                 .foregroundStyle(Color.accent)
                             Text("건의 \(category.description) 활동을 했어요.")
                         }
@@ -137,33 +115,11 @@ struct UserActivityListView: View {
     }
 }
 
-extension UserActivityListView {
-    // TODO: - 다른 유저 정보 필요
-//    private var navigationTitle: String {
-//        
+//#Preview {
+//    NavigationStack {
+//        UserActivityListView(category: .accua)
+//            .environmentObject(MyPageViewModel())
+//            .environmentObject(ArticleViewModel())
+//            .environmentObject(TradeViewModel())
 //    }
-    
-    private var emptyArticleListDescription: String {
-        switch isSignedInUser {
-        case true: return "\(user.nickname)님의\n\(category.description) 활동이 없습니다."
-        case false: return "수정 필요"
-        }
-    }
-    
-    private var emptyTradeListDescription: String {
-        switch isSignedInUser {
-        case true: return "\(user.nickname)님의\n\(category.description) 활동이 없습니다."
-        case false: return "수정 필요"
-        }
-    }
-}
-
-#Preview {
-    NavigationStack {
-        UserActivityListView(category: .accua,
-                             user: MyPageViewModel.mockUser)
-        .environmentObject(MyPageViewModel())
-        .environmentObject(ArticleViewModel())
-        .environmentObject(TradeViewModel())
-    }
-}
+//}

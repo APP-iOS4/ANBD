@@ -76,7 +76,7 @@ struct UserActivityListView: View {
                     Divider()
                 }
                 .padding(.horizontal, 20)
-                .background(.white)
+                .background(Color(UIColor.systemBackground))
             }
             .background(.gray50)
         }
@@ -111,7 +111,7 @@ struct UserActivityListView: View {
                         Divider()
                     }
                     .padding(.horizontal, 20)
-                    .background(.white)
+                    .background(Color(UIColor.systemBackground))
                 }
                 .background(.gray50)
             }

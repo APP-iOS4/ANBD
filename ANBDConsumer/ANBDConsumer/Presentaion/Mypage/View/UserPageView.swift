@@ -93,17 +93,17 @@ struct UserPageView: View {
                     Divider()
                     
                     Button(action: {
-                        myPageViewModel.myPageNaviPath.append(MyPageViewModel.MyPageNaviPaths.userHeartedTradeList)
+                        myPageViewModel.myPageNaviPath.append(MyPageViewModel.MyPageNaviPaths.userLikedArticleList)
                     }, label: {
-                        listButtonView(title: "내가 찜한 나눔・거래 보기")
+                        listButtonView(title: "내가 좋아요한 게시글 보기")
                     })
                     
                     Divider()
                     
                     Button(action: {
-                        myPageViewModel.myPageNaviPath.append(MyPageViewModel.MyPageNaviPaths.userLikedArticleList)
+                        myPageViewModel.myPageNaviPath.append(MyPageViewModel.MyPageNaviPaths.userHeartedTradeList)
                     }, label: {
-                        listButtonView(title: "내가 좋아요한 게시글 보기")
+                        listButtonView(title: "내가 찜한 나눔・거래 보기")
                     })
                     
                     Divider()

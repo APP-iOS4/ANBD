@@ -23,9 +23,9 @@ protocol Postable<Item>: AnyObject {
     func createItem(item: Item) async throws
     func readItem(itemID: String) async throws -> Item
     func readItemList(limit: Int) async throws -> [Item]
-    func readItemList(writerID: String, limit: Int) async throws -> [Item]
+    func readItemList(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [Item]
     func refreshAll(limit: Int) async throws -> [Item]
-    func refreshWriterID(writerID: String, limit: Int) async throws -> [Item]
+    func refreshWriterID(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [Item]
     func deleteItem(itemID: String) async throws
     func resetSearchQuery()
 }
@@ -117,7 +117,7 @@ final class PostDataSource<T: Codable & Identifiable>: Postable {
         return itemList
     }
     
-    func readItemList(writerID: String, limit: Int) async throws -> [T] {
+    func readItemList(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [T] {
         var requestQuery: Query
         
         if let writerIDQuery {
@@ -162,9 +162,9 @@ final class PostDataSource<T: Codable & Identifiable>: Postable {
         return try await readItemList(limit: limit)
     }
     
-    func refreshWriterID(writerID: String, limit: Int) async throws -> [T] {
+    func refreshWriterID(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [T] {
         writerIDQuery = nil
-        return try await readItemList(writerID: writerID, limit: limit)
+        return try await readItemList(writerID: writerID, category: category, limit: limit)
     }
     
 //    func updateItem(item: T) async throws { }

@@ -62,8 +62,8 @@ struct ArticleRepositoryImpl: ArticleRepository {
         return articleList
     }
     
-    func readArticleList(writerID: String, limit: Int) async throws -> [Article] {
-        let articleList = try await articleDataSource.readItemList(writerID: writerID, limit: limit)
+    func readArticleList(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [Article] {
+        let articleList = try await articleDataSource.readItemList(writerID: writerID, category: category, limit: limit)
         return articleList
     }
     
@@ -82,8 +82,8 @@ struct ArticleRepositoryImpl: ArticleRepository {
         return refreshedList
     }
     
-    func refreshWriterID(writerID: String, limit: Int) async throws -> [Article] {
-        let refreshedList = try await articleDataSource.refreshWriterID(writerID: writerID, limit: limit)
+    func refreshWriterID(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [Article] {
+        let refreshedList = try await articleDataSource.refreshWriterID(writerID: writerID, category: category, limit: limit)
         return refreshedList
     }
     

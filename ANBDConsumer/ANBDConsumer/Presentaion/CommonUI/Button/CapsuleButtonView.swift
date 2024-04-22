@@ -27,14 +27,22 @@ struct CapsuleButtonView: View {
             }
         }
         .font(ANBDFont.Caption3)
-        .padding()
+        .padding(.horizontal)
         .foregroundStyle(fontColor)
-        .background(
-            RoundedRectangle(cornerRadius: 25.0)
-                .fill(buttonColor)
-                .stroke(buttonColor == .clear ? .gray400 : buttonColor)
-                .frame(height: 30)
-        )
+        .background {
+            if buttonColor != .clear {
+                RoundedRectangle(cornerRadius: 25.0)
+                    .foregroundStyle(buttonColor)
+                    .frame(height: 30)
+            }
+        }
+        .overlay {
+            if buttonColor == .clear {
+                RoundedRectangle(cornerRadius: 25.0)
+                    .stroke(.gray400)
+                    .frame(height: 30)
+            }
+        }
     }
 }
 

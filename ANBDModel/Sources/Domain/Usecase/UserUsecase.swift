@@ -24,7 +24,12 @@ public struct DefaultUserUsecase: UserUsecase {
     
     /// User ID가 일치하는 User의 정보를 반환한다.
     public func getUserInfo(userID: String) async throws -> User {
-        try await userRepository.readUserInfo(userID: userID)
+        if userID.isEmpty {
+            throw UserError.invalidUserID
+        }
+        
+        let userInfo = try await userRepository.readUserInfo(userID: userID)
+        return userInfo
     }
     
     /// [관리자용] 가입된 User의 목록을 반환한다.

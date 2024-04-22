@@ -16,7 +16,7 @@ struct CheckboxView: View {
             Image(systemName: isChecked ? "checkmark.square.fill" : "square")
                 .resizable()
                 .frame(width: 15, height: 15)
-                .foregroundStyle(isChecked ? .accent : .gray800)
+                .foregroundStyle(isChecked ? .accent : .gray900)
             
             Text(text)
                 .font(ANBDFont.pretendardRegular(18))

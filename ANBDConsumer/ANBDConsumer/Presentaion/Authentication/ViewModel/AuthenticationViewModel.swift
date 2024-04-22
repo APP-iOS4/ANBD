@@ -16,7 +16,9 @@ enum AgreeType {
     case agreeMarketing
 }
 
+@MainActor
 final class AuthenticationViewModel: ObservableObject {
+    private let authUsecase: AuthUsecase = DefaultAuthUsecase()
     
     @Published var authState: Bool = false
     
@@ -40,9 +42,10 @@ final class AuthenticationViewModel: ObservableObject {
     @Published var signUpPasswordCheckString: String = ""
     @Published private(set) var signUpPasswordCheckStringDebounced: String = ""
     
-    // Nickname Field
+    // UserInfo Field
     @Published var signUpNicknameString: String = ""
     @Published private(set) var signUpNicknameStringDebounced: String = ""
+    @Published var signUpUserFavoriteLoaction: Location = .seoul
     
     // Validation
     @Published private(set) var isValidSignUpEmail: Bool = false
@@ -66,7 +69,7 @@ final class AuthenticationViewModel: ObservableObject {
     init() {
         $loginEmailString
             .removeDuplicates()
-            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.65), scheduler: DispatchQueue.main)
             .sink { [weak self] email in
                 guard let self = self else { return }
                 self.loginEmailStringDebounced = email
@@ -75,7 +78,7 @@ final class AuthenticationViewModel: ObservableObject {
         
         $loginPasswordString
             .removeDuplicates()
-            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.65), scheduler: DispatchQueue.main)
             .sink { [weak self] password in
                 guard let self = self else { return }
                 self.loginPasswordStringDebounced = password
@@ -92,7 +95,7 @@ final class AuthenticationViewModel: ObservableObject {
         
         $signUpEmailString
             .removeDuplicates()
-            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.02), scheduler: DispatchQueue.main)
             .sink { [weak self] email in
                 guard let self = self else { return }
                 self.signUpEmailStringDebounced = email
@@ -101,7 +104,7 @@ final class AuthenticationViewModel: ObservableObject {
         
         $signUpPasswordString
             .removeDuplicates()
-            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.65), scheduler: DispatchQueue.main)
             .sink { [weak self] password in
                 guard let self = self else { return }
                 self.signUpPasswordStringDebounced = password
@@ -110,7 +113,7 @@ final class AuthenticationViewModel: ObservableObject {
         
         $signUpPasswordCheckString
             .removeDuplicates()
-            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.65), scheduler: DispatchQueue.main)
             .sink { [weak self] password in
                 guard let self = self else { return }
                 self.signUpPasswordCheckStringDebounced = password
@@ -119,7 +122,7 @@ final class AuthenticationViewModel: ObservableObject {
         
         $signUpNicknameString
             .removeDuplicates()
-            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.65), scheduler: DispatchQueue.main)
             .sink { [weak self] nickname in
                 guard let self = self else { return }
                 self.signUpNicknameStringDebounced = nickname
@@ -154,7 +157,6 @@ final class AuthenticationViewModel: ObservableObject {
 
 // MARK: Validate Method
 extension AuthenticationViewModel {
-    
     func validateLogin(email: String, password: String) -> Bool {
         if (!email.isEmpty && !email.isValidateEmail()) && (!password.isEmpty && !password.isValidatePassword()) {
             errorMessage = "잘못된 이메일 또는 비밀번호 형식입니다."
@@ -166,11 +168,7 @@ extension AuthenticationViewModel {
             errorMessage = ""
         }
         
-        // 프로토타입을 위한 임시 주석
-        // return (!email.isEmpty && email.isValidateEmail()) && (!password.isEmpty && password.isValidatePassword())
-        
-        // 프로토타입을 위한 임시 반환값
-        return (!email.isEmpty) && (!password.isEmpty)
+        return (!email.isEmpty && email.isValidateEmail()) && (!password.isEmpty && password.isValidatePassword())
     }
     
     func validateSignUpEmail(email: String) -> Bool {
@@ -180,27 +178,19 @@ extension AuthenticationViewModel {
             errorMessage = ""
         }
         
-        // 프로토타입을 위한 임시 주석
-        // return !email.isEmpty && email.isValidateEmail()
-        
-        // 프로토타입을 위한 임시 반환값
-        return !email.isEmpty
+        return !email.isEmpty && email.isValidateEmail()
     }
     
     func validateSignUpPassword(password: String, passwordCheck: String) -> Bool {
         if !password.isEmpty && !password.isValidatePassword() {
             errorMessage = "잘못된 비밀번호 형식입니다."
         } else if !password.isEmpty && !passwordCheck.isEmpty && password != passwordCheck {
-            errorMessage = "비밀번호가 다릅니다."
+            errorMessage = "비밀번호가 일치하지 않습니다."
         } else {
             errorMessage = ""
         }
         
-        // 프로토타입을 위한 임시 주석
-        // return (!password.isEmpty && password.isValidatePassword()) && (!passwordCheck.isEmpty && password == passwordCheck)
-        
-        // 프로토타입을 위한 임시 반환값
-        return !password.isEmpty && !passwordCheck.isEmpty
+        return (!password.isEmpty && password.isValidatePassword()) && (!passwordCheck.isEmpty && password == passwordCheck)
     }
     
     func validateSignUpNickname(nickname: String) -> Bool {
@@ -210,20 +200,19 @@ extension AuthenticationViewModel {
             errorMessage = ""
         }
         
-        // 프로토타입을 위한 임시 주석
-        // return !nickname.isEmpty && nickname.isValidateNickname()
-        
-        // 프로토타입을 위한 임시 반환값
-        return !nickname.isEmpty
+        return !nickname.isEmpty && nickname.isValidateNickname()
     }
     
 }
 
 // MARK: Sign Up Method
 extension AuthenticationViewModel {
-    
-    func submitSignUp() {
-        authState = true
+    func checkAuthState() {
+        if UserDefaultsClient.shared.userID == nil {
+            authState = false
+        } else {
+            authState = true
+        }
     }
     
     func toggleAllAgree() {
@@ -264,35 +253,78 @@ extension AuthenticationViewModel {
         showingTermsView.toggle()
     }
     
+    func signIn() async throws {
+        do {
+            let signedInUser = try await authUsecase.signIn(email: loginEmailString,
+                                                            password: loginPasswordString)
+            
+            UserDefaultsClient.shared.userID = signedInUser.id
+            UserStore.shared.user = signedInUser
+        } catch {
+            print("\(error.localizedDescription)")
+        }
+    }
+    
+    func signOut(completion: @escaping () -> Void) async throws {
+        do {
+            try await authUsecase.signOut()
+            
+            completion()
+        } catch {
+            print("\(error.localizedDescription)")
+        }
+    }
+    
+    func signUp() async throws {
+        do {
+            let signedUpUser = try await authUsecase.signUp(email: signUpEmailString,
+                                                            password: signUpPasswordString,
+                                                            nickname: signUpNicknameString,
+                                                            favoriteLocation: signUpUserFavoriteLoaction,
+                                                            isOlderThanFourteen: isOlderThanFourteen,
+                                                            isAgreeService: isAgreeService,
+                                                            isAgreeCollectInfo: isAgreeCollectInfo,
+                                                            isAgreeMarketing: isAgreeMarketing)
+            
+            UserDefaultsClient.shared.userID = signedUpUser.id
+            UserStore.shared.user = signedUpUser
+        } catch {
+            print("\(error.localizedDescription)")
+        }
+    }
+    
+    func checkDuplicatedEmail() async -> Bool {
+        let isDuplicate = await authUsecase.checkDuplicatedEmail(email: signUpEmailString)
+        
+        return isDuplicate
+    }
+    
+    func checkDuplicatedNickname() async -> Bool {
+        let isDuplicate = await authUsecase.checkDuplicatedNickname(nickname: signUpNicknameString)
+        
+        return isDuplicate
+    }
+    
+    func checkNicknameLength(_ nickname: String) -> String {
+        if nickname.count > 20 {
+            return String(nickname.prefix(20))
+        } else {
+            return nickname
+        }
+    }
+    
+    func withdrawal(completion: @escaping () -> Void) async throws {
+        do {
+            try await signOut(completion: { })
+            try await authUsecase.withdrawal(userID: UserStore.shared.user.id)
+            
+            completion()
+        } catch {
+            print("\(error.localizedDescription)")
+        }
+    }
+    
     /*
-     func signUpWithEmailPassword() async {
-     do {
-     let signUpResult = try await Auth.auth().createUser(
-     withEmail: signUpEmailString,
-     password: signUpPasswordString
-     )
-     let firebaseUser = signUpResult.user
-     let accessToken = firebaseUser.uid
-     
-     let serviceUser = User(
-     userNickname: signUpNicknameString,
-     email: signUpEmailString,
-     accessToken: accessToken,
-     isOlderThanFourteen: isOlderThanFourteen,
-     isAgreeService: isAgreeService,
-     isAgreeCollectInfo: isAgreeCollectInfo,
-     isAgreeMarketing: isAgreeMarketing
-     )
-     
-     try await userStore.saveUserInfo(userInfo: serviceUser)
-     isValidSignUp = true
-     UserDefaultsManager.shared.userInfo = serviceUser
-     } catch {
-     print(error)
-     errorMessage = error.localizedDescription
-     }
-     }
-     
      func signUpWithGoogle() async {
      do {
      guard let user = Auth.auth().currentUser
@@ -319,15 +351,26 @@ extension AuthenticationViewModel {
      }
      */
     
-    func clearAccount() {
+    func clearSignUpDatas() {
         loginEmailString = ""
         loginPasswordString = ""
+        
+        signUpEmailString = ""
+        signUpPasswordString = ""
+        signUpPasswordCheckString = ""
+        signUpNicknameString = ""
+        signUpUserFavoriteLoaction = .seoul
+        
+        isOlderThanFourteen = false
+        isAgreeService = false
+        isAgreeCollectInfo = false
+        isAgreeMarketing = false
+        
+        isValidSignUp = false
     }
-    
 }
 
 extension String {
-    
     func isValidateEmail() -> Bool {
         let emailRegEx = #"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,64}"#
         let last = self.contains("com") || self.contains("net") || self.contains("co.kr")
@@ -340,8 +383,7 @@ extension String {
     }
     
     func isValidateNickname() -> Bool {
-        let regex = #"^[0-9a-z가-힣][0-9a-z가-힣._]{0,18}[0-9a-z가-힣]$"#
+        let regex = #"(?i)^[0-9a-z가-힣][0-9a-z가-힣._]{0,18}[0-9a-z가-힣]$"#
         return NSPredicate(format: "SELF MATCHES %@", regex).evaluate(with: self)
     }
-    
 }

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import ANBDModel
 
 struct AccountManagementView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
@@ -15,18 +16,20 @@ struct AccountManagementView: View {
     @State private var isShowingSignOutAlertView = false
     @State private var isShowingWithdrawalAlertView = false
     
+    @State private var refreshView = false
+    
     var body: some View {
         ZStack {
             VStack(spacing: 40) {
-                DetailInfoComponentView(title: "가입한 계정",
-                                        content: "anbd@anbd.co.kr")
+                detailInfoComponentView(title: "가입한 계정",
+                                        content: UserStore.shared.user.email)
                 .padding(.top, 30)
                 
-                DetailInfoComponentView(title: "닉네임",
-                                        content: myPageViewModel.user.nickname)
+                detailInfoComponentView(title: "닉네임",
+                                        content: UserStore.shared.user.nickname)
                 
-                DetailInfoComponentView(title: "선호하는 거래 지역",
-                                        content: myPageViewModel.user.favoriteLocation.description)
+                detailInfoComponentView(title: "선호하는 거래 지역",
+                                        content: UserStore.shared.user.favoriteLocation.description)
                 
                 VStack {
                     Rectangle()
@@ -37,7 +40,7 @@ struct AccountManagementView: View {
                         isShowingSignOutAlertView.toggle()
                     }, label: {
                         Text("로그아웃")
-                            .modifier(WarningTextModifier())
+                            .modifier(warningTextModifier())
                     })
                     
                     Rectangle()
@@ -48,7 +51,7 @@ struct AccountManagementView: View {
                         isShowingWithdrawalAlertView.toggle()
                     }, label: {
                         Text("회원탈퇴")
-                            .modifier(WarningTextModifier())
+                            .modifier(warningTextModifier())
                     })
                     
                     Rectangle()
@@ -57,44 +60,56 @@ struct AccountManagementView: View {
                         .ignoresSafeArea()
                 }
             }
-            .navigationTitle("내 정보")
-            .navigationBarTitleDisplayMode(.inline)
-            
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {
-                        myPageViewModel.tempUserFavoriteLocation = myPageViewModel.user.favoriteLocation
-                        isShowingEditorView.toggle()
-                    }, label: {
-                        Text("수정")
-                    })
-                }
-            }
-            
-            .fullScreenCover(isPresented: $isShowingEditorView) {
-                UserInfoEditingView()
-            }
             
             if isShowingSignOutAlertView {
                 CustomAlertView(isShowingCustomAlert: $isShowingSignOutAlertView, viewType: .signOut) {
-                    // 로그아웃 메서드 넣기
-                    authenticationViewModel.authState = false
-                    print("Sign Out")
+                    Task {
+                        try await authenticationViewModel.signOut {
+                            UserDefaultsClient.shared.removeUserID()
+                            authenticationViewModel.checkAuthState()
+                            myPageViewModel.myPageNaviPath.removeLast()
+                        }
+                    }
                 }
             }
             
             if isShowingWithdrawalAlertView {
                 CustomAlertView(isShowingCustomAlert: $isShowingWithdrawalAlertView, viewType: .withdrawal) {
-                    // 회원 탈퇴 메서드 넣기
-                    authenticationViewModel.authState = false
-                    print("Withdrawal")
+                    Task {
+                        try await authenticationViewModel.withdrawal {
+                            UserDefaultsClient.shared.removeUserID()
+                            authenticationViewModel.checkAuthState()
+                            myPageViewModel.myPageNaviPath.removeLast()
+                        }
+                    }
                 }
             }
         }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: {
+                    myPageViewModel.tempUserFavoriteLocation = UserStore.shared.user.favoriteLocation
+                    isShowingEditorView.toggle()
+                }, label: {
+                    Text("수정")
+                })
+            }
+        }
+        
+        .toolbarRole(.editor)
+        .toolbar(.hidden, for: .tabBar)
+        
+        .navigationTitle("내 정보")
+        .navigationBarTitleDisplayMode(.inline)
+        
+        .fullScreenCover(isPresented: $isShowingEditorView, onDismiss: {
+            refreshView.toggle()
+        }) {
+            UserInfoEditingView()
+        }
     }
     
-    @ViewBuilder
-    private func DetailInfoComponentView(title: String, content: String) -> some View {
+    private func detailInfoComponentView(title: String, content: String) -> some View {
         VStack(alignment: .leading, spacing: 15) {
             Text("\(title)")
                 .font(ANBDFont.SubTitle2)
@@ -106,10 +121,11 @@ struct AccountManagementView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 25)
+        .id(refreshView)
     }
 }
 
-private struct WarningTextModifier: ViewModifier {
+fileprivate struct warningTextModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(ANBDFont.SubTitle1)

@@ -9,7 +9,6 @@ import SwiftUI
 import ANBDModel
 
 struct UserLikedContentsView: View {
-    
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     
     @State var category: ANBDCategory
@@ -23,10 +22,10 @@ struct UserLikedContentsView: View {
             switch category {
             case .accua, .dasi:
                 TabView(selection: $category) {
-                    UserLikedArticleListView(category: .accua)
+                    userLikedArticleListView(category: .accua)
                         .tag(ANBDCategory.accua)
                     
-                    UserLikedArticleListView(category: .dasi)
+                    userLikedArticleListView(category: .dasi)
                         .tag(ANBDCategory.dasi)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
@@ -34,10 +33,10 @@ struct UserLikedContentsView: View {
                 
             case .nanua, .baccua:
                 TabView(selection: $category) {
-                    UserHeartTradeListView(category: .nanua)
+                    userHeartTradeListView(category: .nanua)
                         .tag(ANBDCategory.nanua)
                     
-                    UserHeartTradeListView(category: .baccua)
+                    userHeartTradeListView(category: .baccua)
                         .tag(ANBDCategory.baccua)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
@@ -46,41 +45,30 @@ struct UserLikedContentsView: View {
         }
         .navigationTitle("\(navigationTitile)")
         .navigationBarTitleDisplayMode(.inline)
+        
+        .toolbarRole(.editor)
+        .toolbar(.hidden, for: .tabBar)
     }
     
-    @ViewBuilder
-    func ListEmptyView() -> some View {
-        VStack {
-            switch category {
-            case .accua, .dasi:
-                ContentUnavailableView("\(myPageViewModel.user.nickname)님이 좋아요한\n\(category.description) 게시글이 없습니다.",
-                                       systemImage: "tray",
-                                       description: Text(""))
-            case .nanua, .baccua:
-                ContentUnavailableView("\(myPageViewModel.user.nickname)님이 찜한\n\(category.description) 거래가 없습니다.",
-                                       systemImage: "tray",
-                                       description: Text(""))
-            }
+    private func listEmptyView() -> some View {
+        switch category {
+        case .accua, .dasi:
+            ListEmptyView(description: "\(myPageViewModel.user.nickname)님이 좋아요한\n\(category.description) 게시글이 없습니다.")
+        case .nanua, .baccua:
+            ListEmptyView(description: "\(myPageViewModel.user.nickname)님이 찜한\n\(category.description) 거래가 없습니다.")
         }
     }
     
     @ViewBuilder
-    func UserLikedArticleListView(category: ANBDCategory) -> some View {
-        if myPageViewModel.mockArticleData.isEmpty {
-            ListEmptyView()
+    private func userLikedArticleListView(category: ANBDCategory) -> some View {
+        if myPageViewModel.userLikedArticles.isEmpty {
+            listEmptyView()
         } else {
             ScrollView(.vertical) {
                 LazyVStack {
-                    ForEach(myPageViewModel.mockArticleData.filter({$0.category == category})) { article in
-                        //                        NavigationLink(value: article) {
-                        //                            ArticleListCell(article: article)
-                        //                                .padding(.vertical, 5)
-                        //                        }
-                        NavigationLink {
-                            ArticleDetailView(article: article)
-                                .toolbarRole(.editor)
-                        } label: {
-                            ArticleListCell(article: article)
+                    ForEach(myPageViewModel.userLikedArticles.filter({$0.category == category})) { article in
+                        NavigationLink(value: article) {
+                            ArticleListCell(value: .article(article))
                                 .padding(.vertical, 5)
                         }
                         
@@ -95,22 +83,15 @@ struct UserLikedContentsView: View {
     }
     
     @ViewBuilder
-    func UserHeartTradeListView(category: ANBDCategory) -> some View {
-        if myPageViewModel.mockTradeData.isEmpty {
-            ListEmptyView()
+    private func userHeartTradeListView(category: ANBDCategory) -> some View {
+        if myPageViewModel.userHeartedTrades.isEmpty {
+            listEmptyView()
         } else {
             ScrollView(.vertical) {
                 LazyVStack {
-                    ForEach(myPageViewModel.mockTradeData.filter({$0.category == category})) { trade in
-                        //                        NavigationLink(value: trade) {
-                        //                            TradeListCell(trade: trade)
-                        //                                .padding(.vertical, 5)
-                        //                        }
-                        NavigationLink {
-                            TradeDetailView(trade: trade)
-                                .toolbarRole(.editor)
-                        } label: {
-                            TradeListCell(trade: trade)
+                    ForEach(myPageViewModel.userHeartedTrades.filter({$0.category == category})) { trade in
+                        NavigationLink(value: trade) {
+                            ArticleListCell(value: .trade(trade))
                                 .padding(.vertical, 5)
                         }
                         

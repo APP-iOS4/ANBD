@@ -10,37 +10,43 @@ import FirebaseFirestore
 import FirebaseStorage
 
 @available(iOS 15, *)
-struct DefaultChatRepository: ChatRepository {
+final class DefaultChatRepository: ChatRepository {
+    
+    
 
     private var db = Firestore.firestore()
-    let chatDB = Firestore.firestore().collection("ChatRoom")
+    private let chatDB = Firestore.firestore().collection("ChatRoom")
     
-    func createChannel(channel: Channel) async throws -> String {
-        
+    private var listener : ListenerRegistration?
+    
+    func createChannel(channel: Channel) async throws -> Channel {
         guard let _ = try? chatDB.document(channel.id).setData(from: channel)
         else {
-            throw DBError.setDocumentError(message: "ChatRoom document를 추가하는데 실패했습니다.")
+            throw DBError.setChannelDocumentError
         }
-        return channel.id
+        return channel
     }
     
     func readChannelList(userID: String, completion : @escaping (_ channels: [Channel]) -> Void){
-        
-        chatDB
+        listener = chatDB
             .whereField("users", arrayContains: userID)
-            .addSnapshotListener { snapshot, error in
+            .order(by: "lastSendDate", descending: true)
+            .addSnapshotListener { [weak self] snapshot, error in
                 guard let document = snapshot else {
                     print("채널리스트 업데이트 에러 : \(error!)")
                     return
                 }
-                var channels =  document.documents.compactMap { try? $0.data(as: Channel.self) }.filter{!$0.leaveUsers.contains(userID)}
-                channels = sortedChannel(channels: channels)
+                let channels =  document.documents.compactMap { try? $0.data(as: Channel.self) }.filter{!$0.leaveUsers.contains(userID)}
+//                channels = sortedChannel(channels: channels)
                 completion(channels)
         }
     }
     
+    func deleteListener() {
+        listener?.remove()
+    }
+    
     private func sortedChannel(channels : [Channel]) -> [Channel] {
-        
         return channels.sorted(by: {
             if $0.lastSendDate != $1.lastSendDate {
                 if $0.unreadCount > 0 && $1.unreadCount > 0 {
@@ -57,36 +63,36 @@ struct DefaultChatRepository: ChatRepository {
         })
     }
     
-    func readChannelID(tradeID: String, userID: String) async throws -> String? {
-        
+    func readChannel(tradeID: String, userID: String) async throws -> Channel? {
         guard let querySnapshot = try? await chatDB
             .whereField("users", arrayContains: userID)
             .whereField("tradeId", isEqualTo: tradeID)
             .getDocuments()
         else {
-            throw DBError.getDocumentError(message: "userID에 해당하는 ChatRoom documents를 읽어오는데 실패했습니다.")
+            throw DBError.getChannelDocumentError
         }
-        for document in querySnapshot.documents {
-            let data = document.data()
-            guard let channelID = data["id"] as? String else {
-                return nil
-            }
-            return channelID
+        
+        guard let document = querySnapshot.documents.first else {
+            return nil
         }
-        return nil
+        
+        let channel = try? document.data(as: Channel.self)
+        return channel
+//        for document in querySnapshot.documents {
+//            let channel = try? document.data(as: Channel.self)
+//            return channel
+//        }
     }
     
     func readTradeInChannel(channelID: String) async throws -> Trade? {
-        
         guard let documnet = try? await chatDB.document(channelID).getDocument() else {
-            throw DBError.getDocumentError(message: "channelID에 해당하는 ChatRoom documents를 읽어오는데 실패했습니다.")
+            throw DBError.getChannelDocumentError
         }
         guard let data = documnet.data(), let tradeID = data["tradeId"] as? String else {
-            throw DBError.getDocumentError(message: "채널안에 있는 TradeId 데이터를 읽는데 실패")
-        }
+            throw DBError.getChannelDocumentError        }
         
         guard let trade = try? await db.collection("TradeBoard").document(tradeID).getDocument(as : Trade.self) else {
-            throw DBError.getDocumentError(message: "tradeId에 해당하는 documents를 읽어오는데 실패했습니다.")
+            throw DBError.getTradeDocumentError
         }
         
         return trade
@@ -119,7 +125,7 @@ struct DefaultChatRepository: ChatRepository {
                 "leaveUsers": []
             ]
         ) else {
-            throw DBError.updateDocumentError(message: "channelID에 해당하는 channel 문서를 업데이트하는데 실패했습니다.")
+            throw DBError.updateChannelDocumentError
         }
     }
     
@@ -127,7 +133,7 @@ struct DefaultChatRepository: ChatRepository {
         guard channelID != "" else {return}
         
         guard let document = try? await chatDB.document(channelID).getDocument() else {
-            throw DBError.getDocumentError(message: "channelID에 해당하는 ChatRoom documents를 읽어오는데 실패했습니다.")
+            throw DBError.getChannelDocumentError
         }
         
         guard document.exists , let data = document.data() , userID != data["lastSendId"] as? String else {
@@ -135,34 +141,26 @@ struct DefaultChatRepository: ChatRepository {
         }
         
         guard let _ = try? await chatDB.document(channelID).updateData(["unreadCount" : 0]) else {
-            throw DBError.updateDocumentError(message: "channel unreadCount 필드를 업데이트하는데 실패했습니다.")
+            throw DBError.updateChannelDocumentError
         }
         
     }
     
-    func updateLeftChatUser(channelID: String, userID: String) async throws {
-        
+    func updateLeftChatUser(channelID: String, lastMessageID: String, userID: String) async throws {
         guard let _ = try? await chatDB.document(channelID).updateData([
             "leaveUsers": FieldValue.arrayUnion([userID])
         ]) else {
-            throw DBError.updateDocumentError(message: "channel leaveUsers 필드를 업데이트하는데 실패했습니다.")
-        }
+            throw DBError.updateChannelDocumentError        }
         
-        guard let querySnapshot = try? await chatDB.document(channelID).collection("messages").getDocuments() else {
-            throw DBError.getDocumentError(message: "channelID에 해당하는 messages Document 불러오기 실패했습니다")
-        }
-        
-        for document in querySnapshot.documents {
-            try await chatDB.document(channelID).collection("messages").document(document.documentID).updateData([
-                "leaveUsers": FieldValue.arrayUnion([userID])
-            ])
+        guard let _ = try? await chatDB.document(channelID).collection("messages").document(lastMessageID).updateData(["leaveUsers": FieldValue.arrayUnion([userID])]) else {
+            throw DBError.updateMessageDocumentError
         }
     }
     
     
     func deleteChannel(channelID : String) async throws {
         guard let _ = try? await chatDB.document(channelID).delete() else {
-            throw DBError.deleteDocumentError(message: "ID가 일치하는 channel document를 삭제하는데 실패했습니다.")
+            throw DBError.deleteChannelDocumentError
         }
     }
     

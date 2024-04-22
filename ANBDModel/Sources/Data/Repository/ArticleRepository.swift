@@ -1,248 +1,165 @@
 //
 //  DefaultArticleRepository.swift
-//  
+//
 //
 //  Created by 유지호 on 4/4/24.
 //
 
 import Foundation
-import FirebaseFirestore
-import FirebaseStorage
+import FirebaseAuth
 
 @available(iOS 15, *)
-final class DefaultArticleRepository: ArticleRepository {
+struct ArticleRepositoryImpl: ArticleRepository {
     
-    let articleDB = Firestore.firestore().collection("ArticleBoard")
+    private let articleDataSource: any Postable<Article>
+    private let commentDataSource: any Postable<Comment>
+    private let userDataSource: UserDataSource
     
-    private var allQuery: Query?
-    private var writerIDQuery: Query?
-    private var orderQuery: Query?
-    private var searchQuery: Query?
+    private let storage = StorageManager.shared
     
-    init() { }
+    init(
+        articleDataSource: any Postable<Article> = PostDataSource<Article>(database: .articleDatabase),
+        commentDataSource: any Postable<Comment> = PostDataSource<Comment>(database: .commentDatabase),
+        userDataSource: UserDataSource = DefaultUserDataSource()
+    ) {
+        self.articleDataSource = articleDataSource
+        self.commentDataSource = commentDataSource
+        self.userDataSource = userDataSource
+    }
     
     
     // MARK: Create
-    func crateArticle(article: Article) async throws {
-        guard let _ = try? articleDB.document(article.id).setData(from: article)
-        else {
-            throw DBError.setDocumentError(message: "Article document를 추가하는데 실패했습니다.")
+    func createArticle(article: Article, imageDatas: [Data]) async throws {
+        let imagePaths = try await storage.uploadImageList(
+            path: .article,
+            containerID: article.id,
+            imageDatas: imageDatas
+        )
+        var newArticle = article
+        newArticle.thumbnailImagePath = imagePaths.first ?? ""
+        
+        if !imagePaths.isEmpty {
+            newArticle.imagePaths = Array(imagePaths[1...])
         }
+        
+        try await articleDataSource.createItem(item: newArticle)
     }
     
     
     // MARK: Read
     func readArticle(articleID: String) async throws -> Article {
-        guard let article = try? await articleDB.document(articleID).getDocument(as: Article.self)
-        else {
-            throw DBError.getDocumentError(message: "ID가 일치하는 Article document를 읽어오는데 실패했습니다.")
-        }
-        
+        let article = try await articleDataSource.readItem(itemID: articleID)
         return article
     }
     
     func readRecentArticle(category: ANBDCategory) async throws -> Article {
-        guard category == .accua || category == .dasi else {
-            throw NSError(domain: "Recent Article Category Error", code: 4011)
-            
-        }
-        
-        let query = articleDB
-            .whereField("category", isEqualTo: category.rawValue)
-            .order(by: "createdAt", descending: true)
-            .limit(to: 1)
-        
-        guard let article = try? await query
-            .getDocuments()
-            .documents
-            .first?
-            .data(as: Article.self)
-        else {
-            throw DBError.getDocumentError(message: "최근 Article을 읽어오는데 실패했습니다.")
-        }
-        
+        let article = try await articleDataSource.readRecentItem(category: category)
         return article
     }
-        
-    func readArticleList() async throws -> [Article] {
-        var requestQuery: Query
-        
-        if let allQuery {
-            requestQuery = allQuery
-        } else {
-            requestQuery = articleDB
-                .order(by: "createdAt", descending: true)
-                .limit(to: 10)
-            
-            guard let lastSnapshot = try await requestQuery.getDocuments().documents.last else {
-                print("end")
-                return []
-            }
-            
-            let next = articleDB
-                .order(by: "createdAt", descending: true)
-                .limit(to: 10)
-                .start(afterDocument: lastSnapshot)
-            
-            self.allQuery = next
-        }
-        
-        return try await requestQuery.getDocuments().documents.compactMap { try $0.data(as: Article.self) }
-    }
     
-    func readArticleList(writerID: String) async throws -> [Article] {
-        var requestQuery: Query
-        
-        if let writerIDQuery {
-            requestQuery = writerIDQuery
-        } else {
-            requestQuery = articleDB
-                .whereField("writerID", isEqualTo: writerID)
-                .order(by: "createdAt", descending: true)
-                .limit(to: 10)
-            
-            guard let lastSnapshot = try await requestQuery.getDocuments().documents.last else {
-                print("end")
-                return []
-            }
-            
-            let next = articleDB
-                .whereField("writerID", isEqualTo: writerID)
-                .order(by: "createdAt", descending: true)
-                .limit(to: 10)
-                .start(afterDocument: lastSnapshot)
-            
-            self.allQuery = next
-        }
-        
-        return try await requestQuery.getDocuments().documents.compactMap { try $0.data(as: Article.self) }
-    }
-    
-    func readArticleList(by order: ArticleOrder) async throws -> [Article] {
-        var requestQuery: Query
-        
-        if let orderQuery {
-            requestQuery = orderQuery
-        } else {
-            requestQuery = switch order {
-            case .latest:
-                articleDB
-                    .order(by: "createdAt", descending: true)
-                    .limit(to: 10)
-            case .mostLike:
-                articleDB
-                    .order(by: "likeCount", descending: true)
-                    .order(by: "createdAt", descending: true)
-                    .limit(to: 10)
-            case .mostComment:
-                articleDB
-                    .order(by: "commentCount", descending: true)
-                    .order(by: "createdAt", descending: true)
-                    .limit(to: 10)
-            }
-            
-            guard let lastSnapshot = try await requestQuery.getDocuments().documents.last else {
-                print("end")
-                return []
-            }
-            
-            let next = requestQuery.start(afterDocument: lastSnapshot)
-            orderQuery = next
-        }
-        
-        let articleList = try await requestQuery.getDocuments().documents.compactMap { try $0.data(as: Article.self) }
+    func readArticleList(limit: Int) async throws -> [Article] {
+        let articleList = try await articleDataSource.readItemList(limit: limit)
         return articleList
     }
     
-    func readArticleList(keyword: String) async throws -> [Article] {
-        guard !keyword.isEmpty else { return [] }
-        
-        var requestQuery: Query
-        let filteredQuery = articleDB
-            .whereFilter(
-                .orFilter([
-                    .andFilter([
-                        .whereField("title", isGreaterOrEqualTo: keyword),
-                        .whereField("title", isLessThan: keyword + "힣")
-                    ]),
-                    .andFilter([
-                        .whereField("content", isGreaterOrEqualTo: keyword),
-                        .whereField("content", isLessThan: keyword + "힣")
-                    ])
-                ])
-            )
-            .order(by: "createdAt", descending: true)
-            .limit(to: 10)
-        
-        if let searchQuery {
-            requestQuery = searchQuery
-        } else {
-            requestQuery = filteredQuery
-            
-            guard let lastSnapshot = try await requestQuery.getDocuments().documents.last else {
-                print("end")
-                return []
-            }
-            
-            let next = filteredQuery
-                .start(afterDocument: lastSnapshot)
-            
-            searchQuery = next
-        }
-        
-        return try await requestQuery.getDocuments().documents.compactMap { try $0.data(as: Article.self) }
+    func readArticleList(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [Article] {
+        let articleList = try await articleDataSource.readItemList(writerID: writerID, category: category, limit: limit)
+        return articleList
     }
     
-    func refreshAll() async throws -> [Article] {
-        allQuery = nil
-        return try await readArticleList()
+    func readArticleList(category: ANBDCategory, by order: ArticleOrder, limit: Int) async throws -> [Article] {
+        let articleList = try await articleDataSource.readItemList(category: category, by: order, limit: limit)
+        return articleList
     }
     
-    func refreshWriterID(writerID: String) async throws -> [Article] {
-        writerIDQuery = nil
-        return try await readArticleList(writerID: writerID)
+    func readArticleList(keyword: String, limit: Int) async throws -> [Article] {
+        let articleList = try await articleDataSource.readItemList(keyword: keyword, limit: limit)
+        return articleList
     }
     
-    func refreshOrder(by order: ArticleOrder) async throws -> [Article] {
-        orderQuery = nil
-        return try await readArticleList(by: order)
+    func refreshAll(limit: Int) async throws -> [Article] {
+        let refreshedList = try await articleDataSource.refreshAll(limit: limit)
+        return refreshedList
     }
     
-    func refreshSearch(keyword: String) async throws -> [Article] {
-        guard !keyword.isEmpty else { return [] }
-        searchQuery = nil
-        return try await readArticleList(keyword: keyword)
+    func refreshWriterID(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [Article] {
+        let refreshedList = try await articleDataSource.refreshWriterID(writerID: writerID, category: category, limit: limit)
+        return refreshedList
+    }
+    
+    func refreshOrder(category: ANBDCategory, by order: ArticleOrder, limit: Int) async throws -> [Article] {
+        let refreshedList = try await articleDataSource.refreshOrder(category: category, by: order, limit: limit)
+        return refreshedList
+    }
+    
+    func refreshSearch(keyword: String, limit: Int) async throws -> [Article] {
+        let refreshedList = try await articleDataSource.refreshSearch(keyword: keyword, limit: limit)
+        return refreshedList
     }
     
     
     // MARK: Update
-    func updateArticle(article: Article) async throws {
-        guard let _ = try? await articleDB.document(article.id).updateData([
-            "category": article.category.rawValue,
-            "title": article.title,
-            "content": article.content,
-            "imagePaths": article.imagePaths,
-            "likeCount": article.likeCount,
-            "commentCount": article.commentCount
-        ])
-        else {
-            throw DBError.updateDocumentError(message: "Article document를 업데이트하는데 실패했습니다.")
+    func updateArticle(article: Article, imageDatas: [Data]) async throws {
+        let imagePaths = try await storage.updateImageList(
+            path: .article,
+            containerID: article.id,
+            imagePaths: article.imagePaths,
+            imageDatas: imageDatas
+        )
+        var updatedArticle = article
+        updatedArticle.thumbnailImagePath = imagePaths.first ?? ""
+        
+        if !imagePaths.isEmpty {
+            updatedArticle.imagePaths = Array(imagePaths[1...])
         }
+        
+        try await articleDataSource.updateItem(item: updatedArticle)
+    }
+    
+    func likeArticle(articleID: String) async throws {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            throw UserError.invalidUserID
+        }
+        
+        var userInfo = try await userDataSource.readUserInfo(userID: userID)
+        var articleInfo = try await articleDataSource.readItem(itemID: articleID)
+        
+        if userInfo.likeArticles.contains(articleID) {
+            articleInfo.likeCount -= 1
+            userInfo.likeArticles = userInfo.likeArticles.filter { $0 != articleID }
+        } else {
+            articleInfo.likeCount += 1
+            userInfo.likeArticles.append(articleID)
+        }
+        
+        try await articleDataSource.updateItem(item: articleInfo)
+        try await userDataSource.updateUserInfo(user: userInfo)
     }
     
     
     // MARK: Delete
     func deleteArticle(article: Article) async throws {
-        guard let _ = try? await articleDB.document(article.id).delete()
-        else {
-            throw DBError.deleteDocumentError(message: "ID가 일치하는 Article document를 삭제하는데 실패했습니다.")
+        try await commentDataSource.deleteItemList(articleID: article.id)
+        
+        if !article.thumbnailImagePath.isEmpty {
+            try await storage.deleteImage(
+                path: .article,
+                containerID: "\(article.id)/thumbnail",
+                imagePath: article.thumbnailImagePath
+            )
         }
+        
+        try await storage.deleteImageList(
+            path: .article,
+            containerID: article.id,
+            imagePaths: article.imagePaths
+        )
+        try await articleDataSource.deleteItem(itemID: article.id)
+        try await userDataSource.updateUserInfoList(articleID: article.id)
     }
     
     func resetQuery() {
-        allQuery = nil
-        writerIDQuery = nil
-        searchQuery = nil
+        articleDataSource.resetSearchQuery()
     }
     
 }

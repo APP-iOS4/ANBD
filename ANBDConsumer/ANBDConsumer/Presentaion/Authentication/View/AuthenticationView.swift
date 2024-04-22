@@ -8,11 +8,6 @@
 import SwiftUI
 
 struct AuthenticationView: View {
-    enum FocusableField: Int, Hashable, CaseIterable {
-        case email
-        case password
-    }
-    
     @EnvironmentObject private var authenticationViewModel: AuthenticationViewModel
     
     @FocusState private var focus: FocusableField?
@@ -53,33 +48,36 @@ struct AuthenticationView: View {
                         .focused($focus, equals: .password)
                         .submitLabel(.go)
                         .onSubmit {
-                            // 로그인
-                            authenticationViewModel.submitSignUp()
+                            Task {
+                                try await authenticationViewModel.signIn()
+                                authenticationViewModel.checkAuthState()
+                            }
                         }
                         
-                        // 프로토타입을 위한 임시 주석
-                        /*
-                         if !authenticationViewModel.errorMessage.isEmpty {
-                         Text(authenticationViewModel.errorMessage)
-                         .frame(maxWidth: .infinity, alignment: .leading)
-                         .padding(.top, 8)
-                         .font(ANBDFont.Caption1)
-                         .foregroundStyle(.heartRed)
-                         }
-                         */
+                        if !authenticationViewModel.errorMessage.isEmpty {
+                            Text(authenticationViewModel.errorMessage)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.top, -12)
+                                .font(ANBDFont.Caption1)
+                                .foregroundStyle(.heartRed)
+                        }
                     }
                     .padding(.bottom, 30)
                     
                     VStack(spacing: 20) {
                         BlueSquareButton(title: "로그인",
                                          isDisabled: !authenticationViewModel.isValidLogin) {
-                            // 로그인
-                            authenticationViewModel.submitSignUp()
+                            Task {
+                                try await authenticationViewModel.signIn()
+                                authenticationViewModel.checkAuthState()
+                            }
                         }
                         
                         Button(action: {
                             // 구글 로그인
+                            #if DEBUG
                             print("구글 로그인 - 프로토타입")
+                            #endif
                         }, label: {
                             RoundedRectangle(cornerRadius: 14)
                                 .stroke(Color.gray200)
@@ -119,40 +117,35 @@ struct AuthenticationView: View {
                 }
                 .padding(.horizontal)
                 
-                .onAppear {
-                    authenticationViewModel.clearAccount()
-                }
-                
                 .toolbar {
-                    ToolbarItem(placement: .keyboard) {
+                    ToolbarItemGroup(placement: .keyboard) {
                         Button(action: {
                             focusPreviousField()
                         }, label: {
                             Label("Previous text field", systemImage: "chevron.up")
                         })
                         .disabled(!canFocusPreviousField())
-                    }
-                    
-                    ToolbarItem(placement: .keyboard) {
+                        
                         Button(action: {
                             focusNextField()
                         }, label: {
                             Label("Next text field", systemImage: "chevron.down")
                         })
                         .disabled(!canFocusNextField())
-                    }
-                    
-                    ToolbarItem(placement: .keyboard) {
+                        
                         Spacer()
-                    }
-                    
-                    ToolbarItem(placement: .keyboard) {
+                        
                         Button(action: {
                             downKeyboard()
                         }, label: {
                             Label("Keyboard down", systemImage: "keyboard.chevron.compact.down")
                         })
                     }
+                }
+                
+                .onAppear {
+                    authenticationViewModel.clearSignUpDatas()
+                    authenticationViewModel.checkAuthState()
                 }
             }
         }
@@ -167,6 +160,11 @@ struct AuthenticationView: View {
 }
 
 extension AuthenticationView {
+    enum FocusableField: Int, Hashable, CaseIterable {
+        case email
+        case password
+    }
+    
     private func focusPreviousField() {
         focus = focus.map {
             FocusableField(rawValue: $0.rawValue - 1) ?? .email

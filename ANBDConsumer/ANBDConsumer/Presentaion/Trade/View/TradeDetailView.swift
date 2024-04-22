@@ -12,7 +12,7 @@ struct TradeDetailView: View {
     @EnvironmentObject private var homeViewModel: HomeViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @EnvironmentObject private var chatViewModel: ChatViewModel
-    @EnvironmentObject private var myPageViewMode: MyPageViewModel
+    @EnvironmentObject private var myPageViewModel: MyPageViewModel
     @State var trade: Trade
     var anbdViewType: ANBDViewType = .trade
     
@@ -28,7 +28,7 @@ struct TradeDetailView: View {
     @State private var imageData: [Data] = []
     
     @State private var writerUser: User?
-    private let user = UserStore.shared.user
+    @State private var user = UserStore.shared.user
     
     @State private var isLiked: Bool = false
     
@@ -132,10 +132,11 @@ struct TradeDetailView: View {
             }
         }//ZStack
         .onAppear {
+            tradeViewModel.getOneTrade(trade: trade)
             isLiked = user.likeTrades.contains(tradeViewModel.trade.id)
             Task {
-                writerUser = await myPageViewMode.getUserInfo(userID: trade.writerID)
-                imageData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: trade.id, imagePath: trade.imagePaths)
+                writerUser = await myPageViewModel.getUserInfo(userID: tradeViewModel.trade.writerID)
+                imageData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: tradeViewModel.trade.id, imagePath: tradeViewModel.trade.imagePaths)
             }
         }
         .toolbar(.hidden, for: .tabBar)
@@ -205,7 +206,6 @@ extension TradeDetailView {
                 .onTapGesture {
                     Task {
                         await tradeViewModel.updateLikeTrade(trade: tradeViewModel.trade)
-                        UserStore.shared.user = await UserStore.shared.getUserInfo(userID: UserStore.shared.user.id)
                     }
                     isLiked.toggle()
                 }

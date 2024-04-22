@@ -20,7 +20,6 @@ struct ArticleListCell: View {
     @State private var isLiked: Bool = false
     
     var value: ListCellValue
-    private let user = UserStore.shared.user
     
     var body: some View {
         switch value {
@@ -152,7 +151,6 @@ struct ArticleListCell: View {
                             .onTapGesture {
                                 Task {
                                     await tradeViewModel.updateLikeTrade(trade: tradeViewModel.trade)
-                                    UserStore.shared.user = await UserStore.shared.getUserInfo(userID: UserStore.shared.user.id)
                                 }
                                 isLiked.toggle()
                             }
@@ -163,7 +161,7 @@ struct ArticleListCell: View {
             }
             .frame(height: 100)
             .onAppear {
-                isLiked = user.likeTrades.contains(trade.id)
+                isLiked = UserStore.shared.user.likeTrades.contains(trade.id)
                 Task {
                     do {
                         let image = try await StorageManager.shared.downloadImage(

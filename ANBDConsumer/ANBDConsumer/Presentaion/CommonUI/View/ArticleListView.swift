@@ -46,8 +46,6 @@ struct ArticleListView: View {
             } else if !isArticle && tradeViewModel.filteredTrades.isEmpty {
                 loacationAndCategoryButtons
                 ListEmptyView(description: "해당하는 나눔 · 거래 게시글이 없습니다.")
-//                .foregroundStyle(.gray400)
-//                .background(Color.gray50)
                 
             } else {
                 if isArticle {
@@ -85,6 +83,7 @@ struct ArticleListView: View {
                 } else {
                     loacationAndCategoryButtons
                 }
+                
                 ScrollView {
                     LazyVStack {
                         if isArticle {
@@ -131,8 +130,8 @@ struct ArticleListView: View {
     }
 }
 
-extension ArticleListView {
-    fileprivate var loacationAndCategoryButtons: some View {
+fileprivate extension ArticleListView {
+     var loacationAndCategoryButtons: some View {
         HStack {
             /// 지역 필터링
             Button(action: {
@@ -159,7 +158,7 @@ extension ArticleListView {
         .padding(EdgeInsets(top: 7, leading: 17, bottom: 10, trailing: 0))
     }
     
-    private var navigationTitle: String {
+    var navigationTitle: String {
         if let searchText = searchText {
             return searchText
         } else if isFromHomeView {

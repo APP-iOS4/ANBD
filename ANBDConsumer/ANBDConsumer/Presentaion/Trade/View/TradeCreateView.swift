@@ -366,7 +366,7 @@ extension TradeCreateView {
                                 tradeViewModel.selectedItemCategory = .digital
                             }
                         } else {
-                            if let trade = trade {
+                            if trade != nil {
                                 Task {
                                     await tradeViewModel.updateTrade(category: category, title: title, content: content, myProduct: myProduct, wantProduct: wantProduct, images: selectedPhotosData)
                                     

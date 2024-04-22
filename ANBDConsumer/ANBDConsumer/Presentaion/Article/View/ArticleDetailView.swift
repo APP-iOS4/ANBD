@@ -11,7 +11,7 @@ import ANBDModel
 struct ArticleDetailView: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     @EnvironmentObject private var myPageViewMode: MyPageViewModel
-    
+
     var article: Article
     var comment: Comment
     @State private var isLiked: Bool = false

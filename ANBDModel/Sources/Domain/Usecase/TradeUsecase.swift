@@ -12,7 +12,7 @@ public protocol TradeUsecase {
     func writeTrade(trade: Trade, imageDatas: [Data]) async throws
     func loadTrade(tradeID: String) async throws -> Trade
     func loadTradeList(limit: Int?) async throws -> [Trade]
-    func loadTradeList(writerID: String, limit: Int?) async throws -> [Trade]
+    func loadTradeList(writerID: String, category: ANBDCategory?, limit: Int?) async throws -> [Trade]
     func loadFilteredTradeList(category: ANBDCategory,
                                location: [Location]?,
                                itemCategory: [ItemCategory]?,
@@ -20,7 +20,7 @@ public protocol TradeUsecase {
     func loadRecentTradeList(category: ANBDCategory) async throws -> [Trade]
     func searchTrade(keyword: String, limit: Int?) async throws -> [Trade]
     func refreshAllTradeList(limit: Int?) async throws -> [Trade]
-    func refreshWriterIDTradeList(writerID: String, limit: Int?) async throws -> [Trade]
+    func refreshWriterIDTradeList(writerID: String, category: ANBDCategory?, limit: Int?) async throws -> [Trade]
     func refreshFilteredTradeList(category: ANBDCategory,
                                   location: [Location]?,
                                   itemCategory: [ItemCategory]?,
@@ -86,12 +86,12 @@ public struct DefaultTradeUsecase: TradeUsecase {
     ///   - writerID: 작성자의 ID
     ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: 작성자 ID가 일치하는 Trade 배열
-    public func loadTradeList(writerID: String, limit: Int?) async throws -> [Trade] {
+    public func loadTradeList(writerID: String, category: ANBDCategory?, limit: Int?) async throws -> [Trade] {
         if writerID.isEmpty {
             throw TradeError.invalidWriterInfoField
         }
         
-        let tradeList = try await tradeRepository.readTradeList(writerID: writerID, limit: limit ?? 10)
+        let tradeList = try await tradeRepository.readTradeList(writerID: writerID, category: category, limit: limit ?? 10)
         return tradeList
     }
     
@@ -166,12 +166,12 @@ public struct DefaultTradeUsecase: TradeUsecase {
     ///   - writerID: 불러올 Trade의 writerID
     ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: writerID가 일치하는 Trade 배열
-    public func refreshWriterIDTradeList(writerID: String, limit: Int?) async throws -> [Trade] {
+    public func refreshWriterIDTradeList(writerID: String, category: ANBDCategory?, limit: Int?) async throws -> [Trade] {
         if writerID.isEmpty {
             throw TradeError.invalidWriterInfoField
         }
         
-        let tradeList = try await tradeRepository.refreshWriterID(writerID: writerID, limit: limit ?? 10)
+        let tradeList = try await tradeRepository.refreshWriterID(writerID: writerID, category: category, limit: limit ?? 10)
         return tradeList
     }
     
@@ -243,7 +243,7 @@ public struct DefaultTradeUsecase: TradeUsecase {
         if tradeID.isEmpty {
             throw TradeError.invalidTradeIDField
         }
-        
+
         try await tradeRepository.updateTrade(tradeID: tradeID, tradeState: tradeState)
     }
     

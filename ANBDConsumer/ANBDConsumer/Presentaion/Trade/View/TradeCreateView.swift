@@ -146,6 +146,9 @@ extension TradeCreateView {
         ZStack {
             VStack(alignment: .leading) {
                 HStack {
+                    
+                    //MARK: - 취소 버튼 & 상단 타이틀
+                    
                     Button(action: {
                         endTextEditing()
                         
@@ -192,6 +195,8 @@ extension TradeCreateView {
                 .foregroundStyle(.gray900)
                 .padding()
                 
+                //MARK: - 사진 선택
+                
                 ScrollView {
                     if #available(iOS 17.0, *) {
                         photosView
@@ -223,7 +228,8 @@ extension TradeCreateView {
                             }
                     }
                     
-                    //제목
+                    //MARK: - 제목
+                    
                     VStack(alignment: .leading) {
                         Text("제목")
                             .font(.system(size: 18))
@@ -236,11 +242,13 @@ extension TradeCreateView {
                     .padding(.horizontal, 20)
                     .padding(.bottom, 30)
                     
-                    //거래 방식
+                    //MARK: - 거래 방식 선택 버튼
+                    
                     VStack(alignment: .leading) {
                         Text("거래 방식")
                             .font(.system(size: 18))
                             .fontWeight(.bold)
+                            .padding(.bottom, 10)
                         VStack(alignment: .leading) {
                             //나눠쓰기
                             if category == .nanua {
@@ -354,7 +362,8 @@ extension TradeCreateView {
                     .padding(.horizontal, 20)
                     .padding(.bottom, 10)
                     
-                    //작성완료 버튼
+                    //MARK: - 작성 완료 / 수정 완료 버튼
+                    
                     BlueSquareButton(title: isNewProduct ? "작성 완료" : "수정 완료", isDisabled: isFinished) {
                         if isNewProduct {
                             Task {

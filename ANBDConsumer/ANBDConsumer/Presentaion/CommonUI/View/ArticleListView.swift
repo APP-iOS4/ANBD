@@ -44,25 +44,10 @@ struct ArticleListView: View {
                     .background(Color.gray50)
 
             } else if !isArticle && tradeViewModel.filteredTrades.isEmpty {
-                VStack {
-                    Spacer()
-                    
-                    Image(systemName: "tray")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 60)
-                        .padding(.bottom, 10)
-                    
-                    HStack {
-                        Spacer()
-                        Text("해당하는 나눔 · 거래 게시글이 없습니다.")
-                            .font(ANBDFont.body1)
-                        Spacer()
-                    }
-                    Spacer()
-                }
-                .foregroundStyle(.gray400)
-                .background(Color.gray50)
+                loacationAndCategoryButtons
+                ListEmptyView(description: "해당하는 나눔 · 거래 게시글이 없습니다.")
+//                .foregroundStyle(.gray400)
+//                .background(Color.gray50)
                 
             } else {
                 if isArticle {
@@ -98,30 +83,7 @@ struct ArticleListView: View {
                     }
                     .padding(EdgeInsets(top: 7, leading: 17, bottom: 10, trailing: 0))
                 } else {
-                    HStack {
-                        /// 지역 필터링
-                        Button(action: {
-                            isShowingLocation.toggle()
-                        }, label: {
-                            if tradeViewModel.selectedLocations.isEmpty {
-                                CapsuleButtonView(text: "지역", isForFiltering: true)
-                            } else {
-                                CapsuleButtonView(text: tradeViewModel.selectedLocations.count > 1 ? "지역 \(tradeViewModel.selectedLocations.count)" : "\(tradeViewModel.selectedLocations.first?.description ?? "Unknown")", isForFiltering: true, buttonColor: .accent, fontColor: .white)
-                            }
-                        })
-                        
-                        /// 카테고리 필터링
-                        Button(action: {
-                            isShowingItemCategory.toggle()
-                        }, label: {
-                            if tradeViewModel.selectedItemCategories.isEmpty {
-                                CapsuleButtonView(text: "카테고리", isForFiltering: true)
-                            } else {
-                                CapsuleButtonView(text: tradeViewModel.selectedItemCategories.count > 1 ? "카테고리 \(tradeViewModel.selectedItemCategories.count)" : "\(tradeViewModel.selectedItemCategories.first?.rawValue ?? "Unknown")", isForFiltering: true, buttonColor: .accent, fontColor: .white)
-                            }
-                        })
-                    }
-                    .padding(EdgeInsets(top: 7, leading: 17, bottom: 10, trailing: 0))
+                    loacationAndCategoryButtons
                 }
                 ScrollView {
                     LazyVStack {
@@ -170,6 +132,33 @@ struct ArticleListView: View {
 }
 
 extension ArticleListView {
+    fileprivate var loacationAndCategoryButtons: some View {
+        HStack {
+            /// 지역 필터링
+            Button(action: {
+                isShowingLocation.toggle()
+            }, label: {
+                if tradeViewModel.selectedLocations.isEmpty {
+                    CapsuleButtonView(text: "지역", isForFiltering: true)
+                } else {
+                    CapsuleButtonView(text: tradeViewModel.selectedLocations.count > 1 ? "지역 \(tradeViewModel.selectedLocations.count)" : "\(tradeViewModel.selectedLocations.first?.description ?? "Unknown")", isForFiltering: true, buttonColor: .accent, fontColor: .white)
+                }
+            })
+            
+            /// 카테고리 필터링
+            Button(action: {
+                isShowingItemCategory.toggle()
+            }, label: {
+                if tradeViewModel.selectedItemCategories.isEmpty {
+                    CapsuleButtonView(text: "카테고리", isForFiltering: true)
+                } else {
+                    CapsuleButtonView(text: tradeViewModel.selectedItemCategories.count > 1 ? "카테고리 \(tradeViewModel.selectedItemCategories.count)" : "\(tradeViewModel.selectedItemCategories.first?.rawValue ?? "Unknown")", isForFiltering: true, buttonColor: .accent, fontColor: .white)
+                }
+            })
+        }
+        .padding(EdgeInsets(top: 7, leading: 17, bottom: 10, trailing: 0))
+    }
+    
     private var navigationTitle: String {
         if let searchText = searchText {
             return searchText

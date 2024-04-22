@@ -26,7 +26,6 @@ final class TradeViewModel: ObservableObject {
     @Published var selectedItemCategory: ItemCategory = .digital
     @Published var selectedLocation: Location = .seoul
     
-    
     init() {
         
     }
@@ -139,7 +138,7 @@ final class TradeViewModel: ObservableObject {
     
     func createTrade(category: ANBDCategory, itemCategory: ItemCategory, location: Location, title: String, content: String, myProduct: String, wantProduct: String, images: [Data]) async {
         
-        let user = UserDefaultsClient.shared.userInfo
+        let user = UserStore.shared.user
         var want: String = ""
         
         if wantProduct == "" {
@@ -148,7 +147,7 @@ final class TradeViewModel: ObservableObject {
             want = wantProduct
         }
         
-        let newTrade = Trade(writerID: user!.id, writerNickname: user!.nickname, category: category, itemCategory: itemCategory, location: location, title: title, content: content, myProduct: myProduct, wantProduct: want, thumbnailImagePath: "", imagePaths: [])
+        let newTrade = Trade(writerID: user.id, writerNickname: user.nickname, category: category, itemCategory: itemCategory, location: location, title: title, content: content, myProduct: myProduct, wantProduct: want, thumbnailImagePath: "", imagePaths: [])
         
         //이미지 리사이징
         var newImages: [Data] = []

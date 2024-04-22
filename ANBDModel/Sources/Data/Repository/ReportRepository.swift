@@ -11,19 +11,21 @@ import FirebaseFirestore
 
 @available(iOS 15, *)
 final class DefaultReportRepository: ReportRepository {
-    private var reportDB = Firestore.firestore().collection("Report")
+    private let reportDB = Firestore.firestore().collection("Report")
     
     private var nextDoc: DocumentSnapshot?
     
-    func createReport(report: Report) async throws{
+    func createReport(report: Report) async throws {
         guard let _ = try? reportDB.document(report.id).setData(from: report)
         else {
-            throw DBError.unknownError
+            throw DBError.setReportDocumentError
         }
     }
     
-    func readReport() async throws -> [Report]{
+    func readReport(reportType: ReportType) async throws -> [Report] {
+        
         let commonQuery = reportDB
+            .whereField("type", isEqualTo: reportType.rawValue)
             .order(by: "createdAt" ,descending: true)
             .limit(toLast: 20)
         
@@ -36,7 +38,7 @@ final class DefaultReportRepository: ReportRepository {
         }
         
         guard let snapshot = try? await requestQuery.getDocuments() else {
-            throw DBError.unknownError
+            throw DBError.getReportDocumentError
         }
         
         if snapshot.documents.isEmpty {
@@ -50,7 +52,7 @@ final class DefaultReportRepository: ReportRepository {
     
     func deleteReport(reportID : String) async throws {
         guard let _ = try? await reportDB.document(reportID).delete() else {
-            throw DBError.unknownError
+            throw DBError.deleteReportDocumentError
         }
     }
     

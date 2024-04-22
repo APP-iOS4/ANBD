@@ -143,7 +143,7 @@ struct ArticleView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink(value: "") {
+                NavigationLink(value: Page.searchView) {
                     Image(systemName: "magnifyingglass")
                         .resizable()
                         .frame(width: 20)

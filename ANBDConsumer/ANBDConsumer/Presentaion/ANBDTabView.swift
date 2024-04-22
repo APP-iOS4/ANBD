@@ -14,6 +14,7 @@ struct ANBDTabView: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @EnvironmentObject private var chatViewModel: ChatViewModel
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
+    @EnvironmentObject private var coordinator: Coordinator
     
     @State private var articleCategory: ANBDCategory = .accua
     @State private var tradeCategory: ANBDCategory = .nanua
@@ -21,43 +22,10 @@ struct ANBDTabView: View {
     var body: some View {
         TabView {
             /// Home
-            NavigationStack(path: $homeViewModel.homePath) {
+            NavigationStack(path: $coordinator.homePath) {
                 HomeView()
-                    .navigationDestination(for: ANBDCategory.self) { category in
-                        switch category {
-                        case .accua, .dasi:
-                            ArticleListView(category: category, isFromHomeView: true)
-                                .onAppear {
-                                    Task {
-                                        articleViewModel.filteringArticles(category: category)
-                                    }
-                                }
-                            
-                        case .nanua, .baccua:
-                            ArticleListView(category: category, isArticle: false, isFromHomeView: true)
-                                .onAppear {
-                                    tradeViewModel.filteringTrades(category: category)
-                                }
-                        }
-                    }
-                    .navigationDestination(for: Article.self) { article in
-                        ArticleDetailView(article: article, comment: articleViewModel.comment)
-                    }
-                    .navigationDestination(for: Trade.self) { trade in
-                        TradeDetailView(trade: trade, anbdViewType: .home)
-                    }
-                    .navigationDestination(for: String.self) { str in
-                        SearchResultView(category: tradeCategory, searchText: str)
-                    }
-                    .navigationDestination(for: ANBDNavigationPaths.self) { path in
-                        switch path {
-                        case .searchView:
-                            SearchView()
-                        case .chatDetailView:
-                            ChatDetailView(trade: homeViewModel.chatDetailTrade, anbdViewType: .home)
-                        case .reportView:
-                            ReportView(reportViewType: homeViewModel.reportType, reportedObjectID: homeViewModel.reportedObjectID, reportedChannelID: homeViewModel.reportedChannelID)
-                        }
+                    .navigationDestination(for: Page.self) { page in
+                        coordinator.build(page)
                     }
             }
             .tabItem {
@@ -65,23 +33,10 @@ struct ANBDTabView: View {
             }
             
             /// Article (정보 공유)
-            NavigationStack(path: $articleViewModel.articlePath) {
+            NavigationStack(path: $coordinator.articlePath) {
                 ArticleView(category: $articleCategory)
-                    .navigationDestination(for: Article.self) { article in
-                        ArticleDetailView(article: article, comment: articleViewModel.comment)
-                    }
-                    .navigationDestination(for: Trade.self) { trade in
-                        TradeDetailView(trade: trade)
-                    }
-//                    .navigationDestination(for: User.self) { user in
-//                        UserPageView(writerUser: user)
-//                    }
-                    .navigationDestination(for: String.self) { str in
-                        if str == "" {
-                            SearchView()
-                        } else {
-                            SearchResultView(category: articleCategory, searchText: str)
-                        }
+                    .navigationDestination(for: Page.self) { page in
+                        coordinator.build(page)
                     }
             }
             .tabItem {
@@ -89,7 +44,7 @@ struct ANBDTabView: View {
             }
             
             /// Trade (나눔 · 거래)
-            NavigationStack(path: $tradeViewModel.tradePath) {
+            NavigationStack(path: $coordinator.tradePath) {
                 ArticleView(category: $tradeCategory)
                     .navigationDestination(for: Article.self) { article in
                         ArticleDetailView(article: article, comment: articleViewModel.comment)
@@ -106,15 +61,16 @@ struct ANBDTabView: View {
                     .navigationDestination(for: ANBDCategory.self) { category in
                         UserActivityListView(category: category)
                     }
-                    .navigationDestination(for: ANBDNavigationPaths.self) { path in
-                        switch path {
-                        case .searchView:
-                            SearchView()
-                        case .chatDetailView:
-                            ChatDetailView(trade: homeViewModel.chatDetailTrade, anbdViewType: .trade)
-                        case .reportView:
-                            ReportView(reportViewType: homeViewModel.reportType, reportedObjectID: homeViewModel.reportedObjectID, reportedChannelID: homeViewModel.reportedChannelID)
-                        }
+                    .navigationDestination(for: Page.self) { path in
+//                        switch path {
+//                        case .searchView:
+//                            SearchView()
+//                        case .chatDetailView:
+//                            ChatDetailView()
+////                            ChatDetailView(trade: homeViewModel.chatDetailTrade, anbdViewType: .trade)
+//                        case .reportView:
+//                            ReportView(reportViewType: homeViewModel.reportType, reportedObjectID: homeViewModel.reportedObjectID, reportedChannelID: homeViewModel.reportedChannelID)
+//                        }
                     }
             }
             .tabItem {
@@ -122,7 +78,7 @@ struct ANBDTabView: View {
             }
             
             /// Chat
-            NavigationStack(path: $chatViewModel.chatPath) {
+            NavigationStack(path: $coordinator.chatPath) {
                 ChatView()
                     .navigationDestination(for: Channel.self) { channel in
                         ChatDetailView(channel: channel)
@@ -130,7 +86,7 @@ struct ANBDTabView: View {
                     .navigationDestination(for: Trade.self) { trade in
                         TradeDetailView(trade: trade, anbdViewType: .chat)
                     }
-                    .navigationDestination(for: ANBDNavigationPaths.self) { path in
+                    .navigationDestination(for: Page.self) { path in
                         if path == .reportView {
                             ReportView(reportViewType: chatViewModel.reportType, reportedObjectID: chatViewModel.reportedObjectID, reportedChannelID: chatViewModel.reportedChannelID)
                         } else if path == .chatDetailView {
@@ -143,7 +99,7 @@ struct ANBDTabView: View {
             }
             
             /// Mypage
-            NavigationStack(path: $myPageViewModel.myPageNaviPath) {
+            NavigationStack(path: $coordinator.mypagePath) {
                 UserPageView(writerUser: UserStore.shared.user)
                     .navigationDestination(for: Article.self) { article in
                         ArticleDetailView(article: article, comment: articleViewModel.comment)

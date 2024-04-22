@@ -21,7 +21,7 @@ struct ChatDetailView: View {
     @State private var imageData: Data?
     @State private var tradeState: TradeState = .trading
     
-    var anbdViewType: ANBDViewType = .chat
+    var anbdViewType: ANBDTabViewType = .chat
     
     /// 보낼 메시지 관련 변수
     @State private var message: String = ""
@@ -144,14 +144,14 @@ struct ChatDetailView: View {
                 homeViewModel.reportedObjectID = channel?.id ?? "Unknown ChannelID"
                 chatViewModel.reportedObjectID = channel?.id ?? "Unknown ChannelID"
                 
-                switch anbdViewType {
-                case .home:
-                    homeViewModel.homePath.append(ANBDNavigationPaths.reportView)
-                case .trade:
-                    tradeViewModel.tradePath.append(ANBDNavigationPaths.reportView)
-                case .chat:
-                    chatViewModel.chatPath.append(ANBDNavigationPaths.reportView)
-                }
+//                switch anbdViewType {
+//                case .home:
+//                    homeViewModel.homePath.append(Page.reportView)
+//                case .trade:
+//                    tradeViewModel.tradePath.append(Page.reportView)
+//                case .chat:
+//                    chatViewModel.chatPath.append(Page.reportView)
+//                }
             }
             
             Button("채팅방 나가기", role: .destructive) {

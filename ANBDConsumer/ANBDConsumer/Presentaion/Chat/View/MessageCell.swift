@@ -19,7 +19,7 @@ extension ChatDetailView {
         var isLast: Bool = false
         @State var imageData: Data?
         @State private var isMine: Bool = false
-        var anbdViewType: ANBDViewType = .chat
+        var anbdViewType: ANBDTabViewType = .chat
         var channelID: String
         
         @Binding var isShowingImageDetailView: Bool
@@ -61,14 +61,14 @@ extension ChatDetailView {
                                 homeViewModel.reportedChannelID = channelID
                                 chatViewModel.reportedChannelID = channelID
                                 
-                                switch anbdViewType {
-                                case .home:
-                                    homeViewModel.homePath.append(ANBDNavigationPaths.reportView)
-                                case .trade:
-                                    tradeViewModel.tradePath.append(ANBDNavigationPaths.reportView)
-                                case .chat:
-                                    chatViewModel.chatPath.append(ANBDNavigationPaths.reportView)
-                                }
+//                                switch anbdViewType {
+//                                case .home:
+//                                    homeViewModel.homePath.append(Page.reportView)
+//                                case .trade:
+//                                    tradeViewModel.tradePath.append(Page.reportView)
+//                                case .chat:
+//                                    chatViewModel.chatPath.append(Page.reportView)
+//                                }
                             }
                         }
                 }
@@ -91,14 +91,14 @@ extension ChatDetailView {
                                 homeViewModel.reportType = .messages
                                 chatViewModel.reportType = .messages
                                 
-                                switch anbdViewType {
-                                case .home:
-                                    homeViewModel.homePath.append(ANBDNavigationPaths.reportView)
-                                case .trade:
-                                    tradeViewModel.tradePath.append(ANBDNavigationPaths.reportView)
-                                case .chat:
-                                    chatViewModel.chatPath.append(ANBDNavigationPaths.reportView)
-                                }
+//                                switch anbdViewType {
+//                                case .home:
+//                                    homeViewModel.homePath.append(Page.reportView)
+//                                case .trade:
+//                                    tradeViewModel.tradePath.append(Page.reportView)
+//                                case .chat:
+//                                    chatViewModel.chatPath.append(Page.reportView)
+//                                }
                             }
                         }
                     }

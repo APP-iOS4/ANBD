@@ -17,21 +17,21 @@ extension ChatDetailView {
         
         var trade: Trade?
         var imageData: Data?
-        var anbdViewType: ANBDViewType = .chat
+        var anbdViewType: ANBDTabViewType = .chat
         
         @Binding var tradeState: TradeState
         @Binding var isShowingStateChangeCustomAlert: Bool
         
         var body: some View {
             Button(action: {
-                switch anbdViewType {
-                case .home, .trade:
-                    dismiss()
-                case .chat:
-                    if let trade {
-                        chatViewModel.chatPath.append(trade)
-                    }
-                }
+//                switch anbdViewType {
+//                case .home, .trade:
+//                    dismiss()
+//                case .chat:
+//                    if let trade {
+//                        chatViewModel.chatPath.append(trade)
+//                    }
+//                }
             }, label: {
                 HStack {
                     if trade == nil {

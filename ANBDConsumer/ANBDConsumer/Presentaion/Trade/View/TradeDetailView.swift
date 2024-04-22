@@ -14,7 +14,7 @@ struct TradeDetailView: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
     // @EnvironmentObject private var myPageViewMode: MyPageViewModel
     @State var trade: Trade
-    var anbdViewType: ANBDViewType = .trade
+    var anbdViewType: ANBDTabViewType = .trade
     
     @State private var isShowingCreat: Bool = false
     @State private var isGoingToProfileView: Bool = false
@@ -180,14 +180,14 @@ struct TradeDetailView: View {
                         homeViewModel.reportedObjectID = trade.id
                         chatViewModel.reportedObjectID = trade.id
                         
-                        switch anbdViewType {
-                        case .home:
-                            homeViewModel.homePath.append(ANBDNavigationPaths.reportView)
-                        case .trade:
-                            tradeViewModel.tradePath.append(ANBDNavigationPaths.reportView)
-                        case .chat:
-                            chatViewModel.chatPath.append(ANBDNavigationPaths.reportView)
-                        }
+//                        switch anbdViewType {
+//                        case .home:
+//                            homeViewModel.homePath.append(Page.reportView)
+//                        case .trade:
+//                            tradeViewModel.tradePath.append(Page.reportView)
+//                        case .chat:
+//                            chatViewModel.chatPath.append(Page.reportView)
+//                        }
                     }
                 }
             }
@@ -253,14 +253,14 @@ extension TradeDetailView {
                         .onTapGesture {
                             homeViewModel.chatDetailTrade = trade
                             
-                            switch anbdViewType {
-                            case .home:
-                                homeViewModel.homePath.append(ANBDNavigationPaths.chatDetailView)
-                            case .trade:
-                                tradeViewModel.tradePath.append(ANBDNavigationPaths.chatDetailView)
-                            case .chat:
-                                dismiss()
-                            }
+//                            switch anbdViewType {
+//                            case .home:
+//                                homeViewModel.homePath.append(Page.chatDetailView)
+//                            case .trade:
+//                                tradeViewModel.tradePath.append(Page.chatDetailView)
+//                            case .chat:
+//                                dismiss()
+//                            }
                         }
                 }
             }

@@ -59,6 +59,25 @@ public struct StorageManager {
     }
     
     
+    public func uploadProfileImage(userID: String, imageData: Data) async throws -> String {
+        if userID.isEmpty {
+            throw StorageError.invalidContainerID
+        }
+        
+        let storageRefPath = storageRef
+            .child("Profile")
+            .child(userID)
+            .child("profileImage.jpeg")
+        
+        guard let _ = try? await storageRefPath.putDataAsync(imageData, metadata: storageMetadata)
+        else {
+            throw StorageError.uploadError
+        }
+        
+        return try await storageRefPath.downloadURL().absoluteString
+    }
+    
+    
     /// Image를 FirebaseStorage에 저장하는 메서드
     ///
     /// - Parameters:

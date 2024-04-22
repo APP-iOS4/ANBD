@@ -13,6 +13,7 @@ public protocol UserUsecase {
     func getUserInfoList() async throws -> [User]
     func checkDuplicatedNickname(nickname: String) async -> Bool
     func updateUserInfo(user: User) async throws
+    func updateUserProfile(user: User, profileImage: Data?) async throws
 }
 
 @available(iOS 15, *)
@@ -40,6 +41,19 @@ public struct DefaultUserUsecase: UserUsecase {
     /// User의 정보를 수정한다. (profile, level)
     public func updateUserInfo(user: User) async throws {
         try await userRepository.updateUserInfo(user: user)
+    }
+    
+    public func updateUserProfile(user: User, profileImage: Data?) async throws {
+        var userInfo = user
+        
+        if let profileImage {
+            userInfo.profileImage = try await StorageManager.shared.uploadProfileImage(
+                userID: user.id, 
+                imageData: profileImage
+            )
+        }
+        
+        try await userRepository.updateUserInfo(user: userInfo)
     }
     
     /// 닉네임 중복체크 API

@@ -85,7 +85,8 @@ final class DefaultUserDataSource: UserDataSource {
             "userLevel": user.userLevel.rawValue,
             "isAgreeMarketing": user.isAgreeMarketing,
             "likeArticles": user.likeArticles,
-            "likeTrades": user.likeTrades
+            "likeTrades": user.likeTrades,
+            "profileImage": user.profileImage
         ])
         else {
             throw DBError.updateUserDocumentError

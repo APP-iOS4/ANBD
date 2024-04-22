@@ -42,6 +42,7 @@
 		82318E8B2BD5B5360071DB7A /* UserDefaultsClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82318E672BD5B5360071DB7A /* UserDefaultsClient.swift */; };
 		82A7175F2BD5ED1700D0C21F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 82A7175E2BD5ED1700D0C21F /* GoogleService-Info.plist */; };
 		82A717622BD5F06C00D0C21F /* CachedAsyncImage in Frameworks */ = {isa = PBXBuildFile; productRef = 82A717612BD5F06C00D0C21F /* CachedAsyncImage */; };
+		A8A269952BD61F2C0099C3A3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A8A269942BD61F2C0099C3A3 /* GoogleService-Info.plist */; };
 		CB7BEE412BBD588000C0F298 /* ANBDModel in Frameworks */ = {isa = PBXBuildFile; productRef = CB7BEE402BBD588000C0F298 /* ANBDModel */; };
 /* End PBXBuildFile section */
 
@@ -80,6 +81,7 @@
 		82318E662BD5B5360071DB7A /* DateFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateFormatter.swift; sourceTree = "<group>"; };
 		82318E672BD5B5360071DB7A /* UserDefaultsClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaultsClient.swift; sourceTree = "<group>"; };
 		82A7175E2BD5ED1700D0C21F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		A8A269942BD61F2C0099C3A3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CB7BEDCF2BBD4EE300C0F298 /* ANBDAdmin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ANBDAdmin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -246,6 +248,7 @@
 				82318E602BD5B5360071DB7A /* Font */,
 				82318E612BD5B5360071DB7A /* Assets.xcassets */,
 				82318E622BD5B5360071DB7A /* Colors.xcassets */,
+				A8A269942BD61F2C0099C3A3 /* GoogleService-Info.plist */,
 				82A7175E2BD5ED1700D0C21F /* GoogleService-Info.plist */,
 			);
 			path = Resource;
@@ -371,6 +374,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				82318E822BD5B5360071DB7A /* Pretendard-Bold.otf in Resources */,
+				A8A269952BD61F2C0099C3A3 /* GoogleService-Info.plist in Resources */,
 				82318E842BD5B5360071DB7A /* Pretendard-Regular.otf in Resources */,
 				82318E832BD5B5360071DB7A /* Pretendard-Medium.otf in Resources */,
 				82318E872BD5B5360071DB7A /* Colors.xcassets in Resources */,

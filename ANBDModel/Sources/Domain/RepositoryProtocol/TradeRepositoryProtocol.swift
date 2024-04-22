@@ -22,6 +22,7 @@ public protocol TradeRepository {
                        limit: Int) async throws -> [Trade]
     func readTradeList(keyword: String, limit: Int) async throws -> [Trade]
     func readRecentTradeList(category: ANBDCategory) async throws -> [Trade]
+    func readAllTradeList(writerID: String) async throws -> [Trade]
     func refreshAll(limit: Int) async throws -> [Trade]
     func refreshWriterID(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [Trade]
     func refreshFilter(category: ANBDCategory,

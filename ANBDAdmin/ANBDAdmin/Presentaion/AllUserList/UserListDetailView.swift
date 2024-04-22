@@ -145,8 +145,8 @@ struct UserListDetailView: View {
         .onAppear {
             Task {
                 do {
-                    self.userArticleList = try await articleUsecase.loadArticleList(writerID: user.id, limit: 10)
-                    self.userTradeList = try await tradeUsecase.loadTradeList(writerID: user.id, limit: 10)
+                    self.userArticleList = try await articleUsecase.loadArticleList(writerID: user.id, category: nil, limit: 10)
+                    self.userTradeList = try await tradeUsecase.loadTradeList(writerID: user.id, category: nil, limit: 10)
                     self.userLikeArticleList = try await withThrowingTaskGroup(of: Article.self) { group in
                         for articleID in user.likeArticles {
                             group.addTask {

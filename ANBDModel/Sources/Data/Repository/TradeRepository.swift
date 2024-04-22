@@ -54,8 +54,8 @@ struct TradeRepositoryImpl: TradeRepository {
         return tradeList
     }
     
-    func readTradeList(writerID: String, limit: Int) async throws -> [Trade] {
-        let tradeList = try await tradeDataSource.readItemList(writerID: writerID, limit: limit)
+    func readTradeList(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [Trade] {
+        let tradeList = try await tradeDataSource.readItemList(writerID: writerID, category: category, limit: limit)
         return tradeList
     }
     
@@ -91,8 +91,8 @@ struct TradeRepositoryImpl: TradeRepository {
         return refreshedList
     }
     
-    func refreshWriterID(writerID: String, limit: Int) async throws -> [Trade] {
-        let refreshedList = try await tradeDataSource.refreshWriterID(writerID: writerID, limit: limit)
+    func refreshWriterID(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [Trade] {
+        let refreshedList = try await tradeDataSource.refreshWriterID(writerID: writerID, category: category, limit: limit)
         return refreshedList
     }
     

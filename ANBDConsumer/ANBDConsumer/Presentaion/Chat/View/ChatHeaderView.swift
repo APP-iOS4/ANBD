@@ -10,10 +10,8 @@ import ANBDModel
 
 extension ChatDetailView {
     struct ChatHeaderView: View {
-        @EnvironmentObject private var homeViewModel: HomeViewModel
-        @EnvironmentObject private var tradeViewModel: TradeViewModel
         @EnvironmentObject private var chatViewModel: ChatViewModel
-        @Environment(\.dismiss) private var dismiss
+        @EnvironmentObject private var coordinator: Coordinator
         
         var trade: Trade?
         var imageData: Data?
@@ -23,14 +21,17 @@ extension ChatDetailView {
         
         var body: some View {
             Button(action: {
-//                switch anbdViewType {
-//                case .home, .trade:
-//                    dismiss()
-//                case .chat:
-//                    if let trade {
-//                        chatViewModel.chatPath.append(trade)
-//                    }
-//                }
+                switch coordinator.selectedTab {
+                case .home, .trade:
+                    coordinator.pop()
+                case .article, .mypage:
+                    return
+                case .chat:
+                    if let trade {
+                        coordinator.trade = trade
+                        coordinator.chatPath.append(Page.tradeDetailView)
+                    }
+                }
             }, label: {
                 HStack {
                     if trade == nil {

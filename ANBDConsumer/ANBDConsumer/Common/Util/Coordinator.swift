@@ -71,7 +71,7 @@ final class Coordinator: ObservableObject {
             SearchResultView(category: category, searchText: searchText)
             
         case .chatDetailView:
-            ChatDetailView(trade: trade, channel: channel)
+            ChatDetailView(channel: channel, trade: trade)
             
         case .reportView:
             ReportView(reportViewType: reportType, reportedObjectID: reportedObjectID, reportedChannelID: reportedChannelID)
@@ -98,8 +98,8 @@ final class Coordinator: ObservableObject {
     }
     
     /// dismiss
-    func pop(_ viewType: ANBDTabViewType) {
-        switch viewType {
+    func pop() {
+        switch selectedTab {
         case .home:
             homePath.removeLast()
         case .article:

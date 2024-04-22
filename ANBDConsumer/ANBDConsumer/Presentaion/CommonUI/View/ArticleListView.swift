@@ -41,6 +41,7 @@ struct ArticleListView: View {
                         Spacer()
                     }
                     .foregroundStyle(.gray400)
+                    .background(Color.gray50)
 
             } else if !isArticle && tradeViewModel.filteredTrades.isEmpty {
                 VStack {
@@ -61,6 +62,7 @@ struct ArticleListView: View {
                     Spacer()
                 }
                 .foregroundStyle(.gray400)
+                .background(Color.gray50)
                 
             } else {
                 if isArticle {

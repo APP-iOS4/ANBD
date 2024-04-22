@@ -57,6 +57,10 @@ final class ArticleViewModel: ObservableObject {
         filteredArticles = articles.filter({ $0.category == category })
     }
     
+//    func getOneArticle(article: Article) {
+//        self.article = article
+//    }
+    
     @MainActor
     func loadAllArticles() async {
         do {
@@ -228,23 +232,32 @@ final class ArticleViewModel: ObservableObject {
     }
     
     // MARK: - Comment
-    func writeComment(articleID: String, content: String) async {
-        let user = UserStore.shared.user
+    func writeComment(articleID: String, commentText: String) async {
+//        let user = UserStore.shared.user
 //        guard let user = UserDefaultsClient.shared.userInfo else {
 //            return
 //        }
+        
+//        let newComment = Comment(articleID: articleID,
+//                                 writerID: user.id,
+//                                 writerNickname: user.nickname,
+//                                 writerProfileImageURL: user.profileImage,
+//                                 content: content)
+        
+//        comments.append(newComment)
+//        print("\(newComment.content)")
+        
+        let user = UserStore.shared.user
         
         let newComment = Comment(articleID: articleID,
                                  writerID: user.id,
                                  writerNickname: user.nickname,
                                  writerProfileImageURL: user.profileImage,
-                                 content: content)
-        
-        comments.append(newComment)
-        print("\(newComment.content)")
+                                 content: commentText)
         
         do {
             try await commentUseCase.writeComment(articleID: articleID, comment: newComment)
+            await loadCommentList(articleID: articleID)
         } catch {
             print(error.localizedDescription)
         }

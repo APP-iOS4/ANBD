@@ -73,6 +73,9 @@ struct ANBDTabView: View {
                     .navigationDestination(for: Trade.self) { trade in
                         TradeDetailView(trade: trade)
                     }
+//                    .navigationDestination(for: User.self) { user in
+//                        UserPageView(writerUser: user)
+//                    }
                     .navigationDestination(for: String.self) { str in
                         if str == "" {
                             SearchView()

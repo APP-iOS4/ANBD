@@ -136,6 +136,8 @@ final class TradeViewModel: ObservableObject {
         return detailImages
     }
     
+    //MARK: - CREATE
+    
     func createTrade(category: ANBDCategory, itemCategory: ItemCategory, location: Location, title: String, content: String, myProduct: String, wantProduct: String, images: [Data]) async {
         
         let user = UserStore.shared.user
@@ -164,6 +166,8 @@ final class TradeViewModel: ObservableObject {
         }
     }
     
+    //MARK: - DELETE
+    
     func deleteTrade(trade: Trade) async {
         do {
             try await tradeUseCase.deleteTrade(trade: trade)
@@ -171,6 +175,8 @@ final class TradeViewModel: ObservableObject {
             print("삭제 실패: \(error.localizedDescription)")
         }
     }
+    
+    //MARK: - UPDATE
     
     @MainActor
     func updateTrade(category: ANBDCategory, title: String, content: String, myProduct: String, wantProduct: String, images: [Data]) async {
@@ -216,6 +222,15 @@ final class TradeViewModel: ObservableObject {
             }
         } catch {
             print("상태수정 실패: \(error.localizedDescription)")
+        }
+    }
+    
+    @MainActor
+    func updateLikeTrade(trade: Trade) async {
+        do {
+            try await tradeUseCase.likeTrade(tradeID: trade.id)
+        } catch {
+            print("좋아요 실패: \(error.localizedDescription)")
         }
     }
 }

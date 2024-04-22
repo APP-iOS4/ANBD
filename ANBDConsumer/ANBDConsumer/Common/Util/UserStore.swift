@@ -34,7 +34,7 @@ final class UserStore: ObservableObject {
     func getUserInfo(userID: String) async -> User {
         do {
             let getUser = try await userUsecase.getUserInfo(userID: userID)
-            
+            self.user = getUser
             return getUser
         } catch {
             print("Error get user information: \(error.localizedDescription)")

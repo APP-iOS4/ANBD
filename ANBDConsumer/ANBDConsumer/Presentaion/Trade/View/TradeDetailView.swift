@@ -30,7 +30,6 @@ struct TradeDetailView: View {
     @State private var writerUser: User?
     private let user = UserStore.shared.user
     
-    //임시..
     @State private var isLiked: Bool = false
     
     var body: some View {
@@ -133,6 +132,7 @@ struct TradeDetailView: View {
             }
         }//ZStack
         .onAppear {
+            isLiked = user.likeTrades.contains(tradeViewModel.trade.id)
             Task {
                 writerUser = await myPageViewMode.getUserInfo(userID: trade.writerID)
                 imageData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: trade.id, imagePath: trade.imagePaths)
@@ -198,11 +198,15 @@ struct TradeDetailView: View {
 extension TradeDetailView {
     private var bottomView: some View {
         HStack {
-            Image(systemName: isLiked ? "heart": "heart.fill")
+            Image(systemName: !isLiked ? "heart": "heart.fill")
                 .font(.system(size: 30))
-                .foregroundStyle(isLiked ? .gray800 : .heartRed)
+                .foregroundStyle(!isLiked ? .gray800 : .heartRed)
                 .padding(.leading, 15)
                 .onTapGesture {
+                    Task {
+                        await tradeViewModel.updateLikeTrade(trade: tradeViewModel.trade)
+                        UserStore.shared.user = await UserStore.shared.getUserInfo(userID: UserStore.shared.user.id)
+                    }
                     isLiked.toggle()
                 }
                 .padding()

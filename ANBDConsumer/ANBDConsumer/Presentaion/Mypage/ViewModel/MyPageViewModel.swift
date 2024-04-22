@@ -114,7 +114,7 @@ final class MyPageViewModel: ObservableObject {
     @MainActor
     func loadArticlesWrittenByUser(userID: String, limit: Int = 10) async {
         do {
-            articlesWrittenByUser = try await articleUsecase.refreshWriterIDArticleList(writerID: userID, limit: limit)
+            articlesWrittenByUser = try await articleUsecase.refreshWriterIDArticleList(writerID: userID, category: nil, limit: limit)
         } catch {
             print("Error load to articles written by user: \(error.localizedDescription)")
         }
@@ -123,7 +123,7 @@ final class MyPageViewModel: ObservableObject {
     @MainActor
     func loadTradesWrittenByUser(userID: String, limit: Int = 10) async {
         do {
-            tradesWrittenByUser = try await tradeUsecase.refreshWriterIDTradeList(writerID: userID, limit: limit)
+            tradesWrittenByUser = try await tradeUsecase.refreshWriterIDTradeList(writerID: userID, category: nil, limit: limit)
         } catch {
             print("Error load to trades written by user: \(error.localizedDescription)")
         }

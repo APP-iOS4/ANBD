@@ -41,7 +41,7 @@
 		82318E8A2BD5B5360071DB7A /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82318E662BD5B5360071DB7A /* DateFormatter.swift */; };
 		82318E8B2BD5B5360071DB7A /* UserDefaultsClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82318E672BD5B5360071DB7A /* UserDefaultsClient.swift */; };
 		82A7175F2BD5ED1700D0C21F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 82A7175E2BD5ED1700D0C21F /* GoogleService-Info.plist */; };
-		82A717622BD5F06C00D0C21F /* CachedAsyncImage in Frameworks */ = {isa = PBXBuildFile; productRef = 82A717612BD5F06C00D0C21F /* CachedAsyncImage */; };
+		82A717642BD623F500D0C21F /* CachedAsyncImage in Frameworks */ = {isa = PBXBuildFile; productRef = 82A717632BD623F500D0C21F /* CachedAsyncImage */; };
 		A8A269952BD61F2C0099C3A3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A8A269942BD61F2C0099C3A3 /* GoogleService-Info.plist */; };
 		CB7BEE412BBD588000C0F298 /* ANBDModel in Frameworks */ = {isa = PBXBuildFile; productRef = CB7BEE402BBD588000C0F298 /* ANBDModel */; };
 /* End PBXBuildFile section */
@@ -91,7 +91,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CB7BEE412BBD588000C0F298 /* ANBDModel in Frameworks */,
-				82A717622BD5F06C00D0C21F /* CachedAsyncImage in Frameworks */,
+				82A717642BD623F500D0C21F /* CachedAsyncImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -326,7 +326,7 @@
 			name = ANBDAdmin;
 			packageProductDependencies = (
 				CB7BEE402BBD588000C0F298 /* ANBDModel */,
-				82A717612BD5F06C00D0C21F /* CachedAsyncImage */,
+				82A717632BD623F500D0C21F /* CachedAsyncImage */,
 			);
 			productName = ANBDAdmin;
 			productReference = CB7BEDCF2BBD4EE300C0F298 /* ANBDAdmin.app */;
@@ -646,7 +646,7 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		82A717612BD5F06C00D0C21F /* CachedAsyncImage */ = {
+		82A717632BD623F500D0C21F /* CachedAsyncImage */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 82A717602BD5F06C00D0C21F /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */;
 			productName = CachedAsyncImage;

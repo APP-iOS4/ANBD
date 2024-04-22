@@ -98,11 +98,7 @@ final class PostDataSource<T: Codable & Identifiable>: Postable {
                 return []
             }
             
-            let next = database
-                .order(by: "createdAt", descending: true)
-                .limit(to: limit)
-                .start(afterDocument: lastSnapshot)
-            
+            let next = requestQuery.start(afterDocument: lastSnapshot)
             self.allQuery = next
         }
         
@@ -123,10 +119,18 @@ final class PostDataSource<T: Codable & Identifiable>: Postable {
         if let writerIDQuery {
             requestQuery = writerIDQuery
         } else {
-            requestQuery = database
-                .whereField("writerID", isEqualTo: writerID)
-                .order(by: "createdAt", descending: true)
-                .limit(to: limit)
+            if let category {
+                requestQuery = database
+                    .whereField("writerID", isEqualTo: writerID)
+                    .whereField("category", isEqualTo: category)
+                    .order(by: "createdAt", descending: true)
+                    .limit(to: limit)
+            } else {
+                requestQuery = database
+                    .whereField("writerID", isEqualTo: writerID)
+                    .order(by: "createdAt", descending: true)
+                    .limit(to: limit)
+            }
             
             guard let lastSnapshot = try await requestQuery
                 .getDocuments()
@@ -137,12 +141,7 @@ final class PostDataSource<T: Codable & Identifiable>: Postable {
                 return []
             }
             
-            let next = database
-                .whereField("writerID", isEqualTo: writerID)
-                .order(by: "createdAt", descending: true)
-                .limit(to: limit)
-                .start(afterDocument: lastSnapshot)
-            
+            let next = requestQuery.start(afterDocument: lastSnapshot)
             self.writerIDQuery = next
         }
         
@@ -188,12 +187,12 @@ final class PostDataSource<T: Codable & Identifiable>: Postable {
 extension Postable where Item == Article {
     
     func readRecentItem(category: ANBDCategory) async throws -> Article {
-        let query = database
+        let requestQuery = database
             .whereField("category", isEqualTo: category.rawValue)
             .order(by: "createdAt", descending: true)
             .limit(to: 1)
         
-        guard let article = try? await query
+        guard let article = try? await requestQuery
             .getDocuments()
             .documents
             .first?
@@ -253,26 +252,25 @@ extension Postable where Item == Article {
     
     func readItemList(keyword: String, limit: Int) async throws -> [Article] {
         var requestQuery: Query
-        let filteredQuery = database
-            .whereFilter(
-                .orFilter([
-                    .andFilter([
-                        .whereField("title", isGreaterOrEqualTo: keyword),
-                        .whereField("title", isLessThan: keyword + "힣")
-                    ]),
-                    .andFilter([
-                        .whereField("content", isGreaterOrEqualTo: keyword),
-                        .whereField("content", isLessThan: keyword + "힣")
-                    ])
-                ])
-            )
-            .order(by: "createdAt", descending: true)
-            .limit(to: limit)
         
         if let searchQuery {
             requestQuery = searchQuery
         } else {
-            requestQuery = filteredQuery
+            requestQuery = database
+                .whereFilter(
+                    .orFilter([
+                        .andFilter([
+                            .whereField("title", isGreaterOrEqualTo: keyword),
+                            .whereField("title", isLessThan: keyword + "힣")
+                        ]),
+                        .andFilter([
+                            .whereField("content", isGreaterOrEqualTo: keyword),
+                            .whereField("content", isLessThan: keyword + "힣")
+                        ])
+                    ])
+                )
+                .order(by: "createdAt", descending: true)
+                .limit(to: limit)
             
             guard let lastSnapshot = try await requestQuery
                 .getDocuments()
@@ -283,9 +281,7 @@ extension Postable where Item == Article {
                 return []
             }
             
-            let next = filteredQuery
-                .start(afterDocument: lastSnapshot)
-            
+            let next = requestQuery.start(afterDocument: lastSnapshot)
             searchQuery = next
         }
         
@@ -388,32 +384,39 @@ extension Postable where Item == Trade {
         limit: Int
     ) async throws -> [Trade] {
         var requestQuery: Query
-        var query = database
-            .whereField("category", isEqualTo: category.rawValue)
-        
-        if let location, let itemCategory {
-            query = query.whereFilter(
-                .andFilter([
-                    .whereField("location", in: location.map { $0.rawValue }),
-                    .whereField("itemCategory", in: itemCategory.map { $0.rawValue })
-                ])
-            )
-        } else if let location {
-            query = database
-                .whereField("location", in: location.map { $0.rawValue })
-        } else if let itemCategory {
-            query = database
-                .whereField("itemCategory", in: itemCategory.map { $0.rawValue })
-        }
-        
-        query = query
-            .order(by: "createdAt", descending: true)
-            .limit(to: limit)
         
         if let filterQuery {
             requestQuery = filterQuery
         } else {
-            requestQuery = query
+            if let location, let itemCategory {
+                requestQuery = database
+                    .whereField("category", isEqualTo: category.rawValue)
+                    .whereFilter(
+                        .andFilter([
+                            .whereField("location", in: location.map { $0.rawValue }),
+                            .whereField("itemCategory", in: itemCategory.map { $0.rawValue })
+                        ])
+                    )
+                    .order(by: "createdAt", descending: true)
+                    .limit(to: limit)
+            } else if let location {
+                requestQuery = database
+                    .whereField("category", isEqualTo: category.rawValue)
+                    .whereField("location", in: location.map { $0.rawValue })
+                    .order(by: "createdAt", descending: true)
+                    .limit(to: limit)
+            } else if let itemCategory {
+                requestQuery = database
+                    .whereField("category", isEqualTo: category.rawValue)
+                    .whereField("itemCategory", in: itemCategory.map { $0.rawValue })
+                    .order(by: "createdAt", descending: true)
+                    .limit(to: limit)
+            } else {
+                requestQuery = database
+                    .whereField("category", isEqualTo: category.rawValue)
+                    .order(by: "createdAt", descending: true)
+                    .limit(to: limit)
+            }
             
             guard let lastSnapshot = try await requestQuery
                 .getDocuments()
@@ -424,8 +427,7 @@ extension Postable where Item == Trade {
                 return []
             }
             
-            let next = query.start(afterDocument: lastSnapshot)
-            
+            let next = requestQuery.start(afterDocument: lastSnapshot)
             filterQuery = next
         }
         
@@ -439,30 +441,27 @@ extension Postable where Item == Trade {
     }
     
     func readItemList(keyword: String, limit: Int) async throws -> [Trade] {
-        guard !keyword.isEmpty else { return [] }
-        
         var requestQuery: Query
-        let filteredQuery = database
-            .whereFilter(
-                .orFilter([
-                    .whereField("itemCategory", isEqualTo: keyword),
-                    .andFilter([
-                        .whereField("title", isGreaterOrEqualTo: keyword),
-                        .whereField("title", isLessThan: keyword + "힣")
-                    ]),
-                    .andFilter([
-                        .whereField("content", isGreaterOrEqualTo: keyword),
-                        .whereField("content", isLessThan: keyword + "힣")
-                    ])
-                ])
-            )
-            .order(by: "createdAt", descending: true)
-            .limit(to: limit)
         
         if let searchQuery {
             requestQuery = searchQuery
         } else {
-            requestQuery = filteredQuery
+            requestQuery = database
+                .whereFilter(
+                    .orFilter([
+                        .whereField("itemCategory", isEqualTo: keyword),
+                        .andFilter([
+                            .whereField("title", isGreaterOrEqualTo: keyword),
+                            .whereField("title", isLessThan: keyword + "힣")
+                        ]),
+                        .andFilter([
+                            .whereField("content", isGreaterOrEqualTo: keyword),
+                            .whereField("content", isLessThan: keyword + "힣")
+                        ])
+                    ])
+                )
+                .order(by: "createdAt", descending: true)
+                .limit(to: limit)
             
             guard let lastSnapshot = try await requestQuery
                 .getDocuments()
@@ -473,9 +472,7 @@ extension Postable where Item == Trade {
                 return []
             }
             
-            let next = filteredQuery
-                .start(afterDocument: lastSnapshot)
-            
+            let next = requestQuery.start(afterDocument: lastSnapshot)
             searchQuery = next
         }
         

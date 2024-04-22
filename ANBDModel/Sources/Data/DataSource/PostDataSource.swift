@@ -33,7 +33,7 @@ protocol Postable<Item>: AnyObject {
 
 // MARK: PostDataSource
 @available(iOS 15, *)
-class PostDataSource<T: Codable & Identifiable>: Postable {
+final class PostDataSource<T: Codable & Identifiable>: Postable {
     
     typealias Item = T
     

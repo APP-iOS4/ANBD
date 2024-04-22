@@ -25,7 +25,7 @@ public struct StorageManager {
     private init() {
         storageMetadata.contentType = "image/jpeg"
     }
- 
+    
     
     /// Image를 FirebaseStorage에 저장하는 메서드
     ///
@@ -224,6 +224,41 @@ public struct StorageManager {
                     switch result {
                     case .success(let imageData):
                         continuation.resume(returning: imageData)
+                    case .failure:
+                        continuation.resume(throwing: StorageError.downloadError)
+                    }
+                }
+        }
+    }
+    
+    /// Image를 FirebaseStorage에서 불러오는 메서드
+    ///
+    /// - Parameters:
+    ///   - path: Image를 불러오려는 탭 (ex: Article, Trade, Profile)
+    ///   - containerID: Image를 담은 모델의 ID (ex: ArticleID, TradeID, UserID)
+    ///   - imagePath: 저장한 Image의 Path
+    public func downloadImageToUrl(
+        path storagePath: StoragePath,
+        containerID: String,
+        imagePath: String
+    ) async throws -> URL {
+        if containerID.isEmpty {
+            throw StorageError.invalidContainerID
+        }
+        
+        if imagePath.isEmpty {
+            throw StorageError.invalidImagePath
+        }
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            storageRef
+                .child(storagePath.rawValue)
+                .child(containerID)
+                .child(imagePath)
+                .downloadURL { result in
+                    switch result {
+                    case .success(let imageUrl):
+                        continuation.resume(returning: imageUrl)
                     case .failure:
                         continuation.resume(throwing: StorageError.downloadError)
                     }

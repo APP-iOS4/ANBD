@@ -243,7 +243,7 @@ public struct DefaultTradeUsecase: TradeUsecase {
         if tradeID.isEmpty {
             throw TradeError.invalidTradeIDField
         }
-        
+
         try await tradeRepository.updateTrade(tradeID: tradeID, tradeState: tradeState)
     }
     

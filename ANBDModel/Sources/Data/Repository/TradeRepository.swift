@@ -105,6 +105,11 @@ struct TradeRepositoryImpl: TradeRepository {
         return tradeList
     }
     
+    func readAllTradeList(writerID: String) async throws -> [Trade] {
+        let tradeList = try await tradeDataSource.readAllItemList(writerID: writerID)
+        return tradeList
+    }
+    
     func refreshAll(limit: Int) async throws -> [Trade] {
         let refreshedList = try await tradeDataSource.refreshAll(limit: limit)
         return refreshedList

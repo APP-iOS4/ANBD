@@ -57,6 +57,14 @@ final class DefaultMessageRepository: MessageRepository {
         return snapshot.documents.compactMap {try? $0.data(as: Message.self)}
     }
     
+    func readMessage(channelID: String, messageID: String) async throws -> Message {
+        guard let message = try? await chatDB.document(channelID).collection("messages").document(messageID).getDocument(as : Message.self)
+        else {
+            throw DBError.getChannelDocumentError
+        }
+        return message
+
+    }
     func readNewMessage(channelID: String , userID: String , completion: @escaping ((Message) -> Void)) {
         let commonQuery = chatDB
             .document(channelID)

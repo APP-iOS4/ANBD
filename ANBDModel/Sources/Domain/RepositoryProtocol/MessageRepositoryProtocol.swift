@@ -15,5 +15,5 @@ public protocol MessageRepository {
     func readNewMessage(channelID: String , userID: String , completion: @escaping ((Message) -> Void))
     func updateMessageReadStatus(channelID:String , lastMessage: Message , userID: String) async throws
     func deleteMessageList(channelId: String) async throws
-    func deleteListener() 
+    func deleteListener()
 }

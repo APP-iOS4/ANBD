@@ -12,6 +12,7 @@ import Foundation
 public struct User: Codable, Identifiable {
     /// 유저의 고유 식별값
     public let id: String
+
     public var nickname: String
     public var profileImage: String
     public var email: String

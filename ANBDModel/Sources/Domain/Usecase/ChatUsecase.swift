@@ -124,7 +124,7 @@ public struct ChatUsecase : ChatUsecaseProtocol {
         let otherUserID = getOtherUserID(users: channel.users, userID: userID)
         return try await userRepository.readUserInfo(userID: otherUserID)
     }
-    
+
     //채팅방 리스트에서 채팅방을 들어갔을때 채팅방 상단에 게시글의 정보가 보여야하기 때문에 채널 ID로 Trade 정보를 얻는 메소드
     ///
     /// - Parameters:
@@ -287,5 +287,4 @@ extension ChatUsecase {
     public func initializeListener() {
         messageRepository.deleteListener()
     }
-    
 }

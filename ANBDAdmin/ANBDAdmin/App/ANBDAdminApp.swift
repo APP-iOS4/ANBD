@@ -21,23 +21,25 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return true
     }
     
-//    func application(
-//        _ app: UIApplication,
-//        open url: URL,
-//        options: [UIApplication.OpenURLOptionsKey : Any] = [:]
-//    ) -> Bool {
-//        return GIDSignIn.sharedInstance.handle(url)
-//    }
+    //    func application(
+    //        _ app: UIApplication,
+    //        open url: URL,
+    //        options: [UIApplication.OpenURLOptionsKey : Any] = [:]
+    //    ) -> Bool {
+    //        return GIDSignIn.sharedInstance.handle(url)
+    //    }
 }
 
 @main
 struct ANBDAdminApp: App {
+    @StateObject private var authenticationViewModel = AuthenticationViewModel()
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
     var body: some Scene {
         WindowGroup {
-            AdminHomeView()
+            AuthenticationView()
+                .environmentObject(authenticationViewModel)
         }
     }
 }

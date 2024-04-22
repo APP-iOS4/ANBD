@@ -24,7 +24,12 @@ final class UserStore: ObservableObject {
                                isAgreeCollectInfo: false,
                                isAgreeMarketing: false,
                                likeArticles: [],
-                               likeTrades: [])
+                               likeTrades: [],
+                               accuaCount: 0,
+                               nanuaCount: 0,
+                               baccuaCount: 0,
+                               dasiCount: 0)
+    
     private init() {
         Task {
             user = await getUserInfo(userID: UserDefaultsClient.shared.userID ?? "abcd1234")

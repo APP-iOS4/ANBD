@@ -23,15 +23,16 @@ final class ChatViewModel: ObservableObject {
     @Published var user: User?
     @Published var chatRooms: [Channel] = []
     @Published var messages: [Message] = []
+    @Published var totalUnreadCount: Int = 0
+    
+    @Published var groupedMessages: [(day:String , messages:[Message])] = []
     
     private var isListener: Bool = false
     private var isLeaveChatRoom: Bool = false
     
     /// UserDefaults에서 유저 정보 불러오기
     func loadUserInfo() {
-        if let user = UserDefaultsClient.shared.userInfo {
-            self.user = user
-        }
+        self.user = UserStore.shared.user
     }
     
     
@@ -46,6 +47,7 @@ final class ChatViewModel: ObservableObject {
                         preMessages.removeSubrange(0...leaveMessageIndex)
                     }
                     self.messages.insert(contentsOf: preMessages, at: 0)
+                    updateGroupedMessagesByDate()
                 }
                 
                 if !isListener {
@@ -62,6 +64,7 @@ final class ChatViewModel: ObservableObject {
                             /// 메시지 전송 (추가)
                             self?.messages.append(message)
                         }
+                        self?.updateGroupedMessagesByDate()
                     }
                 }
             }
@@ -70,12 +73,34 @@ final class ChatViewModel: ObservableObject {
         }
     }
     
+    private func updateGroupedMessagesByDate() {
+        let messages = self.messages
+        let groupDictionary = Dictionary(grouping: messages) { message in
+            message.dateStringWithYear
+        }
+        let messageGroup = groupDictionary.map { key, value in
+            let sortedMessages = value.sorted {$0.createdAt > $1.createdAt}
+            return (day: key , messages: sortedMessages)
+        }.sorted { $0.day > $1.day }
+        
+        self.groupedMessages = messageGroup
+        
+//        for (day,messages) in messageGroup {
+//            if let index = groupedMessages.firstIndex(where: {$0.day == day }) {
+//                self.groupedMessages[index].messages.insert(contentsOf: messages, at: 0)
+//            } else {
+//                self.groupedMessages.append((day: day, messages: messages))
+//            }
+//        }
+    }
+    
     
     /// 전체 채팅방 리스트 불러오기
     func fetchChatRooms() {
         if let user {
             chatUsecase.loadChannelList(userID: user.id) { [weak self] channel in
                 self?.chatRooms = channel
+                self?.getTotalUnreadCount()
             }
         }
     }
@@ -104,6 +129,16 @@ final class ChatViewModel: ObservableObject {
         }
     }
     
+    func getTotalUnreadCount(){
+        totalUnreadCount = self.chatRooms.reduce(0) { result, channel in
+            if channel.lastSendId != user?.id {
+                return result + channel.unreadCount
+            } else {
+                return result + 0
+            }
+        }
+    }
+    
     /// 채팅방 Trade 가져오기
     func getTrade(channelID: String) async throws -> Trade? {
         do {
@@ -113,6 +148,8 @@ final class ChatViewModel: ObservableObject {
             return nil
         }
     }
+    
+    
     
     
     /// 이미지 다운로드
@@ -136,6 +173,16 @@ final class ChatViewModel: ObservableObject {
         } catch {
             print("Error: \(error)")
             return Data()
+        }
+    }
+    
+    /// 메시지 사진 로드
+    func downloadImageUrl(messageID: String, imagePath: String) async throws -> URL? {
+        do {
+            return try await storageManager.downloadImageToUrl(path: .chat, containerID: messageID, imagePath: imagePath)
+        } catch {
+            print("Error: \(error)")
+            return nil
         }
     }
     
@@ -163,6 +210,7 @@ final class ChatViewModel: ObservableObject {
         isLeaveChatRoom = false
         chatUsecase.initializeListener()
         messages = []
+        groupedMessages = []
     }
     
     
@@ -210,3 +258,5 @@ final class ChatViewModel: ObservableObject {
         return cnt
     }
 }
+
+

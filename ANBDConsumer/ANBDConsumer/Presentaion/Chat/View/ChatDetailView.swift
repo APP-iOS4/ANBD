@@ -47,10 +47,20 @@ struct ChatDetailView: View {
                 /// message 내역
                 ScrollView {
                     LazyVStack {
-                        ForEach(chatViewModel.messages.reversed()) { message in
-                            MessageCell(message: message, isLast: message == chatViewModel.messages.last, anbdViewType: anbdViewType, channelID: channel?.id ?? "ChannelID", isShowingImageDetailView: $isShowingImageDetailView, detailImage: $detailImage)
-                                .padding(.vertical, 1)
-                                .padding(.horizontal, 20)
+                        ForEach(chatViewModel.groupedMessages, id: \.day) { day, messages in
+                            ForEach(messages) { message in
+                                MessageCell(message: message, isLast: message == chatViewModel.messages.last, anbdViewType: anbdViewType, channelID: channel?.id ?? "ChannelID", isShowingImageDetailView: $isShowingImageDetailView, detailImage: $detailImage)
+                                    .padding(.vertical, 1)
+                                    .padding(.horizontal, 20)
+                            }
+                            if let last = chatViewModel.groupedMessages.last , last.day == day{
+                                MessageDateDividerView(dateString: day)
+                                    .padding(.horizontal, 20)
+                                    .padding(.bottom, 20)
+                            } else {
+                                MessageDateDividerView(dateString: day)
+                                    .padding(20)
+                            }
                         }
                         .rotationEffect(Angle(degrees: 180))
                         .scaleEffect(x: -1.0, y: 1.0, anchor: .center)

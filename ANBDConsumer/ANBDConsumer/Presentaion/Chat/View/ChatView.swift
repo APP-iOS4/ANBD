@@ -29,6 +29,7 @@ struct ChatView: View {
                                         .padding(.vertical, 3)
                                 }
                             }
+                            Text("현재 안읽은 메시지 총 갯수:(\(chatViewModel.totalUnreadCount))")
                         }
                     }
                     

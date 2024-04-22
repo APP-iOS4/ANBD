@@ -24,8 +24,9 @@ final class MyPageViewModel: ObservableObject {
                                likeTrades: [])
     
     private let userUsecase: UserUsecase = DefaultUserUsecase()
+    private let articleUsecase: ArticleUsecase = DefaultArticleUsecase()
+    private let tradeUsecase: TradeUsecase = DefaultTradeUsecase()
     
-    private let userDefaultsClient = UserDefaultsClient.shared
     private let storageManager = StorageManager.shared
     
     @Published var userProfileImage: UIImage = UIImage(named: "DefaultUserProfileImage.001.png")!
@@ -46,18 +47,31 @@ final class MyPageViewModel: ObservableObject {
     @Published private(set) var articlesWrittenByUser: [Article] = []
     @Published private(set) var tradesWrittenByUser: [Trade] = []
     
+    @Published private(set) var accuaArticlesWrittenByUser: [Article] = []
+    @Published private(set) var dasiArticlesWrittenByUser: [Article] = []
+    @Published private(set) var nanuaTradesWrittenByUser: [Trade] = []
+    @Published private(set) var baccuaTradesWrittenByUser: [Trade] = []
+    
     @Published private(set) var userLikedArticles: [Article] = []
     @Published private(set) var userHeartedTrades: [Trade] = []
     
+    /*
+     // 좋아요, 찜 기능 완료 후 테스트
+     @Published private(set) var userLikedAccuaArticles: [Article] = []
+     @Published private(set) var userLikedDasiArticles: [Article] = []
+     @Published private(set) var userHeartedNanuaTrades: [Trade] = []
+     @Published private(set) var userHeartedBaccuaTrades: [Trade] = []
+     */
+    
     @Published var editedUserNickname = ""
     @Published var tempUserFavoriteLocation: Location = .seoul
+    @Published var otherUserNickname = ""
     
     @Published var myPageNaviPath = NavigationPath()
     
-    init() {
-        self.loadUserInfo()
-    }
+    init() { }
     
+    // MARK: - 유저 관련 정보 불러오기
     func checkSignInedUser(userID: String) -> Bool {
         if userID == UserStore.shared.user.id {
             return true
@@ -75,12 +89,6 @@ final class MyPageViewModel: ObservableObject {
             print("\(error.localizedDescription)")
             
             return MyPageViewModel.mockUser
-        }
-    }
-    
-    func loadUserInfo() {
-        if let user = userDefaultsClient.userInfo {
-            self.user = user
         }
     }
     
@@ -102,6 +110,65 @@ final class MyPageViewModel: ObservableObject {
         
         return userProfilImageData
     }
+    
+    @MainActor
+    func loadArticlesWrittenByUser(userID: String, limit: Int = 10) async {
+        do {
+            articlesWrittenByUser = try await articleUsecase.refreshWriterIDArticleList(writerID: userID, limit: limit)
+        } catch {
+            print("Error load to articles written by user: \(error.localizedDescription)")
+        }
+    }
+    
+    @MainActor
+    func loadTradesWrittenByUser(userID: String, limit: Int = 10) async {
+        do {
+            tradesWrittenByUser = try await tradeUsecase.refreshWriterIDTradeList(writerID: userID, limit: limit)
+        } catch {
+            print("Error load to trades written by user: \(error.localizedDescription)")
+        }
+    }
+    
+    func filterANBDListWrittenByUser() {
+        accuaArticlesWrittenByUser = articlesWrittenByUser.filter({ $0.category == .accua})
+        dasiArticlesWrittenByUser = articlesWrittenByUser.filter({ $0.category == .dasi})
+        
+        nanuaTradesWrittenByUser = tradesWrittenByUser.filter({ $0.category == .nanua})
+        baccuaTradesWrittenByUser = tradesWrittenByUser.filter({ $0.category == .baccua})
+    }
+    
+    func loadUserLikedArticles(user: User) async {
+        for articleID in user.likeArticles {
+            do {
+                let article = try await articleUsecase.loadArticle(articleID: articleID)
+                userLikedArticles.append(article)
+            } catch {
+                print("Error load to article that the user likes: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func loadUserHeartedTrades(user: User) async {
+        for tradeID in user.likeTrades {
+            do {
+                let trade = try await tradeUsecase.loadTrade(tradeID: tradeID)
+                userHeartedTrades.append(trade)
+            } catch {
+                print("Error load to trade that the user hearted: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    /*
+     // 좋아요, 찜 기능 완료 후 테스트
+     func filterUserLikedAndHeartedList() {
+     userLikedAccuaArticles = userLikedArticles.filter({ $0.category == .accua})
+     userLikedDasiArticles = userLikedArticles.filter({ $0.category == .dasi})
+     
+     userHeartedNanuaTrades = userHeartedTrades.filter({ $0.category == .nanua})
+     userHeartedBaccuaTrades = userHeartedTrades.filter({ $0.category == .baccua})
+     }
+     */
     
     // MARK: - 유저 정보 수정
     func checkDuplicatedNickname() async -> Bool {

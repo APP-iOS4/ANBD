@@ -13,11 +13,11 @@ public protocol ArticleUsecase {
     func loadArticle(articleID: String) async throws -> Article
     func loadRecentArticle(category: ANBDCategory) async throws -> Article
     func loadArticleList(limit: Int) async throws -> [Article]
-    func loadArticleList(writerID: String, limit: Int) async throws -> [Article]
+    func loadArticleList(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [Article]
     func loadArticleList(category: ANBDCategory, by order: ArticleOrder, limit: Int) async throws -> [Article]
     func searchArticle(keyword: String, limit: Int) async throws -> [Article]
     func refreshAllArticleList(limit: Int) async throws -> [Article]
-    func refreshWriterIDArticleList(writerID: String, limit: Int) async throws -> [Article]
+    func refreshWriterIDArticleList(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [Article]
     func refreshSortedArticleList(category: ANBDCategory, by order: ArticleOrder, limit: Int) async throws -> [Article]
     func refreshSearchArticleList(keyword: String, limit: Int) async throws -> [Article]
     func updateArticle(article: Article, imageDatas: [Data]) async throws
@@ -94,12 +94,12 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     ///   - writerID: 불러올 Article의 writerID
     ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: writerID가 일치하는 Article 배열
-    public func loadArticleList(writerID: String, limit: Int = 10) async throws -> [Article] {
+    public func loadArticleList(writerID: String, category: ANBDCategory?, limit: Int = 10) async throws -> [Article] {
         if writerID.isEmpty {
             throw ArticleError.invalidWriterInfoField
         }
         
-        let articleList = try await articleRepository.readArticleList(writerID: writerID, limit: limit)
+        let articleList = try await articleRepository.readArticleList(writerID: writerID, category: category, limit: limit)
         return articleList
     }
     
@@ -148,14 +148,15 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     /// 페이지네이션 Query를 초기화하고 작성자 ID가 일치하는 최신 Article 목록을 불러오는 메서드
     /// - Parameters:
     ///   - writerID: 불러올 Article의 writerID
+    ///   - category: 불러올 Article의 카테고리 (0이면 아, 3이면 다)
     ///   - limit: 가져오고 싶은 갯수. 기본값은 10이다.
     /// - Returns: writerID가 일치하는 Article 배열
-    public func refreshWriterIDArticleList(writerID: String, limit: Int = 10) async throws -> [Article] {
+    public func refreshWriterIDArticleList(writerID: String, category: ANBDCategory?, limit: Int = 10) async throws -> [Article] {
         if writerID.isEmpty {
             throw ArticleError.invalidWriterInfoField
         }
         
-        let articleList = try await articleRepository.refreshWriterID(writerID: writerID, limit: limit)
+        let articleList = try await articleRepository.refreshWriterID(writerID: writerID, category: category, limit: limit)
         return articleList
     }
     

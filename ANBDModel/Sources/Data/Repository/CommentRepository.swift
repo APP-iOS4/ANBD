@@ -46,7 +46,7 @@ struct CommentRepositoryImpl: CommentRepository {
     }
     
     func readCommentList(writerID: String, limit: Int) async throws -> [Comment] {
-        let commentList = try await commentDataSource.readItemList(writerID: writerID, limit: limit)
+        let commentList = try await commentDataSource.readItemList(writerID: writerID, category: nil, limit: limit)
         return commentList
     }
     

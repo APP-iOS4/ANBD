@@ -10,7 +10,7 @@ import Foundation
 @available(iOS 15, *)
 public protocol ReportUsecase {
     func submitReport(report: Report) async throws
-    func loadReport() async throws -> [Report]
+    func loadReport(reportType: ReportType) async throws -> [Report]
     func removeReport(reportID : String) async throws
 }
 
@@ -25,8 +25,8 @@ public struct DefaultReportUsecase: ReportUsecase {
         try await reportRepository.createReport(report: report)
     }
     
-    public func loadReport() async throws -> [Report] {
-        try await reportRepository.readReport()
+    public func loadReport(reportType: ReportType) async throws -> [Report] {
+        try await reportRepository.readReport(reportType: reportType)
     }
     
     public func removeReport(reportID: String) async throws {

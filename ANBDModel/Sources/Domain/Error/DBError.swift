@@ -50,6 +50,10 @@ public enum DBError: Int, Error {
     case updateBannerDocumentError
     case deleteBannerDocumentError
     
+    case setReportDocumentError = 5033
+    case getReportDocumentError
+    case deleteReportDocumentError
+    
     public var message: String {
         switch self {
         case .unknownError: "알 수 없는 에러"
@@ -93,6 +97,10 @@ public enum DBError: Int, Error {
         case .getBannerDocumentError: "Banner document 읽기 실패"
         case .updateBannerDocumentError: "Banner document 수정 실패"
         case .deleteBannerDocumentError: "Banner document 삭제 실패"
+            
+        case .setReportDocumentError: "Report document 추가 실패"
+        case .getReportDocumentError: "Report document 읽기 실패"
+        case .deleteReportDocumentError: "Report document 삭제 실패"
         }
     }
 }

@@ -53,9 +53,9 @@ struct UserLikedContentsView: View {
     private func listEmptyView() -> some View {
         switch category {
         case .accua, .dasi:
-            ListEmptyView(description: "\(myPageViewModel.user.nickname)님이 좋아요한\n\(category.description) 게시글이 없습니다.")
+            ListEmptyView(description: "\(UserStore.shared.user.nickname)님이 좋아요한\n\(category.description) 게시글이 없습니다.")
         case .nanua, .baccua:
-            ListEmptyView(description: "\(myPageViewModel.user.nickname)님이 찜한\n\(category.description) 거래가 없습니다.")
+            ListEmptyView(description: "\(UserStore.shared.user.nickname)님이 찜한\n\(category.description) 거래가 없습니다.")
         }
     }
     

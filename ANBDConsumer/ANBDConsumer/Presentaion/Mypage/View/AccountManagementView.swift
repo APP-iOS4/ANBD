@@ -70,7 +70,6 @@ struct AccountManagementView: View {
                             authenticationViewModel.checkAuthState()
                             
                             myPageViewModel.myPageNaviPath.removeLast()
-                            myPageViewModel.clearANBDListWrittenByUser()
                         }
                     }
                 }
@@ -85,7 +84,6 @@ struct AccountManagementView: View {
                             authenticationViewModel.checkAuthState()
                             
                             myPageViewModel.myPageNaviPath.removeLast()
-                            myPageViewModel.clearANBDListWrittenByUser()
                         }
                     }
                 }

@@ -10,13 +10,8 @@ import ANBDModel
 
 struct HomeView: View {
     @EnvironmentObject private var homeViewModel: HomeViewModel
-    @EnvironmentObject private var tradeViewModel: TradeViewModel
-    @EnvironmentObject private var articleViewModel: ArticleViewModel
-    
-    
-    @State private var isGoingToSearchView: Bool = false
     @State private var isShowingWebView: Bool = false
-    @State private var blogURL: String = HomeViewModel().bannerItemList.first!.url
+    @State private var blogURL: String = "https://www.naver.com"
     
     var body: some View {
         GeometryReader { geometry in
@@ -25,7 +20,7 @@ struct HomeView: View {
                     adView
                         .padding(.bottom, 20)
                     
-                    AccuaView(geo: geometry)
+                    accuaView(geo: geometry)
                     
                     Divider()
                         .padding(.top, 10)
@@ -43,7 +38,7 @@ struct HomeView: View {
                         .padding(.top, 10)
                         .padding(.bottom, 5)
                     
-                    DasiView(geo: geometry)
+                    dasiView(geo: geometry)
                 }
                 .padding()
             }
@@ -57,62 +52,34 @@ struct HomeView: View {
             }
             
             ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    isGoingToSearchView.toggle()
-                }, label: {
+                NavigationLink(value: ANBDNavigationPaths.searchView) {
                     Image(systemName: "magnifyingglass")
                         .resizable()
                         .frame(width: 20)
                         .foregroundStyle(.gray900)
-                })
+                }
             }
         }
         .fullScreenCover(isPresented: $isShowingWebView) {
             SafariWebView(url: URL(string: blogURL) ?? URL(string: "www.naver.com")!)
                 .ignoresSafeArea(edges: .bottom)
         }
-        .navigationDestination(for: ANBDCategory.self) { category in
-            switch category {
-            case .accua, .dasi:
-                ArticleListView(category: category, isFromHomeView: true)
-                    .onAppear {
-                        articleViewModel.updateArticles(category: category)
-                    }
-                
-            case .nanua, .baccua:
-                TradeListView(category: category, isFromHomeView: true)
-                    .onAppear {
-                        tradeViewModel.filteringTrades(category: category)
-                    }
-            }
-        }
-        .navigationDestination(for: Article.self) { article in
-            ArticleDetailView(article: article)
-        }
-        .navigationDestination(for: Trade.self) { trade in
-            TradeDetailView(trade: trade)
-        }
-        .navigationDestination(isPresented: $isGoingToSearchView) {
-            SearchView()
-        }
-        
     }
     
     
     // MARK: - 광고 배너
     private var adView: some View {
         TabView() {
-            ForEach(homeViewModel.bannerItemList.indices, id:\.self) { idx in
+            ForEach(homeViewModel.bannerItemList) { banner in
                 Button(action: {
-                    blogURL = homeViewModel.bannerItemList[idx].url
+                    blogURL = banner.urlString
                     isShowingWebView.toggle()
                 }, label: {
                     ZStack {
-                        AsyncImage(url: URL(string: homeViewModel.bannerItemList[idx].imageStirng)) { img in
+                        AsyncImage(url: URL(string: banner.thumbnailImageURLString)) { img in
                             img
                                 .resizable()
                                 .scaledToFill()
-                                .containerRelativeFrame(.horizontal)
                             
                         } placeholder: {
                             ProgressView()
@@ -127,6 +94,12 @@ struct HomeView: View {
                 })
             }
         }
+        .onAppear {
+            Task {
+                await homeViewModel.loadBanners()
+                blogURL = homeViewModel.bannerItemList.first?.urlString ?? "https://www.naver.com"
+            }
+        }
         .frame(height: 130)
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .tabViewStyle(PageTabViewStyle())
@@ -134,14 +107,20 @@ struct HomeView: View {
     }
     
     // MARK: - 아껴쓰기 Section
-    @ViewBuilder
-    private func AccuaView(geo: GeometryProxy) -> some View {
+    private func accuaView(geo: GeometryProxy) -> some View {
         VStack {
-            SectionHeaderView(.accua)
+            sectionHeaderView(.accua)
             
-            NavigationLink(value: homeViewModel.accuaArticle) {
-                ArticleCellView(homeViewModel.accuaArticle)
-                    .frame(width: geo.size.width * 0.9, height: 130)
+            if let article = homeViewModel.accuaArticle {
+                NavigationLink(value: homeViewModel.accuaArticle) {
+                    ArticleCellView(article: article)
+                        .frame(width: geo.size.width * 0.9, height: 130)
+                }
+            }
+        }
+        .onAppear {
+            Task {
+                await homeViewModel.loadArticle(category: .accua)
             }
         }
     }
@@ -149,13 +128,13 @@ struct HomeView: View {
     // MARK: - 나눠쓰기 Section
     private var nanuaView: some View {
         VStack(alignment: .leading) {
-            SectionHeaderView(.nanua)
+            sectionHeaderView(.nanua)
             
             ScrollView(.horizontal) {
                 LazyHStack {
                     ForEach(homeViewModel.nanuaTrades) { trade in
                         NavigationLink(value: trade) {
-                            NanuaCellView(trade)
+                            NanuaCellView(trade: trade)
                                 .frame(width: 140, height: 140)
                                 .padding(.horizontal, 1)
                         }
@@ -164,37 +143,52 @@ struct HomeView: View {
             }
             .scrollIndicators(.hidden)
         }
+        .onAppear {
+            Task {
+                await homeViewModel.loadTrades(category: .nanua)
+            }
+        }
     }
     
     // MARK: - 바꿔쓰기 Section
     private var baccuaView: some View {
         VStack(alignment: .leading) {
-            SectionHeaderView(.baccua)
+            sectionHeaderView(.baccua)
             
             ForEach(homeViewModel.baccuaTrades) { trade in
                 NavigationLink(value: trade) {
-                    TradeListCell(trade: trade)
+                    ArticleListCell(value: .trade(trade))
                 }
+            }
+        }
+        .onAppear {
+            Task {
+                await homeViewModel.loadTrades(category: .baccua)
             }
         }
     }
     
     // MARK: - 다시쓰기 Section
-    @ViewBuilder
-    private func DasiView(geo: GeometryProxy) -> some View {
+    private func dasiView(geo: GeometryProxy) -> some View {
         VStack {
-            SectionHeaderView(.dasi)
+            sectionHeaderView(.dasi)
             
             NavigationLink(value: homeViewModel.dasiArticle) {
-                ArticleCellView(homeViewModel.dasiArticle)
-                    .frame(width: geo.size.width * 0.9, height: 130)
+                if let dasiArticle = homeViewModel.dasiArticle {
+                    ArticleCellView(article: dasiArticle)
+                        .frame(width: geo.size.width * 0.9, height: 130)
+                }
+            }
+        }
+        .onAppear {
+            Task {
+                await homeViewModel.loadArticle(category: .dasi)
             }
         }
     }
     
     // MARK: - ANBD 각 섹션 헤더 View
-    @ViewBuilder
-    private func SectionHeaderView(_ category: ANBDCategory) -> some View {
+    func sectionHeaderView(_ category: ANBDCategory) -> some View {
         VStack(alignment: .leading) {
             HStack {
                 switch category {
@@ -245,55 +239,98 @@ struct HomeView: View {
     }
     
     // MARK: - 아껴쓰기 · 다시쓰기 Cell View
-    @ViewBuilder
-    private func ArticleCellView(_ article: Article) -> some View {
-        ZStack(alignment: .bottomLeading) {
-            Image(article.imagePaths.first ?? "DummyImage1")
-                .resizable()
-                .scaledToFill()
+    struct ArticleCellView: View {
+        var article: Article
+        @State private var imageData: Data?
+        @EnvironmentObject private var homeViewModel: HomeViewModel
+        
+        var body: some View {
+            ZStack(alignment: .bottomLeading) {
+                VStack {
+                    if let imageData {
+                        if let uiImage = UIImage(data: imageData) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(height: 130)
+                        }
+                    } else {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                            Spacer()
+                        }
+                    }
+                }
                 .frame(height: 130)
-            
-            LinearGradient(
-                gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.4)]),
-                startPoint: .center,
-                endPoint: .bottom
-            )
-            
-            Text(article.title)
-                .multilineTextAlignment(.leading)
-                .lineLimit(2)
-                .padding(10)
-                .padding(.trailing, 70)
-                .foregroundStyle(.white)
-                .font(ANBDFont.SubTitle1)
+                
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.4)]),
+                    startPoint: .center,
+                    endPoint: .bottom
+                )
+                
+                Text(article.title)
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(2)
+                    .padding(10)
+                    .padding(.trailing, 70)
+                    .foregroundStyle(.white)
+                    .font(ANBDFont.SubTitle1)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .foregroundStyle(.gray900)
+            .onAppear {
+                Task {
+                    imageData = try await homeViewModel.loadThumnailImage(path: .article, containerID: article.id, imagePath: article.thumbnailImagePath)
+                }
+            }
         }
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-        .foregroundStyle(.gray900)
     }
     
     // MARK: - 나눠쓰기 Cell View
-    @ViewBuilder
-    private func NanuaCellView(_ trade: Trade) -> some View {
-        ZStack(alignment: .bottomLeading) {
-            Image(trade.imagePaths.first ?? "DummyImage1")
-                .resizable()
+    struct NanuaCellView: View {
+        var trade: Trade
+        @State private var imageData: Data?
+        @EnvironmentObject private var homeViewModel: HomeViewModel
+        
+        var body: some View {
+            ZStack(alignment: .bottomLeading) {
+                VStack {
+                    if let imageData {
+                        if let uiImage = UIImage(data: imageData) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .frame(height: 140)
+                                .scaledToFit()
+                        }
+                    } else {
+                        ProgressView()
+                    }
+                }
                 .frame(width: 140, height: 140)
-                .scaledToFit()
-            
-            LinearGradient(
-                gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.4)]),
-                startPoint: .center,
-                endPoint: .bottom
-            )
-            
-            Text(trade.title)
-                .lineLimit(1)
-                .padding(10)
-                .padding(.trailing, 20)
-                .foregroundStyle(.white)
-                .font(ANBDFont.SubTitle1)
+                
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.4)]),
+                    startPoint: .center,
+                    endPoint: .bottom
+                )
+                
+                Text(trade.title)
+                    .lineLimit(1)
+                    .padding(10)
+                    .padding(.trailing, 20)
+                    .foregroundStyle(.white)
+                    .font(ANBDFont.SubTitle1)
+            }
+            .frame(width: 140, height: 140)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .onAppear {
+                Task {
+                    imageData = try await homeViewModel.loadThumnailImage(path: .trade, containerID: trade.id, imagePath: trade.thumbnailImagePath)
+                }
+            }
         }
-        .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 }
 

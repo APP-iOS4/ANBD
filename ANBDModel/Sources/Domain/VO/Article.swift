@@ -10,10 +10,10 @@ import Foundation
 @available(iOS 15, *)
 public struct Article: Codable, Identifiable, Hashable {
     /// 게시글의 고유 식별값
-    public private(set) var id: String
+    public let id: String
     
     /// 작성자의 ID
-    public var writerID: String
+    public let writerID: String
     
     /// 작성자의 닉네임
     public var writerNickname: String
@@ -31,6 +31,9 @@ public struct Article: Codable, Identifiable, Hashable {
     
     /// 게시글의 내용
     public var content: String
+    
+    /// 게시글의 썸네일 이미지 Path
+    public var thumbnailImagePath: String
     
     /// 게시글의 이미지 Path 배열
     public var imagePaths: [String]
@@ -50,6 +53,7 @@ public struct Article: Codable, Identifiable, Hashable {
         category: ANBDCategory,
         title: String,
         content: String,
+        thumbnailImagePath: String,
         imagePaths: [String] = [],
         likeCount: Int = 0,
         commentCount: Int = 0
@@ -61,6 +65,7 @@ public struct Article: Codable, Identifiable, Hashable {
         self.category = category
         self.title = title
         self.content = content
+        self.thumbnailImagePath = thumbnailImagePath
         self.imagePaths = imagePaths
         self.likeCount = likeCount
         self.commentCount = commentCount

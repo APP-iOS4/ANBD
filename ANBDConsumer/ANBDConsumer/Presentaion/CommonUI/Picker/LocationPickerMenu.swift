@@ -13,7 +13,7 @@ struct LocationPickerMenu: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     
     @Binding var isShowingMenuList: Bool
-    @State var selectedItem: Location = .seoul
+    @Binding var selectedItem: Location
     
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -83,9 +83,18 @@ struct LocationPickerMenu: View {
         }
         //.frame(width: 250, height: 300)
         .background {
-            RoundedRectangle(cornerRadius: 10)
-                .fill(.white)
-                .stroke(Color.gray100, lineWidth: 1)
+            if #available(iOS 17.0, *) {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.white)
+                    .stroke(Color.gray100, lineWidth: 1)
+            } else {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.white)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.gray100, lineWidth: 1)
+                    }
+            }
         }
         .shadow(radius: 10)
     }
@@ -98,5 +107,5 @@ extension LocationPickerMenu {
 }
 
 #Preview {
-    LocationPickerMenu(isShowingMenuList: .constant(false), selectedItem: .seoul)
+    LocationPickerMenu(isShowingMenuList: .constant(false), selectedItem: .constant(.seoul))
 }

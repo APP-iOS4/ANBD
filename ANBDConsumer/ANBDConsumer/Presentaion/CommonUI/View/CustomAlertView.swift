@@ -20,34 +20,22 @@ struct CustomAlertView: View {
             
             ZStack {
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(.white)
+                    .fill(Color(UIColor.systemBackground))
                     .frame(height: 200)
                 
                 VStack {
                     Text(title)
                         .font(ANBDFont.SubTitle1)
+                        .foregroundStyle(.gray900)
                         .padding(.vertical, 10)
                     
                     Text(description)
                         .multilineTextAlignment(.center)
                         .font(ANBDFont.body1)
+                        .foregroundStyle(.gray900)
                         .padding(.bottom, 15)
                     
-                    
-                    HStack {
-                        Button(action: {
-                            isShowingCustomAlert.toggle()
-                        }, label: {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(.gray100)
-                                    .frame(height: 45)
-                                
-                                Text("취소")
-                            }
-                        })
-                        .padding(.leading, 15)
-                        
+                    if viewType == .duplicatedEmail || viewType == .duplicatedNickname {
                         Button(action: {
                             completionHandler()
                             isShowingCustomAlert.toggle()
@@ -62,9 +50,41 @@ struct CustomAlertView: View {
                                     .fontWeight(textWeight)
                             }
                         })
-                        .padding(.trailing, 15)
+                        .font(ANBDFont.body1)
+                        .padding(.horizontal, 15)
+                    } else {
+                        HStack {
+                            Button(action: {
+                                isShowingCustomAlert.toggle()
+                            }, label: {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(.gray100)
+                                        .frame(height: 45)
+                                    
+                                    Text("취소")
+                                }
+                            })
+                            .padding(.leading, 15)
+                            
+                            Button(action: {
+                                completionHandler()
+                                isShowingCustomAlert.toggle()
+                            }, label: {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(confirmButtonColor)
+                                        .frame(height: 45)
+                                    
+                                    Text(confirmMessage)
+                                        .foregroundStyle(.white)
+                                        .fontWeight(textWeight)
+                                }
+                            })
+                            .padding(.trailing, 15)
+                        }
+                        .font(ANBDFont.body1)
                     }
-                    .font(ANBDFont.body1)
                 }
             }
             .padding(.horizontal, 50)
@@ -77,8 +97,11 @@ struct CustomAlertView: View {
 extension CustomAlertView {
     enum AlertViewType {
         case leaveChatRoom
+        // auth
         case signOut
         case withdrawal
+        case duplicatedEmail
+        case duplicatedNickname
         //trade
         case changeState
         case tradeDelete
@@ -86,6 +109,7 @@ extension CustomAlertView {
         case articleDelete
         case commentDelete
         case writingCancel
+        case report
     }
     
     private var title: String {
@@ -96,6 +120,10 @@ extension CustomAlertView {
             return "로그아웃"
         case .withdrawal:
             return "회원 탈퇴"
+        case .duplicatedEmail:
+            return "중복된 이메일"
+        case .duplicatedNickname:
+            return "중복된 닉네임"
         case .changeState:
             return "거래 상태 변경"
         case .tradeDelete:
@@ -108,6 +136,8 @@ extension CustomAlertView {
             return "댓글 삭제"
         case .writingCancel:
             return "작성 취소"
+        case .report:
+            return "신고"
         }
     }
     
@@ -119,6 +149,10 @@ extension CustomAlertView {
             return "정말 로그아웃 하시겠습니까?"
         case .withdrawal:
             return "정말 ANBD 회원에서 탈퇴하시겠습니까?\n회원 탈퇴 시 회원 정보가\n복구되지 않습니다."
+        case .duplicatedEmail:
+            return "이미 사용중인 이메일 입니다."
+        case .duplicatedNickname:
+            return "이미 사용중인 닉네임 입니다."
         case .changeState:
             return "거래 상태를 변경하시겠습니까?"
         case .tradeDelete:
@@ -131,6 +165,8 @@ extension CustomAlertView {
             return "해당 댓글을 삭제하시겠습니까?\n삭제한 댓글은 복구되지 않습니다." 
         case .writingCancel:
             return "작성하던 내용을 삭제하고\n돌아가시겠습니까?"
+        case .report:
+            return "해당 내역을 신고하시겠습니까?"
         }
     }
     
@@ -142,6 +178,10 @@ extension CustomAlertView {
             return "로그아웃하기"
         case .withdrawal:
             return "탈퇴하기"
+        case .duplicatedEmail:
+            return "확인"
+        case .duplicatedNickname:
+            return "확인"
         case .changeState:
             return "변경하기"
         case .tradeDelete, .writingCancel:
@@ -152,6 +192,8 @@ extension CustomAlertView {
             return "삭제하기"
         case .commentDelete:
             return "삭제하기"
+        case .report:
+            return "신고하기"
         }
     }
     
@@ -163,6 +205,10 @@ extension CustomAlertView {
             return .heartRed
         case .withdrawal:
             return .heartRed
+        case .duplicatedEmail:
+            return .accent
+        case .duplicatedNickname:
+            return .accent
         case .changeState:
             return .accent
         case .tradeDelete, .writingCancel:
@@ -172,6 +218,8 @@ extension CustomAlertView {
         case .articleDelete:
             return .heartRed
         case .commentDelete:
+            return .heartRed
+        case .report:
             return .heartRed
         }
     }
@@ -184,6 +232,10 @@ extension CustomAlertView {
             return .medium
         case .withdrawal:
             return .heavy
+        case .duplicatedEmail:
+            return .medium
+        case .duplicatedNickname:
+            return .medium
         case .changeState:
             return .medium
         case .tradeDelete, .writingCancel:
@@ -193,6 +245,8 @@ extension CustomAlertView {
         case .articleDelete:
             return .medium
         case .commentDelete:
+            return .medium
+        case .report:
             return .medium
         }
     }

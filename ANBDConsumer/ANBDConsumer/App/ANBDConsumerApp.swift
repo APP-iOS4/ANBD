@@ -38,6 +38,8 @@ struct ANBDConsumerApp: App {
     @StateObject private var articleViewModel = ArticleViewModel()
     @StateObject private var authenticationViewModel = AuthenticationViewModel()
     @StateObject private var searchViewModel = SearchViewModel()
+    @StateObject private var chatViewModel = ChatViewModel()
+    @StateObject private var reportViewModel = ReportViewModel()
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
@@ -45,12 +47,14 @@ struct ANBDConsumerApp: App {
         WindowGroup {
             // ANBDTabView()
             AuthenticationView()
+                .environmentObject(homeViewModel)
+                .environmentObject(tradeViewModel)
+                .environmentObject(myPageViewModel)
+                .environmentObject(articleViewModel)
+                .environmentObject(authenticationViewModel)
+                .environmentObject(searchViewModel)
+                .environmentObject(chatViewModel)
+                .environmentObject(reportViewModel)
         }
-        .environmentObject(homeViewModel)
-        .environmentObject(tradeViewModel)
-        .environmentObject(myPageViewModel)
-        .environmentObject(articleViewModel)
-        .environmentObject(authenticationViewModel)
-        .environmentObject(searchViewModel)
     }
 }

@@ -11,12 +11,10 @@ import ANBDModel
 struct UserActivityListView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     
-    private let articleUseCase: ArticleUsecase = DefaultArticleUsecase()
-    private let tradeUseCase: TradeUsecase = DefaultTradeUsecase()
-    private let userUseCase: UserUsecase = DefaultUserUsecase()
-    
     @State var category: ANBDCategory
     @State var user: User
+    
+    @State private var isSignedInUser: Bool = false
     
     @State private var articlesWrittenByUser: [Article] = []
     @State private var tradesWrittenByUser: [Trade] = []
@@ -28,7 +26,6 @@ struct UserActivityListView: View {
         return tradesWrittenByUser.filter({$0.category == category})
     }
     
-    
     var body: some View {
         VStack {
             CategoryDividerView(category: $category, isFromSearchView: true)
@@ -36,35 +33,26 @@ struct UserActivityListView: View {
                 .padding([.leading, .trailing, .bottom])
             
             TabView(selection: $category) {
-                UserArticleListView(category: .accua)
+                userArticleListView(category: .accua)
                     .tag(ANBDCategory.accua)
                 
-                UserTradeListView(category: .nanua)
+                userTradeListView(category: .nanua)
                     .tag(ANBDCategory.nanua)
                 
-                UserTradeListView(category: .baccua)
+                userTradeListView(category: .baccua)
                     .tag(ANBDCategory.baccua)
                 
-                UserArticleListView(category: .dasi)
+                userArticleListView(category: .dasi)
                     .tag(ANBDCategory.dasi)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             .ignoresSafeArea(edges: .bottom)
         }
+        .toolbar(.hidden, for: .tabBar)
+        .toolbarRole(.editor)
+        
         .navigationTitle("\(user.nickname)님의 ANBD")
         .navigationBarTitleDisplayMode(.inline)
-        /*
-         .navigationDestination(for: Article.self, destination: { article in
-         ArticleDetailView(article: article)
-         .toolbarRole(.editor)
-         })
-         .navigationDestination(for: Trade.self, destination: { trade in
-         TradeDetailView(trade: trade)
-         .toolbarRole(.editor)
-         })
-         */
-        
-        .toolbar(.hidden, for: .tabBar)
         
         .onAppear {
             /*
@@ -73,40 +61,23 @@ struct UserActivityListView: View {
              tradesWrittenByUser = try await tradeUseCase.loadTradeList(writerID: user.id)
              }
              */
-            articlesWrittenByUser = myPageViewModel.mockArticleData
-            tradesWrittenByUser = myPageViewModel.mockTradeData
+            articlesWrittenByUser = myPageViewModel.articlesWrittenByUser
+            tradesWrittenByUser = myPageViewModel.tradesWrittenByUser
         }
     }
     
     @ViewBuilder
-    func ListEmptyView() -> some View {
-        VStack {
-            ContentUnavailableView("\(user.nickname)님의\n\(category.description) 활동이 없습니다.",
-                                   systemImage: "tray",
-                                   description: Text(""))
-        }
-    }
-    
-    @ViewBuilder
-    func UserArticleListView(category: ANBDCategory) -> some View {
+    private func userArticleListView(category: ANBDCategory) -> some View {
         if articlesWrittenByUser.isEmpty {
-            ListEmptyView()
+            ListEmptyView(description: emptyArticleListDescription)
         } else {
             ScrollView(.vertical) {
                 LazyVStack {
                     ForEach(articlesWrittenByUser.filter({$0.category == category})) { article in
-                        //                        NavigationLink(value: article) {
-                        //                            ArticleListCell(article: article)
-                        //                                .padding(.vertical, 5)
-                        //                        }
-                        NavigationLink {
-                            ArticleDetailView(article: article)
-                                .toolbarRole(.editor)
-                        } label: {
-                            ArticleListCell(article: article)
+                        NavigationLink(value: article) {
+                            ArticleListCell(value: .article(article))
                                 .padding(.vertical, 5)
                         }
-                        
                         
                         Divider()
                     }
@@ -130,23 +101,16 @@ struct UserActivityListView: View {
     }
     
     @ViewBuilder
-    func UserTradeListView(category: ANBDCategory) -> some View {
+    private func userTradeListView(category: ANBDCategory) -> some View {
         VStack {
             if tradesWrittenByUser.isEmpty {
-                ListEmptyView()
+                ListEmptyView(description: emptyTradeListDescription)
             } else {
                 ScrollView(.vertical) {
                     LazyVStack {
                         ForEach(tradesWrittenByUser.filter({$0.category == category})) { trade in
-                            //                            NavigationLink(value: trade) {
-                            //                                TradeListCell(trade: trade)
-                            //                                    .padding(.vertical, 5)
-                            //                            }
-                            NavigationLink {
-                                TradeDetailView(trade: trade)
-                                    .toolbarRole(.editor)
-                            } label: {
-                                TradeListCell(trade: trade)
+                            NavigationLink(value: trade) {
+                                ArticleListCell(value: .trade(trade))
                                     .padding(.vertical, 5)
                             }
                             
@@ -169,6 +133,27 @@ struct UserActivityListView: View {
                 }
                 .background(.gray50)
             }
+        }
+    }
+}
+
+extension UserActivityListView {
+    // TODO: - 다른 유저 정보 필요
+//    private var navigationTitle: String {
+//        
+//    }
+    
+    private var emptyArticleListDescription: String {
+        switch isSignedInUser {
+        case true: return "\(user.nickname)님의\n\(category.description) 활동이 없습니다."
+        case false: return "수정 필요"
+        }
+    }
+    
+    private var emptyTradeListDescription: String {
+        switch isSignedInUser {
+        case true: return "\(user.nickname)님의\n\(category.description) 활동이 없습니다."
+        case false: return "수정 필요"
         }
     }
 }

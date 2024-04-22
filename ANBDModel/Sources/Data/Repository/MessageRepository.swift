@@ -22,12 +22,11 @@ final class DefaultMessageRepository: MessageRepository {
     
     func createMessage(message: Message, channelID: String) async throws {
         guard let _ = try? chatDB.document(channelID).collection("messages").document(message.id).setData(from: message) else {
-            throw DBError.setDocumentError(message: "message 컬렉션에 데이터를 업데이트하는데 실패하였습니다.")
+            throw DBError.setMessageDocumentError
         }
     }
     
     func readMessageList(channelID: String , userID: String) async throws -> [Message] {
-        
         if endPaging {return []}
         let commonQuery = chatDB
             .document(channelID)
@@ -44,7 +43,7 @@ final class DefaultMessageRepository: MessageRepository {
         }
         
         guard let snapshot = try? await requestQuery.getDocuments() else {
-            throw DBError.getDocumentError(message: "channelID에 해당하는 messages Document를 얻어오는데 실패했습니다")
+            throw DBError.getMessageDocumentError
         }
         
         if snapshot.documents.isEmpty {
@@ -55,11 +54,18 @@ final class DefaultMessageRepository: MessageRepository {
         startDoc = snapshot.documents.first
         lastDoc = snapshot.documents.last
         
-        return snapshot.documents.compactMap {try? $0.data(as: Message.self)}.filter{!$0.leaveUsers.contains(userID)}
+        return snapshot.documents.compactMap {try? $0.data(as: Message.self)}
     }
     
-    func updateNewMessage(channelID: String, completion: @escaping ((Message) -> Void)) {
-        
+    func readMessage(channelID: String, messageID: String) async throws -> Message {
+        guard let message = try? await chatDB.document(channelID).collection("messages").document(messageID).getDocument(as : Message.self)
+        else {
+            throw DBError.getChannelDocumentError
+        }
+        return message
+
+    }
+    func readNewMessage(channelID: String , userID: String , completion: @escaping ((Message) -> Void)) {
         let commonQuery = chatDB
             .document(channelID)
             .collection("messages")
@@ -75,26 +81,48 @@ final class DefaultMessageRepository: MessageRepository {
         }
         
        listener = requestQuery
-            .addSnapshotListener { snapshot, error in
+            .addSnapshotListener { [weak self] snapshot, error in
                 guard let snapshot = snapshot else {
                     print("메시지 업데이트 에러 : \(error!)")
                     return
                 }
                 snapshot.documentChanges.forEach { diff in
                     if (diff.type == .added) {
-                        guard let newMessage = try? diff.document.data(as: Message.self) else {
-                            print("message 변환 오류")
+                        guard let mesaage = try? diff.document.data(as: Message.self) else {
+                            print("컴플리션 에러")
                             return
                         }
-                        completion(newMessage)
+                        
+                        completion(mesaage)
                     }
-                    if (diff.type == .modified) {print("modified:\(diff.document.data())")}
-                    if (diff.type == .removed) {print("removed:\(diff.document.data())")}
+                    if (diff.type == .modified) {
+                        guard let mesaage = try? diff.document.data(as: Message.self) else {
+                            print("컴플리션 에러")
+                            return
+                        }
+                        
+                        if mesaage.leaveUsers.isEmpty {
+                            completion(mesaage)
+                        }
+                    }
+//                    if (diff.type == .removed) {print("removed:\(diff.document.data())")}
                 }
             }
     }
     
-    func resetData() {
+    func updateMessageReadStatus(channelID: String, lastMessage: Message, userID: String) async throws {
+        //내가 보낸 메시지가 아닐때만
+        guard lastMessage.userID != userID else {
+            return
+        }
+        guard let _ = try? await chatDB.document(channelID).collection("messages").document(lastMessage.id).updateData([
+            "isRead" : true
+        ]) else {
+            throw DBError.getMessageDocumentError
+        }
+    }
+    
+    func deleteListener() {
         startDoc = nil
         lastDoc = nil
         endPaging = false
@@ -105,7 +133,7 @@ final class DefaultMessageRepository: MessageRepository {
         let querySnapshot = try await chatDB.document(channelId).collection("messages").getDocuments()
         for document in querySnapshot.documents {
             guard let _ = try? await chatDB.document(channelId).collection("messages").document(document.documentID).delete() else {
-                throw DBError.deleteDocumentError(message: "channelID가 일치하는 messages Documents를 삭제하는데 실패했습니다.")
+                throw DBError.deleteChannelDocumentError
             }
         }
     }

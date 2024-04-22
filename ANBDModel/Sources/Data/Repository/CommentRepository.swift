@@ -9,87 +9,66 @@ import Foundation
 import FirebaseFirestore
 
 @available(iOS 15, *)
-struct DefaultCommentRepository: CommentRepository {
+struct CommentRepositoryImpl: CommentRepository {
     
-    let commentDB = Firestore.firestore().collection("Comment")
+    private let commentDataSource: any Postable<Comment>
+    private let articleDataSource: any Postable<Article>
     
-    init() { }
+    init(
+        commentDataSource: any Postable<Comment> = PostDataSource<Comment>(database: .commentDatabase),
+        articleDataSource: any Postable<Article> = PostDataSource<Article>(database: .articleDatabase)
+    ) {
+        self.commentDataSource = commentDataSource
+        self.articleDataSource = articleDataSource
+    }
     
     
     // MARK: Create
-    /// CommentDB에 댓글 정보를 추가합니다.
-    func createComment(comment: Comment) async throws {
-        guard let _ = try? commentDB.document(comment.id).setData(from: comment)
-        else {
-            throw DBError.setDocumentError(message: "Comment document를 추가하는데 실패했습니다.")
-        }
+    func createComment(articleID: String, comment: Comment) async throws {
+        var articleInfo = try await articleDataSource.readItem(itemID: articleID)
+        
+        try await commentDataSource.createItem(item: comment)
+        articleInfo.commentCount += 1
+        
+        try await articleDataSource.updateItem(item: articleInfo)
     }
     
     
     // MARK: Read
-    /// articleID가 일치하는 댓글 목록을 반환한다.
+    func readComment(commentID: String) async throws -> Comment {
+        let comment = try await commentDataSource.readItem(itemID: commentID)
+        return comment
+    }
+    
     func readCommentList(articleID: String) async throws -> [Comment] {
-        guard let snapshot = try? await commentDB.whereField("articleID", isEqualTo: articleID).getDocuments().documents
-        else {
-            throw DBError.getDocumentError(message: "articleID가 일치하는 Comment documents를 읽어오는데 실패했습니다.")
-        }
-        
-        return snapshot.compactMap { try? $0.data(as: Comment.self) }
+        let commentList = try await commentDataSource.readItemList(articleID: articleID)
+        return commentList
     }
     
-    /// writerID가 일치하는 댓글 목록을 반환한다.
-    func readCommentList(writerID: String) async throws -> [Comment] {
-        guard let snapshot = try? await commentDB.whereField("writerID", isEqualTo: writerID).getDocuments().documents
-        else {
-            throw DBError.getDocumentError(message: "writerID가 일치하는 Comment documents를 읽어오는데 실패했습니다.")
-        }
-        
-        return snapshot.compactMap { try? $0.data(as: Comment.self) }
-    }
-    
-    /// [관리자용]
-    /// 전체 댓글 목록을 반환한다.
-    func readCommentList() async throws -> [Comment] {
-        guard let snapshot = try? await commentDB.getDocuments().documents
-        else {
-            throw DBError.getDocumentError(message: "Comment documents를 읽어오는데 실패했습니다.")
-        }
-        
-        return snapshot.compactMap { try? $0.data(as: Comment.self) }
+    func readCommentList(writerID: String, limit: Int) async throws -> [Comment] {
+        let commentList = try await commentDataSource.readItemList(writerID: writerID, category: nil, limit: limit)
+        return commentList
     }
     
     
     // MARK: Update
-    /// 댓글 정보를 수정한다.
     func updateComment(comment: Comment) async throws {
-        guard let _ = try? await commentDB.document(comment.id).updateData(["content": comment.content])
-        else {
-            throw DBError.updateDocumentError(message: "Comment 정보를 업데이트하는데 실패했습니다.")
-        }
+        try await commentDataSource.updateItem(item: comment)
     }
     
     
     // MARK: Delete
-    func deleteComment(commentID: String) async throws {
-        guard let _ = try? await commentDB.document(commentID).delete()
-        else {
-            throw DBError.deleteDocumentError(message: "Comment 정보를 삭제하는데 실패했습니다.")
-        }
+    func deleteComment(articleID: String, commentID: String) async throws {
+        var articleInfo = try await articleDataSource.readItem(itemID: articleID)
         
-//        try await articleDB.document(article.id).updateData(["commentCount": article.commentCount - 1])
+        try await commentDataSource.deleteItem(itemID: commentID)
+        articleInfo.commentCount -= 1
+        
+        try await articleDataSource.updateItem(item: articleInfo)
     }
     
     func deleteCommentList(articleID: String) async throws {
-        guard let snapshot = try? await commentDB.whereField("articleID", isEqualTo: articleID).getDocuments().documents
-        else {
-            throw DBError.getDocumentError(message: "articleID가 일치하는 Comment documents를 읽어오는데 실패했습니다.")
-        }
-        
-        let commentList = snapshot.compactMap { try? $0.data(as: Comment.self) }
-        
-        for comment in commentList {
-            try await deleteComment(commentID: comment.id)
-        }
+        try await commentDataSource.deleteItemList(articleID: articleID)
     }
     
 }

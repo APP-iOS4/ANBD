@@ -10,10 +10,10 @@ import Foundation
 @available(iOS 15, *)
 public struct Trade: Codable, Identifiable, Hashable {
     /// 거래글의 고유 식별값
-    public private(set) var id: String
+    public let id: String
     
     /// 작성자의 ID
-    public var writerID: String
+    public let writerID: String
     
     /// 작성자의 닉네임
     public var writerNickname: String
@@ -47,6 +47,9 @@ public struct Trade: Codable, Identifiable, Hashable {
     /// 작성자가 원하는 물건
     public var wantProduct: String?
     
+    /// 거래글의 썸네일 이미지 Path
+    public var thumbnailImagePath: String
+    
     /// 거래글의 이미지 Path 배열
     public var imagePaths: [String] = []
     
@@ -64,6 +67,7 @@ public struct Trade: Codable, Identifiable, Hashable {
         content: String,
         myProduct: String,
         wantProduct: String? = nil,
+        thumbnailImagePath: String,
         imagePaths: [String]
     ) {
         self.id = id
@@ -78,6 +82,7 @@ public struct Trade: Codable, Identifiable, Hashable {
         self.content = content
         self.myProduct = myProduct
         self.wantProduct = wantProduct
+        self.thumbnailImagePath = thumbnailImagePath
         self.imagePaths = imagePaths
     }
 }

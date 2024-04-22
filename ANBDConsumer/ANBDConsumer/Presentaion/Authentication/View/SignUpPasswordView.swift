@@ -8,16 +8,11 @@
 import SwiftUI
 
 struct SignUpPasswordView: View {
-    enum FocusableField: Int, Hashable, CaseIterable {
-        case password
-        case passwordCheck
-    }
-    
     @EnvironmentObject private var authenticationViewModel: AuthenticationViewModel
     
     @FocusState private var focus: FocusableField?
     
-    @State private var navigate = false
+    @State private var isNavigate = false
     
     var body: some View {
         VStack {
@@ -45,19 +40,17 @@ struct SignUpPasswordView: View {
             .focused($focus, equals: .passwordCheck)
             .submitLabel(.go)
             .onSubmit {
+                guard authenticationViewModel.isValidSignUpPassword else { return }
                 nextButtonAction()
             }
             
-            // 프로토타입을 위한 임시 주석
-            /*
-             if !authenticationViewModel.errorMessage.isEmpty {
-             Text(authenticationViewModel.errorMessage)
-             .frame(maxWidth: .infinity, alignment: .leading)
-             .padding(.top, 8)
-             .font(ANBDFont.Caption1)
-             .foregroundStyle(Color.heartRed)
-             }
-             */
+            if !authenticationViewModel.errorMessage.isEmpty {
+                Text(authenticationViewModel.errorMessage)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 8)
+                    .font(ANBDFont.Caption1)
+                    .foregroundStyle(Color.heartRed)
+            }
             
             Spacer()
             
@@ -66,38 +59,25 @@ struct SignUpPasswordView: View {
             }
         }
         .padding()
-        .navigationDestination(isPresented: $navigate) {
-            SignUpUserInfoView()
-        }
-        
-        .onAppear {
-            focus = .password
-        }
         
         .toolbar {
-            ToolbarItem(placement: .keyboard) {
+            ToolbarItemGroup(placement: .keyboard) {
                 Button(action: {
                     focusPreviousField()
                 }, label: {
                     Label("Previous text field", systemImage: "chevron.up")
                 })
                 .disabled(!canFocusPreviousField())
-            }
-            
-            ToolbarItem(placement: .keyboard) {
+                
                 Button(action: {
                     focusNextField()
                 }, label: {
                     Label("Next text field", systemImage: "chevron.down")
                 })
                 .disabled(!canFocusNextField())
-            }
-            
-            ToolbarItem(placement: .keyboard) {
+                
                 Spacer()
-            }
-            
-            ToolbarItem(placement: .keyboard) {
+                
                 Button(action: {
                     downKeyboard()
                 }, label: {
@@ -105,10 +85,18 @@ struct SignUpPasswordView: View {
                 })
             }
         }
+        
+        .navigationDestination(isPresented: $isNavigate) {
+            SignUpUserInfoView()
+        }
+        
+        .onAppear {
+            focus = .password
+        }
     }
     
     private func nextButtonAction() {
-        navigate = true
+        isNavigate = true
     }
 }
 
@@ -118,6 +106,11 @@ struct SignUpPasswordView: View {
 }
 
 extension SignUpPasswordView {
+    enum FocusableField: Int, Hashable, CaseIterable {
+        case password
+        case passwordCheck
+    }
+    
     private func focusPreviousField() {
         focus = focus.map {
             FocusableField(rawValue: $0.rawValue - 1) ?? .password

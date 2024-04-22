@@ -12,8 +12,11 @@ struct SearchView: View {
     
     var category: ANBDCategory = .accua
     @State private var searchText: String = ""
-    @State private var isGoingToSearchResultView: Bool = false
+    
+    @EnvironmentObject private var homeViewModel: HomeViewModel
     @EnvironmentObject private var searchViewModel: SearchViewModel
+    @EnvironmentObject private var tradeViewModel: TradeViewModel
+    @EnvironmentObject private var articleViewModel: ArticleViewModel
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -36,44 +39,16 @@ struct SearchView: View {
             .padding(.top, 10)
             
             ForEach(searchViewModel.recentSearch, id: \.self) { recent in
-//                NavigationLink(value: recent) {
-//                    HStack {
-//                        Image(systemName: "clock.arrow.circlepath")
-//                            .foregroundStyle(.gray400)
-//                            .padding(.trailing, 5)
-//                        
-//                        Text(recent)
-//                        
-//                        Spacer()
-//                        
-//                        Image(systemName: "xmark")
-//                            .foregroundStyle(.gray400)
-//                            .font(.system(size: 13))
-//                            .onTapGesture {
-//                                if let idx = searchViewModel.recentSearch.firstIndex(of: recent) {
-//                                    searchViewModel.recentSearch.remove(at: idx)
-//                                }
-//                            }
-//                    }
-//                    .font(ANBDFont.body1)
-//                    .foregroundStyle(.gray900)
-//                    .padding(.horizontal)
-//                    .padding(.vertical, 3)
-//                }
-//            
-                
-                NavigationLink {
-                    SearchResultView(category: category, searchText: recent)
-                } label: {
+                NavigationLink(value: recent) {
                     HStack {
                         Image(systemName: "clock.arrow.circlepath")
                             .foregroundStyle(.gray400)
                             .padding(.trailing, 5)
-
+                        
                         Text(recent)
-
+                        
                         Spacer()
-
+                        
                         Image(systemName: "xmark")
                             .foregroundStyle(.gray400)
                             .font(.system(size: 13))
@@ -88,32 +63,6 @@ struct SearchView: View {
                     .padding(.horizontal)
                     .padding(.vertical, 3)
                 }
-
-                
-//                NavigationLink(destination: SearchResultView(category: category, searchText: recent)) {
-//                    HStack {
-//                        Image(systemName: "clock.arrow.circlepath")
-//                            .foregroundStyle(.gray400)
-//                            .padding(.trailing, 5)
-//                            
-//                        Text(recent)
-//                        
-//                        Spacer()
-//                        
-//                        Image(systemName: "xmark")
-//                            .foregroundStyle(.gray400)
-//                            .font(.system(size: 13))
-//                            .onTapGesture {
-//                                if let idx = searchViewModel.recentSearch.firstIndex(of: recent) {
-//                                    searchViewModel.recentSearch.remove(at: idx)
-//                                }
-//                            }
-//                    }
-//                    .font(ANBDFont.body1)
-//                    .foregroundStyle(.gray900)
-//                    .padding(.horizontal)
-//                    .padding(.vertical, 3)
-//                }
             }
             
             Spacer()
@@ -121,17 +70,14 @@ struct SearchView: View {
         .navigationTitle("검색하기")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
+        .toolbarRole(.editor)
         .searchable(text: $searchText)
         .onSubmit(of: .search) {
             if !searchText.isEmpty {
-                isGoingToSearchResultView.toggle()
+                homeViewModel.homePath.append(searchText)
+                tradeViewModel.tradePath.append(searchText)
+                articleViewModel.articlePath.append(searchText)
             }
-        }
-        .navigationDestination(isPresented: $isGoingToSearchResultView) {
-            SearchResultView(category: category, searchText: searchText)
-        }
-        .navigationDestination(for: String.self) { search in
-            SearchResultView(category: category, searchText: search)
         }
     }
 }
@@ -139,6 +85,9 @@ struct SearchView: View {
 #Preview {
     NavigationStack {
         SearchView(category: .accua)
+            .environmentObject(HomeViewModel())
             .environmentObject(SearchViewModel())
+            .environmentObject(TradeViewModel())
+            .environmentObject(ArticleViewModel())
     }
 }

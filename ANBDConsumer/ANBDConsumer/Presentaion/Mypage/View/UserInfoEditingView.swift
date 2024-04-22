@@ -58,14 +58,14 @@ struct UserInfoEditingView: View {
                         
                         if #available(iOS 17.0, *) {
                             nicknameTextField
-                            .onChange(of: myPageViewModel.editedUserNickname) {
-                                myPageViewModel.editedUserNickname = myPageViewModel.checkNicknameLength(myPageViewModel.editedUserNickname)
-                            }
+                                .onChange(of: myPageViewModel.editedUserNickname) {
+                                    myPageViewModel.editedUserNickname = myPageViewModel.checkNicknameLength(myPageViewModel.editedUserNickname)
+                                }
                         } else {
                             nicknameTextField
-                            .onChange(of: myPageViewModel.editedUserNickname) { _ in
-                                myPageViewModel.editedUserNickname = myPageViewModel.checkNicknameLength(myPageViewModel.editedUserNickname)
-                            }
+                                .onChange(of: myPageViewModel.editedUserNickname) { _ in
+                                    myPageViewModel.editedUserNickname = myPageViewModel.checkNicknameLength(myPageViewModel.editedUserNickname)
+                                }
                         }
                         
                         Divider()

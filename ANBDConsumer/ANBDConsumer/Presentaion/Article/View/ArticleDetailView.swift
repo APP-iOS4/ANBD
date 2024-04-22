@@ -302,8 +302,8 @@ struct ArticleDetailView: View {
         .onAppear {
             // articleViewModel.getOneArticle(article: article)
             Task {
-                writerUser = await myPageViewMode.getUserInfo(userID: article.writerID)
-                commentUser = await myPageViewMode.getUserInfo(userID: comment.writerID)
+//                writerUser = await myPageViewMode.getUserInfo(userID: article.writerID)
+//                commentUser = await myPageViewMode.getUserInfo(userID: comment.writerID)
                 
                 imageData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
                 await articleViewModel.loadCommentList(articleID: article.id)

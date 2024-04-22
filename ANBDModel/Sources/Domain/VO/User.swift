@@ -9,7 +9,7 @@ import Foundation
 
 /// DB에 저장되는 유저의 정보
 @available(iOS 15, *)
-public struct User: Codable, Identifiable {
+public struct User: Codable, Identifiable, Hashable {
     /// 유저의 고유 식별값
     public let id: String
     public var nickname: String
@@ -40,6 +40,18 @@ public struct User: Codable, Identifiable {
     /// 찜한 나눠쓰기, 바꿔쓰기 목록
     public var likeTrades: [String]
     
+    /// 작성한 아껴쓰기 글 갯수
+    public var accuaCount: Int
+    
+    /// 작성한 나눠쓰기 글 갯수
+    public var nanuaCount: Int
+    
+    /// 작성한 바꿔쓰기 글 갯수
+    public var baccuaCount: Int
+    
+    /// 작성한 다시쓰기 글 갯수
+    public var dasiCount: Int
+    
     
     public init(
         id: String,
@@ -53,7 +65,11 @@ public struct User: Codable, Identifiable {
         isAgreeCollectInfo: Bool,
         isAgreeMarketing: Bool, 
         likeArticles: [String] = [],
-        likeTrades: [String] = []
+        likeTrades: [String] = [],
+        accuaCount: Int = 0,
+        nanuaCount: Int = 0,
+        baccuaCount: Int = 0,
+        dasiCount: Int = 0
     ) {
         self.id = id
         self.nickname = nickname
@@ -67,5 +83,9 @@ public struct User: Codable, Identifiable {
         self.isAgreeMarketing = isAgreeMarketing
         self.likeArticles = likeArticles
         self.likeTrades = likeTrades
+        self.accuaCount = accuaCount
+        self.nanuaCount = nanuaCount
+        self.baccuaCount = baccuaCount
+        self.dasiCount = dasiCount
     }
 }

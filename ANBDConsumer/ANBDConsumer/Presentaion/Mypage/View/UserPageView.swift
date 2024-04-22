@@ -146,7 +146,6 @@ struct UserPageView: View {
                 }
             }
         }
-        
         .navigationTitle("\(navigationTitle)")
         .navigationBarTitleDisplayMode(.inline)
         

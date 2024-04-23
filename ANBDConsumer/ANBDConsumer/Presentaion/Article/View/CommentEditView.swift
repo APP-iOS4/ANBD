@@ -15,7 +15,10 @@ struct CommentEditView: View {
     
     @Binding var isShowingCommentEditView: Bool
     
-    var comment: Comment
+    var comment: Comment?
+    var isNewComment: Bool
+    
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -33,7 +36,11 @@ struct CommentEditView: View {
                         .font(ANBDFont.body1)
                         .padding(.horizontal, 15)
                         .onAppear {
-
+                            if !isNewComment {
+                                if let comment = comment {
+                                    self.content = comment.content
+                                }
+                            }
                         }
                 }
 //                Spacer()
@@ -61,6 +68,6 @@ struct CommentEditView: View {
     }
 }
 
-#Preview {
-    CommentEditView(isShowingCommentEditView: .constant(true), comment: Comment(articleID: "", writerID: "", writerNickname: "", writerProfileImageURL: "", content: "asdasd"))
-}
+//#Preview {
+//    CommentEditView(isShowingCommentEditView: .constant(true), comment: Comment(articleID: "", writerID: "", writerNickname: "", writerProfileImageURL: "", content: "asdasd"))
+//}

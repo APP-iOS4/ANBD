@@ -217,13 +217,11 @@ struct ArticleDetailView: View {
                 
             } else if isShowingCustomAlertComment {
                 CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertComment, viewType: .commentDelete) {
-                    /*
-                     댓글 삭제 오류나서 일단 주석 !
                      Task {
-                     await articleViewModel.deleteComment(articleID: article.id, commentID: comment.id)
+                         // MARK: - comment.id를 못 가져오는 중,,
+//                         await articleViewModel.deleteComment(articleID: self.article.id, commentID: self.articleViewModel.comment.id)
                      await articleViewModel.loadArticle(article: article)
                      }
-                     */
                 }
                 .zIndex(2)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -323,7 +321,7 @@ struct ArticleDetailView: View {
             ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
         }
         .fullScreenCover(isPresented: $isShowingCommentEditView) {
-            CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: articleViewModel.comment)
+            CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: articleViewModel.comment, isNewComment: true)
         }
         .navigationTitle("정보 공유")
         .navigationBarTitleDisplayMode(.inline)

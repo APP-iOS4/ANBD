@@ -208,8 +208,14 @@ extension AuthenticationViewModel {
 // MARK: Sign Up Method
 extension AuthenticationViewModel {
     func checkAuthState() {
-        if UserDefaultsClient.shared.userID == nil {
+        if (UserDefaultsClient.shared.userID == nil) || (UserStore.shared.user.userLevel == .banned){
             authState = false
+            switch UserStore.shared.user.userLevel{
+            case .banned:
+                errorMessage = "접근 권한이 없습니다."
+            default: authState = true
+                authState = false
+            }
         } else {
             authState = true
         }

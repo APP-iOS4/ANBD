@@ -19,8 +19,11 @@ struct UserInfoEditingView: View {
     @State private var isShowingPhotosPicker = false
     @State private var isShowingMenuList = false
     @State private var isShwoingDuplicatedNicknameAlert = false
+    @State private var isChangedProfileImage = false
     
     @State private var photosPickerItem: PhotosPickerItem?
+    
+    @State private var refreshView = false
     
     var body: some View {
         NavigationStack {
@@ -28,25 +31,29 @@ struct UserInfoEditingView: View {
                 VStack(spacing: 40) {
                     if #available(iOS 17.0, *) {
                         userProfilImageButton
+                            .id(refreshView)
                             .onChange(of: photosPickerItem) {
                                 Task {
                                     if let photosPickerItem, let data = try? await photosPickerItem.loadTransferable(type: Data.self) {
                                         if let image = await UIImage(data: data)?.byPreparingThumbnail(ofSize: .init(width: 512, height: 512)) {
-                                            myPageViewModel.userProfileImage = image
+                                            myPageViewModel.tempUserProfileImage = image.jpegData(compressionQuality: 0.5)!
                                         }
                                     }
                                 }
+                                isChangedProfileImage = true
                             }
                     } else {
                         userProfilImageButton
+                            .id(refreshView)
                             .onChange(of: photosPickerItem, perform: { _ in
                                 Task {
                                     if let photosPickerItem, let data = try? await photosPickerItem.loadTransferable(type: Data.self) {
                                         if let image = await UIImage(data: data)?.byPreparingThumbnail(ofSize: .init(width: 512, height: 512)) {
-                                            myPageViewModel.userProfileImage = image
+                                            myPageViewModel.tempUserProfileImage = image.jpegData(compressionQuality: 0.5)!
                                         }
                                     }
                                 }
+                                isChangedProfileImage = true
                             })
                     }
                     
@@ -131,12 +138,13 @@ struct UserInfoEditingView: View {
                                 
                                 await myPageViewModel.updateUserInfo(updatedNickname: myPageViewModel.tempUserNickname,
                                                                      updatedLocation: myPageViewModel.tempUserFavoriteLocation)
+                                await myPageViewModel.updateUserProfile(proflieImage: myPageViewModel.tempUserProfileImage)
                             }
                         }
                     }, label: {
                         Text("완료")
                     })
-                    .disabled(myPageViewModel.validateUpdatingComplete())
+                    // .disabled(myPageViewModel.validateUpdatingComplete())
                 }
             }
             
@@ -153,12 +161,22 @@ struct UserInfoEditingView: View {
         Button(action: {
             isShowingProfileImageEditingDialog.toggle()
         }, label: {
-            Image(uiImage: myPageViewModel.userProfileImage)
-                .resizable()
-                .aspectRatio(contentMode: .fill)
+            if isChangedProfileImage == false {
+                AsyncImage(url: URL(string: myPageViewModel.user.profileImage)) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } placeholder: {
+                    ProgressView()
+                }
                 .frame(width: 120, height: 120)
                 .clipShape(.circle)
-                .overlay {
+                .padding(.horizontal, 10)
+                .overlay(
+                    Circle()
+                        .stroke(.gray100, lineWidth: 1)
+                )
+                .overlay(
                     Image(systemName: "camera.circle.fill")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -166,13 +184,40 @@ struct UserInfoEditingView: View {
                         .foregroundStyle(Color.gray800, Color.gray300)
                         .frame(width: 35)
                         .offset(x: 40.0, y: 40.0)
-                }
+                )
+            } else {
+                Image(uiImage: UIImage(data: myPageViewModel.tempUserProfileImage) ?? UIImage(named: "EmptyImage")!)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 120, height: 120)
+                    .clipShape(.circle)
+                    .overlay(
+                        Circle()
+                            .stroke(.gray100, lineWidth: 1)
+                    )
+                    .overlay {
+                        Image(systemName: "camera.circle.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(Color.gray800, Color.gray300)
+                            .frame(width: 35)
+                            .offset(x: 40.0, y: 40.0)
+                    }
+            }
         })
         .padding(.top, 25)
         
         .confirmationDialog("프로필 이미지 수정하기", isPresented: $isShowingProfileImageEditingDialog) {
             Button(action: {
-                myPageViewModel.userProfileImage = UIImage(named: "DefaultUserProfileImage.001.png")!
+                Task {
+                    let image = await UIImage(named: "DefaultUserProfileImage")?.byPreparingThumbnail(ofSize: .init(width: 512, height: 512))
+                    
+                    myPageViewModel.tempUserProfileImage = image!.jpegData(compressionQuality: 0.5)!
+                    
+                    isChangedProfileImage = true
+                    refreshView.toggle()
+                }
             }, label: {
                 Text("기본 이미지 사용하기")
             })

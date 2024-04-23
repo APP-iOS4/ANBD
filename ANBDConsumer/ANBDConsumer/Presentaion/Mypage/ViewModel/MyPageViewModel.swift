@@ -33,8 +33,6 @@ final class MyPageViewModel: ObservableObject {
     
     private let storageManager = StorageManager.shared
     
-    @Published var userProfileImage: UIImage = UIImage(named: "DefaultUserProfileImage.001.png")!
-    
     @Published var user = User(id: "",
                                nickname: "",
                                profileImage: "",
@@ -68,7 +66,7 @@ final class MyPageViewModel: ObservableObject {
      @Published private(set) var userHeartedBaccuaTrades: [Trade] = []
      */
     
-    @Published var tempUserProfileString = ""
+    @Published var tempUserProfileImage: Data = Data()
     @Published var tempUserNickname = ""
     @Published var tempUserFavoriteLocation: Location = .seoul
     
@@ -95,25 +93,6 @@ final class MyPageViewModel: ObservableObject {
             
             return MyPageViewModel.mockUser
         }
-    }
-    
-    func loadUserProfileImage(containerID: String, imagePath: String) async -> Data {
-        var userProfilImageData: Data = Data()
-        
-        do {
-            userProfilImageData = try await storageManager.downloadImage(path: .profile,
-                                                                         containerID: containerID,
-                                                                         imagePath: imagePath)
-        } catch {
-            print("\(error.localizedDescription)")
-            
-            let defaultUserProfileImage = UIImage(named: "DefaultUserProfileImage")
-            let defaultUserProfileImageData = defaultUserProfileImage?.pngData()
-            
-            userProfilImageData = defaultUserProfileImageData ?? Data()
-        }
-        
-        return userProfilImageData
     }
     
     func loadArticleList(of category: ANBDCategory, by userID: String, limit: Int = 10) async -> [Article] {
@@ -183,6 +162,14 @@ final class MyPageViewModel: ObservableObject {
      */
     
     // MARK: - 유저 정보 수정
+    func updateUserProfile(proflieImage: Data?) async {
+        do {
+            try await userUsecase.updateUserProfile(user: UserStore.shared.user, profileImage: proflieImage)
+        } catch {
+            print("Error update user profile image: \(error.localizedDescription)")
+        }
+    }
+    
     func checkDuplicatedNickname() async -> Bool {
         let isDuplicate = await userUsecase.checkDuplicatedNickname(nickname: tempUserNickname)
         
@@ -197,19 +184,19 @@ final class MyPageViewModel: ObservableObject {
         }
     }
     
-    func validateUpdatingComplete() -> Bool {
-//        if (tempUserNickname.isEmpty || tempUserNickname == self.user.nickname) && (tempUserFavoriteLocation != self.user.favoriteLocation) {
+//    func validateUpdatingComplete() -> Bool {
+//        //        if (tempUserNickname.isEmpty || tempUserNickname == self.user.nickname) && (tempUserFavoriteLocation != self.user.favoriteLocation) {
+//        //            return true
+//        //        } else {
+//        //            return false
+//        //        }
+//        
+//        if (tempUserProfileString == user.profileImage) || (tempUserNickname == user.nickname) || (tempUserFavoriteLocation == user.favoriteLocation) {
 //            return true
 //        } else {
 //            return false
 //        }
-        
-        if (tempUserProfileString == user.profileImage) || (tempUserNickname == user.nickname) || (tempUserFavoriteLocation == user.favoriteLocation) {
-            return true
-        } else {
-            return false
-        }
-    }
+//    }
     
     func updateUserInfo(updatedNickname: String, updatedLocation: Location) async {
         do {

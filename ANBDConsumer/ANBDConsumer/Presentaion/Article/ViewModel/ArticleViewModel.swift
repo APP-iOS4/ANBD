@@ -206,7 +206,6 @@ final class ArticleViewModel: ObservableObject {
             let updatedArticle = try await articleUseCase.loadArticle(articleID: articleID)
             article.likeCount = updatedArticle.likeCount
             
-//            isLikedDictionary[articleID] = updatedArticle.isLiked
         } catch {
             print("좋아요 실패요.... \(error.localizedDescription)")
         }

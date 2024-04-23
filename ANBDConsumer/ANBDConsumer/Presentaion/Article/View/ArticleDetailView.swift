@@ -323,9 +323,6 @@ struct ArticleDetailView: View {
         .fullScreenCover(isPresented: $isShowingCommentEditView) {
             CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: articleViewModel.comment, isNewComment: true)
         }
-        .navigationDestination(isPresented: $isGoingToReportView) {
-            ReportView(reportViewType: .article, reportedObjectID: "")
-        }
         .navigationTitle("정보 공유")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarRole(.editor)

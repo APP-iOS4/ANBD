@@ -26,7 +26,8 @@ struct SearchView: View {
                 Spacer()
                 
                 Button(action: {
-                    searchViewModel.recentSearch = []
+                    searchViewModel.resetRecentSearch()
+                    searchViewModel.loadRecentSearch()
                 }, label: {
                     Text("전체 삭제")
                         .font(ANBDFont.body1)
@@ -47,6 +48,7 @@ struct SearchView: View {
                             .padding(.trailing, 5)
                         
                         Text(recent)
+                            .lineLimit(1)
                         
                         Spacer()
                         
@@ -75,8 +77,13 @@ struct SearchView: View {
         .searchable(text: $searchText)
         .onSubmit(of: .search) {
             if !searchText.isEmpty {
+                searchViewModel.saveRecentSearch(searchText)
+                searchViewModel.loadRecentSearch()
+                
                 coordinator.searchText = searchText
                 coordinator.appendPath(.searchResultView)
+                
+                searchText = ""
             }
         }
     }

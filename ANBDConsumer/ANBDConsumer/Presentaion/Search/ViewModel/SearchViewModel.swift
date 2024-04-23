@@ -8,5 +8,19 @@
 import Foundation
 
 final class SearchViewModel: ObservableObject {
-    @Published var recentSearch: [String] = ["아이패드", "아이폰 15Pro", "맥북", "갤럭시워치", "애플워치"]
+    
+    @Published var recentSearch: [String] = UserDefaultsClient.shared.recentSearch.reversed()
+    
+    func loadRecentSearch() {
+        recentSearch = UserDefaultsClient.shared.recentSearch.reversed()
+    }
+    
+    func saveRecentSearch(_ searchText: String) {
+        UserDefaultsClient.shared.saveRecentSearch(searchText)
+        print("UserDefaultsClient : \(UserDefaultsClient.shared.recentSearch)")
+    }
+    
+    func resetRecentSearch() {
+        UserDefaultsClient.shared.resetRecentSearch()
+    }
 }

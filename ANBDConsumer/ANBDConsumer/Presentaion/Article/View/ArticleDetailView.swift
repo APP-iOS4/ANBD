@@ -39,7 +39,7 @@ struct ArticleDetailView: View {
     
     @Environment(\.dismiss) private var dismiss
     
-    init(article: Article, comment: Comment) {
+    init(article: Article) {
         self.article = article
     }
     
@@ -63,21 +63,21 @@ struct ArticleDetailView: View {
                                  }
                                  */
                                 VStack(alignment: .leading) {
-                                    Text("\(articleViewModel.article.writerNickname)")
+                                    Text("\(article.writerNickname)")
                                         .font(ANBDFont.SubTitle3)
                                     
-                                    Text("\(articleViewModel.article.createdAt.relativeTimeNamed)")
+                                    Text("\(article.createdAt.relativeTimeNamed)")
                                         .font(ANBDFont.Caption1)
                                         .foregroundStyle(.gray400)
                                 }
                             }
                             .padding(.bottom, 20)
                             
-                            Text("\(articleViewModel.article.title)")
+                            Text("\(article.title)")
                                 .font(ANBDFont.pretendardBold(24))
                                 .padding(.bottom, 10)
                             
-                            Text("\(articleViewModel.article.content)")
+                            Text("\(article.content)")
                                 .font(ANBDFont.body1)
                                 .padding(.bottom, 10)
                             
@@ -97,17 +97,17 @@ struct ArticleDetailView: View {
                             HStack {
                                 Button {
                                     Task {
-                                        await articleViewModel.toggleLikeArticle(articleID: articleViewModel.article.id)
-                                        await articleViewModel.updateLikeCount(articleID: articleViewModel.article.id, increment: articleViewModel.isArticleLiked(articleID: articleViewModel.article.id))
+                                        await articleViewModel.toggleLikeArticle(articleID: article.id)
+                                        await articleViewModel.updateLikeCount(articleID: article.id, increment: articleViewModel.isArticleLiked(articleID: article.id))
                                     }
                                 } label: {
-                                    Image(systemName: articleViewModel.isArticleLiked(articleID: articleViewModel.article.id) ? "hand.thumbsup.fill" : "hand.thumbsup")
+                                    Image(systemName: articleViewModel.isArticleLiked(articleID: article.id) ? "hand.thumbsup.fill" : "hand.thumbsup")
                                         .resizable()
                                         .frame(width: 16, height: 16)
                                         .foregroundStyle(articleViewModel.isArticleLiked(articleID: article.id) ? .accent : .gray900)
                                         .padding(.leading, 10)
                                 }
-                                Text("\(articleViewModel.article.likeCount)")
+                                Text("\(article.likeCount)")
                                     .foregroundStyle(.gray900)
                                     .font(.system(size: 12))
                                     .padding(.trailing, 10)
@@ -219,13 +219,11 @@ struct ArticleDetailView: View {
                 
             } else if isShowingCustomAlertComment {
                 CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertComment, viewType: .commentDelete) {
-                    /*
-                     댓글 삭제 오류나서 일단 주석 !
                      Task {
-                     await articleViewModel.deleteComment(articleID: article.id, commentID: comment.id)
+                         // MARK: - comment.id를 못 가져오는 중,,
+//                         await articleViewModel.deleteComment(articleID: self.article.id, commentID: self.articleViewModel.comment.id)
                      await articleViewModel.loadArticle(article: article)
                      }
-                     */
                 }
                 .zIndex(2)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -323,7 +321,7 @@ struct ArticleDetailView: View {
             ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
         }
         .fullScreenCover(isPresented: $isShowingCommentEditView) {
-            CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: articleViewModel.comment)
+            CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: articleViewModel.comment, isNewComment: true)
         }
         .navigationDestination(isPresented: $isGoingToReportView) {
             ReportView(reportViewType: .article, reportedObjectID: "")

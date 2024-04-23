@@ -13,7 +13,6 @@ final class ArticleViewModel: ObservableObject {
     
     private let articleUseCase: ArticleUsecase = DefaultArticleUsecase()
     private let commentUseCase: CommentUsecase = DefaultCommentUsecase()
-    private let user = UserStore.shared.user
     
     private let storageManager = StorageManager.shared
     
@@ -117,6 +116,8 @@ final class ArticleViewModel: ObservableObject {
     
     func writeArticle(category: ANBDCategory, title: String, content: String, imageDatas: [Data]) async {
 
+        let user = UserStore.shared.user
+        
         let newArticle = Article(writerID: user.id,
                                  writerNickname: user.nickname,
                                  category: category,
@@ -192,27 +193,26 @@ final class ArticleViewModel: ObservableObject {
     }
     
     func toggleLikeArticle(articleID: String) async {
-        if let isLiked = isLikedDictionary[articleID] {
-            isLikedDictionary[articleID] = !isLiked
-        } else {
+        if isLikedDictionary[articleID] != nil {
             isLikedDictionary[articleID] = false
+        } else {
+            isLikedDictionary[articleID] = true
         }
         
         do {
-            let isLiked = isLikedDictionary[articleID] ?? false
-            
             try await articleUseCase.likeArticle(articleID: articleID)
             
             let updatedArticle = try await articleUseCase.loadArticle(articleID: articleID)
             article.likeCount = updatedArticle.likeCount
-            
+            isLiked.toggle()
+            print("좋아요: \(isLiked)")
         } catch {
             print("좋아요 실패요.... \(error.localizedDescription)")
         }
     }
     
     func isArticleLiked(articleID: String) -> Bool {
-        return isLikedDictionary[articleID] ?? false
+        return isLikedDictionary[articleID] ?? true
     }
     
     func updateLikeCount(articleID: String, increment: Bool) async {
@@ -238,12 +238,17 @@ final class ArticleViewModel: ObservableObject {
     
     // MARK: - Comment
     func writeComment(articleID: String, commentText: String) async {
+        
+        let user = UserStore.shared.user
+        
         let newComment = Comment(articleID: articleID,
                                  writerID: user.id,
                                  writerNickname: user.nickname,
                                  writerProfileImageURL: user.profileImage,
                                  content: commentText)
-        
+        print("user.id: \(user.id)")
+        print("user.nickname: \(user.nickname)")
+        print("user.profileImage: \(user.profileImage)")
         do {
             try await commentUseCase.writeComment(articleID: articleID, comment: newComment)
             await loadCommentList(articleID: articleID)

@@ -34,12 +34,18 @@ struct UserPageView: View {
                 if #available(iOS 17.0, *) {
                     userProfileImage
                         .onChange(of: myPageViewModel.tempUserProfileImage) {
-                            refreshView.toggle()
+                            Task {
+                                try await Task.sleep(nanoseconds: 800_000_000)
+                                refreshView.toggle()
+                            }
                         }
                 } else {
                     userProfileImage
                         .onChange(of: myPageViewModel.tempUserProfileImage) { _ in
-                            refreshView.toggle()
+                            Task {
+                                try await Task.sleep(nanoseconds: 800_000_000)
+                                refreshView.toggle()
+                            }
                         }
                 }
                 
@@ -144,7 +150,7 @@ struct UserPageView: View {
                     Menu {
                         Button(role: .destructive) {
                             coordinator.reportType = .users
-//                            coordinator.reportedObjectID =
+                            coordinator.reportedObjectID = writerUser.id
                             coordinator.appendPath(.reportView)
                         } label: {
                             Label("신고하기", systemImage: "exclamationmark.bubble")

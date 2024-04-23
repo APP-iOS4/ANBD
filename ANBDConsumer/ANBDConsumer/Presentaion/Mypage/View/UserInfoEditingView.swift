@@ -31,7 +31,6 @@ struct UserInfoEditingView: View {
                 VStack(spacing: 40) {
                     if #available(iOS 17.0, *) {
                         userProfilImageButton
-                            .id(refreshView)
                             .onChange(of: photosPickerItem) {
                                 Task {
                                     if let photosPickerItem, let data = try? await photosPickerItem.loadTransferable(type: Data.self) {
@@ -44,7 +43,6 @@ struct UserInfoEditingView: View {
                             }
                     } else {
                         userProfilImageButton
-                            .id(refreshView)
                             .onChange(of: photosPickerItem, perform: { _ in
                                 Task {
                                     if let photosPickerItem, let data = try? await photosPickerItem.loadTransferable(type: Data.self) {
@@ -138,13 +136,16 @@ struct UserInfoEditingView: View {
                                 
                                 await myPageViewModel.updateUserInfo(updatedNickname: myPageViewModel.tempUserNickname,
                                                                      updatedLocation: myPageViewModel.tempUserFavoriteLocation)
-                                await myPageViewModel.updateUserProfile(proflieImage: myPageViewModel.tempUserProfileImage)
+                                
+                                if myPageViewModel.tempUserProfileImage != nil {
+                                    await myPageViewModel.updateUserProfile(proflieImage: myPageViewModel.tempUserProfileImage)
+                                }
                             }
                         }
                     }, label: {
                         Text("완료")
                     })
-                    // .disabled(myPageViewModel.validateUpdatingComplete())
+                    .disabled(!myPageViewModel.validateUpdatingComplete())
                 }
             }
             
@@ -186,7 +187,7 @@ struct UserInfoEditingView: View {
                         .offset(x: 40.0, y: 40.0)
                 )
             } else {
-                Image(uiImage: UIImage(data: myPageViewModel.tempUserProfileImage) ?? UIImage(named: "EmptyImage")!)
+                Image(uiImage: UIImage(data: myPageViewModel.tempUserProfileImage ?? Data()) ?? UIImage(named: "EmptyImage")!)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 120, height: 120)
@@ -207,6 +208,7 @@ struct UserInfoEditingView: View {
             }
         })
         .padding(.top, 25)
+        .id(refreshView)
         
         .confirmationDialog("프로필 이미지 수정하기", isPresented: $isShowingProfileImageEditingDialog) {
             Button(action: {

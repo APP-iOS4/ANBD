@@ -66,7 +66,7 @@ final class MyPageViewModel: ObservableObject {
      @Published private(set) var userHeartedBaccuaTrades: [Trade] = []
      */
     
-    @Published var tempUserProfileImage: Data = Data()
+    @Published var tempUserProfileImage: Data?
     @Published var tempUserNickname = ""
     @Published var tempUserFavoriteLocation: Location = .seoul
     
@@ -171,9 +171,13 @@ final class MyPageViewModel: ObservableObject {
     }
     
     func checkDuplicatedNickname() async -> Bool {
-        let isDuplicate = await userUsecase.checkDuplicatedNickname(nickname: tempUserNickname)
-        
-        return isDuplicate
+        if tempUserNickname == user.nickname {
+            return false
+        } else {
+            let isDuplicate = await userUsecase.checkDuplicatedNickname(nickname: tempUserNickname)
+            
+            return isDuplicate
+        }
     }
     
     func checkNicknameLength(_ nickname: String) -> String {
@@ -184,19 +188,15 @@ final class MyPageViewModel: ObservableObject {
         }
     }
     
-//    func validateUpdatingComplete() -> Bool {
-//        //        if (tempUserNickname.isEmpty || tempUserNickname == self.user.nickname) && (tempUserFavoriteLocation != self.user.favoriteLocation) {
-//        //            return true
-//        //        } else {
-//        //            return false
-//        //        }
-//        
-//        if (tempUserProfileString == user.profileImage) || (tempUserNickname == user.nickname) || (tempUserFavoriteLocation == user.favoriteLocation) {
-//            return true
-//        } else {
-//            return false
-//        }
-//    }
+    func validateUpdatingComplete() -> Bool {
+        if (tempUserProfileImage == nil) && (user.nickname == tempUserNickname) && (user.favoriteLocation == tempUserFavoriteLocation) {
+            return false
+        } else if tempUserNickname.isEmpty {
+            return false
+        } else {
+            return true
+        }
+    }
     
     func updateUserInfo(updatedNickname: String, updatedLocation: Location) async {
         do {
@@ -210,6 +210,11 @@ final class MyPageViewModel: ObservableObject {
         } catch {
             print("\(error.localizedDescription)")
         }
+    }
+    
+    // MARK: - 유저 프로필 이미지 관련
+    func convertStringToImageData(string: String) -> Data? {
+        return Data()
     }
 }
 

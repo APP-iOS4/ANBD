@@ -75,7 +75,12 @@ struct TradeDetailView: View {
                                 .clipShape(Circle())
                                 .onTapGesture {
                                     coordinator.user = writerUser
-                                    coordinator.appendPath(.userPageView)
+                                    switch coordinator.selectedTab {
+                                    case .home, .article, .trade, .chat:
+                                        coordinator.appendPath(.userPageView)
+                                    case .mypage:
+                                        coordinator.pop()
+                                    }
                                 }
                             
                             VStack(alignment: .leading) {

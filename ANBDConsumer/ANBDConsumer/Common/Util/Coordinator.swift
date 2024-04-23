@@ -24,6 +24,10 @@ enum Page {
     case reportView
     
     case userPageView
+    case accountManagementView
+    case userInfoEditingView
+    case userActivityView
+    case userLikedContentView
 }
 
 final class Coordinator: ObservableObject {
@@ -52,11 +56,11 @@ final class Coordinator: ObservableObject {
         switch page {
         case .articleListView:
             ArticleListView(category: category, isArticle: (category == .accua || category == .dasi), isFromHomeView: true)
-           
-        // TODO: 수정 필요
+            
+            // TODO: 수정 필요
         case .articleDeatilView:
             if let article = article {
-//                ArticleDetailView(article: article, comment: comment)
+                //                ArticleDetailView(article: article, comment: comment)
             }
             
         case .tradeDetailView:
@@ -80,6 +84,18 @@ final class Coordinator: ObservableObject {
             if let user = user {
                 UserPageView(writerUser: user)
             }
+            
+        case .accountManagementView:
+            AccountManagementView()
+        
+        case .userInfoEditingView:
+            UserInfoEditingView()
+            
+        case .userActivityView:
+            UserActivityListView(category: category)
+            
+        case .userLikedContentView:
+            UserLikedContentsView(category: category)
         }
     }
     

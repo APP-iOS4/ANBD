@@ -91,7 +91,8 @@ struct ArticleListView: View {
                         }
                     }
                     if !articleListViewModel.articleList.isEmpty {
-                        ProgressView()
+                        Text("List End")
+                            .foregroundColor(.gray)
                           .onAppear {
                               articleListViewModel.loadMoreArticles()
                           }
@@ -104,7 +105,7 @@ struct ArticleListView: View {
                 .toolbar {
                     Button(action: {
                         articleListViewModel.articleList = []
-                        articleListViewModel.loadMoreArticles()
+                        articleListViewModel.firstLoadArticles()
                     }) {
                         Image(systemName: "arrow.clockwise")
                     }

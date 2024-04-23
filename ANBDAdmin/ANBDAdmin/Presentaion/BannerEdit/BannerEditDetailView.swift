@@ -14,8 +14,7 @@ struct BannerEditDetailView: View {
     let banner: Banner
     let bannerUsecase = DefaultBannerUsecase()
     @Binding var deletedBannerID: String?
-    @State private var bannerDeleteShowingAlert = false // 경고 표시 상태를 추적 변수
-    
+    @State private var bannerDeleteShowingAlert = false
     
     var body: some View {
         List {

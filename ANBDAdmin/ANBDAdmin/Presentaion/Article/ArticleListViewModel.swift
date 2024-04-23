@@ -19,9 +19,10 @@ class ArticleListViewModel: ObservableObject {
         if articleList.isEmpty {
             Task {
                 do {
-                    let articles = try await articleUsecase.loadArticleList()
+                    let articles = try await articleUsecase.refreshAllArticleList()
                     DispatchQueue.main.async {
                         self.articleList = articles
+                        self.canLoadMore = true
                     }
                 } catch {
                     print("게시물 목록을 가져오는데 실패했습니다: \(error)")

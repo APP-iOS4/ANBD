@@ -234,17 +234,28 @@ struct HomeView: View {
                 
                 Spacer()
                 
-                Button(action: {
-                    coordinator.category = category
-                    coordinator.homePath.append(Page.articleListView)
-                }, label: {
-                    HStack {
-                        Text("더보기")
+                HStack {
+                    Text("더보기")
+                    
+                    Image(systemName: "chevron.forward")
+                }
+                .font(ANBDFont.body2)
+                .onTapGesture {
+                    Task {
+                        coordinator.category = category
                         
-                        Image(systemName: "chevron.forward")
+                        switch category {
+                        case .accua, .dasi:
+                            await articleViewModel.loadAllArticles()
+                            articleViewModel.filteringArticles(category: category)
+                        case .nanua, .baccua:
+                            await tradeViewModel.loadAllTrades()
+                            await tradeViewModel.loadFilteredTrades(category: category)
+                        }
+                        
+                        coordinator.homePath.append(Page.articleListView)
                     }
-                    .font(ANBDFont.body2)
-                })
+                }
             }
             .padding(.bottom, 3)
             

@@ -170,6 +170,14 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
+    func searchArticle(keyword: String) async {
+        do {
+            let loadedArticles = try await articleUseCase.searchArticle(keyword: keyword, limit: 10)
+        } catch {
+            print("Error: \(error)")
+        }
+    }
+    
     func deleteArticle(article: Article) async {
         do {
             try await articleUseCase.deleteArticle(article: article)

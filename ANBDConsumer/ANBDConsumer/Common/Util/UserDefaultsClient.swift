@@ -52,14 +52,12 @@ final class UserDefaultsClient: ObservableObject {
     func saveRecentSearch(_ searchText: String) {
         var searchArray: [String] = recentSearch
         
-        /// 중복 확인
         if searchArray.contains(searchText) {
             if let idx = searchArray.firstIndex(of: searchText) {
                 searchArray.remove(at: idx)
             }
         }
     
-        /// 8개까지만 저장
         if searchArray.count > 7 {
             searchArray.remove(at: 0)
         }
@@ -69,7 +67,12 @@ final class UserDefaultsClient: ObservableObject {
     }
     
     func removeRecentSearch(_ searchText: String) {
+        var searchArray: [String] = recentSearch
         
+        if let idx = searchArray.firstIndex(of: searchText) {
+            searchArray.remove(at: idx)
+        }
+        UserDefaults.standard.set(searchArray, forKey: Keys.recentSearch.id)
     }
     
     func resetRecentSearch() {

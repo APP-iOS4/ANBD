@@ -56,9 +56,8 @@ struct SearchView: View {
                             .foregroundStyle(.gray400)
                             .font(.system(size: 13))
                             .onTapGesture {
-                                if let idx = searchViewModel.recentSearch.firstIndex(of: recent) {
-                                    searchViewModel.recentSearch.remove(at: idx)
-                                }
+                                searchViewModel.removeRecentSearch(recent)
+                                searchViewModel.loadRecentSearch()
                             }
                     }
                     .font(ANBDFont.body1)
@@ -81,6 +80,7 @@ struct SearchView: View {
                 searchViewModel.loadRecentSearch()
                 
                 coordinator.searchText = searchText
+                coordinator.category = category
                 coordinator.appendPath(.searchResultView)
                 
                 searchText = ""

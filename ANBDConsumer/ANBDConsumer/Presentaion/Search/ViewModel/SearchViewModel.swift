@@ -17,7 +17,10 @@ final class SearchViewModel: ObservableObject {
     
     func saveRecentSearch(_ searchText: String) {
         UserDefaultsClient.shared.saveRecentSearch(searchText)
-        print("UserDefaultsClient : \(UserDefaultsClient.shared.recentSearch)")
+    }
+    
+    func removeRecentSearch(_ searchText: String) {
+        UserDefaultsClient.shared.removeRecentSearch(searchText)
     }
     
     func resetRecentSearch() {

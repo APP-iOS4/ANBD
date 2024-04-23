@@ -136,6 +136,14 @@ final class TradeViewModel: ObservableObject {
         return detailImages
     }
     
+    func searchTrade(keyword: String) async {
+        do {
+            trades = try await tradeUseCase.searchTrade(keyword: keyword, limit: nil)
+        } catch {
+            print("Error: \(error)")
+        }
+    }
+    
     //MARK: - CREATE
     
     func createTrade(category: ANBDCategory, itemCategory: ItemCategory, location: Location, title: String, content: String, myProduct: String, wantProduct: String, images: [Data]) async {

@@ -65,12 +65,15 @@ struct SearchResultView: View {
             .ignoresSafeArea(edges: .bottom)
         }
         .onAppear {
-            if category == .accua || category == .dasi {
-                Task {
+            Task {
+                switch category {
+                case .accua, .dasi:
+                    await articleViewModel.searchArticle(keyword: searchText)
                     articleViewModel.filteringArticles(category: category)
+                case .nanua, .baccua:
+                    await tradeViewModel.searchTrade(keyword: searchText)
+                    await tradeViewModel.loadFilteredTrades(category: category)
                 }
-            } else {
-                tradeViewModel.filteringTrades(category: category)
             }
         }
         .navigationTitle(searchText)

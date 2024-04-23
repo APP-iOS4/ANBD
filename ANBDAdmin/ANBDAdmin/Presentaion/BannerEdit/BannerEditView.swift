@@ -45,6 +45,7 @@ struct BannerEditView: View {
                                 }
                             }
                             .frame(minWidth: 0, maxWidth: 250, alignment: .leading)
+                            Divider()
                             Spacer()
                             VStack(alignment: .leading) {
                                 Text("배너 ID")
@@ -54,6 +55,7 @@ struct BannerEditView: View {
                             }
                             .frame(minWidth: 0, maxWidth: 250, alignment: .leading)
                             .padding()
+                            Divider()
                             Spacer()
                             VStack(alignment: .leading) {
                                 Text("생성일자")

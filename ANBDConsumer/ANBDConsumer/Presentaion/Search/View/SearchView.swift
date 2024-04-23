@@ -13,10 +13,8 @@ struct SearchView: View {
     var category: ANBDCategory = .accua
     @State private var searchText: String = ""
     
-    @EnvironmentObject private var homeViewModel: HomeViewModel
+    @EnvironmentObject private var coordinator: Coordinator
     @EnvironmentObject private var searchViewModel: SearchViewModel
-    @EnvironmentObject private var tradeViewModel: TradeViewModel
-    @EnvironmentObject private var articleViewModel: ArticleViewModel
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -39,7 +37,10 @@ struct SearchView: View {
             .padding(.top, 10)
             
             ForEach(searchViewModel.recentSearch, id: \.self) { recent in
-                NavigationLink(value: recent) {
+                Button(action: {
+                    coordinator.searchText = recent
+                    coordinator.appendPath(.searchResultView)
+                }, label: {
                     HStack {
                         Image(systemName: "clock.arrow.circlepath")
                             .foregroundStyle(.gray400)
@@ -62,7 +63,7 @@ struct SearchView: View {
                     .foregroundStyle(.gray900)
                     .padding(.horizontal)
                     .padding(.vertical, 3)
-                }
+                })
             }
             
             Spacer()
@@ -74,9 +75,8 @@ struct SearchView: View {
         .searchable(text: $searchText)
         .onSubmit(of: .search) {
             if !searchText.isEmpty {
-                homeViewModel.homePath.append(searchText)
-                tradeViewModel.tradePath.append(searchText)
-                articleViewModel.articlePath.append(searchText)
+                coordinator.searchText = searchText
+                coordinator.appendPath(.searchResultView)
             }
         }
     }
@@ -85,9 +85,7 @@ struct SearchView: View {
 #Preview {
     NavigationStack {
         SearchView(category: .accua)
-            .environmentObject(HomeViewModel())
+            .environmentObject(Coordinator())
             .environmentObject(SearchViewModel())
-            .environmentObject(TradeViewModel())
-            .environmentObject(ArticleViewModel())
     }
 }

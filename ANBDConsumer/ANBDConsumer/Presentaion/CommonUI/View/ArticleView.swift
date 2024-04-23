@@ -9,12 +9,14 @@ import SwiftUI
 import ANBDModel
 
 struct ArticleView: View {
+    @EnvironmentObject private var coordinator: Coordinator
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     
     @State private var isShowingArticleCreateView: Bool = false
     @State private var isShowingTradeCreateView: Bool = false
     @Binding var category: ANBDCategory
+    
     //true - accua, dasi / false - nanua, baccua
     @State private var isArticle: Bool = true
     
@@ -141,12 +143,14 @@ struct ArticleView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink(value: "") {
+                Button(action: {
+                    coordinator.appendPath(.searchView)
+                }, label: {
                     Image(systemName: "magnifyingglass")
                         .resizable()
                         .frame(width: 20)
                         .foregroundStyle(.gray900)
-                }
+                })
             }
         }
         .fullScreenCover(isPresented: $isShowingArticleCreateView, content: {
@@ -164,6 +168,7 @@ struct ArticleView: View {
 
 #Preview {
     ArticleView(category: .constant(.accua))
+        .environmentObject(Coordinator())
         .environmentObject(ArticleViewModel())
 }
 

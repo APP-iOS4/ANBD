@@ -10,6 +10,8 @@ import ANBDModel
 
 struct UserActivityListView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
+    @EnvironmentObject private var tradeViewModel: TradeViewModel
+    @EnvironmentObject private var coordinator: Coordinator
     
     @State var category: ANBDCategory
     
@@ -56,10 +58,12 @@ struct UserActivityListView: View {
             ScrollView(.vertical) {
                 LazyVStack {
                     ForEach(list) { article in
-                        NavigationLink(value: article) {
-                            ArticleListCell(value: .article(article))
-                                .padding(.vertical, 5)
-                        }
+                        ArticleListCell(value: .article(article))
+                            .padding(.vertical, 5)
+                            .onTapGesture {
+                                coordinator.article = article
+                                coordinator.appendPath(.articleDeatilView)
+                            }
                         
                         Divider()
                     }
@@ -91,10 +95,14 @@ struct UserActivityListView: View {
                 ScrollView(.vertical) {
                     LazyVStack {
                         ForEach(list) { trade in
-                            NavigationLink(value: trade) {
-                                ArticleListCell(value: .trade(trade))
-                                    .padding(.vertical, 5)
-                            }
+                            
+                            ArticleListCell(value: .trade(trade))
+                                .padding(.vertical, 5)
+                                .onTapGesture {
+                                    coordinator.trade = trade
+                                    tradeViewModel.getOneTrade(trade: trade)
+                                    coordinator.appendPath(.tradeDetailView)
+                                }
                             
                             Divider()
                         }

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ChatView: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
+    @EnvironmentObject private var coordinator: Coordinator
     
     @State private var isShowingConfirmSheet: Bool = false
     @State private var isShowingCustomAlertView: Bool = false
@@ -23,12 +24,16 @@ struct ChatView: View {
                     ScrollView {
                         LazyVStack {
                             ForEach(chatViewModel.chatRooms) { channel in
-                                NavigationLink(value: channel) {
+                                Button(action: {
+                                    coordinator.channel = channel
+                                    coordinator.chatPath.append(Page.chatDetailView)
+                                }, label: {
                                     ChatListCell(channel: channel)
                                         .padding(.horizontal, 20)
                                         .padding(.vertical, 3)
-                                }
+                                })
                             }
+                            Text("현재 안읽은 메시지 총 갯수:(\(chatViewModel.totalUnreadCount))")
                         }
                     }
                     

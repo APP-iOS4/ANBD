@@ -11,20 +11,40 @@ import ANBDModel
 
 class TradeListViewModel: ObservableObject {
     @Published var tradeList: [Trade] = []
-    var deletedTradeID: String? // 삭제 변수
+    var deletedTradeID: String?
     let tradeUsecase = DefaultTradeUsecase()
+    @Published var canLoadMoreTrades: Bool = true
+
     
     func firstLoadTrades() {
         if tradeList.isEmpty {
             Task {
                 do {
-                    let trades = try await tradeUsecase.loadTradeList(limit: 10)
+                    let trades = try await tradeUsecase.refreshAllTradeList(limit: 10)
                     DispatchQueue.main.async {
                         self.tradeList = trades
+                        self.canLoadMoreTrades = true
                     }
                 } catch {
                     print("게시물 목록을 가져오는데 실패했습니다: \(error)")
                 }
+            }
+        }
+    }
+    func loadMoreTrades(){
+        guard canLoadMoreTrades else { return }
+
+        Task {
+            do {
+                let trades = try await tradeUsecase.loadTradeList(limit: 10)
+                DispatchQueue.main.async {
+                    self.tradeList.append(contentsOf: trades)
+                    if trades.count < 10 {
+                        self.canLoadMoreTrades = false
+                    }
+                }
+            } catch {
+                print("게시물 목록을 가져오는데 실패했습니다: \(error)")
             }
         }
     }

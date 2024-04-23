@@ -89,6 +89,13 @@ struct TradeListView: View {
                             .padding(.horizontal)
                         }
                     }
+                    if !tradeListViewModel.tradeList.isEmpty {
+                        Text("List End")
+                            .foregroundColor(.gray)
+                          .onAppear {
+                              tradeListViewModel.loadMoreTrades()
+                          }
+                      }
                 }
                 
                 .onAppear {

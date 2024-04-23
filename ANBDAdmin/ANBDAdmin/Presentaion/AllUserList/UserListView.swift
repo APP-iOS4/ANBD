@@ -117,9 +117,16 @@ struct UserListView: View {
                             .padding(.horizontal)
                         }
                     }
+                    if !userListViewModel.userList.isEmpty {
+                        Text("List End")
+                            .foregroundColor(.gray)
+                          .onAppear {
+                              userListViewModel.loadMoreUsers()
+                          }
+                      }
                 }
                 .onAppear {
-                    userListViewModel.loadUsers()
+                    userListViewModel.firstLoadUsers()
                 }
                 .navigationBarTitle("유저 목록")
             }

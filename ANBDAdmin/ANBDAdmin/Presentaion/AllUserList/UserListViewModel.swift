@@ -11,16 +11,35 @@ import ANBDModel
 class UserListViewModel: ObservableObject {
     @Published var userList: [User] = []
     let userUsecase = DefaultUserUsecase()
+    @Published var canLoadMoreUsers: Bool = true
     
-    func loadUsers() {
+    func firstLoadUsers() {
         Task {
             do {
                 let users = try await userUsecase.getUserInfoList()
                 DispatchQueue.main.async {
                     self.userList = users
+                    self.canLoadMoreUsers = true
                 }
             } catch {
                 print("사용자 목록을 가져오는데 실패했습니다: \(error)")
+            }
+        }
+    }
+    func loadMoreUsers() {
+        guard canLoadMoreUsers else { return }
+        
+        Task {
+            do {
+                let users = try await userUsecase.getUserInfoList()
+                DispatchQueue.main.async {
+                    self.userList.append(contentsOf: users)
+                    if users.count < 10 {
+                        self.canLoadMoreUsers = false
+                    }
+                }
+            } catch {
+                print("게시물 목록을 가져오는데 실패했습니다: \(error)")
             }
         }
     }

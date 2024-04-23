@@ -22,13 +22,13 @@ struct CustomAlertView: View {
                 
                 VStack {
                     Text(title)
-                        .font(ANBDFont.SubTitle1)
-                        .padding(.vertical, 10)
+                        .font(ANBDFont.Heading3)
+                        .padding(.vertical, 20)
                     
                     Text(description)
                         .multilineTextAlignment(.center)
-                        .font(ANBDFont.body1)
-                        .padding(.bottom, 15)
+                        .font(ANBDFont.SubTitle1)
+                        .padding(.bottom, 30)
                     
                     
                     HStack {

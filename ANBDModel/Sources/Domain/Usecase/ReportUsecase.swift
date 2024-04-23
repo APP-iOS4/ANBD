@@ -33,5 +33,4 @@ public struct DefaultReportUsecase: ReportUsecase {
         try await reportRepository.deleteReport(reportID: reportID)
     }
     
-    
 }

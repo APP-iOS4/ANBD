@@ -87,8 +87,15 @@ struct ArticleListView: View {
                             .background(Color.white)
                             .cornerRadius(10)
                             .padding(.horizontal)
+                            
                         }
                     }
+                    if !articleListViewModel.articleList.isEmpty {
+                        ProgressView()
+                          .onAppear {
+                              articleListViewModel.loadMoreArticles()
+                          }
+                      }
                 }
                 .onAppear {
                     articleListViewModel.firstLoadArticles()
@@ -96,7 +103,8 @@ struct ArticleListView: View {
                 .navigationBarTitle("게시글 목록")
                 .toolbar {
                     Button(action: {
-                        //새로고침 함수 뷰모델에 작성예정
+                        articleListViewModel.articleList = []
+                        articleListViewModel.loadMoreArticles()
                     }) {
                         Image(systemName: "arrow.clockwise")
                     }

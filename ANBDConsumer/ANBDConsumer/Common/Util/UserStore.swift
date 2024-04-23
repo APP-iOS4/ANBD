@@ -24,7 +24,12 @@ final class UserStore: ObservableObject {
                                isAgreeCollectInfo: false,
                                isAgreeMarketing: false,
                                likeArticles: [],
-                               likeTrades: [])
+                               likeTrades: [],
+                               accuaCount: 0,
+                               nanuaCount: 0,
+                               baccuaCount: 0,
+                               dasiCount: 0)
+    
     private init() {
         Task {
             user = await getUserInfo(userID: UserDefaultsClient.shared.userID ?? "abcd1234")
@@ -34,7 +39,7 @@ final class UserStore: ObservableObject {
     func getUserInfo(userID: String) async -> User {
         do {
             let getUser = try await userUsecase.getUserInfo(userID: userID)
-            
+            self.user = getUser
             return getUser
         } catch {
             print("Error get user information: \(error.localizedDescription)")

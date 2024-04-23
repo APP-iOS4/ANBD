@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ANBDModel
+import CachedAsyncImage
 
 extension ChatDetailView {
     struct MessageCell: View {
@@ -17,7 +18,7 @@ extension ChatDetailView {
         
         var message: Message
         var isLast: Bool = false
-        @State var imageData: Data?
+        @State var imageUrl: URL?
         @State private var isMine: Bool = false
         var anbdViewType: ANBDViewType = .chat
         var channelID: String
@@ -44,6 +45,16 @@ extension ChatDetailView {
                 
                 // 텍스트
                 if let content = message.content {
+                    if !isMine{
+                        ZStack {
+                            Circle()
+                                .fill(Color.gray100)
+                                .frame(width: 30)
+                            
+                            Text("🐳")
+                                .font(.system(size: 20))
+                        }
+                    }
                     Text(content)
                         .padding(15)
                         .foregroundStyle(isMine ? .white : (colorScheme == .dark ? Color(red: 13/255, green: 15/255, blue: 20/255) : .gray900))
@@ -51,64 +62,69 @@ extension ChatDetailView {
                         .background(isMine ? Color.accentColor : .gray50)
                         .clipShape(RoundedRectangle(cornerRadius: 15))
                         .contextMenu {
-                            Button("메시지 신고하기", role: .destructive) {
-                                homeViewModel.reportType = .messages
-                                chatViewModel.reportType = .messages
-                                
-                                homeViewModel.reportedObjectID = message.id
-                                chatViewModel.reportedObjectID = message.id
-                                
-                                homeViewModel.reportedChannelID = channelID
-                                chatViewModel.reportedChannelID = channelID
-                                
-                                switch anbdViewType {
-                                case .home:
-                                    homeViewModel.homePath.append(ANBDNavigationPaths.reportView)
-                                case .trade:
-                                    tradeViewModel.tradePath.append(ANBDNavigationPaths.reportView)
-                                case .chat:
-                                    chatViewModel.chatPath.append(ANBDNavigationPaths.reportView)
+                            if !isMine {
+                                Button("메시지 신고하기", role: .destructive) {
+                                    homeViewModel.reportType = .messages
+                                    chatViewModel.reportType = .messages
+                                    
+                                    homeViewModel.reportedObjectID = message.id
+                                    chatViewModel.reportedObjectID = message.id
+                                    
+                                    homeViewModel.reportedChannelID = channelID
+                                    chatViewModel.reportedChannelID = channelID
+                                    
+                                    switch anbdViewType {
+                                    case .home:
+                                        homeViewModel.homePath.append(ANBDNavigationPaths.reportView)
+                                    case .trade:
+                                        tradeViewModel.tradePath.append(ANBDNavigationPaths.reportView)
+                                    case .chat:
+                                        chatViewModel.chatPath.append(ANBDNavigationPaths.reportView)
+                                    }
                                 }
                             }
                         }
                 }
                 
                 // 이미지
-                if let imageData {
-                    if let uiImage = UIImage(data: imageData) {
+                if let imageUrl {
+                    CachedAsyncImage(url: imageUrl) { image in
                         Button(action: {
-                            detailImage = Image(uiImage: uiImage)
+                            detailImage = image
                             isShowingImageDetailView.toggle()
                         }, label: {
-                            Image(uiImage: uiImage)
+                            image
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 150)
                                 .clipShape(RoundedRectangle(cornerRadius: 15))
                         })
                         .contextMenu {
-                            Button("메시지 신고하기", role: .destructive) {
-                                homeViewModel.reportType = .messages
-                                chatViewModel.reportType = .messages
-                                
-                                switch anbdViewType {
-                                case .home:
-                                    homeViewModel.homePath.append(ANBDNavigationPaths.reportView)
-                                case .trade:
-                                    tradeViewModel.tradePath.append(ANBDNavigationPaths.reportView)
-                                case .chat:
-                                    chatViewModel.chatPath.append(ANBDNavigationPaths.reportView)
+                            if !isMine {
+                                Button("메시지 신고하기", role: .destructive) {
+                                    homeViewModel.reportType = .messages
+                                    chatViewModel.reportType = .messages
+                                    
+                                    switch anbdViewType {
+                                    case .home:
+                                        homeViewModel.homePath.append(ANBDNavigationPaths.reportView)
+                                    case .trade:
+                                        tradeViewModel.tradePath.append(ANBDNavigationPaths.reportView)
+                                    case .chat:
+                                        chatViewModel.chatPath.append(ANBDNavigationPaths.reportView)
+                                    }
                                 }
                             }
                         }
+                    } placeholder: {
+                        ProgressView()
                     }
                 }
                 
                 if !isMine {
-                    Text("\(message.dateString)")
-                        .foregroundStyle(.gray400)
-                        .font(ANBDFont.Caption2)
-                    
+                        Text("\(message.dateString)")
+                            .foregroundStyle(.gray400)
+                            .font(ANBDFont.Caption2)
                     Spacer()
                 }
             }
@@ -120,7 +136,7 @@ extension ChatDetailView {
                 if let imagePath = message.imagePath {
                     Task {
                         /// 이미지 로드
-                        imageData = try await chatViewModel.downloadImagePath(messageID: message.id, imagePath: imagePath)
+                        imageUrl = try await chatViewModel.downloadImageUrl(messageID: message.id, imagePath: imagePath)
                     }
                 }
             }

@@ -16,6 +16,7 @@ protocol UserDataSource {
     func checkUser(email: String) async throws
     func checkUser(nickname: String) async throws
     func updateUserInfo(user: User) async throws
+    func updateUserPostCount(user: User) async throws
     func updateUserInfoList(articleID: String) async throws
     func updateUserInfoList(tradeID: String) async throws
     func deleteUserInfo(userID: String) async throws
@@ -84,10 +85,23 @@ final class DefaultUserDataSource: UserDataSource {
             "userLevel": user.userLevel.rawValue,
             "isAgreeMarketing": user.isAgreeMarketing,
             "likeArticles": user.likeArticles,
-            "likeTrades": user.likeTrades
+            "likeTrades": user.likeTrades,
+            "profileImage": user.profileImage
         ])
         else {
             throw DBError.updateUserDocumentError
+        }
+    }
+    
+    func updateUserPostCount(user: User) async throws {
+        guard let _ = try? await userDB.document(user.id).updateData([
+            "accuaCount": user.accuaCount,
+            "nanuaCount": user.nanuaCount,
+            "baccuaCount": user.baccuaCount,
+            "dasiCount": user.dasiCount
+        ])
+        else {
+            throw DBError.updateDocumentError
         }
     }
     

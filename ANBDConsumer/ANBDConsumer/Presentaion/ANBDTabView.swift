@@ -73,9 +73,9 @@ struct ANBDTabView: View {
                     .navigationDestination(for: Trade.self) { trade in
                         TradeDetailView(trade: trade)
                     }
-//                    .navigationDestination(for: User.self) { user in
-//                        UserPageView(writerUser: user)
-//                    }
+                //                    .navigationDestination(for: User.self) { user in
+                //                        UserPageView(writerUser: user)
+                //                    }
                     .navigationDestination(for: String.self) { str in
                         if str == "" {
                             SearchView()
@@ -100,9 +100,9 @@ struct ANBDTabView: View {
                     .navigationDestination(for: String.self) { str in
                         SearchResultView(category: tradeCategory, searchText: str)
                     }
-                //                    .navigationDestination(for: User.self) { user in
-                //                        UserPageView(writerUser: user)
-                //                    }
+                    .navigationDestination(for: User.self) { user in
+                        UserPageView(writerUser: user)
+                    }
                     .navigationDestination(for: ANBDCategory.self) { category in
                         UserActivityListView(category: category)
                     }

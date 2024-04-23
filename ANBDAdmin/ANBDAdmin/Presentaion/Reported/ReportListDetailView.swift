@@ -65,7 +65,7 @@ struct ReportListDetailView: View {
         .alert(isPresented: $reportDeleteShowingAlert) { // 경고를 표시
             Alert(
                 title: Text("삭제"),
-                message: Text("해당게시글을 삭제하시겠습니까?"),
+                message: Text("해당 신고 메세지를 삭제하시겠습니까?"),
                 primaryButton: .destructive(Text("삭제")) {
                     Task {
                         do {
@@ -73,7 +73,7 @@ struct ReportListDetailView: View {
                             deletedReportID = report.id
                             reportPresentationMode.wrappedValue.dismiss()
                         } catch {
-                            print("게시글을 삭제하는데 실패했습니다: \(error)")
+                            print("신고 메세지를 삭제하는데 실패했습니다: \(error)")
                         }
                     }
                 },

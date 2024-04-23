@@ -11,6 +11,7 @@ import ANBDModel
 struct UserPageView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
+    @EnvironmentObject private var coordinator: Coordinator
     
     private var writerUser: User
     
@@ -57,7 +58,7 @@ struct UserPageView: View {
                             Spacer()
                             
                             Button(action: {
-                                myPageViewModel.myPageNaviPath.append(MyPageViewModel.MyPageNaviPaths.accountManagement)
+                                coordinator.mypagePath.append(Page.accountManagementView)
                             }, label: {
                                 Text("계정관리")
                             })
@@ -93,7 +94,8 @@ struct UserPageView: View {
                     Divider()
                     
                     Button(action: {
-                        myPageViewModel.myPageNaviPath.append(MyPageViewModel.MyPageNaviPaths.userLikedArticleList)
+                        coordinator.category = .accua
+                        coordinator.mypagePath.append(Page.userLikedContentView)
                     }, label: {
                         listButtonView(title: "내가 좋아요한 게시글 보기")
                     })
@@ -101,7 +103,8 @@ struct UserPageView: View {
                     Divider()
                     
                     Button(action: {
-                        myPageViewModel.myPageNaviPath.append(MyPageViewModel.MyPageNaviPaths.userHeartedTradeList)
+                        coordinator.category = .nanua
+                        coordinator.mypagePath.append(Page.userLikedContentView)
                     }, label: {
                         listButtonView(title: "내가 찜한 나눔・거래 보기")
                     })
@@ -136,7 +139,9 @@ struct UserPageView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button(role: .destructive) {
-                            tradeViewModel.tradePath.append("tradeToReport")
+                            coordinator.reportType = .users
+//                            coordinator.reportedObjectID =
+                            coordinator.appendPath(.reportView)
                         } label: {
                             Label("신고하기", systemImage: "exclamationmark.bubble")
                         }
@@ -166,7 +171,10 @@ struct UserPageView: View {
     }
     
     private func activityInfoComponent(title: String, category: ANBDCategory) -> some View {
-        NavigationLink(value: category) {
+        Button(action: {
+            coordinator.category = category
+            coordinator.appendPath(.userActivityView)
+        }, label: {
             VStack(alignment: .center, spacing: 5) {
                 
                 Text("\(title)")
@@ -187,7 +195,7 @@ struct UserPageView: View {
                 }
                 .font(ANBDFont.pretendardSemiBold(22))
             }
-        }
+        })
     }
     
     private func listButtonView(title: String) -> some View {

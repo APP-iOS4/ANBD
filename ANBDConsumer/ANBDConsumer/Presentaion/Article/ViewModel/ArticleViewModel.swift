@@ -246,9 +246,7 @@ final class ArticleViewModel: ObservableObject {
                                  writerNickname: user.nickname,
                                  writerProfileImageURL: user.profileImage,
                                  content: commentText)
-        print("user.id: \(user.id)")
-        print("user.nickname: \(user.nickname)")
-        print("user.profileImage: \(user.profileImage)")
+        
         do {
             try await commentUseCase.writeComment(articleID: articleID, comment: newComment)
             await loadCommentList(articleID: articleID)

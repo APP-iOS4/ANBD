@@ -11,6 +11,7 @@ import ANBDModel
 struct ArticleDetailView: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     @EnvironmentObject private var myPageViewMode: MyPageViewModel
+    @EnvironmentObject private var coordinator: Coordinator
 
     private var article: Article
     private let user = UserStore.shared.user
@@ -20,8 +21,6 @@ struct ArticleDetailView: View {
     
     @State private var isShowingImageDetailView: Bool = false
     @State private var isShowingCreateView: Bool = false
-    @State private var isGoingToReportView: Bool = false
-    @State private var isGoingToProfileView: Bool = false
     @State private var isShowingArticleConfirmSheet: Bool = false
     @State private var isShowingCustomAlertArticle: Bool = false
     @State private var isShowingCustomAlertComment: Bool = false
@@ -63,21 +62,21 @@ struct ArticleDetailView: View {
                                  }
                                  */
                                 VStack(alignment: .leading) {
-                                    Text("\(article.writerNickname)")
+                                    Text("\(articleViewModel.article.writerNickname)")
                                         .font(ANBDFont.SubTitle3)
                                     
-                                    Text("\(article.createdAt.relativeTimeNamed)")
+                                    Text("\(articleViewModel.article.createdAt.relativeTimeNamed)")
                                         .font(ANBDFont.Caption1)
                                         .foregroundStyle(.gray400)
                                 }
                             }
                             .padding(.bottom, 20)
                             
-                            Text("\(article.title)")
+                            Text("\(articleViewModel.article.title)")
                                 .font(ANBDFont.pretendardBold(24))
                                 .padding(.bottom, 10)
                             
-                            Text("\(article.content)")
+                            Text("\(articleViewModel.article.content)")
                                 .font(ANBDFont.body1)
                                 .padding(.bottom, 10)
                             
@@ -97,17 +96,17 @@ struct ArticleDetailView: View {
                             HStack {
                                 Button {
                                     Task {
-                                        await articleViewModel.toggleLikeArticle(articleID: article.id)
-                                        await articleViewModel.updateLikeCount(articleID: article.id, increment: articleViewModel.isArticleLiked(articleID: article.id))
+                                        await articleViewModel.toggleLikeArticle(articleID: articleViewModel.article.id)
+                                        await articleViewModel.updateLikeCount(articleID: articleViewModel.article.id, increment: articleViewModel.isArticleLiked(articleID: articleViewModel.article.id))
                                     }
                                 } label: {
-                                    Image(systemName: articleViewModel.isArticleLiked(articleID: article.id) ? "hand.thumbsup.fill" : "hand.thumbsup")
+                                    Image(systemName: articleViewModel.isArticleLiked(articleID: articleViewModel.article.id) ? "hand.thumbsup.fill" : "hand.thumbsup")
                                         .resizable()
                                         .frame(width: 16, height: 16)
                                         .foregroundStyle(articleViewModel.isArticleLiked(articleID: article.id) ? .accent : .gray900)
                                         .padding(.leading, 10)
                                 }
-                                Text("\(article.likeCount)")
+                                Text("\(articleViewModel.article.likeCount)")
                                     .foregroundStyle(.gray900)
                                     .font(.system(size: 12))
                                     .padding(.trailing, 10)
@@ -182,7 +181,9 @@ struct ArticleDetailView: View {
                                             }
                                         } else {
                                             Button(role: .destructive) {
-                                                isGoingToReportView.toggle()
+                                                // TODO: 댓글 신고
+                                                coordinator.reportType = .comment
+                                                
                                             } label: {
                                                 Label("신고하기", systemImage: "exclamationmark.bubble")
                                             }
@@ -192,9 +193,6 @@ struct ArticleDetailView: View {
                                             .font(.system(size: 13))
                                             .rotationEffect(.degrees(90))
                                             .foregroundStyle(.gray900)
-                                    }
-                                    .navigationDestination(isPresented: $isGoingToReportView) {
-                                        ReportView(reportViewType: .article, reportedObjectID: "")
                                     }
                                 }
                                 .padding(.horizontal, 10)
@@ -280,7 +278,9 @@ struct ArticleDetailView: View {
                         }
                     } else {
                         Button(role: .destructive) {
-                            isGoingToReportView.toggle()
+                            coordinator.reportType = .article
+                            coordinator.reportedObjectID = article.id
+                            coordinator.appendPath(.reportView)
                         } label: {
                             Label("신고하기", systemImage: "exclamationmark.bubble")
                         }

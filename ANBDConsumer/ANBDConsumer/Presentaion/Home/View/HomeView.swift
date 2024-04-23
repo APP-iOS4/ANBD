@@ -9,7 +9,11 @@ import SwiftUI
 import ANBDModel
 
 struct HomeView: View {
+    @EnvironmentObject private var coordinator: Coordinator
     @EnvironmentObject private var homeViewModel: HomeViewModel
+    @EnvironmentObject private var articleViewModel: ArticleViewModel
+    @EnvironmentObject private var tradeViewModel: TradeViewModel
+    
     @State private var isShowingWebView: Bool = false
     @State private var blogURL: String = "https://www.naver.com"
     
@@ -52,12 +56,15 @@ struct HomeView: View {
             }
             
             ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink(value: ANBDNavigationPaths.searchView) {
+                Button(action: {
+                    coordinator.homePath.append(Page.searchView)
+                }, label: {
                     Image(systemName: "magnifyingglass")
                         .resizable()
                         .frame(width: 20)
                         .foregroundStyle(.gray900)
-                }
+                })
+                
             }
         }
         .fullScreenCover(isPresented: $isShowingWebView) {
@@ -112,10 +119,15 @@ struct HomeView: View {
             sectionHeaderView(.accua)
             
             if let article = homeViewModel.accuaArticle {
-                NavigationLink(value: homeViewModel.accuaArticle) {
-                    ArticleCellView(article: article)
-                        .frame(width: geo.size.width * 0.9, height: 130)
-                }
+                ArticleCellView(article: article)
+                    .frame(width: geo.size.width * 0.9, height: 130)
+                    .onTapGesture {
+                        Task {
+                            coordinator.article = article
+                            await articleViewModel.loadArticle(article: article)
+                            coordinator.homePath.append(Page.articleDeatilView)
+                        }
+                    }
             }
         }
         .onAppear {
@@ -133,11 +145,15 @@ struct HomeView: View {
             ScrollView(.horizontal) {
                 LazyHStack {
                     ForEach(homeViewModel.nanuaTrades) { trade in
-                        NavigationLink(value: trade) {
+                        Button(action: {
+                            coordinator.trade = trade
+                            tradeViewModel.getOneTrade(trade: trade)
+                            coordinator.homePath.append(Page.tradeDetailView)
+                        }, label: {
                             NanuaCellView(trade: trade)
                                 .frame(width: 140, height: 140)
                                 .padding(.horizontal, 1)
-                        }
+                        })
                     }
                 }
             }
@@ -156,9 +172,13 @@ struct HomeView: View {
             sectionHeaderView(.baccua)
             
             ForEach(homeViewModel.baccuaTrades) { trade in
-                NavigationLink(value: trade) {
+                Button(action: {
+                    coordinator.trade = trade
+                    tradeViewModel.getOneTrade(trade: trade)
+                    coordinator.homePath.append(Page.tradeDetailView)
+                }, label: {
                     ArticleListCell(value: .trade(trade))
-                }
+                })
             }
         }
         .onAppear {
@@ -173,11 +193,17 @@ struct HomeView: View {
         VStack {
             sectionHeaderView(.dasi)
             
-            NavigationLink(value: homeViewModel.dasiArticle) {
-                if let dasiArticle = homeViewModel.dasiArticle {
+            if let dasiArticle = homeViewModel.dasiArticle {
+                Button(action: {
+                    Task {
+                        coordinator.article = dasiArticle
+                        await articleViewModel.loadArticle(article: dasiArticle)
+                        coordinator.homePath.append(Page.articleDeatilView)
+                    }
+                }, label: {
                     ArticleCellView(article: dasiArticle)
                         .frame(width: geo.size.width * 0.9, height: 130)
-                }
+                })
             }
         }
         .onAppear {
@@ -208,14 +234,17 @@ struct HomeView: View {
                 
                 Spacer()
                 
-                NavigationLink(value: category) {
+                Button(action: {
+                    coordinator.category = category
+                    coordinator.homePath.append(Page.articleListView)
+                }, label: {
                     HStack {
                         Text("더보기")
                         
                         Image(systemName: "chevron.forward")
                     }
                     .font(ANBDFont.body2)
-                }
+                })
             }
             .padding(.bottom, 3)
             
@@ -337,6 +366,8 @@ struct HomeView: View {
 #Preview {
     NavigationStack {
         HomeView()
+            .environmentObject(Coordinator())
             .environmentObject(HomeViewModel())
+            .environmentObject(TradeViewModel())
     }
 }

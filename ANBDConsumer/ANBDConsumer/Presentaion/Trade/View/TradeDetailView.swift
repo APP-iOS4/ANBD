@@ -13,8 +13,9 @@ struct TradeDetailView: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @EnvironmentObject private var chatViewModel: ChatViewModel
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
+    @EnvironmentObject private var coordinator: Coordinator
+    // @EnvironmentObject private var myPageViewMode: MyPageViewModel
     @State var trade: Trade
-    var anbdViewType: ANBDViewType = .trade
     
     @State private var isShowingCreat: Bool = false
     @State private var isGoingToProfileView: Bool = false
@@ -59,13 +60,20 @@ struct TradeDetailView: View {
                         
                         //작성자 이미지, 닉네임, 작성시간
                         HStack {
-                            NavigationLink(value: writerUser) {
-                                Image(.dummyImage1)
-                                    .resizable()
-                                    .frame(width: 40, height: 40)
-                                    .scaledToFill()
-                                    .clipShape(Circle())
-                            }
+                            Image(.dummyImage1)
+                                .resizable()
+                                .frame(width: 40, height: 40)
+                                .scaledToFill()
+                                .clipShape(Circle())
+                                .onTapGesture {
+                                    coordinator.user = writerUser
+                                    switch coordinator.selectedTab {
+                                    case .home, .article, .trade, .chat:
+                                        coordinator.appendPath(.userPageView)
+                                    case .mypage:
+                                        coordinator.pop()
+                                    }
+                                }
                             
                             VStack(alignment: .leading) {
                                 Text("\(tradeViewModel.trade.writerNickname)")
@@ -175,20 +183,9 @@ struct TradeDetailView: View {
                     }
                 } else {
                     Button("신고하기", role: .destructive) {
-                        homeViewModel.reportType = .trade
-                        chatViewModel.reportType = .trade
-                        
-                        homeViewModel.reportedObjectID = trade.id
-                        chatViewModel.reportedObjectID = trade.id
-                        
-                        switch anbdViewType {
-                        case .home:
-                            homeViewModel.homePath.append(ANBDNavigationPaths.reportView)
-                        case .trade:
-                            tradeViewModel.tradePath.append(ANBDNavigationPaths.reportView)
-                        case .chat:
-                            chatViewModel.chatPath.append(ANBDNavigationPaths.reportView)
-                        }
+                        coordinator.reportType = .trade
+                        coordinator.reportedObjectID = trade.id
+                        coordinator.appendPath(.reportView)
                     }
                 }
             }
@@ -255,15 +252,19 @@ extension TradeDetailView {
                     .frame(width: 100, height: 45)
                     .padding()
                     .onTapGesture {
-                        homeViewModel.chatDetailTrade = trade
-                        
-                        switch anbdViewType {
+                        coordinator.trade = trade
+                        tradeViewModel.getOneTrade(trade: trade)
+                        switch coordinator.selectedTab {
                         case .home:
-                            homeViewModel.homePath.append(ANBDNavigationPaths.chatDetailView)
+                            coordinator.homePath.append(Page.chatDetailView)
+                        case .article:
+                            return
                         case .trade:
-                            tradeViewModel.tradePath.append(ANBDNavigationPaths.chatDetailView)
+                            coordinator.tradePath.append(Page.chatDetailView)
                         case .chat:
-                            dismiss()
+                            coordinator.pop()
+                        case .mypage:
+                            return
                         }
                     }
             }

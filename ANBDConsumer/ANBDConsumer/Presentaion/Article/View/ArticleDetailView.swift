@@ -11,6 +11,7 @@ import ANBDModel
 struct ArticleDetailView: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     @EnvironmentObject private var myPageViewMode: MyPageViewModel
+    @EnvironmentObject private var coordinator: Coordinator
 
     private var article: Article
     private let user = UserStore.shared.user
@@ -20,8 +21,6 @@ struct ArticleDetailView: View {
     
     @State private var isShowingImageDetailView: Bool = false
     @State private var isShowingCreateView: Bool = false
-    @State private var isGoingToReportView: Bool = false
-    @State private var isGoingToProfileView: Bool = false
     @State private var isShowingArticleConfirmSheet: Bool = false
     @State private var isShowingCustomAlertArticle: Bool = false
     @State private var isShowingCustomAlertComment: Bool = false
@@ -39,7 +38,7 @@ struct ArticleDetailView: View {
     
     @Environment(\.dismiss) private var dismiss
     
-    init(article: Article, comment: Comment) {
+    init(article: Article) {
         self.article = article
     }
     
@@ -182,7 +181,9 @@ struct ArticleDetailView: View {
                                             }
                                         } else {
                                             Button(role: .destructive) {
-                                                isGoingToReportView.toggle()
+                                                // TODO: 댓글 신고
+                                                coordinator.reportType = .comment
+                                                
                                             } label: {
                                                 Label("신고하기", systemImage: "exclamationmark.bubble")
                                             }
@@ -192,9 +193,6 @@ struct ArticleDetailView: View {
                                             .font(.system(size: 13))
                                             .rotationEffect(.degrees(90))
                                             .foregroundStyle(.gray900)
-                                    }
-                                    .navigationDestination(isPresented: $isGoingToReportView) {
-                                        ReportView(reportViewType: .article, reportedObjectID: "")
                                     }
                                 }
                                 .padding(.horizontal, 10)
@@ -282,7 +280,9 @@ struct ArticleDetailView: View {
                         }
                     } else {
                         Button(role: .destructive) {
-                            isGoingToReportView.toggle()
+                            coordinator.reportType = .article
+                            coordinator.reportedObjectID = article.id
+                            coordinator.appendPath(.reportView)
                         } label: {
                             Label("신고하기", systemImage: "exclamationmark.bubble")
                         }
@@ -324,9 +324,6 @@ struct ArticleDetailView: View {
         }
         .fullScreenCover(isPresented: $isShowingCommentEditView) {
             CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: articleViewModel.comment)
-        }
-        .navigationDestination(isPresented: $isGoingToReportView) {
-            ReportView(reportViewType: .article, reportedObjectID: "")
         }
         .navigationTitle("정보 공유")
         .navigationBarTitleDisplayMode(.inline)

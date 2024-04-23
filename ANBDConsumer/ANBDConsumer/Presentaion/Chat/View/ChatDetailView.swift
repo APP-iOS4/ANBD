@@ -13,6 +13,7 @@ struct ChatDetailView: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @EnvironmentObject private var homeViewModel: HomeViewModel
+    @EnvironmentObject private var coordinator: Coordinator
     @Environment(\.dismiss) private var dismiss
     
     /// 채팅방 구분 변수
@@ -20,8 +21,6 @@ struct ChatDetailView: View {
     @State var trade: Trade? = nil
     @State private var imageData: Data?
     @State private var tradeState: TradeState = .trading
-    
-    var anbdViewType: ANBDViewType = .chat
     
     /// 보낼 메시지 관련 변수
     @State private var message: String = ""
@@ -38,7 +37,7 @@ struct ChatDetailView: View {
     var body: some View {
         ZStack {
             VStack {
-                ChatHeaderView(trade: trade, imageData: imageData, anbdViewType: anbdViewType, tradeState: $tradeState, isShowingStateChangeCustomAlert: $isShowingStateChangeCustomAlert)
+                ChatHeaderView(trade: trade, imageData: imageData, tradeState: $tradeState, isShowingStateChangeCustomAlert: $isShowingStateChangeCustomAlert)
                     .padding(.vertical, 5)
                     .padding(.horizontal, 15)
                 
@@ -49,7 +48,7 @@ struct ChatDetailView: View {
                     LazyVStack {
                         ForEach(chatViewModel.groupedMessages, id: \.day) { day, messages in
                             ForEach(messages) { message in
-                                MessageCell(message: message, isLast: message == chatViewModel.messages.last, anbdViewType: anbdViewType, channelID: channel?.id ?? "ChannelID", isShowingImageDetailView: $isShowingImageDetailView, detailImage: $detailImage)
+                                MessageCell(message: message, isLast: message == chatViewModel.messages.last, channelID: channel?.id ?? "ChannelID", isShowingImageDetailView: $isShowingImageDetailView, detailImage: $detailImage)
                                     .padding(.vertical, 1)
                                     .padding(.horizontal, 20)
                             }
@@ -148,20 +147,11 @@ struct ChatDetailView: View {
         }
         .confirmationDialog("", isPresented: $isShowingConfirmSheet) {
             Button("채팅 신고하기") {
-                homeViewModel.reportType = .chatRoom
-                chatViewModel.reportType = .chatRoom
-                
-                homeViewModel.reportedObjectID = channel?.id ?? "Unknown ChannelID"
-                chatViewModel.reportedObjectID = channel?.id ?? "Unknown ChannelID"
-                
-                switch anbdViewType {
-                case .home:
-                    homeViewModel.homePath.append(ANBDNavigationPaths.reportView)
-                case .trade:
-                    tradeViewModel.tradePath.append(ANBDNavigationPaths.reportView)
-                case .chat:
-                    chatViewModel.chatPath.append(ANBDNavigationPaths.reportView)
+                coordinator.reportType = .chatRoom
+                if let channel = channel {
+                    coordinator.reportedObjectID = channel.id
                 }
+                coordinator.appendPath(.reportView)
             }
             
             Button("채팅방 나가기", role: .destructive) {

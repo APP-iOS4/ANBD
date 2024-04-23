@@ -11,6 +11,7 @@ import ANBDModel
 struct AccountManagementView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     @EnvironmentObject private var authenticationViewModel: AuthenticationViewModel
+    @EnvironmentObject private var coordinator: Coordinator
     
     @State private var isShowingEditorView = false
     @State private var isShowingSignOutAlertView = false
@@ -69,7 +70,8 @@ struct AccountManagementView: View {
                             UserStore.shared.user = MyPageViewModel.mockUser
                             authenticationViewModel.checkAuthState()
                             
-                            myPageViewModel.myPageNaviPath.removeLast()
+                            coordinator.pop()
+                            coordinator.selectedTab = .home
                         }
                     }
                 }
@@ -83,7 +85,8 @@ struct AccountManagementView: View {
                             UserStore.shared.user = MyPageViewModel.mockUser
                             authenticationViewModel.checkAuthState()
                             
-                            myPageViewModel.myPageNaviPath.removeLast()
+                            coordinator.pop()
+                            coordinator.selectedTab = .home
                         }
                     }
                 }

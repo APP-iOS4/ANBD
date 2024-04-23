@@ -10,26 +10,30 @@ import ANBDModel
 
 extension ChatDetailView {
     struct ChatHeaderView: View {
-        @EnvironmentObject private var homeViewModel: HomeViewModel
-        @EnvironmentObject private var tradeViewModel: TradeViewModel
         @EnvironmentObject private var chatViewModel: ChatViewModel
-        @Environment(\.dismiss) private var dismiss
+        @EnvironmentObject private var tradeViewModel: TradeViewModel
+        @EnvironmentObject private var coordinator: Coordinator
         
         var trade: Trade?
         var imageData: Data?
-        var anbdViewType: ANBDViewType = .chat
         
         @Binding var tradeState: TradeState
         @Binding var isShowingStateChangeCustomAlert: Bool
         
         var body: some View {
             Button(action: {
-                switch anbdViewType {
-                case .home, .trade:
-                    dismiss()
-                case .chat:
-                    if let trade {
-                        chatViewModel.chatPath.append(trade)
+                if trade != nil {
+                    switch coordinator.selectedTab {
+                    case .home, .trade:
+                        coordinator.pop()
+                    case .article, .mypage:
+                        return
+                    case .chat:
+                        if let trade {
+                            coordinator.trade = trade
+                            tradeViewModel.getOneTrade(trade: trade)
+                            coordinator.chatPath.append(Page.tradeDetailView)
+                        }
                     }
                 }
             }, label: {
@@ -87,6 +91,7 @@ extension ChatDetailView {
                 }
                 .foregroundStyle(.gray900)
             })
+            .disabled(trade == nil)
         }
         
         /// Trade 상품 String

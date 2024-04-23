@@ -12,11 +12,9 @@ struct ArticleDetailView: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     @EnvironmentObject private var myPageViewMode: MyPageViewModel
 
-    var article: Article
-    var comment: Comment
-    @State private var isLiked: Bool = false
-    @State private var isWriter: Bool = true
-    
+    private var article: Article
+    private let user = UserStore.shared.user
+
     @State private var isShowingComment: Bool = false
     @State private var commentText: String = ""
     
@@ -28,15 +26,22 @@ struct ArticleDetailView: View {
     @State private var isShowingCustomAlertArticle: Bool = false
     @State private var isShowingCustomAlertComment: Bool = false
     @State private var isShowingCommentEditView: Bool = false
-
+    
     
     @State private var detailImage: Image = Image("DummyPuppy1")
     @State private var imageData: [Data] = []
     
-//    @State private var writerUser: User?
-//    @State private var commentUser: User?
+    /*
+     User 네비 관련 주석
+     @State private var writerUser: User?
+     @State private var commentUser: User?
+     */
     
     @Environment(\.dismiss) private var dismiss
+    
+    init(article: Article, comment: Comment) {
+        self.article = article
+    }
     
     var body: some View {
         ZStack {
@@ -46,34 +51,33 @@ struct ArticleDetailView: View {
                     HStack {
                         VStack(alignment: .leading) {
                             HStack {
-//                                NavigationLink(value: writerUser) {
-//                                    Image(writerUser?.profileImage ?? "DummyImage1")
-//                                    Image(.defaultUserProfile)
-//                                        .resizable()
-//                                        .frame(width: 40, height: 40)
-//                                        .scaledToFill()
-//                                        .clipShape(Circle())
-//                                }
-                                
+                                /*
+                                 User 네비 관련 주석
+                                 NavigationLink(value: writerUser) {
+                                 Image(writerUser?.profileImage ?? "DummyImage1")
+                                 Image(.defaultUserProfile)
+                                 .resizable()
+                                 .frame(width: 40, height: 40)
+                                 .scaledToFill()
+                                 .clipShape(Circle())
+                                 }
+                                 */
                                 VStack(alignment: .leading) {
-                                    Text("\(article.writerNickname)")
+                                    Text("\(articleViewModel.article.writerNickname)")
                                         .font(ANBDFont.SubTitle3)
                                     
-                                    Text("5분 전")
+                                    Text("\(articleViewModel.article.createdAt.relativeTimeNamed)")
                                         .font(ANBDFont.Caption1)
                                         .foregroundStyle(.gray400)
                                 }
                             }
-                            .navigationDestination(isPresented: $isGoingToProfileView) {
-                                //                                UserPageView(isSignedInUser: false)
-                            }
                             .padding(.bottom, 20)
                             
-                            Text("\(article.title)")
+                            Text("\(articleViewModel.article.title)")
                                 .font(ANBDFont.pretendardBold(24))
                                 .padding(.bottom, 10)
                             
-                            Text("\(article.content)")
+                            Text("\(articleViewModel.article.content)")
                                 .font(ANBDFont.body1)
                                 .padding(.bottom, 10)
                             
@@ -93,18 +97,17 @@ struct ArticleDetailView: View {
                             HStack {
                                 Button {
                                     Task {
-                                        await articleViewModel.toggleLikeArticle(articleID: article.id)
-                                        isLiked.toggle()
-                                        await articleViewModel.updateLikeCount(articleID: article.id, increment: isLiked)
+                                        await articleViewModel.toggleLikeArticle(articleID: articleViewModel.article.id)
+                                        await articleViewModel.updateLikeCount(articleID: articleViewModel.article.id, increment: articleViewModel.isArticleLiked(articleID: articleViewModel.article.id))
                                     }
                                 } label: {
-                                    Image(systemName: isLiked ? "hand.thumbsup.fill" : "hand.thumbsup")
+                                    Image(systemName: articleViewModel.isArticleLiked(articleID: articleViewModel.article.id) ? "hand.thumbsup.fill" : "hand.thumbsup")
                                         .resizable()
                                         .frame(width: 16, height: 16)
-                                        .foregroundStyle(isLiked ? .accent : .gray900)
+                                        .foregroundStyle(articleViewModel.isArticleLiked(articleID: article.id) ? .accent : .gray900)
                                         .padding(.leading, 10)
                                 }
-                                Text("\(article.likeCount)")
+                                Text("\(articleViewModel.article.likeCount)")
                                     .foregroundStyle(.gray900)
                                     .font(.system(size: 12))
                                     .padding(.trailing, 10)
@@ -135,15 +138,17 @@ struct ArticleDetailView: View {
                             
                             ForEach(articleViewModel.comments) { comment in
                                 HStack(alignment: .top) {
-//                                    NavigationLink(value: commentUser) {
-    //                                    Image(writerUser?.profileImage ?? "DummyImage1")
-//                                        Image(.defaultUserProfile)
-//                                            .resizable()
-//                                            .frame(width: 40, height: 40)
-//                                            .scaledToFill()
-//                                            .clipShape(Circle())
-//                                    }
-                                    
+                                    /*
+                                     User 네비 관련 주석
+                                     NavigationLink(value: commentUser) {
+                                     Image(writerUser?.profileImage ?? "DummyImage1")
+                                     Image(.defaultUserProfile)
+                                     .resizable()
+                                     .frame(width: 40, height: 40)
+                                     .scaledToFill()
+                                     .clipShape(Circle())
+                                     }
+                                     */
                                     VStack(alignment: .leading) {
                                         HStack {
                                             Text("\(comment.writerNickname)")
@@ -164,7 +169,6 @@ struct ArticleDetailView: View {
                                     Menu {
                                         
                                         if comment.writerID == UserStore.shared.user.id {
-                                            // 본인 댓글 = 수정, 삭제 | 다른 사람 게시물 = 신고
                                             Button {
                                                 isShowingCommentEditView.toggle()
                                             } label: {
@@ -215,10 +219,13 @@ struct ArticleDetailView: View {
                 
             } else if isShowingCustomAlertComment {
                 CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertComment, viewType: .commentDelete) {
-                    //                    Task {
-                    //                        await articleViewModel.deleteComment(articleID: article.id, commentID: comment.id)
-                    //                        await articleViewModel.loadArticle(article: article)
-                    //                    }
+                    /*
+                     댓글 삭제 오류나서 일단 주석 !
+                     Task {
+                     await articleViewModel.deleteComment(articleID: article.id, commentID: comment.id)
+                     await articleViewModel.loadArticle(article: article)
+                     }
+                     */
                 }
                 .zIndex(2)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -257,13 +264,7 @@ struct ArticleDetailView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
-                    
-                    //                    guard let userID = UserDefaultsClient.shared.userInfo.id else {
-                    
-                    //                    }
-                    
                     if article.writerID == UserStore.shared.user.id {
-                        // 본인 게시물 = 수정, 삭제 | 다른 사람 게시물 = 신고
                         Button {
                             isShowingCreateView.toggle()
                         } label: {
@@ -286,9 +287,6 @@ struct ArticleDetailView: View {
                             Label("신고하기", systemImage: "exclamationmark.bubble")
                         }
                     }
-                    //                }
-                    //                Button {
-                    //                    isShowingArticleConfirmSheet.toggle()
                 } label: {
                     Image(systemName: "ellipsis")
                         .font(.system(size: 13))
@@ -297,13 +295,11 @@ struct ArticleDetailView: View {
                 }
             }
         }
-        //        .confirmationDialog("", isPresented: $isShowingArticleConfirmSheet) {
-        //        }
         .onAppear {
             // articleViewModel.getOneArticle(article: article)
             Task {
-//                writerUser = await myPageViewMode.getUserInfo(userID: article.writerID)
-//                commentUser = await myPageViewMode.getUserInfo(userID: comment.writerID)
+                //                writerUser = await myPageViewMode.getUserInfo(userID: article.writerID)
+                //                commentUser = await myPageViewMode.getUserInfo(userID: comment.writerID)
                 
                 imageData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
                 await articleViewModel.loadCommentList(articleID: article.id)
@@ -313,20 +309,21 @@ struct ArticleDetailView: View {
             ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, isNewArticle: false, article: article)
         }
         /*
-        .fullScreenCover(isPresented: $isShowingCreateView, onDismiss: {
-            Task {
-                await articleViewModel.loadArticle(article: article)
-                imageData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
-            }
-        }) {
-            ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, isNewArticle: false, article: article)
-        }
+         수정하고 완료했을 때 로드시키고 싶었는데 실패해서 일단 주석해둠 !
+         .fullScreenCover(isPresented: $isShowingCreateView, onDismiss: {
+         Task {
+         await articleViewModel.loadArticle(article: article)
+         imageData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
+         }
+         }) {
+         ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, isNewArticle: false, article: article)
+         }
          */
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
             ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
         }
         .fullScreenCover(isPresented: $isShowingCommentEditView) {
-            CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: comment)
+            CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: articleViewModel.comment)
         }
         .navigationDestination(isPresented: $isGoingToReportView) {
             ReportView(reportViewType: .article, reportedObjectID: "")

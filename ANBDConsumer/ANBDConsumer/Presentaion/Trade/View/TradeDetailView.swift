@@ -140,18 +140,6 @@ struct TradeDetailView: View {
             }
         }
         .toolbar(.hidden, for: .tabBar)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    isShowingConfirm.toggle()
-                }) {
-                    Image(systemName: "ellipsis")
-                        .font(.system(size: 13))
-                        .rotationEffect(.degrees(90))
-                        .foregroundStyle(.gray900)
-                }
-            }
-        }
         .fullScreenCover(isPresented: $isShowingCreat) {
             TradeCreateView(isShowingCreate: $isShowingCreat, isNewProduct: false, trade: tradeViewModel.trade)
         }
@@ -161,35 +149,47 @@ struct TradeDetailView: View {
         .navigationTitle("나눔 · 거래")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarRole(.editor)
-        .confirmationDialog("", isPresented: $isShowingConfirm) {
-            if let user = UserDefaultsClient.shared.userInfo {
-                if user.id == tradeViewModel.trade.writerID {
-                    Button("수정하기") {
-                        isShowingCreat.toggle()
-                        tradeViewModel.selectedLocation = tradeViewModel.trade.location
-                        tradeViewModel.selectedItemCategory = tradeViewModel.trade.itemCategory
-                    }
-                    
-                    Button("삭제하기", role: .destructive) {
-                        isShowingDeleteCustomAlert.toggle()
-                    }
-                } else {
-                    Button("신고하기", role: .destructive) {
-                        homeViewModel.reportType = .trade
-                        chatViewModel.reportType = .trade
-                        
-                        homeViewModel.reportedObjectID = trade.id
-                        chatViewModel.reportedObjectID = trade.id
-                        
-                        switch anbdViewType {
-                        case .home:
-                            homeViewModel.homePath.append(ANBDNavigationPaths.reportView)
-                        case .trade:
-                            tradeViewModel.tradePath.append(ANBDNavigationPaths.reportView)
-                        case .chat:
-                            chatViewModel.chatPath.append(ANBDNavigationPaths.reportView)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    if user.id != tradeViewModel.trade.writerID {
+                        Button(role: .destructive) {
+                            homeViewModel.reportType = .trade
+                            chatViewModel.reportType = .trade
+                            
+                            homeViewModel.reportedObjectID = trade.id
+                            chatViewModel.reportedObjectID = trade.id
+                            
+                            switch anbdViewType {
+                            case .home:
+                                homeViewModel.homePath.append(ANBDNavigationPaths.reportView)
+                            case .trade:
+                                tradeViewModel.tradePath.append(ANBDNavigationPaths.reportView)
+                            case .chat:
+                                chatViewModel.chatPath.append(ANBDNavigationPaths.reportView)
+                            }
+                        } label: {
+                            Label("신고하기", systemImage: "exclamationmark.bubble")
+                        }
+                    } else {
+                        Button {
+                            isShowingCreat.toggle()
+                            tradeViewModel.selectedLocation = tradeViewModel.trade.location
+                            tradeViewModel.selectedItemCategory = tradeViewModel.trade.itemCategory
+                        } label: {
+                            Label("수정하기", systemImage: "square.and.pencil")
+                        }
+                        Button(role: .destructive) {
+                            isShowingDeleteCustomAlert.toggle()
+                        } label: {
+                            Label("삭제하기", systemImage: "trash")
                         }
                     }
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 13))
+                        .rotationEffect(.degrees(90))
+                        .foregroundStyle(.gray900)
                 }
             }
         }

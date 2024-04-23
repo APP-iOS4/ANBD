@@ -19,15 +19,15 @@ struct ArticleView: View {
     @State private var isArticle: Bool = true
     
     @State private var isFirstAppear: Bool = true
-
+    
     var body: some View {
         if #available(iOS 17.0, *) {
             listView
                 .onChange(of: category) {
                     if isArticle {
-//                        Task {
-//                            await articleViewModel.filteringArticles(category: category)
-//                        }
+                        //                        Task {
+                        //                            await articleViewModel.filteringArticles(category: category)
+                        //                        }
                         articleViewModel.filteringArticles(category: category)
                     } else {
                         Task {
@@ -56,9 +56,9 @@ struct ArticleView: View {
             listView
                 .onChange(of: category, perform: { _ in
                     if isArticle {
-//                        Task {
-//                            await articleViewModel.filteringArticles(category: category)
-//                        }
+                        //                        Task {
+                        //                            await articleViewModel.filteringArticles(category: category)
+                        //                        }
                         articleViewModel.filteringArticles(category: category)
                         
                     } else {
@@ -120,24 +120,22 @@ struct ArticleView: View {
             }
         }
         .onAppear {
-            // 임의로 온어피어 한 번만 되게 함..................
-            if  isFirstAppear {
-                isFirstAppear = false
-                if category == .accua || category == .dasi {
-                    isArticle = true
-                    Task {
-                        await articleViewModel.loadAllArticles()
-                        articleViewModel.filteringArticles(category: category)
-                    }
-                } else {
-                    isArticle = false
-                    Task {
-                        await tradeViewModel.loadAllTrades()
-                        await tradeViewModel.loadFilteredTrades(category:category)
-                        //tradeViewModel.filteringTrades(category: category)
-                    }
+            
+            if category == .accua || category == .dasi {
+                isArticle = true
+                Task {
+                    await articleViewModel.loadAllArticles()
+                    articleViewModel.filteringArticles(category: category)
+                }
+            } else {
+                isArticle = false
+                Task {
+                    await tradeViewModel.reloadAllTrades()
+                    await tradeViewModel.loadFilteredTrades(category:category)
+                    tradeViewModel.filteringTrades(category: category)
                 }
             }
+            
         }
         .navigationTitle(isArticle ? "정보 공유" : "나눔 · 거래")
         .navigationBarTitleDisplayMode(.inline)

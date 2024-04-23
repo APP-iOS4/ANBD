@@ -54,18 +54,7 @@ final class TradeViewModel: ObservableObject {
         self.trade = trade
     }
     
-    
-    
     //MARK: - READ
-    @MainActor
-    func loadAllTrades() async {
-        do {
-            try await self.trades.append(contentsOf: tradeUseCase.loadTradeList(limit: 20))
-
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
     
     @MainActor
     func reloadAllTrades() async {

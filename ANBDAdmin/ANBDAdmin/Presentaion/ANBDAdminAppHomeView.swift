@@ -45,11 +45,8 @@ struct ANBDAdminAppHomeView: View {
                 NavigationLink(destination: BannerEditView().font(.title3)) {
                     Text("배너 관리").bold()
                 }
-                NavigationLink(destination: ReportedListView().font(.title3)) {
-                    Text("신고함")
-                }
-                NavigationLink(destination: InquiryView().font(.title3)) {
-                    Text("문의함").bold()
+                NavigationLink(destination: ReportListView().font(.title3)) {
+                    Text("신고함").bold()
                 }
                 Spacer()
                 Button(action: {

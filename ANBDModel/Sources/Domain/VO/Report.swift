@@ -21,7 +21,7 @@ public struct Report : Identifiable, Codable , Hashable {
     //메시진 신고일때만 하나의 reportedObjectID 더 필요함
     public var reportedChannelID: String? = nil
     
-    private var createDate: Date = Date()
+    public var createDate: Date = Date()
     
     private static var dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()

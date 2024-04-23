@@ -10,7 +10,7 @@ import ANBDModel
 
 class ArticleListViewModel: ObservableObject {
     @Published var articleList: [Article] = []
-    var deletedArticleID: String? // 삭제 변수
+    var deletedArticleID: String?
     let articleUsecase = DefaultArticleUsecase()
     
     func firstLoadArticles() {

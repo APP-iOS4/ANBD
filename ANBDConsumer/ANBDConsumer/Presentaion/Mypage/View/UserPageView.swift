@@ -55,7 +55,7 @@ struct UserPageView: View {
                         .font(ANBDFont.pretendardBold(24))
                         .padding(.bottom, 10)
                     
-                    Text("선호 지역 : \(myPageViewModel.user.favoriteLocation)")
+                    Text("선호 지역 : \(myPageViewModel.user.favoriteLocation.description)")
                         .foregroundStyle(Color.gray400)
                         .font(ANBDFont.Caption3)
                         .frame(maxWidth: .infinity, alignment: .leading)

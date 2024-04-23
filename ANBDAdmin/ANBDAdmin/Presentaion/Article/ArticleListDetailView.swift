@@ -17,6 +17,7 @@ struct ArticleListDetailView: View {
     @Binding var deletedArticleID: String?
     @State private var articleDeleteShowingAlert = false
     @State private var articleImageUrls:[URL?] = []
+    @State private var isLinkActive = false
     
     var body: some View {
         List {

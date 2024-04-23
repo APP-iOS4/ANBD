@@ -12,7 +12,7 @@ class ArticleListViewModel: ObservableObject {
     @Published var articleList: [Article] = []
     var deletedArticleID: String?
     let articleUsecase = DefaultArticleUsecase()
-    @Published var canLoadMore: Bool = true
+    @Published var canLoadMoreArticles: Bool = true
 
     
     func firstLoadArticles() {
@@ -22,7 +22,7 @@ class ArticleListViewModel: ObservableObject {
                     let articles = try await articleUsecase.refreshAllArticleList()
                     DispatchQueue.main.async {
                         self.articleList = articles
-                        self.canLoadMore = true
+                        self.canLoadMoreArticles = true
                     }
                 } catch {
                     print("게시물 목록을 가져오는데 실패했습니다: \(error)")
@@ -30,8 +30,8 @@ class ArticleListViewModel: ObservableObject {
             }
         }
     }
-    func loadMoreArticles(){ //10개씩 불러옴
-        guard canLoadMore else { return }
+    func loadMoreArticles(){ //articleUsecase.loadArticleList() 는 데이터를 10개씩 불러오는 함수
+        guard canLoadMoreArticles else { return }
 
         Task {
             do {
@@ -39,7 +39,7 @@ class ArticleListViewModel: ObservableObject {
                 DispatchQueue.main.async {
                     self.articleList.append(contentsOf: articles)
                     if articles.count < 10 {
-                        self.canLoadMore = false
+                        self.canLoadMoreArticles = false
                     }
                 }
             } catch {
@@ -47,7 +47,6 @@ class ArticleListViewModel: ObservableObject {
             }
         }
     }
-
     func loadArticle(articleID: String) async throws -> Article {
         return try await articleUsecase.loadArticle(articleID: articleID)
     }

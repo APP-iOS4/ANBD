@@ -68,9 +68,9 @@ final class MyPageViewModel: ObservableObject {
      @Published private(set) var userHeartedBaccuaTrades: [Trade] = []
      */
     
-    @Published var editedUserNickname = ""
+    @Published var tempUserProfileString = ""
+    @Published var tempUserNickname = ""
     @Published var tempUserFavoriteLocation: Location = .seoul
-    @Published var otherUserNickname = ""
     
     @Published var myPageNaviPath = NavigationPath()
     
@@ -184,7 +184,7 @@ final class MyPageViewModel: ObservableObject {
     
     // MARK: - 유저 정보 수정
     func checkDuplicatedNickname() async -> Bool {
-        let isDuplicate = await userUsecase.checkDuplicatedNickname(nickname: editedUserNickname)
+        let isDuplicate = await userUsecase.checkDuplicatedNickname(nickname: tempUserNickname)
         
         return isDuplicate
     }
@@ -198,7 +198,13 @@ final class MyPageViewModel: ObservableObject {
     }
     
     func validateUpdatingComplete() -> Bool {
-        if (editedUserNickname.isEmpty || editedUserNickname == self.user.nickname) && (tempUserFavoriteLocation != self.user.favoriteLocation) {
+//        if (tempUserNickname.isEmpty || tempUserNickname == self.user.nickname) && (tempUserFavoriteLocation != self.user.favoriteLocation) {
+//            return true
+//        } else {
+//            return false
+//        }
+        
+        if (tempUserProfileString == user.profileImage) || (tempUserNickname == user.nickname) || (tempUserFavoriteLocation == user.favoriteLocation) {
             return true
         } else {
             return false

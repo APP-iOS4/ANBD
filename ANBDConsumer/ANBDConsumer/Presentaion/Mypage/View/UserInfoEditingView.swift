@@ -58,13 +58,13 @@ struct UserInfoEditingView: View {
                         
                         if #available(iOS 17.0, *) {
                             nicknameTextField
-                                .onChange(of: myPageViewModel.editedUserNickname) {
-                                    myPageViewModel.editedUserNickname = myPageViewModel.checkNicknameLength(myPageViewModel.editedUserNickname)
+                                .onChange(of: myPageViewModel.tempUserNickname) {
+                                    myPageViewModel.tempUserNickname = myPageViewModel.checkNicknameLength(myPageViewModel.tempUserNickname)
                                 }
                         } else {
                             nicknameTextField
-                                .onChange(of: myPageViewModel.editedUserNickname) { _ in
-                                    myPageViewModel.editedUserNickname = myPageViewModel.checkNicknameLength(myPageViewModel.editedUserNickname)
+                                .onChange(of: myPageViewModel.tempUserNickname) { _ in
+                                    myPageViewModel.tempUserNickname = myPageViewModel.checkNicknameLength(myPageViewModel.tempUserNickname)
                                 }
                         }
                         
@@ -73,7 +73,7 @@ struct UserInfoEditingView: View {
                         HStack {
                             Spacer()
                             
-                            Text("\(myPageViewModel.editedUserNickname.count) / 20")
+                            Text("\(myPageViewModel.tempUserNickname.count) / 20")
                                 .padding(.horizontal, 5)
                                 .font(ANBDFont.body2)
                                 .foregroundStyle(.gray400)
@@ -129,14 +129,14 @@ struct UserInfoEditingView: View {
                             } else {
                                 dismiss()
                                 
-                                await myPageViewModel.updateUserInfo(updatedNickname: myPageViewModel.editedUserNickname,
+                                await myPageViewModel.updateUserInfo(updatedNickname: myPageViewModel.tempUserNickname,
                                                                      updatedLocation: myPageViewModel.tempUserFavoriteLocation)
                             }
                         }
                     }, label: {
                         Text("완료")
                     })
-                    //.disabled(myPageViewModel.validateEditing())
+                    .disabled(myPageViewModel.validateUpdatingComplete())
                 }
             }
             
@@ -144,7 +144,7 @@ struct UserInfoEditingView: View {
             .navigationBarTitleDisplayMode(.inline)
             
             .onAppear {
-                myPageViewModel.editedUserNickname = UserStore.shared.user.nickname
+                myPageViewModel.tempUserNickname = UserStore.shared.user.nickname
             }
         }
     }
@@ -189,7 +189,7 @@ struct UserInfoEditingView: View {
     
     private var nicknameTextField: some View {
         textFieldUIKit(placeholder: "닉네임을 입력해주세요.",
-                       text: $myPageViewModel.editedUserNickname)
+                       text: $myPageViewModel.tempUserNickname)
         .focused($focus, equals: .nickname)
         .textInputAutocapitalization(.never)
         .autocorrectionDisabled(true)

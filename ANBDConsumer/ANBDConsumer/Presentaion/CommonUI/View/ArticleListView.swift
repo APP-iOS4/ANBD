@@ -118,6 +118,13 @@ struct ArticleListView: View {
                             }
                             .padding(.horizontal)
                         }
+                        Color.clear
+                            .frame(width: 0, height: 0)
+                            .onAppear {
+                                Task {
+                                    await tradeViewModel.loadMoreFilteredTrades(category: category)
+                                }
+                            }
                     }
                     .background(Color(UIColor.systemBackground))
                     .padding(.bottom, 80)
@@ -179,10 +186,4 @@ fileprivate extension ArticleListView {
             return "나눔 · 거래"
         }
     }
-}
-
-
-#Preview {
-    ArticleListView()
-        .environmentObject(ArticleViewModel())
 }

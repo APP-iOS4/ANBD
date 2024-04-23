@@ -162,20 +162,9 @@ struct TradeDetailView: View {
                 Menu {
                     if user.id != tradeViewModel.trade.writerID {
                         Button(role: .destructive) {
-                            homeViewModel.reportType = .trade
-                            chatViewModel.reportType = .trade
-                            
-                            homeViewModel.reportedObjectID = trade.id
-                            chatViewModel.reportedObjectID = trade.id
-                            
-                            switch anbdViewType {
-                            case .home:
-                                homeViewModel.homePath.append(ANBDNavigationPaths.reportView)
-                            case .trade:
-                                tradeViewModel.tradePath.append(ANBDNavigationPaths.reportView)
-                            case .chat:
-                                chatViewModel.chatPath.append(ANBDNavigationPaths.reportView)
-                            }
+                            coordinator.reportType = .trade
+                            coordinator.reportedObjectID = trade.id
+                            coordinator.appendPath(.reportView)
                         } label: {
                             Label("신고하기", systemImage: "exclamationmark.bubble")
                         }
@@ -250,7 +239,6 @@ extension TradeDetailView {
             .padding(.leading, -10)
             
             Spacer()
-            
             
             if user.id != tradeViewModel.trade.writerID {
                 RoundedRectangle(cornerRadius: 14)

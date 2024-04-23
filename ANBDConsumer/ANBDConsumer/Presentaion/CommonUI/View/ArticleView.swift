@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ANBDModel
+import Combine
 
 struct ArticleView: View {
     @EnvironmentObject private var coordinator: Coordinator
@@ -19,98 +20,63 @@ struct ArticleView: View {
     
     //true - accua, dasi / false - nanua, baccua
     @State private var isArticle: Bool = true
-    
-    @State private var isFirstAppear: Bool = true
+    //private var cancellables = Set<AnyCancellable>()
     
     var body: some View {
+        //TODO: combine으로 고치기
         if #available(iOS 17.0, *) {
             listView
                 .onChange(of: category) {
                     if isArticle {
-                        //                        Task {
-                        //                            await articleViewModel.filteringArticles(category: category)
-                        //                        }
-                        articleViewModel.filteringArticles(category: category)
+                        
+                        Task {
+                            await articleViewModel.refreshSortedArticleList(category: category, by: articleViewModel.sortOption, limit: 10)
+                        }
                     } else {
                         Task {
-                            await tradeViewModel.loadFilteredTrades(category:category)
-                            tradeViewModel.filteringTrades(category: category)
+                            await tradeViewModel.reloadFilteredTrades(category: category)
+                            //await tradeViewModel.loadFilteredTrades(category: category)
                         }
                     }
-                }
-                .onChange(of: tradeViewModel.selectedLocations) {
-                    if !isArticle {
-                        Task {
-                            await tradeViewModel.loadFilteredTrades(category:category)
-                            tradeViewModel.filteringTrades(category: category)
-                        }
-                    }
-                }
-                .onChange(of: tradeViewModel.selectedItemCategories) {
-                    if !isArticle {
-                        Task {
-                            await tradeViewModel.loadFilteredTrades(category:category)
-                            tradeViewModel.filteringTrades(category: category)
-                        }
-                    }
+                    print("🤍\(category)")
                 }
         } else {
             listView
-                .onChange(of: category, perform: { _ in
+                .onChange(of: category, perform: { newValue in
                     if isArticle {
-                        //                        Task {
-                        //                            await articleViewModel.filteringArticles(category: category)
-                        //                        }
-                        articleViewModel.filteringArticles(category: category)
-                        
+                        Task {
+                            await articleViewModel.refreshSortedArticleList(category: category, by: articleViewModel.sortOption, limit: 10)
+                        }
                     } else {
                         Task {
-                            await tradeViewModel.loadFilteredTrades(category:category)
-                            tradeViewModel.filteringTrades(category: category)
+                            await tradeViewModel.reloadFilteredTrades(category: newValue)
+                            //await tradeViewModel.loadFilteredTrades(category: category)
                         }
                     }
+                    print("🤍\(category)")
                 })
-                .onChange(of: tradeViewModel.selectedLocations) { _ in
-                    if !isArticle {
-                        Task {
-                            await tradeViewModel.loadFilteredTrades(category:category)
-                            tradeViewModel.filteringTrades(category: category)
-                        }
-                    }
-                }
-                .onChange(of: tradeViewModel.selectedItemCategories) { _ in
-                    if !isArticle {
-                        Task {
-                            await tradeViewModel.loadFilteredTrades(category:category)
-                            tradeViewModel.filteringTrades(category: category)
-                        }
-                    }
-                }
+            
         }
     }
     
     //MARK: - article 서브뷰
     private var listView: some View {
         ZStack(alignment: .bottomTrailing) {
+            
             VStack(alignment: .leading) {
                 CategoryDividerView(category: $category)
                     .frame(height: 45)
                 
                 TabView(selection: $category) {
-                    if isArticle {
-                        ArticleListView(category: .accua, isArticle: isArticle)
-                            .tag(ANBDCategory.accua)
-                        ArticleListView(category: .dasi, isArticle: isArticle)
-                            .tag(ANBDCategory.dasi)
-                    } else {
-                        ArticleListView(category: .nanua, isArticle: isArticle)
-                            .tag(ANBDCategory.nanua)
-                        ArticleListView(category: .baccua, isArticle: isArticle)
-                            .tag(ANBDCategory.baccua)
-                    }
+                    ArticleListView(category: isArticle ? .accua : .nanua,
+                                    isArticle: isArticle)
+                        .tag(isArticle ? ANBDCategory.accua : ANBDCategory.nanua)
+                    ArticleListView(category: isArticle ? .dasi : .baccua, isArticle: isArticle)
+                        .tag(isArticle ? ANBDCategory.dasi : ANBDCategory.baccua)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }
+            
             Button {
                 if isArticle {
                     self.isShowingArticleCreateView.toggle()
@@ -122,7 +88,6 @@ struct ArticleView: View {
             }
         }
         .onAppear {
-            
             if category == .accua || category == .dasi {
                 isArticle = true
                 Task {
@@ -133,42 +98,38 @@ struct ArticleView: View {
                 isArticle = false
                 Task {
                     await tradeViewModel.reloadAllTrades()
-                    await tradeViewModel.loadFilteredTrades(category:category)
                     tradeViewModel.filteringTrades(category: category)
                 }
             }
-            
         }
-        .navigationTitle(isArticle ? "정보 공유" : "나눔 · 거래")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    coordinator.appendPath(.searchView)
-                }, label: {
-                    Image(systemName: "magnifyingglass")
-                        .resizable()
-                        .frame(width: 20)
-                        .foregroundStyle(.gray900)
-                })
-            }
-        }
-        .fullScreenCover(isPresented: $isShowingArticleCreateView, content: {
-            ArticleCreateView(isShowingCreateView: $isShowingArticleCreateView, category: category, isNewArticle: true)
-        })
-        .fullScreenCover(isPresented: $isShowingTradeCreateView, onDismiss: {
-            Task {
-                tradeViewModel.filteringTrades(category: category)
-            }
-        }, content: {
-            TradeCreateView(isShowingCreate: $isShowingTradeCreateView, category: category, isNewProduct: true)
-        })
+//        .navigationTitle(isArticle ? "정보 공유" : "나눔 · 거래")
+//        .navigationBarTitleDisplayMode(.inline)
+//        .toolbar {
+//            ToolbarItem(placement: .topBarTrailing) {
+//                Button(action: {
+//                    coordinator.appendPath(.searchView)
+//                }, label: {
+//                    Image(systemName: "magnifyingglass")
+//                        .resizable()
+//                        .frame(width: 20)
+//                        .foregroundStyle(.gray900)
+//                })
+//            }
+//        }
+//        .fullScreenCover(isPresented: $isShowingArticleCreateView, onDismiss: {
+//            Task {
+//                await articleViewModel.reloadAllArticles()
+//                articleViewModel.filteringArticles(category: category)
+//            }
+//        }, content: {
+//            ArticleCreateView(isShowingCreateView: $isShowingArticleCreateView, category: category, isNewArticle: true)
+//        })
+//        .fullScreenCover(isPresented: $isShowingTradeCreateView, onDismiss: {
+//            Task {
+//                await tradeViewModel.reloadFilteredTrades(category: category)
+//            }
+//        }, content: {
+//            TradeCreateView(isShowingCreate: $isShowingTradeCreateView, category: category, isNewProduct: true)
+//        })
     }
 }
-
-#Preview {
-    ArticleView(category: .constant(.accua))
-        .environmentObject(Coordinator())
-        .environmentObject(ArticleViewModel())
-}
-

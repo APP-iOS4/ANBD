@@ -19,7 +19,7 @@ final class ArticleViewModel: ObservableObject {
     @Published var articlePath: NavigationPath = NavigationPath()
     
     @Published private(set) var articles: [Article] = []
-    @Published private(set) var filteredArticles: [Article] = []
+    @Published var filteredArticles: [Article] = []
     
     @Published var article: Article = Article(id: "",
                                               writerID: "",

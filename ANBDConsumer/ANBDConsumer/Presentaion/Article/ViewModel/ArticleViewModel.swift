@@ -48,7 +48,8 @@ final class ArticleViewModel: ObservableObject {
     
     @Published var sortOption: ArticleOrder = .latest
     
-    @Published private var isLiked: Bool = false
+    @Published private(set) var isLiked: Bool = false
+    @Published private var isLikedDictionary: [String: Bool] = [:]
     
     init() {
         
@@ -191,18 +192,28 @@ final class ArticleViewModel: ObservableObject {
     }
     
     func toggleLikeArticle(articleID: String) async {
-        do {
-            if isLiked {
-                try await articleUseCase.likeArticle(articleID: articleID)
-                isLiked = false
-            } else {
-                try await articleUseCase.likeArticle(articleID: articleID)
-                isLiked = true
-            }
-            isLiked.toggle()
-        } catch {
-            print(error.localizedDescription)
+        if let isLiked = isLikedDictionary[articleID] {
+            isLikedDictionary[articleID] = !isLiked
+        } else {
+            isLikedDictionary[articleID] = false
         }
+        
+        do {
+            let isLiked = isLikedDictionary[articleID] ?? false
+            
+            try await articleUseCase.likeArticle(articleID: articleID)
+            
+            let updatedArticle = try await articleUseCase.loadArticle(articleID: articleID)
+            article.likeCount = updatedArticle.likeCount
+            
+//            isLikedDictionary[articleID] = updatedArticle.isLiked
+        } catch {
+            print("좋아요 실패요.... \(error.localizedDescription)")
+        }
+    }
+    
+    func isArticleLiked(articleID: String) -> Bool {
+        return isLikedDictionary[articleID] ?? false
     }
     
     func updateLikeCount(articleID: String, increment: Bool) async {
@@ -228,7 +239,6 @@ final class ArticleViewModel: ObservableObject {
     
     // MARK: - Comment
     func writeComment(articleID: String, commentText: String) async {
-        
         let newComment = Comment(articleID: articleID,
                                  writerID: user.id,
                                  writerNickname: user.nickname,

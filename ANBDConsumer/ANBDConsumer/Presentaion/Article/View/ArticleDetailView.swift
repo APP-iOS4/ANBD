@@ -12,11 +12,9 @@ struct ArticleDetailView: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     @EnvironmentObject private var myPageViewMode: MyPageViewModel
 
-    var article: Article
-    var comment: Comment
-    @State private var isLiked: Bool = false
-    @State private var isWriter: Bool = true
-    
+    private var article: Article
+    private let user = UserStore.shared.user
+
     @State private var isShowingComment: Bool = false
     @State private var commentText: String = ""
     
@@ -32,12 +30,18 @@ struct ArticleDetailView: View {
     
     @State private var detailImage: Image = Image("DummyPuppy1")
     @State private var imageData: [Data] = []
+    
     /*
      User 네비 관련 주석
      @State private var writerUser: User?
      @State private var commentUser: User?
      */
+    
     @Environment(\.dismiss) private var dismiss
+    
+    init(article: Article, comment: Comment) {
+        self.article = article
+    }
     
     var body: some View {
         ZStack {
@@ -59,21 +63,21 @@ struct ArticleDetailView: View {
                                  }
                                  */
                                 VStack(alignment: .leading) {
-                                    Text("\(article.writerNickname)")
+                                    Text("\(articleViewModel.article.writerNickname)")
                                         .font(ANBDFont.SubTitle3)
                                     
-                                    Text("5분 전")
+                                    Text("\(articleViewModel.article.createdAt.relativeTimeNamed)")
                                         .font(ANBDFont.Caption1)
                                         .foregroundStyle(.gray400)
                                 }
                             }
                             .padding(.bottom, 20)
                             
-                            Text("\(article.title)")
+                            Text("\(articleViewModel.article.title)")
                                 .font(ANBDFont.pretendardBold(24))
                                 .padding(.bottom, 10)
                             
-                            Text("\(article.content)")
+                            Text("\(articleViewModel.article.content)")
                                 .font(ANBDFont.body1)
                                 .padding(.bottom, 10)
                             
@@ -93,18 +97,17 @@ struct ArticleDetailView: View {
                             HStack {
                                 Button {
                                     Task {
-                                        await articleViewModel.toggleLikeArticle(articleID: article.id)
-                                        isLiked.toggle()
-                                        await articleViewModel.updateLikeCount(articleID: article.id, increment: isLiked)
+                                        await articleViewModel.toggleLikeArticle(articleID: articleViewModel.article.id)
+                                        await articleViewModel.updateLikeCount(articleID: articleViewModel.article.id, increment: articleViewModel.isArticleLiked(articleID: articleViewModel.article.id))
                                     }
                                 } label: {
-                                    Image(systemName: isLiked ? "hand.thumbsup.fill" : "hand.thumbsup")
+                                    Image(systemName: articleViewModel.isArticleLiked(articleID: articleViewModel.article.id) ? "hand.thumbsup.fill" : "hand.thumbsup")
                                         .resizable()
                                         .frame(width: 16, height: 16)
-                                        .foregroundStyle(isLiked ? .accent : .gray900)
+                                        .foregroundStyle(articleViewModel.isArticleLiked(articleID: article.id) ? .accent : .gray900)
                                         .padding(.leading, 10)
                                 }
-                                Text("\(article.likeCount)")
+                                Text("\(articleViewModel.article.likeCount)")
                                     .foregroundStyle(.gray900)
                                     .font(.system(size: 12))
                                     .padding(.trailing, 10)
@@ -320,7 +323,7 @@ struct ArticleDetailView: View {
             ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
         }
         .fullScreenCover(isPresented: $isShowingCommentEditView) {
-            CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: comment)
+            CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: articleViewModel.comment)
         }
         .navigationDestination(isPresented: $isGoingToReportView) {
             ReportView(reportViewType: .article, reportedObjectID: "")

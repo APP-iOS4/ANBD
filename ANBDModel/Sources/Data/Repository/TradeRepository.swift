@@ -126,7 +126,7 @@ struct TradeRepositoryImpl: TradeRepository {
         itemCategory: [ItemCategory]?,
         limit: Int
     ) async throws -> [Trade] {
-        let refreshedList = try await tradeDataSource.readItemList(
+        let refreshedList = try await tradeDataSource.refreshFilter(
             category: category,
             location: location,
             itemCategory: itemCategory,

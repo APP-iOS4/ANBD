@@ -19,7 +19,7 @@ public protocol UserUsecase {
 @available(iOS 15, *)
 public struct DefaultUserUsecase: UserUsecase {
 
-    private let userRepository = DefaultUserRepository()
+    private let userRepository: UserRepository = DefaultUserRepository()
     
     public init() { }
     

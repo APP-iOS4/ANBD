@@ -11,6 +11,7 @@ import ANBDModel
 struct HomeView: View {
     @EnvironmentObject private var coordinator: Coordinator
     @EnvironmentObject private var homeViewModel: HomeViewModel
+    @EnvironmentObject private var articleViewModel: ArticleViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     
     @State private var isShowingWebView: Bool = false
@@ -121,8 +122,11 @@ struct HomeView: View {
                 ArticleCellView(article: article)
                     .frame(width: geo.size.width * 0.9, height: 130)
                     .onTapGesture {
-                        coordinator.article = article
-                        coordinator.homePath.append(Page.articleDeatilView)
+                        Task {
+                            coordinator.article = article
+                            await articleViewModel.loadArticle(article: article)
+                            coordinator.homePath.append(Page.articleDeatilView)
+                        }
                     }
             }
         }
@@ -191,8 +195,11 @@ struct HomeView: View {
             
             if let dasiArticle = homeViewModel.dasiArticle {
                 Button(action: {
-                    coordinator.article = dasiArticle
-                    coordinator.homePath.append(Page.articleDeatilView)
+                    Task {
+                        coordinator.article = dasiArticle
+                        await articleViewModel.loadArticle(article: dasiArticle)
+                        coordinator.homePath.append(Page.articleDeatilView)
+                    }
                 }, label: {
                     ArticleCellView(article: dasiArticle)
                         .frame(width: geo.size.width * 0.9, height: 130)

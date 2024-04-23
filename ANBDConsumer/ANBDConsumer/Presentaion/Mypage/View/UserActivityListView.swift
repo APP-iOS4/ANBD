@@ -10,6 +10,7 @@ import ANBDModel
 
 struct UserActivityListView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
+    @EnvironmentObject private var tradeViewModel: TradeViewModel
     @EnvironmentObject private var coordinator: Coordinator
     
     @State var category: ANBDCategory
@@ -99,6 +100,7 @@ struct UserActivityListView: View {
                                 .padding(.vertical, 5)
                                 .onTapGesture {
                                     coordinator.trade = trade
+                                    tradeViewModel.getOneTrade(trade: trade)
                                     coordinator.appendPath(.tradeDetailView)
                                 }
                             

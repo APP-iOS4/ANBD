@@ -11,6 +11,7 @@ import ANBDModel
 extension ChatDetailView {
     struct ChatHeaderView: View {
         @EnvironmentObject private var chatViewModel: ChatViewModel
+        @EnvironmentObject private var tradeViewModel: TradeViewModel
         @EnvironmentObject private var coordinator: Coordinator
         
         var trade: Trade?
@@ -21,15 +22,18 @@ extension ChatDetailView {
         
         var body: some View {
             Button(action: {
-                switch coordinator.selectedTab {
-                case .home, .trade:
-                    coordinator.pop()
-                case .article, .mypage:
-                    return
-                case .chat:
-                    if let trade {
-                        coordinator.trade = trade
-                        coordinator.chatPath.append(Page.tradeDetailView)
+                if trade != nil {
+                    switch coordinator.selectedTab {
+                    case .home, .trade:
+                        coordinator.pop()
+                    case .article, .mypage:
+                        return
+                    case .chat:
+                        if let trade {
+                            coordinator.trade = trade
+                            tradeViewModel.getOneTrade(trade: trade)
+                            coordinator.chatPath.append(Page.tradeDetailView)
+                        }
                     }
                 }
             }, label: {
@@ -87,6 +91,7 @@ extension ChatDetailView {
                 }
                 .foregroundStyle(.gray900)
             })
+            .disabled(trade == nil)
         }
         
         /// Trade 상품 String

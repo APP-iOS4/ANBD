@@ -38,7 +38,7 @@ struct ArticleDetailView: View {
     
     @Environment(\.dismiss) private var dismiss
     
-    init(article: Article, comment: Comment) {
+    init(article: Article) {
         self.article = article
     }
     

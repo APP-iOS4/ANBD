@@ -60,14 +60,6 @@ struct TradeDetailView: View {
                         
                         //작성자 이미지, 닉네임, 작성시간
                         HStack {
-//                            NavigationLink(value: writerUser) {
-//                                Image(.dummyImage1)
-//                                    .resizable()
-//                                    .frame(width: 40, height: 40)
-//                                    .scaledToFill()
-//                                    .clipShape(Circle())
-//                            }
-                            
                             Image(.dummyImage1)
                                 .resizable()
                                 .frame(width: 40, height: 40)
@@ -261,6 +253,7 @@ extension TradeDetailView {
                     .padding()
                     .onTapGesture {
                         coordinator.trade = trade
+                        tradeViewModel.getOneTrade(trade: trade)
                         switch coordinator.selectedTab {
                         case .home:
                             coordinator.homePath.append(Page.chatDetailView)

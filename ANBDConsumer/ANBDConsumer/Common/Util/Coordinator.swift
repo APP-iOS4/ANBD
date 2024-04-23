@@ -60,7 +60,7 @@ final class Coordinator: ObservableObject {
             // TODO: 수정 필요
         case .articleDeatilView:
             if let article = article {
-                //                ArticleDetailView(article: article, comment: comment)
+                ArticleDetailView(article: article)
             }
             
         case .tradeDetailView:

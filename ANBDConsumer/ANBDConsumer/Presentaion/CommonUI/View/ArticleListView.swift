@@ -90,8 +90,11 @@ struct ArticleListView: View {
                         if isArticle {
                             ForEach(articleViewModel.filteredArticles) { item in
                                 Button(action: {
-                                    coordinator.article = item
-                                    coordinator.appendPath(.articleDeatilView)
+                                    Task {
+                                        coordinator.article = item
+                                        await articleViewModel.loadArticle(article: item)
+                                        coordinator.appendPath(.articleDeatilView)
+                                    }
                                 }, label: {
                                     ArticleListCell(value: .article(item))
                                         .padding(.vertical, 5)

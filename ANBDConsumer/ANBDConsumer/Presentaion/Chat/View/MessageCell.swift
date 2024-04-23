@@ -14,13 +14,14 @@ extension ChatDetailView {
         @EnvironmentObject private var homeViewModel: HomeViewModel
         @EnvironmentObject private var tradeViewModel: TradeViewModel
         @EnvironmentObject private var chatViewModel: ChatViewModel
+        @EnvironmentObject private var coordinator: Coordinator
         @Environment(\.colorScheme) private var colorScheme: ColorScheme
         
         var message: Message
         var isLast: Bool = false
         @State var imageUrl: URL?
         @State private var isMine: Bool = false
-        var anbdViewType: ANBDViewType = .chat
+        
         var channelID: String
         
         @Binding var isShowingImageDetailView: Bool
@@ -64,23 +65,10 @@ extension ChatDetailView {
                         .contextMenu {
                             if !isMine {
                                 Button("메시지 신고하기", role: .destructive) {
-                                    homeViewModel.reportType = .messages
-                                    chatViewModel.reportType = .messages
-                                    
-                                    homeViewModel.reportedObjectID = message.id
-                                    chatViewModel.reportedObjectID = message.id
-                                    
-                                    homeViewModel.reportedChannelID = channelID
-                                    chatViewModel.reportedChannelID = channelID
-                                    
-                                    switch anbdViewType {
-                                    case .home:
-                                        homeViewModel.homePath.append(ANBDNavigationPaths.reportView)
-                                    case .trade:
-                                        tradeViewModel.tradePath.append(ANBDNavigationPaths.reportView)
-                                    case .chat:
-                                        chatViewModel.chatPath.append(ANBDNavigationPaths.reportView)
-                                    }
+                                    coordinator.reportType = .messages
+                                    coordinator.reportedObjectID = message.id
+                                    coordinator.reportedChannelID = channelID
+                                    coordinator.appendPath(.reportView)
                                 }
                             }
                         }
@@ -102,17 +90,10 @@ extension ChatDetailView {
                         .contextMenu {
                             if !isMine {
                                 Button("메시지 신고하기", role: .destructive) {
-                                    homeViewModel.reportType = .messages
-                                    chatViewModel.reportType = .messages
-                                    
-                                    switch anbdViewType {
-                                    case .home:
-                                        homeViewModel.homePath.append(ANBDNavigationPaths.reportView)
-                                    case .trade:
-                                        tradeViewModel.tradePath.append(ANBDNavigationPaths.reportView)
-                                    case .chat:
-                                        chatViewModel.chatPath.append(ANBDNavigationPaths.reportView)
-                                    }
+                                    coordinator.reportType = .messages
+                                    coordinator.reportedObjectID = message.id
+                                    coordinator.reportedChannelID = channelID
+                                    coordinator.appendPath(.reportView)
                                 }
                             }
                         }
@@ -122,9 +103,9 @@ extension ChatDetailView {
                 }
                 
                 if !isMine {
-                        Text("\(message.dateString)")
-                            .foregroundStyle(.gray400)
-                            .font(ANBDFont.Caption2)
+                    Text("\(message.dateString)")
+                        .foregroundStyle(.gray400)
+                        .font(ANBDFont.Caption2)
                     Spacer()
                 }
             }

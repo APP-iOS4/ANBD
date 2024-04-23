@@ -10,6 +10,8 @@ import ANBDModel
 
 struct UserLikedContentsView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
+    @EnvironmentObject private var tradeViewModel: TradeViewModel
+    @EnvironmentObject private var coordinator: Coordinator
     
     @State var category: ANBDCategory
     
@@ -74,10 +76,13 @@ struct UserLikedContentsView: View {
             ScrollView(.vertical) {
                 LazyVStack {
                     ForEach(myPageViewModel.userLikedArticles.filter({$0.category == category})) { article in
-                        NavigationLink(value: article) {
-                            ArticleListCell(value: .article(article))
-                                .padding(.vertical, 5)
-                        }
+                        
+                        ArticleListCell(value: .article(article))
+                            .padding(.vertical, 5)
+                            .onTapGesture {
+                                coordinator.article = article
+                                coordinator.appendPath(.articleDeatilView)
+                            }
                         
                         Divider()
                     }
@@ -97,10 +102,14 @@ struct UserLikedContentsView: View {
             ScrollView(.vertical) {
                 LazyVStack {
                     ForEach(myPageViewModel.userHeartedTrades.filter({$0.category == category})) { trade in
-                        NavigationLink(value: trade) {
-                            ArticleListCell(value: .trade(trade))
-                                .padding(.vertical, 5)
-                        }
+
+                        ArticleListCell(value: .trade(trade))
+                            .padding(.vertical, 5)
+                            .onTapGesture {
+                                coordinator.trade = trade
+                                tradeViewModel.getOneTrade(trade: trade)
+                                coordinator.appendPath(.tradeDetailView)
+                            }
                         
                         Divider()
                     }

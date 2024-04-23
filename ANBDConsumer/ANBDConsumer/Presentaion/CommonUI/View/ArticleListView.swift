@@ -9,6 +9,7 @@ import SwiftUI
 import ANBDModel
 
 struct ArticleListView: View {
+    @EnvironmentObject private var coordinator: Coordinator
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     
@@ -88,22 +89,31 @@ struct ArticleListView: View {
                     LazyVStack {
                         if isArticle {
                             ForEach(articleViewModel.filteredArticles) { item in
-                                NavigationLink(value: item) {
+                                Button(action: {
+                                    Task {
+                                        coordinator.article = item
+                                        await articleViewModel.loadArticle(article: item)
+                                        coordinator.appendPath(.articleDeatilView)
+                                    }
+                                }, label: {
                                     ArticleListCell(value: .article(item))
-                                }
-                                .padding(.vertical, 5)
+                                        .padding(.vertical, 5)
+                                })
+                                
                                 Divider()
                             }
                             .padding(.horizontal)
                         } else {
                             ForEach(tradeViewModel.filteredTrades) { item in
-                                NavigationLink(value: item) {
-                                    ArticleListCell(value: .trade(item))
-                                }
-                                .simultaneousGesture(TapGesture().onEnded({
+                                Button(action: {
+                                    coordinator.trade = item
                                     tradeViewModel.getOneTrade(trade: item)
-                                }))
-                                .padding(.vertical, 5)
+                                    coordinator.appendPath(.tradeDetailView)
+                                }, label: {
+                                    ArticleListCell(value: .trade(item))
+                                        .padding(.vertical, 5)
+                                })
+                                
                                 Divider()
                             }
                             .padding(.horizontal)

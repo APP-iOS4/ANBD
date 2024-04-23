@@ -104,7 +104,8 @@ struct TradeListView: View {
                 .navigationBarTitle("거래글 목록")
                 .toolbar {
                     Button(action: {
-                        //새로고침 함수 뷰모델에 작성예정
+                        tradeListViewModel.tradeList = []
+                        tradeListViewModel.firstLoadTrades()
                     }) {
                         Image(systemName: "arrow.clockwise")
                     }

@@ -73,6 +73,13 @@ struct ReportListView: View {
                             .padding(.horizontal)
                         }
                     }
+                    if !reportListViewModel.reportList.isEmpty {
+                        Text("List End")
+                            .foregroundColor(.gray)
+                          .onAppear {
+                              //페이지네이션 로딩 함수 추가 예정
+                          }
+                      }
                 }
                 .onAppear {
                     reportListViewModel.firstLoadReports()
@@ -80,7 +87,8 @@ struct ReportListView: View {
                 .navigationBarTitle("신고함 목록")
                 .toolbar {
                     Button(action: {
-                        //새로고침 함수 뷰모델에 작성예정
+                        reportListViewModel.reportList = []
+                        reportListViewModel.firstLoadReports()
                     }) {
                         Image(systemName: "arrow.clockwise")
                     }

@@ -28,7 +28,10 @@ public protocol AuthUsecase {
 @available(iOS 15, *)
 public struct DefaultAuthUsecase: AuthUsecase {
     
-    private let userRepository = DefaultUserRepository()
+    private let userRepository: UserRepository = DefaultUserRepository()
+    private let articleRepository: ArticleRepository = ArticleRepositoryImpl()
+    private let commentRepository: CommentRepository = CommentRepositoryImpl()
+    private let tradeRepository: TradeRepository = TradeRepositoryImpl()
     
     public init() { }
     
@@ -134,6 +137,27 @@ public struct DefaultAuthUsecase: AuthUsecase {
         
         try await user?.delete()
         try await userRepository.deleteUserInfo(userID: userID)
+        
+        let articleList = try await articleRepository.readAllArticleList(writerID: userID)
+        
+        for article in articleList {
+            try await articleRepository.updateArticle(articleID: article.id, nickname: "탈퇴한 사용자")
+        }
+        
+        let commentList = try await commentRepository.readAllCommentList(writerID: userID)
+        
+        for comment in commentList {
+            var updatedComment = comment
+            updatedComment.writerNickname = "탈퇴한 사용자"
+            
+            try await commentRepository.updateComment(comment: updatedComment)
+        }
+        
+        let tradeList = try await tradeRepository.readAllTradeList(writerID: userID)
+        
+        for trade in tradeList {
+            try await tradeRepository.deleteTrade(trade: trade)
+        }
     }
     
     /// 이메일 중복체크 API

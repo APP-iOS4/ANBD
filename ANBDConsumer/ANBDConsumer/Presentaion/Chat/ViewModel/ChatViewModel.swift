@@ -34,9 +34,7 @@ final class ChatViewModel: ObservableObject {
     
     init() {
         Task {
-            guard let userID = UserDefaultsClient.shared.userID else { return }
-            user = await UserStore.shared.getUserInfo(userID: userID)
-            
+            user = await UserStore.shared.getUserInfo(userID: UserStore.shared.user.id)
             fetchChatRooms()
         }
     }

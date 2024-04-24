@@ -9,12 +9,8 @@ import SwiftUI
 import ANBDModel
 
 struct ANBDTabView: View {
-    @EnvironmentObject private var homeViewModel: HomeViewModel
-    @EnvironmentObject private var articleViewModel: ArticleViewModel
-    @EnvironmentObject private var tradeViewModel: TradeViewModel
-    @EnvironmentObject private var chatViewModel: ChatViewModel
-    @EnvironmentObject private var myPageViewModel: MyPageViewModel
-    @EnvironmentObject private var coordinator: Coordinator
+    @StateObject private var chatViewModel = ChatViewModel()
+    @StateObject private var coordinator = Coordinator()
     
     @State private var articleCategory: ANBDCategory = .accua
     @State private var tradeCategory: ANBDCategory = .nanua
@@ -87,6 +83,8 @@ struct ANBDTabView: View {
             }
             .tag(ANBDTabViewType.mypage)
         }
+        .environmentObject(chatViewModel)
+        .environmentObject(coordinator)
     }
 }
 

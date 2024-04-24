@@ -160,7 +160,6 @@ struct AuthenticationView: View {
                         })
                     }
                 }
-                
                 .onAppear {
                     authenticationViewModel.clearSignUpDatas()
                     authenticationViewModel.checkAuthState()

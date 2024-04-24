@@ -56,9 +56,10 @@ struct ChatView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             chatViewModel.fetchChatRooms()
+            
         }
         .onDisappear {
-//            chatViewModel.resetChannelListener()
+            // chatViewModel.resetChannelListener()
         }
     }
 }

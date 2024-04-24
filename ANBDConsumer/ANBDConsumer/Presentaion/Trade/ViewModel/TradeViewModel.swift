@@ -223,7 +223,8 @@ final class TradeViewModel: ObservableObject {
     func updateLikeTrade(trade: Trade) async {
         do {
             try await tradeUseCase.likeTrade(tradeID: trade.id)
-            UserStore.shared.user = await UserStore.shared.getUserInfo(userID: UserStore.shared.user.id)
+            guard let userID = UserDefaultsClient.shared.userID else { return }
+            UserStore.shared.user = await UserStore.shared.getUserInfo(userID: userID)
         } catch {
             print("좋아요 실패: \(error.localizedDescription)")
         }

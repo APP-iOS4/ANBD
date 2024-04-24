@@ -201,6 +201,10 @@ public struct DefaultArticleUsecase: ArticleUsecase {
             throw ArticleError.invalidCategory
         }
         
+        if article.id.isEmpty {
+            throw ArticleError.invalidArticleIDField
+        }
+        
         if imageDatas.isEmpty {
             throw ArticleError.invalidImageField
         }
@@ -227,6 +231,10 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     /// 댓글 목록 -> 사진 -> 게시글 순으로 삭제됩니다.
     /// 삭제 성공 시 좋아요한 User들의 좋아요 목록에서도 사라집니다.
     public func deleteArticle(article: Article) async throws {
+        if article.id.isEmpty {
+            throw ArticleError.invalidArticleIDField
+        }
+        
         try await articleRepository.deleteArticle(article: article)
     }
     

@@ -25,6 +25,10 @@ final class TradeViewModel: ObservableObject {
     
     //MARK: - 로컬 함수 (네트워크 호출 X)
     
+    func filteringTrades(category: ANBDCategory) {
+        self.filteredTrades = trades.filter({ $0.category == category })
+    }
+    
     func pickerItemCategory(itemCategory: ItemCategory) {
         self.selectedItemCategory = itemCategory
     }
@@ -44,22 +48,22 @@ final class TradeViewModel: ObservableObject {
     func reloadFilteredTrades(category: ANBDCategory) async {
         do {
             if self.selectedLocations.isEmpty && self.selectedItemCategories.isEmpty {
-                print("둘다 엠티여요")
+                //print("둘다 엠티여요")
                 
                 self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: nil, itemCategory: nil, limit: 8)
                 
                 //print("🥹\(filteredTrades)")
                 
             } else if self.selectedLocations.isEmpty {
-                print("지역 엠티여요")
+                //print("지역 엠티여요")
                 self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: nil, itemCategory: self.selectedItemCategories, limit: 8)
                 
             } else if self.selectedItemCategories.isEmpty {
-                print("카테고리 엠티여요")
+                //print("카테고리 엠티여요")
                 self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: nil, limit: 8)
                 
             } else {
-                print("둘다 풀")
+                //print("둘다 풀")
                 self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: self.selectedItemCategories, limit: 8)
             }
         } catch {
@@ -128,14 +132,6 @@ final class TradeViewModel: ObservableObject {
         }
         
         return detailImages
-    }
-    
-    func searchTrade(keyword: String) async {
-        do {
-            trades = try await tradeUseCase.searchTrade(keyword: keyword, limit: nil)
-        } catch {
-            print("Error: \(error)")
-        }
     }
     
     //MARK: - CREATE
@@ -234,6 +230,20 @@ final class TradeViewModel: ObservableObject {
             UserStore.shared.user = await UserStore.shared.getUserInfo(userID: UserStore.shared.user.id)
         } catch {
             print("좋아요 실패: \(error.localizedDescription)")
+        }
+    }
+    
+    //MARK: - SEARCH
+    
+    @MainActor
+    func searchTrade(keyword: String, category: ANBDCategory?) async {
+        do {
+            trades = try await tradeUseCase.refreshSearchTradeList(keyword: keyword, limit: 100)
+            if let category {
+                filteringTrades(category: category)
+            }
+        } catch {
+            print("Error: \(error)")
         }
     }
 }

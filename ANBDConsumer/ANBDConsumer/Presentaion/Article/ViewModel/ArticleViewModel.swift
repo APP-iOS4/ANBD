@@ -47,6 +47,10 @@ final class ArticleViewModel: ObservableObject {
         self.article = article
     }
     
+    func filteringArticles(category: ANBDCategory) {
+        filteredArticles = articles.filter({ $0.category == category })
+    }
+    
     //MARK: - ARTICLE
     
     @MainActor
@@ -151,14 +155,6 @@ final class ArticleViewModel: ObservableObject {
         } catch {
             print(error.localizedDescription)
             print("실패실패실패실패실패")
-        }
-    }
-    
-    func searchArticle(keyword: String) async {
-        do {
-            let loadedArticles = try await articleUseCase.searchArticle(keyword: keyword, limit: 10)
-        } catch {
-            print("Error: \(error)")
         }
     }
     
@@ -268,6 +264,19 @@ final class ArticleViewModel: ObservableObject {
         } catch {
             print(error.localizedDescription)
             print("댓글 삭제 실패")
+        }
+    }
+    
+    //MARK: - SEARCH
+    
+    func searchArticle(keyword: String, category: ANBDCategory?) async {
+        do {
+            articles = try await articleUseCase.refreshSearchArticleList(keyword: keyword, limit: 100)
+            if let category {
+                filteringArticles(category: category)
+            }
+        } catch {
+            print("Error: \(error)")
         }
     }
     

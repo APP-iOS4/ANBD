@@ -5,10 +5,14 @@
 //  Created by 유지호 on 4/14/24.
 //
 
-public enum CommentError: Error {
-    case invalidParameter(code: Int, message: String)
-    case createCommentError(code: Int, message: String)
-    case readCommentError(code: Int, message: String)
-    case updateCommentError(code: Int, message: String)
-    case deleteCommentError(code: Int, message: String)
+public enum CommentError: Int, Error {
+    case invalidCommentID = 4017
+    case invalidParameter
+    
+    public var message: String {
+        switch self {
+        case .invalidCommentID: "잘못된 댓글 ID"
+        case .invalidParameter: "댓글 필드 누락(내용)"
+        }
+    }
 }

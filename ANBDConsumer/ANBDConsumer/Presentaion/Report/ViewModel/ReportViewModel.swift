@@ -16,6 +16,8 @@ final class ReportViewModel: ObservableObject {
     /// 신고하기
     func submitReport(reportType: ReportType, reportReason: String, reportedObjectID: String, reportChannelID: String?) async {
         do {
+            guard let userID = UserDefaultsClient.shared.userID else { return }
+            user = await UserStore.shared.getUserInfo(userID: userID)
             let report = Report(type: reportType, reportReason: reportReason, reportedUser: user.id, reportedObjectID: reportedObjectID, reportedChannelID: reportChannelID)
             try await reportUsecase.submitReport(report: report)
         } catch {

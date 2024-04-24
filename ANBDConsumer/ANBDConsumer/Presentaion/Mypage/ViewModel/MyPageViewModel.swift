@@ -211,11 +211,6 @@ final class MyPageViewModel: ObservableObject {
             print("\(error.localizedDescription)")
         }
     }
-    
-    // MARK: - 유저 프로필 이미지 관련
-    func convertStringToImageData(string: String) -> Data? {
-        return Data()
-    }
 }
 
 extension MyPageViewModel {

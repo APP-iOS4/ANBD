@@ -175,7 +175,6 @@ struct ArticleDetailView: View {
                                             }
                                             
                                             Button(role: .destructive) {
-                                                // 바로해결 @Published로해결 @Published로해결 @Published로해결 @Published로해결 @Published로해결 @Published로해결 @Published로해결 @Published로해결 @Published로해결 @Published로해결 @Published로해결 @Published로해결 @Published로해결 @Published로해결 @Published로해결 @Published로해결 @Published로해결 @Published로해결 @Published로해결 @Published로해결 @Published로해결 @Published로해결 @Published로해결 @Published
                                                 articleViewModel.comment = comment
                                                 isShowingCustomAlertComment.toggle()
                                             } label: {
@@ -220,12 +219,7 @@ struct ArticleDetailView: View {
             } else if isShowingCustomAlertComment {
                 CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertComment, viewType: .commentDelete) {
                      Task {
-                         // MARK: - comment.id를 어떻게 가져와야할까요요요요요요용요요ㅛ요요ㅛ
-
-
-
                          await articleViewModel.deleteComment(articleID: article.id, commentID: articleViewModel.comment.id)
-                         
                          await articleViewModel.loadArticle(article: article)
                      }
                 }

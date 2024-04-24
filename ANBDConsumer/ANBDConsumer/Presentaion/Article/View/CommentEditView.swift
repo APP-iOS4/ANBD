@@ -16,8 +16,6 @@ struct CommentEditView: View {
     @State private var isShowingCustomAlert: Bool = false
 
     @Binding var isShowingCommentEditView: Bool
-    
-    @Environment(\.dismiss) private var dismiss
 
     var comment: Comment?
     var isEditComment: Bool
@@ -70,8 +68,7 @@ struct CommentEditView: View {
                             Button {
                                 if !isEditComment {
                                     if let comment = comment {
-                                        let isContentChanged = content != comment.content
-                                        if isContentChanged {
+                                        if content != comment.content {
                                             isShowingCustomAlert.toggle()
                                         } else {
                                             isShowingCommentEditView.toggle()
@@ -92,7 +89,7 @@ struct CommentEditView: View {
             
             if isShowingCustomAlert {
                 CustomAlertView(isShowingCustomAlert: $isShowingCustomAlert, viewType: .commentEdit) {
-                    dismiss()
+                    isShowingCommentEditView = false
                 }
             }
         }

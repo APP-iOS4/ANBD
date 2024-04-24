@@ -8,12 +8,14 @@
 import Foundation
 import ANBDModel
 
+
 final class ReportViewModel: ObservableObject {
     private let reportUsecase: ReportUsecase = DefaultReportUsecase()
     
     @Published var user: User = UserStore.shared.user
     
     /// 신고하기
+    @MainActor
     func submitReport(reportType: ReportType, reportReason: String, reportedObjectID: String, reportChannelID: String?) async {
         do {
             guard let userID = UserDefaultsClient.shared.userID else { return }

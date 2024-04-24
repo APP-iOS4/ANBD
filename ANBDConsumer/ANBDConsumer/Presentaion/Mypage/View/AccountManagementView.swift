@@ -111,6 +111,14 @@ struct AccountManagementView: View {
         
         .fullScreenCover(isPresented: $isShowingEditorView, onDismiss: {
             refreshView.toggle()
+            
+            myPageViewModel.tempUserProfileImage = nil
+            myPageViewModel.tempUserNickname = ""
+            myPageViewModel.tempUserFavoriteLocation = .seoul
+            
+            Task {
+                myPageViewModel.user = await myPageViewModel.getUserInfo(userID: UserStore.shared.user.id)
+            }
         }) {
             UserInfoEditingView()
         }

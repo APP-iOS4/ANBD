@@ -25,6 +25,7 @@ struct CommentEditView: View {
             NavigationStack {
                 VStack {
                     Divider()
+                    
                     ZStack(alignment: .topLeading) {
                         if content.isEmpty {
                             Text(placeHolder)
@@ -33,6 +34,7 @@ struct CommentEditView: View {
                                 .padding(.horizontal, 20)
                                 .padding(.top, 8)
                         }
+                        
                         TextEditor(text: $content)
                             .scrollContentBackground(.hidden)
                             .font(ANBDFont.body1)

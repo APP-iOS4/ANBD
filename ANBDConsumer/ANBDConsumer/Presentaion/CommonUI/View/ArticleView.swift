@@ -23,7 +23,7 @@ struct ArticleView: View {
     
     var body: some View {
         
-        //TODO: combine으로 고치기
+        // TODO: combine으로 고치기
         if #available(iOS 17.0, *) {
             listView
                 .onChange(of: category) {
@@ -50,15 +50,12 @@ struct ArticleView: View {
                         }
                     }
                 })
-            
         }
     }
     
-    //MARK: - article 서브뷰
-    
+    // MARK: - article 서브뷰
     private var listView: some View {
         ZStack(alignment: .bottomTrailing) {
-            
             VStack(alignment: .leading) {
                 CategoryDividerView(category: $category)
                     .frame(height: 45)
@@ -67,7 +64,9 @@ struct ArticleView: View {
                     ArticleListView(category: isArticle ? .accua : .nanua,
                                     isArticle: isArticle)
                         .tag(isArticle ? ANBDCategory.accua : ANBDCategory.nanua)
-                    ArticleListView(category: isArticle ? .dasi : .baccua, isArticle: isArticle)
+                    
+                    ArticleListView(category: isArticle ? .dasi : .baccua,
+                                    isArticle: isArticle)
                         .tag(isArticle ? ANBDCategory.dasi : ANBDCategory.baccua)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))

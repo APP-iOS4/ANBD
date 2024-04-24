@@ -24,18 +24,17 @@ struct ArticleListView: View {
     var body: some View {
         VStack(alignment: .leading) {
             if isArticle && articleViewModel.filteredArticles.isEmpty {
-                
+
                 ListEmptyView(description: "해당하는 정보 공유 게시글이 없습니다.")
                 
             } else if !isArticle && tradeViewModel.filteredTrades.isEmpty {
-                
+
                 loacationAndCategoryButtons
                 ListEmptyView(description: "해당하는 나눔 · 거래 게시글이 없습니다.")
                 
             } else {
                 
-                //MARK: - trade 카테고리 선택 / article sort 선택
-                
+                // MARK: - trade 카테고리 선택 / article sort 선택
                 if isArticle {
                     Menu {
                         Button {
@@ -46,7 +45,7 @@ struct ArticleListView: View {
                         } label: {
                             Label("최신순", systemImage: articleViewModel.sortOption == .latest ? "checkmark" : "")
                         }
-                        
+
                         Button {
                             articleViewModel.sortOption = .mostLike
                             Task {
@@ -55,7 +54,7 @@ struct ArticleListView: View {
                         } label: {
                             Label("좋아요순", systemImage: articleViewModel.sortOption == .mostLike ? "checkmark" : "")
                         }
-                        
+
                         Button {
                             articleViewModel.sortOption = .mostComment
                             Task {
@@ -73,8 +72,7 @@ struct ArticleListView: View {
                     loacationAndCategoryButtons
                 }
                 
-                //MARK: - list
-                
+                // MARK: - list
                 ScrollView {
                     LazyVStack {
                         if isArticle {
@@ -87,10 +85,10 @@ struct ArticleListView: View {
                                     ArticleListCell(value: .article(item))
                                         .padding(.vertical, 5)
                                 })
-                                
                                 Divider()
                             }
                             .padding(.horizontal)
+                            
                         } else {
                             ForEach(tradeViewModel.filteredTrades) { item in
                                 Button(action: {
@@ -101,7 +99,6 @@ struct ArticleListView: View {
                                     ArticleListCell(value: .trade(item))
                                         .padding(.vertical, 5)
                                 })
-                                
                                 Divider()
                             }
                             .padding(.horizontal)

@@ -15,6 +15,7 @@ final class ArticleViewModel: ObservableObject {
     private let commentUseCase: CommentUsecase = DefaultCommentUsecase()
     private let storageManager = StorageManager.shared
     
+    @Published var sortOption: ArticleOrder = .latest
     @Published private(set) var articles: [Article] = []
     @Published var filteredArticles: [Article] = []
     @Published var article: Article = Article(id: "",
@@ -39,7 +40,7 @@ final class ArticleViewModel: ObservableObject {
                                               content: "")
 
     @Published var commentText: String = ""
-    @Published var sortOption: ArticleOrder = .latest
+    
     @Published private(set) var isLiked: Bool = false
     @Published private var isLikedDictionary: [String: Bool] = [:]
     
@@ -164,6 +165,17 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
+    func getSortOptionLabel() -> String {
+        switch sortOption {
+        case .latest:
+            return "최신순"
+        case .mostLike:
+            return "좋아요순"
+        case .mostComment:
+            return "댓글순"
+        }
+    }
+    
     //MARK: - LIKE
     
     func likeArticle(articleID: String) async {
@@ -208,17 +220,6 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
-    func getSortOptionLabel() -> String {
-        switch sortOption {
-        case .latest:
-            return "최신순"
-        case .mostLike:
-            return "좋아요순"
-        case .mostComment:
-            return "댓글순"
-        }
-    }
-    
     // MARK: - Comment
     
     func writeComment(articleID: String, commentText: String) async {
@@ -260,8 +261,7 @@ final class ArticleViewModel: ObservableObject {
         do {
             try await commentUseCase.deleteComment(articleID: articleID, commentID: commentID)
         } catch {
-            print(error.localizedDescription)
-            print("댓글 삭제 실패")
+            print("댓글 삭제 실패 - \(error.localizedDescription)")
         }
     }
     

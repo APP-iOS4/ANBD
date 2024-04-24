@@ -98,7 +98,6 @@ struct ArticleDetailView: View {
                                     Task {
                                         await articleViewModel.toggleLikeArticle(articleID: articleViewModel.article.id)
                                         await articleViewModel.updateLikeCount(articleID: articleViewModel.article.id, increment: articleViewModel.isArticleLiked(articleID: articleViewModel.article.id))
-                                        print("⭐️\(articleViewModel.isLiked)")
                                     }
                                 } label: {
                                     Image(systemName: articleViewModel.isLiked ? "hand.thumbsup" : "hand.thumbsup.fill")

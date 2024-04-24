@@ -50,6 +50,11 @@ struct CommentRepositoryImpl: CommentRepository {
         return commentList
     }
     
+    func readAllCommentList(writerID: String) async throws -> [Comment] {
+        let commentList = try await commentDataSource.readAllItemList(writerID: writerID)
+        return commentList
+    }
+    
     
     // MARK: Update
     func updateComment(comment: Comment) async throws {

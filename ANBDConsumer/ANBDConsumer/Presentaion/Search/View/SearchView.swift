@@ -25,14 +25,16 @@ struct SearchView: View {
                 
                 Spacer()
                 
-                Button(action: {
-                    searchViewModel.resetRecentSearch()
-                    searchViewModel.loadRecentSearch()
-                }, label: {
-                    Text("전체 삭제")
-                        .font(ANBDFont.body1)
-                        .foregroundStyle(Color.accentColor)
-                })
+                if !searchViewModel.recentSearch.isEmpty {
+                    Button(action: {
+                        searchViewModel.resetRecentSearch()
+                        searchViewModel.loadRecentSearch()
+                    }, label: {
+                        Text("전체 삭제")
+                            .font(ANBDFont.body1)
+                            .foregroundStyle(Color.accentColor)
+                    })
+                }
             }
             .padding()
             .padding(.top, 10)

@@ -37,42 +37,43 @@ struct ArticleListView: View {
             } else {
                 
                 //MARK: - trade 카테고리 선택 / article sort 선택
-                
-                if isArticle {
-                    Menu {
-                        Button {
-                            articleViewModel.sortOption = .latest
-                            Task {
-                                await articleViewModel.refreshSortedArticleList(category: category)
+                if !isSearchView {
+                    if isArticle {
+                        Menu {
+                            Button {
+                                articleViewModel.sortOption = .latest
+                                Task {
+                                    await articleViewModel.refreshSortedArticleList(category: category)
+                                }
+                            } label: {
+                                Label("최신순", systemImage: articleViewModel.sortOption == .latest ? "checkmark" : "")
+                            }
+                            
+                            Button {
+                                articleViewModel.sortOption = .mostLike
+                                Task {
+                                    await articleViewModel.refreshSortedArticleList(category: category)
+                                }
+                            } label: {
+                                Label("좋아요순", systemImage: articleViewModel.sortOption == .mostLike ? "checkmark" : "")
+                            }
+                            
+                            Button {
+                                articleViewModel.sortOption = .mostComment
+                                Task {
+                                    await articleViewModel.refreshSortedArticleList(category: category)
+                                }
+                            } label: {
+                                Label("댓글순", systemImage: articleViewModel.sortOption == .mostComment ? "checkmark" : "")
                             }
                         } label: {
-                            Label("최신순", systemImage: articleViewModel.sortOption == .latest ? "checkmark" : "")
+                            CapsuleButtonView(text: articleViewModel.getSortOptionLabel(), isForFiltering: true)
                         }
+                        .padding(EdgeInsets(top: 7, leading: 17, bottom: 10, trailing: 0))
                         
-                        Button {
-                            articleViewModel.sortOption = .mostLike
-                            Task {
-                                await articleViewModel.refreshSortedArticleList(category: category)
-                            }
-                        } label: {
-                            Label("좋아요순", systemImage: articleViewModel.sortOption == .mostLike ? "checkmark" : "")
-                        }
-                        
-                        Button {
-                            articleViewModel.sortOption = .mostComment
-                            Task {
-                                await articleViewModel.refreshSortedArticleList(category: category)
-                            }
-                        } label: {
-                            Label("댓글순", systemImage: articleViewModel.sortOption == .mostComment ? "checkmark" : "")
-                        }
-                    } label: {
-                        CapsuleButtonView(text: articleViewModel.getSortOptionLabel(), isForFiltering: true)
+                    } else {
+                        loacationAndCategoryButtons
                     }
-                    .padding(EdgeInsets(top: 7, leading: 17, bottom: 10, trailing: 0))
-                    
-                } else {
-                    loacationAndCategoryButtons
                 }
                 
                 //MARK: - list

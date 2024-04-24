@@ -98,12 +98,13 @@ struct ArticleDetailView: View {
                                     Task {
                                         await articleViewModel.toggleLikeArticle(articleID: articleViewModel.article.id)
                                         await articleViewModel.updateLikeCount(articleID: articleViewModel.article.id, increment: articleViewModel.isArticleLiked(articleID: articleViewModel.article.id))
+                                        print("⭐️\(articleViewModel.isLiked)")
                                     }
                                 } label: {
-                                    Image(systemName: articleViewModel.isArticleLiked(articleID: articleViewModel.article.id) ? "hand.thumbsup.fill" : "hand.thumbsup")
+                                    Image(systemName: articleViewModel.isLiked ? "hand.thumbsup" : "hand.thumbsup.fill")
                                         .resizable()
                                         .frame(width: 16, height: 16)
-                                        .foregroundStyle(articleViewModel.isArticleLiked(articleID: article.id) ? .accent : .gray900)
+                                        .foregroundStyle(articleViewModel.isLiked ? .gray900 : .accent)
                                         .padding(.leading, 10)
                                 }
                                 Text("\(articleViewModel.article.likeCount)")

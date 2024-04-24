@@ -202,7 +202,7 @@ struct ArticleCreateView: View {
                                 article.category = self.category
                                 
                                 await articleViewModel.updateArticle(category: category, title: title, content: content, imageDatas: selectedImageData)
-                                await articleViewModel.reloadAllArticles()
+                                await articleViewModel.refreshSortedArticleList(category: category)
                                 await articleViewModel.loadArticle(article: article)
                             }
                         }

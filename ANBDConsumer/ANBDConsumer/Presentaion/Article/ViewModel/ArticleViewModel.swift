@@ -52,7 +52,7 @@ final class ArticleViewModel: ObservableObject {
     @MainActor
     func refreshSortedArticleList(category: ANBDCategory) async {
         do {
-            self.filteredArticles = try await articleUseCase.refreshSortedArticleList(category: category, by: self.sortOption, limit: 8)
+            self.filteredArticles = try await articleUseCase.refreshSortedArticleList(category: category, by: self.sortOption, limit: 10)
         } catch {
             print(error.localizedDescription)
         }
@@ -62,7 +62,7 @@ final class ArticleViewModel: ObservableObject {
     func loadMoreArticles(category: ANBDCategory) async {
         do {
             var newArticles: [Article] = []
-            newArticles = try await articleUseCase.loadArticleList(category: category, by: self.sortOption, limit: 5)
+            newArticles = try await articleUseCase.loadArticleList(category: category, by: self.sortOption, limit: 10)
             
             for item in newArticles {
                 if filteredArticles.contains(item) {
@@ -176,9 +176,9 @@ final class ArticleViewModel: ObservableObject {
     
     func toggleLikeArticle(articleID: String) async {
         if isLikedDictionary[articleID] != nil {
-            isLikedDictionary[articleID] = false
-        } else {
             isLikedDictionary[articleID] = true
+        } else {
+            isLikedDictionary[articleID] = false
         }
         
         do {
@@ -194,7 +194,8 @@ final class ArticleViewModel: ObservableObject {
     }
     
     func isArticleLiked(articleID: String) -> Bool {
-        return isLikedDictionary[articleID] ?? true
+        return isLikedDictionary[articleID] ?? false
+        
     }
     
     func updateLikeCount(articleID: String, increment: Bool) async {

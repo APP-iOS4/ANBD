@@ -53,7 +53,7 @@ struct ReportListDetailView: View {
             HStack {
                 Text("생성일자:").foregroundColor(.gray)
                 Spacer()
-                Text(" \(dateFormatter(report.createDate))")
+                Text(" \(report.reportedDate)")
             }
         }
         .navigationBarTitle("신고 내역")

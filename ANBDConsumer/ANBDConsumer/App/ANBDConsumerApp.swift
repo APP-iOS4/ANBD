@@ -12,6 +12,8 @@ import FirebaseFirestore
 import ANBDModel
 
 class AppDelegate: NSObject, UIApplicationDelegate {
+    @StateObject private var chatViewModel = ChatViewModel()
+    
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
@@ -19,6 +21,23 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         FirebaseApp.configure()
         
         return true
+    }
+    
+    func applicationWillResignActive(_ application: UIApplication) {
+        // 앱이 비활성 상태로 전환될 때 수행할 작업
+        chatViewModel.resetChannelListener()
+    }
+    
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        // 앱이 백그라운드로 이동될 때 수행할 작업
+        print("백그라운드 간다")
+        chatViewModel.resetChannelListener()
+        print("백그라운드 갔다")
+    }
+    
+    func applicationWillTerminate(_ application: UIApplication) {
+        // 앱이 종료되기 전에 수행할 작업
+        chatViewModel.resetChannelListener()
     }
     
 //    func application(

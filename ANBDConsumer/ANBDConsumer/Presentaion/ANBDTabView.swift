@@ -72,6 +72,7 @@ struct ANBDTabView: View {
                 Label("채팅", systemImage: "bubble.right")
             }
             .tag(ANBDTabViewType.chat)
+            .badge(chatViewModel.totalUnreadCount)
             
             
             /// Mypage

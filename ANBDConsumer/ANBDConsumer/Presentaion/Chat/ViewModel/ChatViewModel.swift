@@ -23,6 +23,8 @@ final class ChatViewModel: ObservableObject {
     @Published var user: User = UserStore.shared.user
     @Published var chatRooms: [Channel] = []
     @Published var messages: [Message] = []
+    @Published var otherUserLastMessages: [Message] = []
+    @Published var otherUserProfileImageUrl: String = ""
     @Published var totalUnreadCount: Int = 0
     
     @Published var groupedMessages: [(day:String , messages:[Message])] = []
@@ -50,6 +52,7 @@ final class ChatViewModel: ObservableObject {
                 }
                 self.messages.insert(contentsOf: preMessages, at: 0)
                 updateGroupedMessagesByDate()
+                updateLastMessage()
             }
             
             if !isListener {
@@ -65,6 +68,7 @@ final class ChatViewModel: ObservableObject {
                     } else {
                         /// 메시지 전송 (추가)
                         self?.messages.append(message)
+                        self?.addMessageUpdate(addMessage: message)
                     }
                     self?.updateGroupedMessagesByDate()
                 }
@@ -85,14 +89,6 @@ final class ChatViewModel: ObservableObject {
         }.sorted { $0.day > $1.day }
         
         self.groupedMessages = messageGroup
-        
-        //        for (day,messages) in messageGroup {
-        //            if let index = groupedMessages.firstIndex(where: {$0.day == day }) {
-        //                self.groupedMessages[index].messages.insert(contentsOf: messages, at: 0)
-        //            } else {
-        //                self.groupedMessages.append((day: day, messages: messages))
-        //            }
-        //        }
     }
     
     
@@ -123,6 +119,55 @@ final class ChatViewModel: ObservableObject {
             print("getChannel Error: \(error)")
             return nil
         }
+    }
+    
+    func getOtherUserImage(channel: Channel) async {
+        do {
+            let otherUser = try await chatUsecase.getOtherUser(channel: channel, userID: user.id)
+            self.otherUserProfileImageUrl = otherUser.profileImage
+        } catch {
+            print("error: \(error)")
+        }
+    }
+    
+    func setOtherUserImage(channel: Channel) async -> User? {
+        do {
+            let otherUser = try await chatUsecase.getOtherUser(channel: channel, userID: user.id)
+            return otherUser
+        } catch {
+            print("error: \(error)")
+            return nil
+        }
+    }
+    
+    func updateLastMessage() {
+        var otherMessages: [Message] = []
+        
+        for message in messages {
+            if message.userID != user.id {
+                if let lastMessage = otherMessages.last, lastMessage.dateStringWithYear != message.dateStringWithYear {
+                    self.otherUserLastMessages.append(lastMessage)
+                    otherMessages = []
+                }
+                otherMessages.append(message)
+            } else {
+                if let lastMessage = otherMessages.last {
+                    self.otherUserLastMessages.append(lastMessage)
+                    otherMessages = []
+                }
+            }
+        }
+        
+        if let lastMessage = otherMessages.last {
+            self.otherUserLastMessages.append(lastMessage)
+        }
+    }
+    
+    func addMessageUpdate(addMessage: Message) {
+        if let lastMessage = otherUserLastMessages.last , lastMessage.dateStringWithYear == addMessage.dateStringWithYear{
+            otherUserLastMessages.removeLast()
+        }
+        otherUserLastMessages.append(addMessage)
     }
     
     func getTotalUnreadCount() {

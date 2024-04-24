@@ -80,7 +80,7 @@ struct ArticleListView: View {
                                     Text("\(dateFormatter(article.createdAt))")
                                         .foregroundColor(.black)
                                 }
-                                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                                .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Spacer()
                             }
                             .frame(maxWidth: .infinity, minHeight: 50)

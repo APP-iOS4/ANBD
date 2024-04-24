@@ -65,7 +65,7 @@ struct AccountManagementView: View {
             if isShowingSignOutAlertView {
                 CustomAlertView(isShowingCustomAlert: $isShowingSignOutAlertView, viewType: .signOut) {
                     Task {
-                        try await authenticationViewModel.signOut {
+                        await authenticationViewModel.signOut {
                             UserDefaultsClient.shared.removeUserID()
                             UserStore.shared.user = MyPageViewModel.mockUser
                             authenticationViewModel.checkAuthState()
@@ -80,7 +80,7 @@ struct AccountManagementView: View {
             if isShowingWithdrawalAlertView {
                 CustomAlertView(isShowingCustomAlert: $isShowingWithdrawalAlertView, viewType: .withdrawal) {
                     Task {
-                        try await authenticationViewModel.withdrawal {
+                        await authenticationViewModel.withdrawal {
                             UserDefaultsClient.shared.removeUserID()
                             UserStore.shared.user = MyPageViewModel.mockUser
                             authenticationViewModel.checkAuthState()
@@ -111,6 +111,14 @@ struct AccountManagementView: View {
         
         .fullScreenCover(isPresented: $isShowingEditorView, onDismiss: {
             refreshView.toggle()
+            
+            myPageViewModel.tempUserProfileImage = nil
+            myPageViewModel.tempUserNickname = ""
+            myPageViewModel.tempUserFavoriteLocation = .seoul
+            
+            Task {
+                myPageViewModel.user = await myPageViewModel.getUserInfo(userID: UserStore.shared.user.id)
+            }
         }) {
             UserInfoEditingView()
         }

@@ -369,7 +369,7 @@ extension TradeCreateView {
                             Task {
                                 await tradeViewModel.createTrade(category: category, itemCategory: tradeViewModel.selectedItemCategory, location: tradeViewModel.selectedLocation, title: title, content: content, myProduct: myProduct, wantProduct: wantProduct, images: selectedPhotosData)
                                 
-                                await tradeViewModel.reloadAllTrades()
+                                await tradeViewModel.reloadFilteredTrades(category: category)
                                 
                                 tradeViewModel.selectedLocation = .seoul
                                 tradeViewModel.selectedItemCategory = .digital

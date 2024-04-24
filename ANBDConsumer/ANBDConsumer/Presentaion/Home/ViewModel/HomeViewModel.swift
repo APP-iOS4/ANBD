@@ -16,14 +16,6 @@ final class HomeViewModel: ObservableObject {
     private let tradeUsecase: TradeUsecase = DefaultTradeUsecase()
     private let bannerUsecase: BannerUsecase = DefaultBannerUsecase()
     
-    /// path관련 변수들
-    @Published var homePath: NavigationPath = NavigationPath()
-    @Published var chatDetailTrade: Trade?
-    @Published var reportType: ReportType = .trade
-    @Published var reportedObjectID: String = ""
-    @Published var reportedChannelID: String?
-    
-    
     /// Home에서 보여주는 아이템들
     @Published var bannerItemList: [Banner] = []
     @Published var accuaArticle: Article?

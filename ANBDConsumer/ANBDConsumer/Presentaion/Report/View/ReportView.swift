@@ -31,12 +31,12 @@ struct ReportView: View {
                         RoundedRectangle(cornerRadius: 10)
                             .fill(.clear)
                             .overlay(RoundedRectangle(cornerRadius: 10).stroke(.gray400))
-                            
+                        
                         
                         TextEditor(text: $reportReason)
                             .foregroundStyle(.gray900)
                             .padding(13)
-                            
+                        
                         
                         if reportReason.isEmpty {
                             Text("신고 내용을 입력해주세요. (최대 200자)")
@@ -77,7 +77,7 @@ struct ReportView: View {
             if isShowingCustomAlert {
                 CustomAlertView(isShowingCustomAlert: $isShowingCustomAlert, viewType: .report) {
                     Task {
-                        try await reportViewModel.submitReport(reportType: reportViewType, reportReason: reportReason, reportedObjectID: reportedObjectID, reportChannelID: reportedChannelID)
+                        await reportViewModel.submitReport(reportType: reportViewType, reportReason: reportReason, reportedObjectID: reportedObjectID, reportChannelID: reportedChannelID)
                         dismiss()
                     }
                 }
@@ -87,9 +87,6 @@ struct ReportView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
         .toolbarRole(.editor)
-        .onAppear {
-            reportViewModel.loadUserInfo()
-        }
     }
 }
 

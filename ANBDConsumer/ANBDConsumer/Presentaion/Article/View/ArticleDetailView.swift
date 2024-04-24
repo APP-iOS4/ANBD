@@ -26,7 +26,6 @@ struct ArticleDetailView: View {
     @State private var isShowingCustomAlertComment: Bool = false
     @State private var isShowingCommentEditView: Bool = false
     
-    
     @State private var detailImage: Image = Image("DummyPuppy1")
     @State private var imageData: [Data] = []
     
@@ -170,11 +169,13 @@ struct ArticleDetailView: View {
                                         if comment.writerID == UserStore.shared.user.id {
                                             Button {
                                                 isShowingCommentEditView.toggle()
+                                                articleViewModel.comment = comment
                                             } label: {
                                                 Label("수정하기", systemImage: "square.and.pencil")
                                             }
                                             
                                             Button(role: .destructive) {
+                                                articleViewModel.comment = comment
                                                 isShowingCustomAlertComment.toggle()
                                             } label: {
                                                 Label("삭제하기", systemImage: "trash")
@@ -218,9 +219,8 @@ struct ArticleDetailView: View {
             } else if isShowingCustomAlertComment {
                 CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertComment, viewType: .commentDelete) {
                      Task {
-                         // MARK: - comment.id를 못 가져오는 중,,
-//                         await articleViewModel.deleteComment(articleID: self.article.id, commentID: self.articleViewModel.comment.id)
-                     await articleViewModel.loadArticle(article: article)
+                         await articleViewModel.deleteComment(articleID: article.id, commentID: articleViewModel.comment.id)
+                         await articleViewModel.loadArticle(article: article)
                      }
                 }
                 .zIndex(2)
@@ -270,7 +270,7 @@ struct ArticleDetailView: View {
                         Button(role: .destructive) {
                             Task {
                                 await articleViewModel.deleteArticle(article: article)
-                                await articleViewModel.reloadAllArticles()
+                                await articleViewModel.refreshSortedArticleList(category: article.category)
                             }
                             isShowingCustomAlertArticle.toggle()
                         } label: {
@@ -321,7 +321,7 @@ struct ArticleDetailView: View {
             ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
         }
         .fullScreenCover(isPresented: $isShowingCommentEditView) {
-            CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: articleViewModel.comment, isNewComment: true)
+            CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: articleViewModel.comment, isEditComment: false)
         }
         .navigationTitle("정보 공유")
         .navigationBarTitleDisplayMode(.inline)

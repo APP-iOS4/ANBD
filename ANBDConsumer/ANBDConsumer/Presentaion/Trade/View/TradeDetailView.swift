@@ -133,7 +133,7 @@ struct TradeDetailView: View {
                     Task {
                         print("삭제!")
                         await tradeViewModel.deleteTrade(trade: tradeViewModel.trade)
-                        await tradeViewModel.reloadAllTrades()
+                        await tradeViewModel.reloadFilteredTrades(category: trade.category)
                         self.dismiss()
                     }
                 }
@@ -148,18 +148,6 @@ struct TradeDetailView: View {
             }
         }
         .toolbar(.hidden, for: .tabBar)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    isShowingConfirm.toggle()
-                }) {
-                    Image(systemName: "ellipsis")
-                        .font(.system(size: 13))
-                        .rotationEffect(.degrees(90))
-                        .foregroundStyle(.gray900)
-                }
-            }
-        }
         .fullScreenCover(isPresented: $isShowingCreat) {
             TradeCreateView(isShowingCreate: $isShowingCreat, isNewProduct: false, trade: tradeViewModel.trade)
         }
@@ -169,24 +157,36 @@ struct TradeDetailView: View {
         .navigationTitle("나눔 · 거래")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarRole(.editor)
-        .confirmationDialog("", isPresented: $isShowingConfirm) {
-            if let user = UserDefaultsClient.shared.userInfo {
-                if user.id == tradeViewModel.trade.writerID {
-                    Button("수정하기") {
-                        isShowingCreat.toggle()
-                        tradeViewModel.selectedLocation = tradeViewModel.trade.location
-                        tradeViewModel.selectedItemCategory = tradeViewModel.trade.itemCategory
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    if user.id != tradeViewModel.trade.writerID {
+                        Button(role: .destructive) {
+                            coordinator.reportType = .trade
+                            coordinator.reportedObjectID = trade.id
+                            coordinator.appendPath(.reportView)
+                        } label: {
+                            Label("신고하기", systemImage: "exclamationmark.bubble")
+                        }
+                    } else {
+                        Button {
+                            isShowingCreat.toggle()
+                            tradeViewModel.selectedLocation = tradeViewModel.trade.location
+                            tradeViewModel.selectedItemCategory = tradeViewModel.trade.itemCategory
+                        } label: {
+                            Label("수정하기", systemImage: "square.and.pencil")
+                        }
+                        Button(role: .destructive) {
+                            isShowingDeleteCustomAlert.toggle()
+                        } label: {
+                            Label("삭제하기", systemImage: "trash")
+                        }
                     }
-                    
-                    Button("삭제하기", role: .destructive) {
-                        isShowingDeleteCustomAlert.toggle()
-                    }
-                } else {
-                    Button("신고하기", role: .destructive) {
-                        coordinator.reportType = .trade
-                        coordinator.reportedObjectID = trade.id
-                        coordinator.appendPath(.reportView)
-                    }
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 13))
+                        .rotationEffect(.degrees(90))
+                        .foregroundStyle(.gray900)
                 }
             }
         }
@@ -239,7 +239,6 @@ extension TradeDetailView {
             .padding(.leading, -10)
             
             Spacer()
-            
             
             if user.id != tradeViewModel.trade.writerID {
                 RoundedRectangle(cornerRadius: 14)

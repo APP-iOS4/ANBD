@@ -202,7 +202,6 @@ extension AuthenticationViewModel {
         
         return !nickname.isEmpty && nickname.isValidateNickname()
     }
-    
 }
 
 // MARK: Sign Up Method
@@ -256,29 +255,33 @@ extension AuthenticationViewModel {
         showingTermsView.toggle()
     }
     
-    func signIn() async throws {
+    func signIn() async -> Bool {
         do {
             let signedInUser = try await authUsecase.signIn(email: loginEmailString,
                                                             password: loginPasswordString)
             
             UserDefaultsClient.shared.userID = signedInUser.id
             UserStore.shared.user = signedInUser
+            
+            return true
         } catch {
-            print("\(error.localizedDescription)")
+            print("Error sign in: \(error.localizedDescription)")
+            
+            return false
         }
     }
     
-    func signOut(completion: @escaping () -> Void) async throws {
+    func signOut(completion: @escaping () -> Void) async {
         do {
             try await authUsecase.signOut()
             
             completion()
         } catch {
-            print("\(error.localizedDescription)")
+            print("Error sign out: \(error.localizedDescription)")
         }
     }
     
-    func signUp() async throws {
+    func signUp() async {
         do {
             let signedUpUser = try await authUsecase.signUp(email: signUpEmailString,
                                                             password: signUpPasswordString,
@@ -292,7 +295,7 @@ extension AuthenticationViewModel {
             UserDefaultsClient.shared.userID = signedUpUser.id
             UserStore.shared.user = signedUpUser
         } catch {
-            print("\(error.localizedDescription)")
+            print("Error sign up: \(error.localizedDescription)")
         }
     }
     
@@ -316,14 +319,14 @@ extension AuthenticationViewModel {
         }
     }
     
-    func withdrawal(completion: @escaping () -> Void) async throws {
+    func withdrawal(completion: @escaping () -> Void) async {
         do {
-            try await signOut(completion: { })
+            await signOut(completion: { })
             try await authUsecase.withdrawal(userID: UserStore.shared.user.id)
             
             completion()
         } catch {
-            print("\(error.localizedDescription)")
+            print("Error withdrawal: \(error.localizedDescription)")
         }
     }
     

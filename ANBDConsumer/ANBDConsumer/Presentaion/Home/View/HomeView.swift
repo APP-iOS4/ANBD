@@ -119,15 +119,16 @@ struct HomeView: View {
             sectionHeaderView(.accua)
             
             if let article = homeViewModel.accuaArticle {
-                ArticleCellView(article: article)
-                    .frame(width: geo.size.width * 0.9, height: 130)
-                    .onTapGesture {
-                        Task {
-                            coordinator.article = article
-                            await articleViewModel.loadArticle(article: article)
-                            coordinator.homePath.append(Page.articleDeatilView)
-                        }
+                Button(action: {
+                    Task {
+                        coordinator.article = article
+                        await articleViewModel.loadArticle(article: article)
+                        coordinator.homePath.append(Page.articleDeatilView)
                     }
+                }, label: {
+                    ArticleCellView(article: article)
+                        .frame(width: geo.size.width * 0.9, height: 130)
+                })
             }
         }
         .onAppear {
@@ -237,6 +238,14 @@ struct HomeView: View {
                 Button(action: {
                     coordinator.category = category
                     coordinator.homePath.append(Page.articleListView)
+                    Task {
+                        switch coordinator.category {
+                        case .accua, .dasi:
+                            await articleViewModel.refreshSortedArticleList(category: category)
+                        case .nanua, .baccua:
+                            await tradeViewModel.reloadFilteredTrades(category: category)
+                        }
+                    }
                 }, label: {
                     HStack {
                         Text("더보기")

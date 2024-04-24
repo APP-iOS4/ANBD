@@ -63,7 +63,7 @@ struct CategoryBottomSheet: View {
                 Button(action: {
                     tradeViewModel.selectedItemCategories = tmpSelectedItemCategories
                     Task {
-                        await tradeViewModel.loadFilteredTrades(category:category)
+                        await tradeViewModel.reloadFilteredTrades(category:category)
                         isShowingCategory.toggle()
                     }
                 }, label: {

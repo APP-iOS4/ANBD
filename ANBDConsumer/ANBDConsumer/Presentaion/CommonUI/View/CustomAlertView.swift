@@ -35,7 +35,7 @@ struct CustomAlertView: View {
                         .foregroundStyle(.gray900)
                         .padding(.bottom, 15)
                     
-                    if viewType == .duplicatedEmail || viewType == .duplicatedNickname {
+                    if viewType == .duplicatedEmail || viewType == .duplicatedNickname || viewType == .signInFail {
                         Button(action: {
                             completionHandler()
                             isShowingCustomAlert.toggle()
@@ -102,6 +102,7 @@ extension CustomAlertView {
         case withdrawal
         case duplicatedEmail
         case duplicatedNickname
+        case signInFail
         //trade
         case changeState
         case tradeDelete
@@ -110,6 +111,7 @@ extension CustomAlertView {
         case commentDelete
         case writingCancel
         case report
+        case commentEdit
     }
     
     private var title: String {
@@ -124,6 +126,8 @@ extension CustomAlertView {
             return "중복된 이메일"
         case .duplicatedNickname:
             return "중복된 닉네임"
+        case .signInFail:
+            return "로그인 실패"
         case .changeState:
             return "거래 상태 변경"
         case .tradeDelete:
@@ -138,6 +142,8 @@ extension CustomAlertView {
             return "작성 취소"
         case .report:
             return "신고"
+        case .commentEdit:
+            return "수정 취소"
         }
     }
     
@@ -153,6 +159,8 @@ extension CustomAlertView {
             return "이미 사용중인 이메일 입니다."
         case .duplicatedNickname:
             return "이미 사용중인 닉네임 입니다."
+        case .signInFail:
+            return "이메일 또는 비밀번호를 확인하세요."
         case .changeState:
             return "거래 상태를 변경하시겠습니까?"
         case .tradeDelete:
@@ -167,6 +175,8 @@ extension CustomAlertView {
             return "작성하던 내용을 삭제하고\n돌아가시겠습니까?"
         case .report:
             return "해당 내역을 신고하시겠습니까?"
+        case .commentEdit:
+            return "댓글 수정을 취소하시겠습니까?\n취소한 수정사항은 복구되지 않습니다."
         }
     }
     
@@ -182,6 +192,8 @@ extension CustomAlertView {
             return "확인"
         case .duplicatedNickname:
             return "확인"
+        case .signInFail:
+            return "확인"
         case .changeState:
             return "변경하기"
         case .tradeDelete, .writingCancel:
@@ -194,6 +206,8 @@ extension CustomAlertView {
             return "삭제하기"
         case .report:
             return "신고하기"
+        case .commentEdit:
+            return "취소하기"
         }
     }
     
@@ -209,6 +223,8 @@ extension CustomAlertView {
             return .accent
         case .duplicatedNickname:
             return .accent
+        case .signInFail:
+            return .accent
         case .changeState:
             return .accent
         case .tradeDelete, .writingCancel:
@@ -220,6 +236,8 @@ extension CustomAlertView {
         case .commentDelete:
             return .heartRed
         case .report:
+            return .heartRed
+        case .commentEdit:
             return .heartRed
         }
     }
@@ -236,6 +254,8 @@ extension CustomAlertView {
             return .medium
         case .duplicatedNickname:
             return .medium
+        case .signInFail:
+            return .medium
         case .changeState:
             return .medium
         case .tradeDelete, .writingCancel:
@@ -247,6 +267,8 @@ extension CustomAlertView {
         case .commentDelete:
             return .medium
         case .report:
+            return .medium
+        case .commentEdit:
             return .medium
         }
     }

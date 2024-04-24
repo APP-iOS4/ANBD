@@ -13,17 +13,13 @@ final class ArticleViewModel: ObservableObject {
     
     private let articleUseCase: ArticleUsecase = DefaultArticleUsecase()
     private let commentUseCase: CommentUsecase = DefaultCommentUsecase()
-    
     private let storageManager = StorageManager.shared
     
-    @Published var articlePath: NavigationPath = NavigationPath()
-    
     @Published private(set) var articles: [Article] = []
-    @Published private(set) var filteredArticles: [Article] = []
-    
+    @Published var filteredArticles: [Article] = []
     @Published var article: Article = Article(id: "",
                                               writerID: "",
-                                              writerNickname: "",
+                                              writerNickname: "DefaultNickname",
                                               createdAt: Date(),
                                               category: .accua,
                                               title: "",
@@ -34,60 +30,47 @@ final class ArticleViewModel: ObservableObject {
                                               commentCount: 0)
     
     @Published private(set) var comments: [Comment] = []
-    
     @Published var comment: Comment = Comment(id: "",
                                               articleID: "",
                                               writerID: "",
-                                              writerNickname: "",
+                                              writerNickname: "DefaultNickname",
                                               writerProfileImageURL: "",
                                               createdAt: Date(),
                                               content: "")
 
     @Published var commentText: String = ""
-    
     @Published var sortOption: ArticleOrder = .latest
-    
     @Published private(set) var isLiked: Bool = false
     @Published private var isLikedDictionary: [String: Bool] = [:]
     
-    init() {
-        
+    func getOneArticle(article: Article) {
+        self.article = article
     }
     
-    func filteringArticles(category: ANBDCategory) {
-        filteredArticles = articles.filter({ $0.category == category })
-    }
-    
-//    func getOneArticle(article: Article) {
-//        self.article = article
-//    }
+    //MARK: - ARTICLE
     
     @MainActor
-    func loadAllArticles() async {
+    func refreshSortedArticleList(category: ANBDCategory) async {
         do {
-            try await self.articles.append(contentsOf: articleUseCase.loadArticleList(limit: 10))
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
-    
-    func reloadAllArticles() async {
-        do {
-            self.articles = try await articleUseCase.refreshAllArticleList(limit: 10)
+            self.filteredArticles = try await articleUseCase.refreshSortedArticleList(category: category, by: self.sortOption, limit: 8)
         } catch {
             print(error.localizedDescription)
         }
     }
     
     @MainActor
-    func refreshSortedArticleList(category: ANBDCategory, by order: ArticleOrder, limit: Int) async {
+    func loadMoreArticles(category: ANBDCategory) async {
         do {
-            filteredArticles.removeAll()
+            var newArticles: [Article] = []
+            newArticles = try await articleUseCase.loadArticleList(category: category, by: self.sortOption, limit: 5)
             
-            let newArticles = try await articleUseCase.refreshSortedArticleList(category: category, by: order, limit: limit)
-            filteredArticles.append(contentsOf: newArticles)
-            
-            print(filteredArticles)
+            for item in newArticles {
+                if filteredArticles.contains(item) {
+                    print("end")
+                } else {
+                    filteredArticles.append(contentsOf: newArticles)
+                }
+            }
         } catch {
             print(error.localizedDescription)
         }
@@ -180,16 +163,14 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
+    //MARK: - LIKE
+    
     func likeArticle(articleID: String) async {
         do {
             try await articleUseCase.likeArticle(articleID: articleID)
         } catch {
             print(error.localizedDescription)
         }
-    }
-    
-    func resetQuery() {
-        articleUseCase.resetQuery()
     }
     
     func toggleLikeArticle(articleID: String) async {
@@ -237,6 +218,7 @@ final class ArticleViewModel: ObservableObject {
     }
     
     // MARK: - Comment
+    
     func writeComment(articleID: String, commentText: String) async {
         
         let user = UserStore.shared.user
@@ -275,13 +257,9 @@ final class ArticleViewModel: ObservableObject {
     func deleteComment(articleID: String, commentID: String) async {
         do {
             try await commentUseCase.deleteComment(articleID: articleID, commentID: commentID)
-            print("articleID: \(article.id), \(articleID)")
-            print("commentID: \(comment.id), \(commentID)")
         } catch {
             print(error.localizedDescription)
             print("댓글 삭제 실패")
-            print("articleID: \(article.id), \(articleID)")
-            print("commentID: \(comment.id), \(commentID)")
         }
     }
     

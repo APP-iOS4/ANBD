@@ -270,7 +270,7 @@ struct ArticleDetailView: View {
                         Button(role: .destructive) {
                             Task {
                                 await articleViewModel.deleteArticle(article: article)
-                                await articleViewModel.reloadAllArticles()
+                                await articleViewModel.refreshSortedArticleList(category: article.category)
                             }
                             isShowingCustomAlertArticle.toggle()
                         } label: {

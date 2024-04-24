@@ -244,17 +244,13 @@ struct HomeView: View {
                 .onTapGesture {
                     Task {
                         coordinator.category = category
-                        
-                        switch category {
-                        case .accua, .dasi:
-                            await articleViewModel.loadAllArticles()
-                            articleViewModel.filteringArticles(category: category)
-                        case .nanua, .baccua:
-                            await tradeViewModel.loadAllTrades()
-                            await tradeViewModel.loadFilteredTrades(category: category)
-                        }
-                        
                         coordinator.homePath.append(Page.articleListView)
+                        switch coordinator.category {
+                        case .accua, .dasi:
+                            await articleViewModel.refreshSortedArticleList(category: category)
+                        case .nanua, .baccua:
+                            await tradeViewModel.reloadFilteredTrades(category: category)
+                        }
                     }
                 }
             }

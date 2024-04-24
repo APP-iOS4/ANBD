@@ -63,7 +63,7 @@ struct LocationBottomSheet: View {
                 Button(action: {
                     tradeViewModel.selectedLocations = tmpSelectedLocation
                     Task {
-                        await tradeViewModel.loadFilteredTrades(category:category)
+                        await tradeViewModel.reloadFilteredTrades(category:category)
                         isShowingLocation.toggle()
                     }
                     

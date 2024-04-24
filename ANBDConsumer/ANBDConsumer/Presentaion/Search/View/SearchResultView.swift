@@ -22,10 +22,10 @@ struct SearchResultView: View {
                 .onChange(of: category) {
                     if category == .accua || category == .dasi {
                         Task {
-                            articleViewModel.filteringArticles(category: category)
+                            //articleViewModel.filteringArticles(category: category)
                         }
                     } else {
-                        tradeViewModel.filteringTrades(category: category)
+                        //tradeViewModel.filteringTrades(category: category)
                     }
                 }
         } else {
@@ -33,10 +33,10 @@ struct SearchResultView: View {
                 .onChange(of: category) { category in
                     if category == .accua || category == .dasi {
                         Task {
-                            articleViewModel.filteringArticles(category: category)
+                            //articleViewModel.filteringArticles(category: category)
                         }
                     } else {
-                        tradeViewModel.filteringTrades(category: category)
+                        //tradeViewModel.filteringTrades(category: category)
                     }
                 }
         }
@@ -69,10 +69,10 @@ struct SearchResultView: View {
                 switch category {
                 case .accua, .dasi:
                     await articleViewModel.searchArticle(keyword: searchText)
-                    articleViewModel.filteringArticles(category: category)
+                    //articleViewModel.filteringArticles(category: category)
                 case .nanua, .baccua:
                     await tradeViewModel.searchTrade(keyword: searchText)
-                    await tradeViewModel.loadFilteredTrades(category: category)
+                    //await tradeViewModel.loadFilteredTrades(category: category)
                 }
             }
         }

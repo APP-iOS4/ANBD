@@ -57,7 +57,6 @@ final class Coordinator: ObservableObject {
         case .articleListView:
             ArticleListView(category: category, isArticle: (category == .accua || category == .dasi), isFromHomeView: true)
             
-            // TODO: 수정 필요
         case .articleDeatilView:
             if let article = article {
                 ArticleDetailView(article: article)

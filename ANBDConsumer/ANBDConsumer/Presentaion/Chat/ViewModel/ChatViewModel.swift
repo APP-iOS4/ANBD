@@ -140,14 +140,14 @@ final class ChatViewModel: ObservableObject {
         }
     }
     
-    func setOtherUserImage(channel: Channel) async -> String? {
+    func setOtherUserImage(channel: Channel) async -> User? {
         
         guard let user = user else {
             return nil
         }
         do {
             let otherUser = try await chatUsecase.getOtherUser(channel: channel, userID: user.id)
-            return otherUser.profileImage
+            return otherUser
         } catch {
             print("error: \(error)")
             return nil

@@ -26,6 +26,7 @@ struct BannerEditView: View {
                                 Text("썸네일 이미지")
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
+                                Spacer()
                                 if let imageUrl = URL(string: banner.thumbnailImageURLString) {
                                     CachedAsyncImage(url: imageUrl) { phase in
                                         switch phase {
@@ -43,27 +44,32 @@ struct BannerEditView: View {
                                         }
                                     }
                                 }
+                                Spacer()
                             }
-                            .frame(minWidth: 0, maxWidth: 250, alignment: .leading)
+                            .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
+                            .padding()
                             Divider()
-                            Spacer()
                             VStack(alignment: .leading) {
                                 Text("배너 ID")
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
+                                Spacer()
                                 Text("\(banner.id)")
+                                Spacer()
                             }
-                            .frame(minWidth: 0, maxWidth: 250, alignment: .leading)
+                            .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                             .padding()
                             Divider()
-                            Spacer()
                             VStack(alignment: .leading) {
                                 Text("생성일자")
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
+                                Spacer()
                                 Text("\(dateFormatter(banner.createdAt))")
+                                Spacer()
                             }
-                            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                            .padding()
+                            .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                             Spacer()
                         }
                     }

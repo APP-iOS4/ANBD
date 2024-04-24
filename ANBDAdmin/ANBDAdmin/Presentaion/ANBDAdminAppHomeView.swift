@@ -39,9 +39,6 @@ struct ANBDAdminAppHomeView: View {
                 } label: {
                     Text("게시판 목록").bold()
                 }
-                NavigationLink(destination: EmptyView().font(.title3)) { // 임시 뷰
-                    Text("댓글 목록").bold()
-                }
                 NavigationLink(destination: ReportListView().font(.title3)) {
                     Text("신고함").bold()
                 }
@@ -49,6 +46,7 @@ struct ANBDAdminAppHomeView: View {
                     Text("배너 관리").bold()
                 }
                 Spacer()
+                Text("로그인 유저: \(authenticationViewModel.user.nickname)")
                 Button(action: {
                     isShowingSignOutAlertView.toggle()
                 }, label: {

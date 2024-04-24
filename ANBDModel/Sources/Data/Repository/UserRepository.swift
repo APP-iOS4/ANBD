@@ -31,8 +31,13 @@ struct DefaultUserRepository: UserRepository {
         return userInfo
     }
     
-    func readUserInfoList() async throws -> [User] {
-        let userInfoList = try await userDataSource.readUserInfoList()
+    func readUserInfoList(limit: Int) async throws -> [User] {
+        let userInfoList = try await userDataSource.readUserInfoList(limit: limit)
+        return userInfoList
+    }
+    
+    func refreshAll(limit: Int) async throws -> [User] {
+        let userInfoList = try await userDataSource.refreshAll(limit: limit)
         return userInfoList
     }
     

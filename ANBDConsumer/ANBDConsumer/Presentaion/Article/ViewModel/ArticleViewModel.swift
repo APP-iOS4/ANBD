@@ -13,7 +13,6 @@ final class ArticleViewModel: ObservableObject {
     
     private let articleUseCase: ArticleUsecase = DefaultArticleUsecase()
     private let commentUseCase: CommentUsecase = DefaultCommentUsecase()
-    private let user = UserStore.shared.user
     
     private let storageManager = StorageManager.shared
     
@@ -24,7 +23,7 @@ final class ArticleViewModel: ObservableObject {
     
     @Published var article: Article = Article(id: "",
                                               writerID: "",
-                                              writerNickname: "",
+                                              writerNickname: "ㅁㄴㅇㅁㄴㅇ",
                                               createdAt: Date(),
                                               category: .accua,
                                               title: "",
@@ -39,7 +38,7 @@ final class ArticleViewModel: ObservableObject {
     @Published var comment: Comment = Comment(id: "",
                                               articleID: "",
                                               writerID: "",
-                                              writerNickname: "",
+                                              writerNickname: "ㅁㄴㅇㅁㄴㅇ",
                                               writerProfileImageURL: "",
                                               createdAt: Date(),
                                               content: "")
@@ -117,6 +116,8 @@ final class ArticleViewModel: ObservableObject {
     
     func writeArticle(category: ANBDCategory, title: String, content: String, imageDatas: [Data]) async {
 
+        let user = UserStore.shared.user
+        
         let newArticle = Article(writerID: user.id,
                                  writerNickname: user.nickname,
                                  category: category,
@@ -200,27 +201,26 @@ final class ArticleViewModel: ObservableObject {
     }
     
     func toggleLikeArticle(articleID: String) async {
-        if let isLiked = isLikedDictionary[articleID] {
-            isLikedDictionary[articleID] = !isLiked
-        } else {
+        if isLikedDictionary[articleID] != nil {
             isLikedDictionary[articleID] = false
+        } else {
+            isLikedDictionary[articleID] = true
         }
         
         do {
-            let isLiked = isLikedDictionary[articleID] ?? false
-            
             try await articleUseCase.likeArticle(articleID: articleID)
             
             let updatedArticle = try await articleUseCase.loadArticle(articleID: articleID)
             article.likeCount = updatedArticle.likeCount
-            
+            isLiked.toggle()
+            print("좋아요: \(isLiked)")
         } catch {
             print("좋아요 실패요.... \(error.localizedDescription)")
         }
     }
     
     func isArticleLiked(articleID: String) -> Bool {
-        return isLikedDictionary[articleID] ?? false
+        return isLikedDictionary[articleID] ?? true
     }
     
     func updateLikeCount(articleID: String, increment: Bool) async {
@@ -246,6 +246,9 @@ final class ArticleViewModel: ObservableObject {
     
     // MARK: - Comment
     func writeComment(articleID: String, commentText: String) async {
+        
+        let user = UserStore.shared.user
+        
         let newComment = Comment(articleID: articleID,
                                  writerID: user.id,
                                  writerNickname: user.nickname,
@@ -264,6 +267,7 @@ final class ArticleViewModel: ObservableObject {
         do {
             let loadedComment = try await commentUseCase.loadCommentList(articleID: articleID)
             self.comments = loadedComment
+//            print("loadedComment: \(loadedComment)")
         } catch {
             print(error.localizedDescription)
         }
@@ -280,13 +284,9 @@ final class ArticleViewModel: ObservableObject {
     func deleteComment(articleID: String, commentID: String) async {
         do {
             try await commentUseCase.deleteComment(articleID: articleID, commentID: commentID)
-            print("articleID: \(article.id), \(articleID)")
-            print("commentID: \(comment.id), \(commentID)")
         } catch {
             print(error.localizedDescription)
             print("댓글 삭제 실패")
-            print("articleID: \(article.id), \(articleID)")
-            print("commentID: \(comment.id), \(commentID)")
         }
     }
     

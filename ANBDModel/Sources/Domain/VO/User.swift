@@ -57,7 +57,7 @@ public struct User: Codable, Identifiable, Hashable {
     public init(
         id: String,
         nickname: String,
-        profileImage: String = "https://firebasestorage.googleapis.com/v0/b/anbd-project3.appspot.com/o/profileImage%2F4971976.png?alt=media&token=dd1cec4c-4826-4ddd-9a83-d07aaf4259a2",
+        profileImage: String = "https://firebasestorage.googleapis.com/v0/b/anbd-project3.appspot.com/o/Profile%2FDefaultUserProfileImage.png?alt=media&token=54ef0329-7618-4773-9313-a6c581b463ee",
         email: String,
         favoriteLocation: Location,
         userLevel: UserLevel = .consumer,

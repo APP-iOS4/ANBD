@@ -119,15 +119,16 @@ struct HomeView: View {
             sectionHeaderView(.accua)
             
             if let article = homeViewModel.accuaArticle {
-                ArticleCellView(article: article)
-                    .frame(width: geo.size.width * 0.9, height: 130)
-                    .onTapGesture {
-                        Task {
-                            coordinator.article = article
-                            await articleViewModel.loadArticle(article: article)
-                            coordinator.homePath.append(Page.articleDeatilView)
-                        }
+                Button(action: {
+                    Task {
+                        coordinator.article = article
+                        await articleViewModel.loadArticle(article: article)
+                        coordinator.homePath.append(Page.articleDeatilView)
                     }
+                }, label: {
+                    ArticleCellView(article: article)
+                        .frame(width: geo.size.width * 0.9, height: 130)
+                })
             }
         }
         .onAppear {

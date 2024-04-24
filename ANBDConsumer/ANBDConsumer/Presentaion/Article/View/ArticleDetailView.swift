@@ -12,10 +12,10 @@ struct ArticleDetailView: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     @EnvironmentObject private var myPageViewMode: MyPageViewModel
     @EnvironmentObject private var coordinator: Coordinator
-
+    
     private var article: Article
     private let user = UserStore.shared.user
-
+    
     @State private var isShowingComment: Bool = false
     @State private var commentText: String = ""
     
@@ -29,11 +29,8 @@ struct ArticleDetailView: View {
     @State private var detailImage: Image = Image("DummyPuppy1")
     @State private var imageData: [Data] = []
     
-    /*
-     User 네비 관련 주석
-     @State private var writerUser: User?
-     @State private var commentUser: User?
-     */
+    @State private var writerUser: User?
+    //    @State private var commentUser: User?
     
     @Environment(\.dismiss) private var dismiss
     
@@ -49,17 +46,21 @@ struct ArticleDetailView: View {
                     HStack {
                         VStack(alignment: .leading) {
                             HStack {
-                                /*
-                                 User 네비 관련 주석
-                                 NavigationLink(value: writerUser) {
-                                 Image(writerUser?.profileImage ?? "DummyImage1")
-                                 Image(.defaultUserProfile)
-                                 .resizable()
-                                 .frame(width: 40, height: 40)
-                                 .scaledToFill()
-                                 .clipShape(Circle())
-                                 }
-                                 */
+                                Image(.defaultUserProfile)
+                                    .resizable()
+                                    .frame(width: 40, height: 40)
+                                    .scaledToFill()
+                                    .clipShape(Circle())
+                                    .onTapGesture {
+                                        coordinator.user = writerUser
+                                        switch coordinator.selectedTab {
+                                        case .home, .article, .trade, .chat:
+                                            coordinator.appendPath(.userPageView)
+                                        case .mypage:
+                                            coordinator.pop()
+                                        }
+                                    }
+                                
                                 VStack(alignment: .leading) {
                                     Text("\(articleViewModel.article.writerNickname)")
                                         .font(ANBDFont.SubTitle3)
@@ -99,10 +100,10 @@ struct ArticleDetailView: View {
                                         await articleViewModel.updateLikeCount(articleID: articleViewModel.article.id, increment: articleViewModel.isArticleLiked(articleID: articleViewModel.article.id))
                                     }
                                 } label: {
-                                    Image(systemName: articleViewModel.isArticleLiked(articleID: articleViewModel.article.id) ? "hand.thumbsup.fill" : "hand.thumbsup")
+                                    Image(systemName: articleViewModel.isLiked ? "hand.thumbsup" : "hand.thumbsup.fill")
                                         .resizable()
                                         .frame(width: 16, height: 16)
-                                        .foregroundStyle(articleViewModel.isArticleLiked(articleID: article.id) ? .accent : .gray900)
+                                        .foregroundStyle(articleViewModel.isLiked ? .gray900 : .accent)
                                         .padding(.leading, 10)
                                 }
                                 Text("\(articleViewModel.article.likeCount)")
@@ -136,15 +137,22 @@ struct ArticleDetailView: View {
                             
                             ForEach(articleViewModel.comments) { comment in
                                 HStack(alignment: .top) {
+                                    Image(.defaultUserProfile)
+                                        .resizable()
+                                        .frame(width: 40, height: 40)
+                                        .scaledToFill()
+                                        .clipShape(Circle())
                                     /*
-                                     User 네비 관련 주석
-                                     NavigationLink(value: commentUser) {
-                                     Image(writerUser?.profileImage ?? "DummyImage1")
-                                     Image(.defaultUserProfile)
-                                     .resizable()
-                                     .frame(width: 40, height: 40)
-                                     .scaledToFill()
-                                     .clipShape(Circle())
+                                     댓글 프로필 이동 관련
+                                     .onTapGesture {
+                                     articleViewModel.comment = comment
+                                     coordinator.user = commentUser
+                                     switch coordinator.selectedTab {
+                                     case .home, .article, .trade, .chat:
+                                     coordinator.appendPath(.userPageView)
+                                     case .mypage:
+                                     coordinator.pop()
+                                     }
                                      }
                                      */
                                     VStack(alignment: .leading) {
@@ -165,7 +173,6 @@ struct ArticleDetailView: View {
                                     Spacer()
                                     
                                     Menu {
-                                        
                                         if comment.writerID == UserStore.shared.user.id {
                                             Button {
                                                 isShowingCommentEditView.toggle()
@@ -184,7 +191,6 @@ struct ArticleDetailView: View {
                                             Button(role: .destructive) {
                                                 // TODO: 댓글 신고
                                                 coordinator.reportType = .comment
-                                                
                                             } label: {
                                                 Label("신고하기", systemImage: "exclamationmark.bubble")
                                             }
@@ -218,10 +224,10 @@ struct ArticleDetailView: View {
                 
             } else if isShowingCustomAlertComment {
                 CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertComment, viewType: .commentDelete) {
-                     Task {
-                         await articleViewModel.deleteComment(articleID: article.id, commentID: articleViewModel.comment.id)
-                         await articleViewModel.loadArticle(article: article)
-                     }
+                    Task {
+                        await articleViewModel.deleteComment(articleID: article.id, commentID: articleViewModel.comment.id)
+                        await articleViewModel.loadArticle(article: article)
+                    }
                 }
                 .zIndex(2)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -294,10 +300,10 @@ struct ArticleDetailView: View {
             }
         }
         .onAppear {
-            // articleViewModel.getOneArticle(article: article)
+            articleViewModel.getOneArticle(article: article)
             Task {
-                //                writerUser = await myPageViewMode.getUserInfo(userID: article.writerID)
-                //                commentUser = await myPageViewMode.getUserInfo(userID: comment.writerID)
+                writerUser = await myPageViewMode.getUserInfo(userID: article.writerID)
+                // commentUser = await myPageViewMode.getUserInfo(userID: articleViewModel.comment.writerID)
                 
                 imageData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
                 await articleViewModel.loadCommentList(articleID: article.id)
@@ -306,17 +312,6 @@ struct ArticleDetailView: View {
         .fullScreenCover(isPresented: $isShowingCreateView) {
             ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, isNewArticle: false, article: article)
         }
-        /*
-         수정하고 완료했을 때 로드시키고 싶었는데 실패해서 일단 주석해둠 !
-         .fullScreenCover(isPresented: $isShowingCreateView, onDismiss: {
-         Task {
-         await articleViewModel.loadArticle(article: article)
-         imageData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
-         }
-         }) {
-         ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, isNewArticle: false, article: article)
-         }
-         */
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
             ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
         }

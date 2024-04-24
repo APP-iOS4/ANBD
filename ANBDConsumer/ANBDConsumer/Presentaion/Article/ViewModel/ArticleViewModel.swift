@@ -15,11 +15,12 @@ final class ArticleViewModel: ObservableObject {
     private let commentUseCase: CommentUsecase = DefaultCommentUsecase()
     private let storageManager = StorageManager.shared
     
+    @Published var sortOption: ArticleOrder = .latest
     @Published private(set) var articles: [Article] = []
     @Published var filteredArticles: [Article] = []
     @Published var article: Article = Article(id: "",
                                               writerID: "",
-                                              writerNickname: "DefaultNickname",
+                                              writerNickname: "",
                                               createdAt: Date(),
                                               category: .accua,
                                               title: "",
@@ -33,13 +34,13 @@ final class ArticleViewModel: ObservableObject {
     @Published var comment: Comment = Comment(id: "",
                                               articleID: "",
                                               writerID: "",
-                                              writerNickname: "DefaultNickname",
+                                              writerNickname: "",
                                               writerProfileImageURL: "",
                                               createdAt: Date(),
                                               content: "")
 
     @Published var commentText: String = ""
-    @Published var sortOption: ArticleOrder = .latest
+    
     @Published private(set) var isLiked: Bool = false
     @Published private var isLikedDictionary: [String: Bool] = [:]
     
@@ -56,7 +57,7 @@ final class ArticleViewModel: ObservableObject {
     @MainActor
     func refreshSortedArticleList(category: ANBDCategory) async {
         do {
-            self.filteredArticles = try await articleUseCase.refreshSortedArticleList(category: category, by: self.sortOption, limit: 8)
+            self.filteredArticles = try await articleUseCase.refreshSortedArticleList(category: category, by: self.sortOption, limit: 10)
         } catch {
             print(error.localizedDescription)
         }
@@ -66,7 +67,7 @@ final class ArticleViewModel: ObservableObject {
     func loadMoreArticles(category: ANBDCategory) async {
         do {
             var newArticles: [Article] = []
-            newArticles = try await articleUseCase.loadArticleList(category: category, by: self.sortOption, limit: 5)
+            newArticles = try await articleUseCase.loadArticleList(category: category, by: self.sortOption, limit: 10)
             
             for item in newArticles {
                 if filteredArticles.contains(item) {
@@ -127,11 +128,12 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
-    func updateArticle(/*category: ANBDCategory, title: String, content: String*/article: Article, imageDatas: [Data]) async {
+    @MainActor
+    func updateArticle(category: ANBDCategory, title: String, content: String, imageDatas: [Data]) async {
         
-        //        self.article.category = category
-        //        self.article.title = title
-        //        self.article.content = content
+        self.article.category = category
+        self.article.title = title
+        self.article.content = content
         
         //이미지 리사이징
         var newImages: [Data] = []
@@ -141,8 +143,8 @@ final class ArticleViewModel: ObservableObject {
         }
         
         do {
-            try await articleUseCase.updateArticle(article: article, imageDatas: newImages)
-            //            article = try await articleUseCase.loadArticle(articleID: article.id)
+            try await articleUseCase.updateArticle(article: self.article, imageDatas: newImages)
+            article = try await articleUseCase.loadArticle(articleID: article.id)
         } catch {
             print(error.localizedDescription)
         }
@@ -167,6 +169,17 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
+    func getSortOptionLabel() -> String {
+        switch sortOption {
+        case .latest:
+            return "최신순"
+        case .mostLike:
+            return "좋아요순"
+        case .mostComment:
+            return "댓글순"
+        }
+    }
+    
     //MARK: - LIKE
     
     func likeArticle(articleID: String) async {
@@ -179,9 +192,9 @@ final class ArticleViewModel: ObservableObject {
     
     func toggleLikeArticle(articleID: String) async {
         if isLikedDictionary[articleID] != nil {
-            isLikedDictionary[articleID] = false
-        } else {
             isLikedDictionary[articleID] = true
+        } else {
+            isLikedDictionary[articleID] = false
         }
         
         do {
@@ -197,7 +210,8 @@ final class ArticleViewModel: ObservableObject {
     }
     
     func isArticleLiked(articleID: String) -> Bool {
-        return isLikedDictionary[articleID] ?? true
+        return isLikedDictionary[articleID] ?? false
+        
     }
     
     func updateLikeCount(articleID: String, increment: Bool) async {
@@ -207,17 +221,6 @@ final class ArticleViewModel: ObservableObject {
             } else {
                 filteredArticles[index].likeCount -= 1
             }
-        }
-    }
-    
-    func getSortOptionLabel() -> String {
-        switch sortOption {
-        case .latest:
-            return "최신순"
-        case .mostLike:
-            return "좋아요순"
-        case .mostComment:
-            return "댓글순"
         }
     }
     
@@ -262,8 +265,7 @@ final class ArticleViewModel: ObservableObject {
         do {
             try await commentUseCase.deleteComment(articleID: articleID, commentID: commentID)
         } catch {
-            print(error.localizedDescription)
-            print("댓글 삭제 실패")
+            print("댓글 삭제 실패 - \(error.localizedDescription)")
         }
     }
     

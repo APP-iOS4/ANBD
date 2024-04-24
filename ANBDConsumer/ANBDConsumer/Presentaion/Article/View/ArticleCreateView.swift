@@ -11,7 +11,6 @@ import ANBDModel
 
 @MainActor
 struct ArticleCreateView: View {
-    
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     @Binding var isShowingCreateView: Bool
     
@@ -46,6 +45,7 @@ struct ArticleCreateView: View {
                                     if let data = try? await newItem.loadTransferable(type: Data.self) {
                                         selectedImageData.append(data)
                                     }
+                                    
                                     if selectedImageData.count > 5 {
                                         selectedImageData.removeLast()
                                     }
@@ -61,6 +61,7 @@ struct ArticleCreateView: View {
                                     if let data = try? await newItem.loadTransferable(type: Data.self) {
                                         selectedImageData.append(data)
                                     }
+                                    
                                     if selectedImageData.count > 5 {
                                         selectedImageData.removeLast()
                                     }
@@ -70,9 +71,10 @@ struct ArticleCreateView: View {
                         })
                 }
             }
+            
             if isShowingCustomAlert {
                 CustomAlertView(isShowingCustomAlert: $isShowingCustomAlert, viewType: .articleEdit) {
-                    dismiss()
+                    isShowingCreateView = false
                 }
                 .zIndex(1)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -80,13 +82,11 @@ struct ArticleCreateView: View {
         }
     }
     
-    //MARK: - articleCreate 서브뷰
     private var articleCreateView: some View {
         VStack {
             InstructionsView()
             VStack {
                 TextField("제목을 입력하세요", text: $title)
-                
                     .onAppear {
                         UITextField.appearance().clearButtonMode = .never
                         if !isNewArticle {
@@ -97,6 +97,7 @@ struct ArticleCreateView: View {
                     }
                     .font(ANBDFont.pretendardBold(24))
                     .padding(.leading, 20)
+                
                 Divider()
                     .padding(.horizontal, 20)
                 
@@ -108,6 +109,7 @@ struct ArticleCreateView: View {
                             .padding(.horizontal, 20)
                             .padding(.top , 8)
                     }
+                    
                     TextEditor(text: $content)
                         .scrollContentBackground(.hidden)
                         .font(ANBDFont.body1)
@@ -123,8 +125,7 @@ struct ArticleCreateView: View {
                 
                 ScrollView(.horizontal) {
                     HStack {
-                        ForEach(selectedImageData, id: \.self) {
-                            photoData in
+                        ForEach(selectedImageData, id: \.self) { photoData in
                             ZStack(alignment:.topTrailing) {
                                 if let image = UIImage(data: photoData) {
                                     Image(uiImage: image)
@@ -167,7 +168,8 @@ struct ArticleCreateView: View {
                     .foregroundStyle(.accent)
                 } else {
                     PhotosPicker(
-                        selection: $selectedItems, maxSelectionCount: 5-selectedImageData.count,
+                        selection: $selectedItems,
+                        maxSelectionCount: 5-selectedImageData.count,
                         matching: .images
                     ) {
                         Image(systemName: "photo")
@@ -198,11 +200,12 @@ struct ArticleCreateView: View {
                             await articleViewModel.refreshSortedArticleList(category: category)
                         } else {
                             if var article = article {
+                                
                                 article.title = self.title
                                 article.content = self.content
                                 article.category = self.category
                                 
-                                await articleViewModel.updateArticle(article: article, imageDatas: selectedImageData)
+                                await articleViewModel.updateArticle(category: category, title: title, content: content, imageDatas: selectedImageData)
                                 await articleViewModel.refreshSortedArticleList(category: category)
                                 await articleViewModel.loadArticle(article: article)
                             }
@@ -216,12 +219,15 @@ struct ArticleCreateView: View {
                 }
                 .disabled(title.isEmpty || content.isEmpty || selectedImageData.isEmpty)
             }
+            
             ToolbarItem(placement: .cancellationAction) {
                 Button {
                     if !isNewArticle {
                         if let article = article {
+                            
                             let isTitleChanged = title != article.title
                             let isContentChanged = content != article.content
+
                             if isTitleChanged || isContentChanged {
                                 isShowingCustomAlert.toggle()
                             } else {

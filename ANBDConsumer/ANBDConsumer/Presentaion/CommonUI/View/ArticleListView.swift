@@ -102,7 +102,6 @@ struct ArticleListView: View {
                                             .padding(.vertical, 5)
                                     }
                                 })
-                                
                                 Divider()
                             }
                             .padding(.horizontal)
@@ -128,7 +127,6 @@ struct ArticleListView: View {
                                             .padding(.vertical, 5)
                                     }
                                 })
-                                
                                 Divider()
                             }
                             .padding(.horizontal)
@@ -212,5 +210,4 @@ fileprivate extension ArticleListView {
             return "나눔 · 거래"
         }
     }
-
 }

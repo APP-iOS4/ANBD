@@ -12,11 +12,12 @@ import CachedAsyncImage
 
 struct ArticleListDetailView: View {
     @Environment(\.presentationMode) var articlePresentationMode
-    let article: Article
     let articleUsecase = DefaultArticleUsecase()
+    let article: Article
     @Binding var deletedArticleID: String?
     @State private var articleDeleteShowingAlert = false
     @State private var articleImageUrls:[URL?] = []
+    @State private var articleImageLoaded = false
     @State private var isLinkActive = false
     
     var body: some View {
@@ -85,9 +86,17 @@ struct ArticleListDetailView: View {
                 Spacer()
                 Text(" \(article.commentCount)")
             }
+            HStack {
+                NavigationLink(destination: CommentView(articleID: article.id).font(.title3)) {
+                    Text("댓글 목록")
+                }
+            }
         }
         .onAppear {
-            articleLoadImages()
+            if articleImageLoaded == false{
+                articleLoadImages()
+                articleImageLoaded.toggle()
+            }
         }
         .navigationBarTitle(article.title)
         .toolbar {

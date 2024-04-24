@@ -21,8 +21,7 @@
 		82318E752BD5B5360071DB7A /* BannerEditDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82318E482BD5B5360071DB7A /* BannerEditDetailView.swift */; };
 		82318E762BD5B5360071DB7A /* BannerEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82318E492BD5B5360071DB7A /* BannerEditView.swift */; };
 		82318E772BD5B5360071DB7A /* BannerEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82318E4A2BD5B5360071DB7A /* BannerEditViewModel.swift */; };
-		82318E782BD5B5360071DB7A /* CommentListDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82318E4C2BD5B5360071DB7A /* CommentListDetailView.swift */; };
-		82318E792BD5B5360071DB7A /* CommentListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82318E4D2BD5B5360071DB7A /* CommentListView.swift */; };
+		82318E792BD5B5360071DB7A /* CommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82318E4D2BD5B5360071DB7A /* CommentView.swift */; };
 		82318E7A2BD5B5360071DB7A /* CommentListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82318E4E2BD5B5360071DB7A /* CommentListViewModel.swift */; };
 		82318E7B2BD5B5360071DB7A /* InquiryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82318E502BD5B5360071DB7A /* InquiryView.swift */; };
 		82318E7C2BD5B5360071DB7A /* ReportListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82318E522BD5B5360071DB7A /* ReportListView.swift */; };
@@ -62,8 +61,7 @@
 		82318E482BD5B5360071DB7A /* BannerEditDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerEditDetailView.swift; sourceTree = "<group>"; };
 		82318E492BD5B5360071DB7A /* BannerEditView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerEditView.swift; sourceTree = "<group>"; };
 		82318E4A2BD5B5360071DB7A /* BannerEditViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerEditViewModel.swift; sourceTree = "<group>"; };
-		82318E4C2BD5B5360071DB7A /* CommentListDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentListDetailView.swift; sourceTree = "<group>"; };
-		82318E4D2BD5B5360071DB7A /* CommentListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentListView.swift; sourceTree = "<group>"; };
+		82318E4D2BD5B5360071DB7A /* CommentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentView.swift; sourceTree = "<group>"; };
 		82318E4E2BD5B5360071DB7A /* CommentListViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentListViewModel.swift; sourceTree = "<group>"; };
 		82318E502BD5B5360071DB7A /* InquiryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InquiryView.swift; sourceTree = "<group>"; };
 		82318E522BD5B5360071DB7A /* ReportListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReportListView.swift; sourceTree = "<group>"; };
@@ -176,8 +174,7 @@
 		82318E4F2BD5B5360071DB7A /* Comment */ = {
 			isa = PBXGroup;
 			children = (
-				82318E4C2BD5B5360071DB7A /* CommentListDetailView.swift */,
-				82318E4D2BD5B5360071DB7A /* CommentListView.swift */,
+				82318E4D2BD5B5360071DB7A /* CommentView.swift */,
 				82318E4E2BD5B5360071DB7A /* CommentListViewModel.swift */,
 			);
 			path = Comment;
@@ -394,7 +391,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				82318E7A2BD5B5360071DB7A /* CommentListViewModel.swift in Sources */,
-				82318E782BD5B5360071DB7A /* CommentListDetailView.swift in Sources */,
 				82318E6D2BD5B5360071DB7A /* UserListDetailView.swift in Sources */,
 				82318E702BD5B5360071DB7A /* ArticleListDetailView.swift in Sources */,
 				82318E8A2BD5B5360071DB7A /* DateFormatter.swift in Sources */,
@@ -415,7 +411,7 @@
 				82A717682BD62CE100D0C21F /* ReportListDetailView.swift in Sources */,
 				82318E7E2BD5B5360071DB7A /* TradeListView.swift in Sources */,
 				82318E772BD5B5360071DB7A /* BannerEditViewModel.swift in Sources */,
-				82318E792BD5B5360071DB7A /* CommentListView.swift in Sources */,
+				82318E792BD5B5360071DB7A /* CommentView.swift in Sources */,
 				82318E762BD5B5360071DB7A /* BannerEditView.swift in Sources */,
 				82318E7C2BD5B5360071DB7A /* ReportListView.swift in Sources */,
 				82318E6E2BD5B5360071DB7A /* UserListView.swift in Sources */,

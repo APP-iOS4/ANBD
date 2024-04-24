@@ -64,7 +64,7 @@ struct ReportListView: View {
                                     Text("\(report.reportedDate)")
                                         .foregroundColor(.black)
                                 }
-                                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                                .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Spacer()
                             }
                             .frame(maxWidth: .infinity, minHeight: 50)

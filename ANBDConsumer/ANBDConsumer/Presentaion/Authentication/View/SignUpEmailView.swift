@@ -44,7 +44,7 @@ struct SignUpEmailView: View {
                             nextButtonAction()
                         }
                     }
-
+                    
                 }
                 
                 if !authenticationViewModel.errorMessage.isEmpty {

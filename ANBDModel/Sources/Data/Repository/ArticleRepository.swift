@@ -30,6 +30,12 @@ struct ArticleRepositoryImpl: ArticleRepository {
     
     // MARK: Create
     func createArticle(article: Article, imageDatas: [Data]) async throws {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            throw UserError.invalidUserID
+        }
+        
+        var userInfo = try await userDataSource.readUserInfo(userID: userID)
+        
         let imagePaths = try await storage.uploadImageList(
             path: .article,
             containerID: article.id,
@@ -43,6 +49,19 @@ struct ArticleRepositoryImpl: ArticleRepository {
         }
         
         try await articleDataSource.createItem(item: newArticle)
+        
+        switch article.category {
+        case .accua:
+            userInfo.accuaCount += 1
+        case .nanua:
+            userInfo.nanuaCount += 1
+        case .baccua:
+            userInfo.baccuaCount += 1
+        case .dasi:
+            userInfo.dasiCount += 1
+        }
+        
+        try await userDataSource.updateUserPostCount(user: userInfo)
     }
     
     
@@ -74,6 +93,11 @@ struct ArticleRepositoryImpl: ArticleRepository {
     
     func readArticleList(keyword: String, limit: Int) async throws -> [Article] {
         let articleList = try await articleDataSource.readItemList(keyword: keyword, limit: limit)
+        return articleList
+    }
+    
+    func readAllArticleList(writerID: String) async throws -> [Article] {
+        let articleList = try await articleDataSource.readAllItemList(writerID: writerID)
         return articleList
     }
     
@@ -116,6 +140,10 @@ struct ArticleRepositoryImpl: ArticleRepository {
         try await articleDataSource.updateItem(item: updatedArticle)
     }
     
+    func updateArticle(articleID: String, nickname: String) async throws {
+        try await articleDataSource.updateItem(itemID: articleID, writerNickname: nickname)
+    }
+    
     func likeArticle(articleID: String) async throws {
         guard let userID = Auth.auth().currentUser?.uid else {
             throw UserError.invalidUserID
@@ -139,6 +167,12 @@ struct ArticleRepositoryImpl: ArticleRepository {
     
     // MARK: Delete
     func deleteArticle(article: Article) async throws {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            throw UserError.invalidUserID
+        }
+        
+        var userInfo = try await userDataSource.readUserInfo(userID: userID)
+        
         try await commentDataSource.deleteItemList(articleID: article.id)
         
         if !article.thumbnailImagePath.isEmpty {
@@ -155,6 +189,19 @@ struct ArticleRepositoryImpl: ArticleRepository {
             imagePaths: article.imagePaths
         )
         try await articleDataSource.deleteItem(itemID: article.id)
+        
+        switch article.category {
+        case .accua:
+            userInfo.accuaCount -= 1
+        case .nanua:
+            userInfo.nanuaCount -= 1
+        case .baccua:
+            userInfo.baccuaCount -= 1
+        case .dasi:
+            userInfo.dasiCount -= 1
+        }
+        
+        try await userDataSource.updateUserPostCount(user: userInfo)
         try await userDataSource.updateUserInfoList(articleID: article.id)
     }
     

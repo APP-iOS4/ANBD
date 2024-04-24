@@ -12,10 +12,12 @@ import FirebaseFirestore
 protocol UserDataSource {
     func createUserInfo(user: User) async throws -> User
     func readUserInfo(userID: String) async throws -> User
-    func readUserInfoList() async throws -> [User]
+    func readUserInfoList(limit: Int) async throws -> [User]
+    func refreshAll(limit: Int) async throws -> [User]
     func checkUser(email: String) async throws
     func checkUser(nickname: String) async throws
     func updateUserInfo(user: User) async throws
+    func updateUserPostCount(user: User) async throws
     func updateUserInfoList(articleID: String) async throws
     func updateUserInfoList(tradeID: String) async throws
     func deleteUserInfo(userID: String) async throws
@@ -25,6 +27,8 @@ protocol UserDataSource {
 final class DefaultUserDataSource: UserDataSource {
     
     private let userDB = Firestore.firestore().collection("User")
+    
+    private var allQuery: Query?
     
     init() { }
     
@@ -50,13 +54,43 @@ final class DefaultUserDataSource: UserDataSource {
         return userInfo
     }
     
-    func readUserInfoList() async throws -> [User] {
-        guard let snapshot = try? await userDB.getDocuments()
-        else {
-            throw DBError.getUserDocumentError
+    func readUserInfoList(limit: Int) async throws -> [User] {
+        var requestQuery: Query
+        
+        if let allQuery {
+            requestQuery = allQuery
+        } else {
+            requestQuery = userDB
+                .order(by: "createdAt", descending: true)
+                .limit(to: limit)
+            
+            guard let lastSnapshot = try await requestQuery
+                .getDocuments()
+                .documents
+                .last
+            else {
+                print("end")
+                return []
+            }
+            
+            let next = requestQuery.start(afterDocument: lastSnapshot)
+            self.allQuery = next
         }
         
-        return try snapshot.documents.compactMap { try $0.data(as: User.self) }
+        guard let snapshot = try? await requestQuery
+            .getDocuments()
+            .documents
+        else {
+            throw DBError.getDocumentError
+        }
+        
+        let userInfoList = snapshot.compactMap { try? $0.data(as: User.self) }
+        return userInfoList
+    }
+    
+    func refreshAll(limit: Int) async throws -> [User] {
+        allQuery = nil
+        return try await readUserInfoList(limit: limit)
     }
     
     func checkUser(email: String) async throws {
@@ -84,10 +118,23 @@ final class DefaultUserDataSource: UserDataSource {
             "userLevel": user.userLevel.rawValue,
             "isAgreeMarketing": user.isAgreeMarketing,
             "likeArticles": user.likeArticles,
-            "likeTrades": user.likeTrades
+            "likeTrades": user.likeTrades,
+            "profileImage": user.profileImage
         ])
         else {
             throw DBError.updateUserDocumentError
+        }
+    }
+    
+    func updateUserPostCount(user: User) async throws {
+        guard let _ = try? await userDB.document(user.id).updateData([
+            "accuaCount": user.accuaCount,
+            "nanuaCount": user.nanuaCount,
+            "baccuaCount": user.baccuaCount,
+            "dasiCount": user.dasiCount
+        ])
+        else {
+            throw DBError.updateDocumentError
         }
     }
     

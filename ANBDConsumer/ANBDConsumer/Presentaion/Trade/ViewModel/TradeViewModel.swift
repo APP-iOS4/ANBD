@@ -23,6 +23,8 @@ final class TradeViewModel: ObservableObject {
     @Published var selectedItemCategory: ItemCategory = .digital
     @Published var selectedLocation: Location = .seoul
     
+    private var hasMoreList: Bool = true
+    
     init() {
         
     }
@@ -46,36 +48,30 @@ final class TradeViewModel: ObservableObject {
     
     //MARK: - READ
     
-    @MainActor
-    func reloadAllTrades() async {
-        do {
-            self.trades = try await tradeUseCase.refreshAllTradeList(limit: 5)
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
-    
+    /// 위로 당겨서 새로고침 + 지역, 카테고리가 바뀌었을 경우 호출
     @MainActor
     func reloadFilteredTrades(category: ANBDCategory) async {
         do {
+            self.hasMoreList = true
             filteredTrades.removeAll()
+            
             if self.selectedLocations.isEmpty && self.selectedItemCategories.isEmpty {
-                //print("둘다 엠티여요")
+                print("둘다 엠티여요")
                 
                 self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: nil, itemCategory: nil, limit: 5)
                 
-                print("🥹\(filteredTrades)")
+                //print("🥹\(filteredTrades)")
                 
             } else if self.selectedLocations.isEmpty {
-                //print("지역 엠티여요")
+                print("지역 엠티여요")
                 self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: nil, itemCategory: self.selectedItemCategories, limit: 5)
                 
             } else if self.selectedItemCategories.isEmpty {
-                //print("카테고리 엠티여요")
+                print("카테고리 엠티여요")
                 self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: nil, limit: 5)
                 
             } else {
-                //print("둘다 풀")
+                print("둘다 풀")
                 self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: self.selectedItemCategories, limit: 5)
             }
         } catch {
@@ -83,9 +79,12 @@ final class TradeViewModel: ObservableObject {
         }
     }
     
+    /// 탭 전환 시 호출 -> 아직 잘 모르겠음
     @MainActor
     func loadFilteredTrades(category: ANBDCategory) async {
         do {
+            self.hasMoreList = true
+            
             if self.selectedLocations.isEmpty && self.selectedItemCategories.isEmpty {
                 //print("둘다 엠티여요")
                 self.filteredTrades = try await tradeUseCase.loadFilteredTradeList(category: category, location: nil, itemCategory: nil, limit: 5)
@@ -105,6 +104,7 @@ final class TradeViewModel: ObservableObject {
         }
     }
     
+    /// 페이지네이션시 호출
     @MainActor
     func loadMoreFilteredTrades(category: ANBDCategory) async {
         do {
@@ -122,16 +122,21 @@ final class TradeViewModel: ObservableObject {
                 //print("둘다 풀")
                 newTrades = try await tradeUseCase.loadFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: self.selectedItemCategories, limit: 5)
             }
-           
-            if !filteredTrades.contains(newTrades) {
-                //print("\(newTrades)")
-                self.filteredTrades.append(contentsOf: newTrades)
+            
+            for item in newTrades {
+                if filteredTrades.contains(item) {
+                    print("end")
+                } else {
+                    self.filteredTrades.append(contentsOf: newTrades)
+                }
             }
+                
         } catch {
             print(error.localizedDescription)
         }
     }
     
+    /// 뷰모델에 하나의 trade 값 저장
     @MainActor
     func loadOneTrade(trade: Trade) async {
         do {

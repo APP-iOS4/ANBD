@@ -28,14 +28,12 @@ struct ArticleView: View {
             listView
                 .onChange(of: category) {
                     if isArticle {
-                        
                         Task {
                             await articleViewModel.refreshSortedArticleList(category: category, by: articleViewModel.sortOption, limit: 10)
                         }
                     } else {
                         Task {
                             await tradeViewModel.reloadFilteredTrades(category: category)
-                            //await tradeViewModel.loadFilteredTrades(category: category)
                         }
                     }
                     print("🤍\(category)")
@@ -50,7 +48,6 @@ struct ArticleView: View {
                     } else {
                         Task {
                             await tradeViewModel.reloadFilteredTrades(category: newValue)
-                            //await tradeViewModel.loadFilteredTrades(category: category)
                         }
                     }
                     print("🤍\(category)")
@@ -91,45 +88,44 @@ struct ArticleView: View {
             if category == .accua || category == .dasi {
                 isArticle = true
                 Task {
-                    await articleViewModel.loadAllArticles()
+                    await articleViewModel.reloadAllArticles()
                     articleViewModel.filteringArticles(category: category)
                 }
             } else {
                 isArticle = false
                 Task {
-                    await tradeViewModel.reloadAllTrades()
-                    tradeViewModel.filteringTrades(category: category)
+                    await tradeViewModel.reloadFilteredTrades(category: category)
                 }
             }
         }
-//        .navigationTitle(isArticle ? "정보 공유" : "나눔 · 거래")
-//        .navigationBarTitleDisplayMode(.inline)
-//        .toolbar {
-//            ToolbarItem(placement: .topBarTrailing) {
-//                Button(action: {
-//                    coordinator.appendPath(.searchView)
-//                }, label: {
-//                    Image(systemName: "magnifyingglass")
-//                        .resizable()
-//                        .frame(width: 20)
-//                        .foregroundStyle(.gray900)
-//                })
-//            }
-//        }
-//        .fullScreenCover(isPresented: $isShowingArticleCreateView, onDismiss: {
-//            Task {
-//                await articleViewModel.reloadAllArticles()
-//                articleViewModel.filteringArticles(category: category)
-//            }
-//        }, content: {
-//            ArticleCreateView(isShowingCreateView: $isShowingArticleCreateView, category: category, isNewArticle: true)
-//        })
-//        .fullScreenCover(isPresented: $isShowingTradeCreateView, onDismiss: {
-//            Task {
-//                await tradeViewModel.reloadFilteredTrades(category: category)
-//            }
-//        }, content: {
-//            TradeCreateView(isShowingCreate: $isShowingTradeCreateView, category: category, isNewProduct: true)
-//        })
+        .navigationTitle(isArticle ? "정보 공유" : "나눔 · 거래")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: {
+                    coordinator.appendPath(.searchView)
+                }, label: {
+                    Image(systemName: "magnifyingglass")
+                        .resizable()
+                        .frame(width: 20)
+                        .foregroundStyle(.gray900)
+                })
+            }
+        }
+        .fullScreenCover(isPresented: $isShowingArticleCreateView, onDismiss: {
+            Task {
+                await articleViewModel.reloadAllArticles()
+                articleViewModel.filteringArticles(category: category)
+            }
+        }, content: {
+            ArticleCreateView(isShowingCreateView: $isShowingArticleCreateView, category: category, isNewArticle: true)
+        })
+        .fullScreenCover(isPresented: $isShowingTradeCreateView, onDismiss: {
+            Task {
+                await tradeViewModel.reloadFilteredTrades(category: category)
+            }
+        }, content: {
+            TradeCreateView(isShowingCreate: $isShowingTradeCreateView, category: category, isNewProduct: true)
+        })
     }
 }

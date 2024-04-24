@@ -133,7 +133,7 @@ struct TradeDetailView: View {
                     Task {
                         print("삭제!")
                         await tradeViewModel.deleteTrade(trade: tradeViewModel.trade)
-                        await tradeViewModel.reloadAllTrades()
+                        await tradeViewModel.reloadFilteredTrades(category: trade.category)
                         self.dismiss()
                     }
                 }

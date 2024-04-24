@@ -24,27 +24,11 @@ struct ArticleListView: View {
     var body: some View {
         VStack(alignment: .leading) {
             if isArticle && articleViewModel.filteredArticles.isEmpty {
-                    VStack {
-                        Spacer()
-                        
-                        Image(systemName: "tray")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 60)
-                            .padding(.bottom, 10)
-                        
-                        HStack {
-                            Spacer()
-                            Text("해당하는 정보 공유 게시글이 없습니다.")
-                                .font(ANBDFont.body1)
-                            Spacer()
-                        }
-                        Spacer()
-                    }
-                    .foregroundStyle(.gray400)
-                    .background(Color.gray50)
-
+                
+                ListEmptyView(description: "해당하는 정보 공유 게시글이 없습니다.")
+                
             } else if !isArticle && tradeViewModel.filteredTrades.isEmpty {
+                
                 loacationAndCategoryButtons
                 ListEmptyView(description: "해당하는 나눔 · 거래 게시글이 없습니다.")
                 
@@ -119,7 +103,6 @@ struct ArticleListView: View {
                             .padding(.horizontal)
                         }
                         Color.clear
-                            .frame(width: 0, height: 0)
                             .onAppear {
                                 Task {
                                     await tradeViewModel.loadMoreFilteredTrades(category: category)
@@ -128,6 +111,13 @@ struct ArticleListView: View {
                     }
                     .background(Color(UIColor.systemBackground))
                     .padding(.bottom, 80)
+                }
+                .refreshable {
+                    if isArticle {
+                        await articleViewModel.refreshSortedArticleList(category: category, by: articleViewModel.sortOption, limit: 10)
+                    } else {
+                        await tradeViewModel.reloadFilteredTrades(category: category)
+                    }
                 }
                 .background(.gray50)
             }

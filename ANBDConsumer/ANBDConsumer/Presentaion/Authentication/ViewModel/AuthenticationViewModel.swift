@@ -202,7 +202,6 @@ extension AuthenticationViewModel {
         
         return !nickname.isEmpty && nickname.isValidateNickname()
     }
-    
 }
 
 // MARK: Sign Up Method
@@ -256,15 +255,19 @@ extension AuthenticationViewModel {
         showingTermsView.toggle()
     }
     
-    func signIn() async {
+    func signIn() async -> Bool {
         do {
             let signedInUser = try await authUsecase.signIn(email: loginEmailString,
                                                             password: loginPasswordString)
             
             UserDefaultsClient.shared.userID = signedInUser.id
             UserStore.shared.user = signedInUser
+            
+            return true
         } catch {
             print("Error sign in: \(error.localizedDescription)")
+            
+            return false
         }
     }
     

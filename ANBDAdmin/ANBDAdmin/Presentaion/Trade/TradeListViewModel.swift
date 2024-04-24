@@ -55,6 +55,7 @@ class TradeListViewModel: ObservableObject {
         do {
             let searchedTrade = try await loadTrade(tradeID: tradeID)
             DispatchQueue.main.async {
+                self.canLoadMoreTrades = false
                 self.tradeList = [searchedTrade]
             }
         } catch {

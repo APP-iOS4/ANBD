@@ -106,6 +106,7 @@ struct TradeListView: View {
                 .navigationBarTitle("거래글 목록")
                 .toolbar {
                     Button(action: {
+                        self.searchTradeText = ""
                         tradeListViewModel.tradeList = []
                         tradeListViewModel.firstLoadTrades()
                     }) {

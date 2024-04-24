@@ -106,6 +106,7 @@ struct ArticleListView: View {
                 .navigationBarTitle("게시글 목록")
                 .toolbar {
                     Button(action: {
+                        self.searchArticleText = ""
                         articleListViewModel.articleList = []
                         articleListViewModel.firstLoadArticles()
                     }) {

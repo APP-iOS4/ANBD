@@ -251,6 +251,7 @@ extension TradeDetailView {
                     .frame(width: 100, height: 45)
                     .padding()
                     .onTapGesture {
+                        coordinator.channel = nil
                         coordinator.trade = trade
                         tradeViewModel.getOneTrade(trade: trade)
                         switch coordinator.selectedTab {

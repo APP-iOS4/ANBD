@@ -23,7 +23,7 @@ final class ArticleViewModel: ObservableObject {
     
     @Published var article: Article = Article(id: "",
                                               writerID: "",
-                                              writerNickname: "",
+                                              writerNickname: "ㅁㄴㅇㅁㄴㅇ",
                                               createdAt: Date(),
                                               category: .accua,
                                               title: "",
@@ -38,7 +38,7 @@ final class ArticleViewModel: ObservableObject {
     @Published var comment: Comment = Comment(id: "",
                                               articleID: "",
                                               writerID: "",
-                                              writerNickname: "",
+                                              writerNickname: "ㅁㄴㅇㅁㄴㅇ",
                                               writerProfileImageURL: "",
                                               createdAt: Date(),
                                               content: "")
@@ -259,6 +259,7 @@ final class ArticleViewModel: ObservableObject {
         do {
             let loadedComment = try await commentUseCase.loadCommentList(articleID: articleID)
             self.comments = loadedComment
+//            print("loadedComment: \(loadedComment)")
         } catch {
             print(error.localizedDescription)
         }
@@ -275,13 +276,9 @@ final class ArticleViewModel: ObservableObject {
     func deleteComment(articleID: String, commentID: String) async {
         do {
             try await commentUseCase.deleteComment(articleID: articleID, commentID: commentID)
-            print("articleID: \(article.id), \(articleID)")
-            print("commentID: \(comment.id), \(commentID)")
         } catch {
             print(error.localizedDescription)
             print("댓글 삭제 실패")
-            print("articleID: \(article.id), \(articleID)")
-            print("commentID: \(comment.id), \(commentID)")
         }
     }
     

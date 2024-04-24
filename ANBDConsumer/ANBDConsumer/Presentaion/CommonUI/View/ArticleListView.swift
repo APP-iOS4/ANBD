@@ -16,6 +16,7 @@ struct ArticleListView: View {
     @State var category: ANBDCategory = .accua
     var isArticle: Bool = true
     var isFromHomeView: Bool = false
+    var isSearchView: Bool = false
     var searchText: String? = nil
     
     @State private var isShowingLocation: Bool = false
@@ -28,49 +29,51 @@ struct ArticleListView: View {
                 ListEmptyView(description: "해당하는 정보 공유 게시글이 없습니다.")
                 
             } else if !isArticle && tradeViewModel.filteredTrades.isEmpty {
-                
-                loacationAndCategoryButtons
+                if !isSearchView {
+                    loacationAndCategoryButtons
+                }
                 ListEmptyView(description: "해당하는 나눔 · 거래 게시글이 없습니다.")
                 
             } else {
                 
                 //MARK: - trade 카테고리 선택 / article sort 선택
-                
-                if isArticle {
-                    Menu {
-                        Button {
-                            articleViewModel.sortOption = .latest
-                            Task {
-                                await articleViewModel.refreshSortedArticleList(category: category)
+                if !isSearchView {
+                    if isArticle {
+                        Menu {
+                            Button {
+                                articleViewModel.sortOption = .latest
+                                Task {
+                                    await articleViewModel.refreshSortedArticleList(category: category)
+                                }
+                            } label: {
+                                Label("최신순", systemImage: articleViewModel.sortOption == .latest ? "checkmark" : "")
+                            }
+                            
+                            Button {
+                                articleViewModel.sortOption = .mostLike
+                                Task {
+                                    await articleViewModel.refreshSortedArticleList(category: category)
+                                }
+                            } label: {
+                                Label("좋아요순", systemImage: articleViewModel.sortOption == .mostLike ? "checkmark" : "")
+                            }
+                            
+                            Button {
+                                articleViewModel.sortOption = .mostComment
+                                Task {
+                                    await articleViewModel.refreshSortedArticleList(category: category)
+                                }
+                            } label: {
+                                Label("댓글순", systemImage: articleViewModel.sortOption == .mostComment ? "checkmark" : "")
                             }
                         } label: {
-                            Label("최신순", systemImage: articleViewModel.sortOption == .latest ? "checkmark" : "")
+                            CapsuleButtonView(text: articleViewModel.getSortOptionLabel(), isForFiltering: true)
                         }
+                        .padding(EdgeInsets(top: 7, leading: 17, bottom: 10, trailing: 0))
                         
-                        Button {
-                            articleViewModel.sortOption = .mostLike
-                            Task {
-                                await articleViewModel.refreshSortedArticleList(category: category)
-                            }
-                        } label: {
-                            Label("좋아요순", systemImage: articleViewModel.sortOption == .mostLike ? "checkmark" : "")
-                        }
-                        
-                        Button {
-                            articleViewModel.sortOption = .mostComment
-                            Task {
-                                await articleViewModel.refreshSortedArticleList(category: category)
-                            }
-                        } label: {
-                            Label("댓글순", systemImage: articleViewModel.sortOption == .mostComment ? "checkmark" : "")
-                        }
-                    } label: {
-                        CapsuleButtonView(text: articleViewModel.getSortOptionLabel(), isForFiltering: true)
+                    } else {
+                        loacationAndCategoryButtons
                     }
-                    .padding(EdgeInsets(top: 7, leading: 17, bottom: 10, trailing: 0))
-                    
-                } else {
-                    loacationAndCategoryButtons
                 }
                 
                 //MARK: - list
@@ -84,8 +87,20 @@ struct ArticleListView: View {
                                         articleViewModel.getOneArticle(article: item)
                                         coordinator.appendPath(.articleDeatilView)
                                 }, label: {
-                                    ArticleListCell(value: .article(item))
-                                        .padding(.vertical, 5)
+                                    if item == articleViewModel.filteredArticles.last {
+                                        ArticleListCell(value: .article(item))
+                                            .padding(.vertical, 5)
+                                            .onAppear {
+                                                Task {
+                                                    if !isSearchView {
+                                                        await articleViewModel.loadMoreArticles(category: category)
+                                                    }
+                                                }
+                                            }
+                                    } else {
+                                        ArticleListCell(value: .article(item))
+                                            .padding(.vertical, 5)
+                                    }
                                 })
                                 
                                 Divider()
@@ -98,33 +113,44 @@ struct ArticleListView: View {
                                     tradeViewModel.getOneTrade(trade: item)
                                     coordinator.appendPath(.tradeDetailView)
                                 }, label: {
-                                    ArticleListCell(value: .trade(item))
-                                        .padding(.vertical, 5)
+                                    if item == tradeViewModel.filteredTrades.last {
+                                        ArticleListCell(value: .trade(item))
+                                            .padding(.vertical, 5)
+                                            .onAppear {
+                                                Task {
+                                                    if !isSearchView {
+                                                        await tradeViewModel.loadMoreFilteredTrades(category: category)
+                                                    }
+                                                }
+                                            }
+                                    } else {
+                                        ArticleListCell(value: .trade(item))
+                                            .padding(.vertical, 5)
+                                    }
                                 })
                                 
                                 Divider()
                             }
                             .padding(.horizontal)
                         }
-                        Color.clear
-                            .onAppear {
-                                Task {
-                                    if isArticle {
-                                        await articleViewModel.loadMoreArticles(category: category)
-                                    } else {
-                                        await tradeViewModel.loadMoreFilteredTrades(category: category)
-                                    }
-                                }
-                            }
                     }
                     .background(Color(UIColor.systemBackground))
                     .padding(.bottom, 80)
                 }
                 .refreshable {
-                    if isArticle {
-                        await articleViewModel.refreshSortedArticleList(category: category)
+                    if !isSearchView {
+                        if isArticle {
+                            await articleViewModel.refreshSortedArticleList(category: category)
+                        } else {
+                            await tradeViewModel.reloadFilteredTrades(category: category)
+                        }
                     } else {
-                        await tradeViewModel.reloadFilteredTrades(category: category)
+                        guard let searchText else { return }
+                        if isArticle {
+                            await articleViewModel.searchArticle(keyword: searchText, category: category)
+                        } else {
+                            await tradeViewModel.searchTrade(keyword: searchText, category: category)
+                        }
                     }
                 }
                 .background(.gray50)
@@ -148,27 +174,29 @@ struct ArticleListView: View {
 fileprivate extension ArticleListView {
      var loacationAndCategoryButtons: some View {
         HStack {
-            /// 지역 필터링
-            Button(action: {
-                isShowingLocation.toggle()
-            }, label: {
-                if tradeViewModel.selectedLocations.isEmpty {
-                    CapsuleButtonView(text: "지역", isForFiltering: true)
-                } else {
-                    CapsuleButtonView(text: tradeViewModel.selectedLocations.count > 1 ? "지역 \(tradeViewModel.selectedLocations.count)" : "\(tradeViewModel.selectedLocations.first?.description ?? "Unknown")", isForFiltering: true, buttonColor: .accent, fontColor: .white)
-                }
-            })
-            
-            /// 카테고리 필터링
-            Button(action: {
-                isShowingItemCategory.toggle()
-            }, label: {
-                if tradeViewModel.selectedItemCategories.isEmpty {
-                    CapsuleButtonView(text: "카테고리", isForFiltering: true)
-                } else {
-                    CapsuleButtonView(text: tradeViewModel.selectedItemCategories.count > 1 ? "카테고리 \(tradeViewModel.selectedItemCategories.count)" : "\(tradeViewModel.selectedItemCategories.first?.rawValue ?? "Unknown")", isForFiltering: true, buttonColor: .accent, fontColor: .white)
-                }
-            })
+            if !isSearchView {
+                /// 지역 필터링
+                Button(action: {
+                    isShowingLocation.toggle()
+                }, label: {
+                    if tradeViewModel.selectedLocations.isEmpty {
+                        CapsuleButtonView(text: "지역", isForFiltering: true)
+                    } else {
+                        CapsuleButtonView(text: tradeViewModel.selectedLocations.count > 1 ? "지역 \(tradeViewModel.selectedLocations.count)" : "\(tradeViewModel.selectedLocations.first?.description ?? "Unknown")", isForFiltering: true, buttonColor: .accent, fontColor: .white)
+                    }
+                })
+                
+                /// 카테고리 필터링
+                Button(action: {
+                    isShowingItemCategory.toggle()
+                }, label: {
+                    if tradeViewModel.selectedItemCategories.isEmpty {
+                        CapsuleButtonView(text: "카테고리", isForFiltering: true)
+                    } else {
+                        CapsuleButtonView(text: tradeViewModel.selectedItemCategories.count > 1 ? "카테고리 \(tradeViewModel.selectedItemCategories.count)" : "\(tradeViewModel.selectedItemCategories.first?.rawValue ?? "Unknown")", isForFiltering: true, buttonColor: .accent, fontColor: .white)
+                    }
+                })
+            }
         }
         .padding(EdgeInsets(top: 7, leading: 17, bottom: 10, trailing: 0))
     }
@@ -184,4 +212,5 @@ fileprivate extension ArticleListView {
             return "나눔 · 거래"
         }
     }
+
 }

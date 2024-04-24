@@ -22,10 +22,12 @@ struct SearchResultView: View {
                 .onChange(of: category) {
                     if category == .accua || category == .dasi {
                         Task {
-                            //articleViewModel.filteringArticles(category: category)
+                            await articleViewModel.searchArticle(keyword: searchText, category: category)
                         }
                     } else {
-                        //tradeViewModel.filteringTrades(category: category)
+                        Task {
+                            await tradeViewModel.searchTrade(keyword: searchText, category: category)
+                        }
                     }
                 }
         } else {
@@ -33,44 +35,47 @@ struct SearchResultView: View {
                 .onChange(of: category) { category in
                     if category == .accua || category == .dasi {
                         Task {
-                            //articleViewModel.filteringArticles(category: category)
+                            await articleViewModel.searchArticle(keyword: searchText, category: category)
                         }
                     } else {
-                        //tradeViewModel.filteringTrades(category: category)
+                        Task {
+                            await tradeViewModel.searchTrade(keyword: searchText, category: category)
+                        }
                     }
                 }
         }
     }
     
-    fileprivate var searchResultView: some View {
+    private var searchResultView: some View {
         VStack {
             CategoryDividerView(category: $category, isFromSearchView: true)
                 .frame(height: 40)
                 .padding(.horizontal)
             
             TabView(selection: $category) {
-                ArticleListView(category: .accua, searchText: searchText)
+                ArticleListView(category: .accua, isSearchView: true, searchText: searchText)
                     .tag(ANBDCategory.accua)
                 
-                ArticleListView(category: .nanua, isArticle: false, searchText: searchText)
+                ArticleListView(category: .nanua, isArticle: false, isSearchView: true, searchText: searchText)
                     .tag(ANBDCategory.nanua)
                 
-                ArticleListView(category: .baccua, isArticle: false, searchText: searchText)
+                ArticleListView(category: .baccua, isArticle: false, isSearchView: true, searchText: searchText)
                     .tag(ANBDCategory.baccua)
                 
-                ArticleListView(category: .dasi, searchText: searchText)
+                ArticleListView(category: .dasi, isSearchView: true, searchText: searchText)
                     .tag(ANBDCategory.dasi)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             .ignoresSafeArea(edges: .bottom)
         }
         .onAppear {
-            if category == .accua || category == .dasi {
-                Task {
-                    //articleViewModel.filteringArticles(category: category)
+            Task {
+                switch category {
+                case .accua, .dasi:
+                    await articleViewModel.searchArticle(keyword: searchText, category: category)
+                case .nanua, .baccua:
+                    await tradeViewModel.searchTrade(keyword: searchText, category: category)
                 }
-            } else {
-                //tradeViewModel.filteringTrades(category: category)
             }
         }
         .navigationTitle(searchText)

@@ -150,7 +150,7 @@ struct ArticleListCell: View {
                             .foregroundStyle(isLiked ? .heartRed : .gray800)
                             .onTapGesture {
                                 Task {
-                                    await tradeViewModel.updateLikeTrade(trade: tradeViewModel.trade)
+                                    await tradeViewModel.updateLikeTrade(trade: trade)
                                 }
                                 isLiked.toggle()
                             }

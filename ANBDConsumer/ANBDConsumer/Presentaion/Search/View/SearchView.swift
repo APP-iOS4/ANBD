@@ -25,13 +25,16 @@ struct SearchView: View {
                 
                 Spacer()
                 
-                Button(action: {
-                    searchViewModel.recentSearch = []
-                }, label: {
-                    Text("전체 삭제")
-                        .font(ANBDFont.body1)
-                        .foregroundStyle(Color.accentColor)
-                })
+                if !searchViewModel.recentSearch.isEmpty {
+                    Button(action: {
+                        searchViewModel.resetRecentSearch()
+                        searchViewModel.loadRecentSearch()
+                    }, label: {
+                        Text("전체 삭제")
+                            .font(ANBDFont.body1)
+                            .foregroundStyle(Color.accentColor)
+                    })
+                }
             }
             .padding()
             .padding(.top, 10)
@@ -47,6 +50,7 @@ struct SearchView: View {
                             .padding(.trailing, 5)
                         
                         Text(recent)
+                            .lineLimit(1)
                         
                         Spacer()
                         
@@ -54,9 +58,8 @@ struct SearchView: View {
                             .foregroundStyle(.gray400)
                             .font(.system(size: 13))
                             .onTapGesture {
-                                if let idx = searchViewModel.recentSearch.firstIndex(of: recent) {
-                                    searchViewModel.recentSearch.remove(at: idx)
-                                }
+                                searchViewModel.removeRecentSearch(recent)
+                                searchViewModel.loadRecentSearch()
                             }
                     }
                     .font(ANBDFont.body1)
@@ -75,8 +78,14 @@ struct SearchView: View {
         .searchable(text: $searchText)
         .onSubmit(of: .search) {
             if !searchText.isEmpty {
+                searchViewModel.saveRecentSearch(searchText)
+                searchViewModel.loadRecentSearch()
+                
                 coordinator.searchText = searchText
+                coordinator.category = category
                 coordinator.appendPath(.searchResultView)
+                
+                searchText = ""
             }
         }
     }

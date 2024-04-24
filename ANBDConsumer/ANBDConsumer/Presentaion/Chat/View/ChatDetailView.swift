@@ -25,7 +25,6 @@ struct ChatDetailView: View {
     @State private var selectedPhoto: Data?
     
     /// Sheet 관련 변수
-    @State private var isShowingConfirmSheet: Bool = false
     @State private var isShowingCustomAlertView: Bool = false
     @State private var isShowingImageDetailView: Bool = false
     @State private var detailImage: Image = Image("DummyPuppy3")
@@ -135,27 +134,29 @@ struct ChatDetailView: View {
         .toolbarRole(.editor)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    isShowingConfirmSheet.toggle()
-                }, label: {
+                Menu {
+                    
+                    Button {
+                        coordinator.reportType = .chatRoom
+                        if let channel = channel {
+                            coordinator.reportedObjectID = channel.id
+                        }
+                        coordinator.appendPath(.reportView)
+                    } label: {
+                        Label("채팅 신고하기", systemImage: "exclamationmark.bubble")
+                    }
+                    
+                    Button(role: .destructive) {
+                        isShowingCustomAlertView.toggle()
+                    } label: {
+                        Label("채팅방 나가기", systemImage: "rectangle.portrait.and.arrow.forward")
+                    }
+                } label: {
                     Image(systemName: "ellipsis")
                         .font(.system(size: 13))
                         .rotationEffect(.degrees(90))
                         .foregroundStyle(.gray900)
-                })
-            }
-        }
-        .confirmationDialog("", isPresented: $isShowingConfirmSheet) {
-            Button("채팅 신고하기") {
-                coordinator.reportType = .chatRoom
-                if let channel = channel {
-                    coordinator.reportedObjectID = channel.id
                 }
-                coordinator.appendPath(.reportView)
-            }
-            
-            Button("채팅방 나가기", role: .destructive) {
-                isShowingCustomAlertView.toggle()
             }
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {

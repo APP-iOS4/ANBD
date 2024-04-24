@@ -208,7 +208,7 @@ extension AuthenticationViewModel {
 // MARK: Sign Up Method
 extension AuthenticationViewModel {
     func checkAuthState() {
-        if let userID = UserDefaultsClient.shared.userID, UserStore.shared.user.userLevel != .banned {
+        if let _ = UserDefaultsClient.shared.userID, UserStore.shared.user.userLevel != .banned {
             authState = true
         } else {
             authState = false

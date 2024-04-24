@@ -80,13 +80,21 @@ struct BannerEditView: View {
             }
             .sheet(isPresented: $showingAddBannerSheet) {
                 VStack {
-                    TextField("배너 URL", text: $newBannerURL)
+                    VStack{
+                        Image("BannerGuideImage")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 600, height: 200)
+                        
+                    }
+                    .padding(.bottom, 30)
+                    TextField("배너 썸네일 URL 입력란, 이미지 비율은 3:1 비율입니다.", text: $newBannerThumbnailURL)
                         .padding()
                         .overlay(
                             RoundedRectangle(cornerRadius: 30)
                                 .stroke(Color.blue, lineWidth: 2)
                         )
-                    TextField("배너 썸네일 URL", text: $newBannerThumbnailURL)
+                    TextField("배너 URL 입력란", text: $newBannerURL)
                         .padding()
                         .overlay(
                             RoundedRectangle(cornerRadius: 30)

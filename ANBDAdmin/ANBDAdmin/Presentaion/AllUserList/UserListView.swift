@@ -35,28 +35,21 @@ struct UserListView: View {
                     Text("닉네임")
                         .font(.title3)
                 }
-                .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
+                .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                 Divider()
                 Spacer()
                 VStack(alignment: .leading) {
                     Text("이메일")
                         .font(.title3)
                 }
-                .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
-                Divider()
-                Spacer()
-                VStack(alignment: .leading) {
-                    Text("유저권한")
-                        .font(.title3)
-                }
-                .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
+                .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                 Divider()
                 Spacer()
                 VStack(alignment: .leading) {
                     Text("프로필 사진")
                         .font(.title3)
                 }
-                .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
+                .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: 30)
@@ -76,21 +69,14 @@ struct UserListView: View {
                                         .lineLimit(2)
                                         .foregroundColor(.black)
                                 }
-                                .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
+                                .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
                                     Text("\(user.email)")
                                         .foregroundColor(.black)
                                 }
-                                .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
-                                Divider()
-                                Spacer()
-                                VStack(alignment: .leading) {
-                                    Text("\(user.userLevel)")
-                                        .foregroundColor(.black)
-                                }
-                                .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
+                                .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
@@ -109,7 +95,7 @@ struct UserListView: View {
                                         }
                                     }
                                 }
-                                .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
+                                .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Spacer()
                             }
                             .frame(maxWidth: .infinity, minHeight: 50)

@@ -78,7 +78,7 @@ struct TradeListDetailView: View {
             HStack {
                 Text("바꾸고 싶은 물건:").foregroundColor(.gray)
                 Spacer()
-                Text(" \(String(describing: trade.wantProduct))")
+                Text(" \(String(describing: trade.wantProduct  ?? "Empty"))")
             }
             HStack {
                 Text("내용:").foregroundColor(.gray)

@@ -61,7 +61,7 @@ struct ReportListView: View {
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
-                                    Text("\(dateFormatter(report.createDate))")
+                                    Text("\(report.reportedDate)")
                                         .foregroundColor(.black)
                                 }
                                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)

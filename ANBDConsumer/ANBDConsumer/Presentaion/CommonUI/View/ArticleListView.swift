@@ -24,37 +24,24 @@ struct ArticleListView: View {
     var body: some View {
         VStack(alignment: .leading) {
             if isArticle && articleViewModel.filteredArticles.isEmpty {
-                    VStack {
-                        Spacer()
-                        
-                        Image(systemName: "tray")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 60)
-                            .padding(.bottom, 10)
-                        
-                        HStack {
-                            Spacer()
-                            Text("해당하는 정보 공유 게시글이 없습니다.")
-                                .font(ANBDFont.body1)
-                            Spacer()
-                        }
-                        Spacer()
-                    }
-                    .foregroundStyle(.gray400)
-                    .background(Color.gray50)
-
+                
+                ListEmptyView(description: "해당하는 정보 공유 게시글이 없습니다.")
+                
             } else if !isArticle && tradeViewModel.filteredTrades.isEmpty {
+                
                 loacationAndCategoryButtons
                 ListEmptyView(description: "해당하는 나눔 · 거래 게시글이 없습니다.")
                 
             } else {
+                
+                //MARK: - trade 카테고리 선택 / article sort 선택
+                
                 if isArticle {
                     Menu {
                         Button {
                             articleViewModel.sortOption = .latest
                             Task {
-                                await articleViewModel.refreshSortedArticleList(category: category, by: .latest, limit: 10)
+                                await articleViewModel.refreshSortedArticleList(category: category)
                             }
                         } label: {
                             Label("최신순", systemImage: articleViewModel.sortOption == .latest ? "checkmark" : "")
@@ -63,7 +50,7 @@ struct ArticleListView: View {
                         Button {
                             articleViewModel.sortOption = .mostLike
                             Task {
-                                await articleViewModel.refreshSortedArticleList(category: category, by: .mostLike, limit: 10)
+                                await articleViewModel.refreshSortedArticleList(category: category)
                             }
                         } label: {
                             Label("좋아요순", systemImage: articleViewModel.sortOption == .mostLike ? "checkmark" : "")
@@ -72,7 +59,7 @@ struct ArticleListView: View {
                         Button {
                             articleViewModel.sortOption = .mostComment
                             Task {
-                                await articleViewModel.refreshSortedArticleList(category: category, by: .mostComment, limit: 10)
+                                await articleViewModel.refreshSortedArticleList(category: category)
                             }
                         } label: {
                             Label("댓글순", systemImage: articleViewModel.sortOption == .mostComment ? "checkmark" : "")
@@ -81,20 +68,21 @@ struct ArticleListView: View {
                         CapsuleButtonView(text: articleViewModel.getSortOptionLabel(), isForFiltering: true)
                     }
                     .padding(EdgeInsets(top: 7, leading: 17, bottom: 10, trailing: 0))
+                    
                 } else {
                     loacationAndCategoryButtons
                 }
+                
+                //MARK: - list
                 
                 ScrollView {
                     LazyVStack {
                         if isArticle {
                             ForEach(articleViewModel.filteredArticles) { item in
                                 Button(action: {
-                                    Task {
                                         coordinator.article = item
-                                        await articleViewModel.loadArticle(article: item)
+                                        articleViewModel.getOneArticle(article: item)
                                         coordinator.appendPath(.articleDeatilView)
-                                    }
                                 }, label: {
                                     ArticleListCell(value: .article(item))
                                         .padding(.vertical, 5)
@@ -118,9 +106,26 @@ struct ArticleListView: View {
                             }
                             .padding(.horizontal)
                         }
+                        Color.clear
+                            .onAppear {
+                                Task {
+                                    if isArticle {
+                                        await articleViewModel.loadMoreArticles(category: category)
+                                    } else {
+                                        await tradeViewModel.loadMoreFilteredTrades(category: category)
+                                    }
+                                }
+                            }
                     }
                     .background(Color(UIColor.systemBackground))
                     .padding(.bottom, 80)
+                }
+                .refreshable {
+                    if isArticle {
+                        await articleViewModel.refreshSortedArticleList(category: category)
+                    } else {
+                        await tradeViewModel.reloadFilteredTrades(category: category)
+                    }
                 }
                 .background(.gray50)
             }
@@ -179,10 +184,4 @@ fileprivate extension ArticleListView {
             return "나눔 · 거래"
         }
     }
-}
-
-
-#Preview {
-    ArticleListView()
-        .environmentObject(ArticleViewModel())
 }

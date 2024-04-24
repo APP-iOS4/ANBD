@@ -194,7 +194,7 @@ struct ArticleCreateView: View {
                     Task {
                         if isNewArticle {
                             await articleViewModel.writeArticle(category: category, title: title, content: content, imageDatas: selectedImageData)
-                            await articleViewModel.reloadAllArticles()
+                            await articleViewModel.refreshSortedArticleList(category: category)
                         } else {
                             if var article = article {
                                 article.title = self.title
@@ -206,7 +206,7 @@ struct ArticleCreateView: View {
                                 await articleViewModel.loadArticle(article: article)
                             }
                         }
-                        await articleViewModel.refreshSortedArticleList(category: category, by: .latest, limit: 10)
+                        await articleViewModel.refreshSortedArticleList(category: category)
                         isShowingCreateView = false
                     }
                     self.isShowingCreateView.toggle()

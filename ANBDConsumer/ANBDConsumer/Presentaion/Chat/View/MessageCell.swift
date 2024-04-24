@@ -10,8 +10,6 @@ import ANBDModel
 import CachedAsyncImage
 
 struct MessageCell: View {
-    @EnvironmentObject private var homeViewModel: HomeViewModel
-    @EnvironmentObject private var tradeViewModel: TradeViewModel
     @EnvironmentObject private var chatViewModel: ChatViewModel
     @EnvironmentObject private var coordinator: Coordinator
     @Environment(\.colorScheme) private var colorScheme: ColorScheme

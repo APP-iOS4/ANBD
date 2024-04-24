@@ -15,14 +15,13 @@ struct UserPageView: View {
     
     private var writerUser: User
     
-    @State private var userProfileImageData = Data()
-    
     @State private var category: ANBDCategory = .accua
     
     @State private var isSignedInUser: Bool = false
     
     @State private var isShowingPolicyView = false
     @State private var isShowingReportView = false
+    @State private var refreshView = false
     
     init(writerUser: User) {
         self.writerUser = writerUser
@@ -32,27 +31,38 @@ struct UserPageView: View {
         VStack(spacing: 20) {
             // UserInfo
             HStack {
-                Image(uiImage: UIImage(data: userProfileImageData) ?? UIImage(named: "DefaultUserProfileImage")!)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 90, height: 90)
-                    .clipShape(.circle)
-                    .padding(.horizontal)
+                if #available(iOS 17.0, *) {
+                    userProfileImage
+                        .onChange(of: myPageViewModel.tempUserProfileImage) {
+                            Task {
+                                try await Task.sleep(nanoseconds: 800_000_000)
+                                refreshView.toggle()
+                            }
+                        }
+                } else {
+                    userProfileImage
+                        .onChange(of: myPageViewModel.tempUserProfileImage) { _ in
+                            Task {
+                                try await Task.sleep(nanoseconds: 800_000_000)
+                                refreshView.toggle()
+                            }
+                        }
+                }
                 
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("\(writerUser.nickname)")
+                    Text("\(myPageViewModel.user.nickname)")
                         .foregroundStyle(Color.gray900)
                         .font(ANBDFont.pretendardBold(24))
                         .padding(.bottom, 10)
                     
-                    Text("선호 지역 : \(writerUser.favoriteLocation.description)")
+                    Text("선호 지역 : \(myPageViewModel.user.favoriteLocation.description)")
                         .foregroundStyle(Color.gray400)
                         .font(ANBDFont.Caption3)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
                     if isSignedInUser {
                         HStack {
-                            Text(verbatim: "\(writerUser.email)")
+                            Text(verbatim: "\(myPageViewModel.user.email)")
                                 .foregroundStyle(Color.gray400)
                             
                             Spacer()
@@ -140,7 +150,7 @@ struct UserPageView: View {
                     Menu {
                         Button(role: .destructive) {
                             coordinator.reportType = .users
-//                            coordinator.reportedObjectID =
+                            coordinator.reportedObjectID = writerUser.id
                             coordinator.appendPath(.reportView)
                         } label: {
                             Label("신고하기", systemImage: "exclamationmark.bubble")
@@ -168,6 +178,24 @@ struct UserPageView: View {
                 myPageViewModel.user = await myPageViewModel.getUserInfo(userID: writerUser.id)
             }
         }
+    }
+    
+    private var userProfileImage: some View {
+        AsyncImage(url: URL(string: myPageViewModel.user.profileImage)) { image in
+            image
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+        } placeholder: {
+            ProgressView()
+        }
+        .frame(width: 95, height: 95)
+        .clipShape(.circle)
+        .padding(.horizontal, 10)
+        .overlay(
+            Circle()
+                .stroke(.gray100, lineWidth: 1)
+        )
+        .id(refreshView)
     }
     
     private func activityInfoComponent(title: String, category: ANBDCategory) -> some View {
@@ -212,15 +240,6 @@ extension UserPageView {
         switch isSignedInUser {
         case true: return "마이페이지"
         case false: return "사용자 정보"
-        }
-    }
-    
-    private var userProfileImage: UIImage {
-        switch isSignedInUser {
-        case true:
-            return UIImage(data: userProfileImageData) ?? UIImage(named: "DefaultUserProfileImage")!
-        case false:
-            return UIImage(named: "DefaultUserProfileImage")!
         }
     }
 }

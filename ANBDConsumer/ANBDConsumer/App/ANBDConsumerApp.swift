@@ -12,6 +12,7 @@ import FirebaseFirestore
 import ANBDModel
 
 class AppDelegate: NSObject, UIApplicationDelegate {
+    
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
@@ -20,6 +21,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         return true
     }
+    
     
 //    func application(
 //        _ app: UIApplication,

@@ -90,7 +90,7 @@ public struct DefaultAuthUsecase: AuthUsecase {
         
         if nickname.isEmpty {
             throw AuthError.invalidNicknameField
-        } else if !password.isValidateNickname() {
+        } else if !nickname.isValidateNickname() {
             throw AuthError.invalidNicknameRegularExpression
         }
         

@@ -80,7 +80,6 @@ struct ArticleCreateView: View {
         }
     }
     
-    //MARK: - articleCreate 서브뷰
     private var articleCreateView: some View {
         VStack {
             InstructionsView()
@@ -202,7 +201,7 @@ struct ArticleCreateView: View {
                                 article.content = self.content
                                 article.category = self.category
                                 
-                                await articleViewModel.updateArticle(article: article, imageDatas: selectedImageData)
+                                await articleViewModel.updateArticle(category: category, title: title, content: content, imageDatas: selectedImageData)
                                 await articleViewModel.reloadAllArticles()
                                 await articleViewModel.loadArticle(article: article)
                             }

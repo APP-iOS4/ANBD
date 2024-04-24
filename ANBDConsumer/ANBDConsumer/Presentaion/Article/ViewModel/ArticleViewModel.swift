@@ -23,7 +23,7 @@ final class ArticleViewModel: ObservableObject {
     
     @Published var article: Article = Article(id: "",
                                               writerID: "",
-                                              writerNickname: "ㅁㄴㅇㅁㄴㅇ",
+                                              writerNickname: "",
                                               createdAt: Date(),
                                               category: .accua,
                                               title: "",
@@ -38,11 +38,11 @@ final class ArticleViewModel: ObservableObject {
     @Published var comment: Comment = Comment(id: "",
                                               articleID: "",
                                               writerID: "",
-                                              writerNickname: "ㅁㄴㅇㅁㄴㅇ",
+                                              writerNickname: "",
                                               writerProfileImageURL: "",
                                               createdAt: Date(),
                                               content: "")
-
+    
     @Published var commentText: String = ""
     
     @Published var sortOption: ArticleOrder = .latest
@@ -58,9 +58,9 @@ final class ArticleViewModel: ObservableObject {
         filteredArticles = articles.filter({ $0.category == category })
     }
     
-//    func getOneArticle(article: Article) {
-//        self.article = article
-//    }
+    func getOneArticle(article: Article) {
+        self.article = article
+    }
     
     @MainActor
     func loadAllArticles() async {
@@ -115,7 +115,7 @@ final class ArticleViewModel: ObservableObject {
     }
     
     func writeArticle(category: ANBDCategory, title: String, content: String, imageDatas: [Data]) async {
-
+        
         let user = UserStore.shared.user
         
         let newArticle = Article(writerID: user.id,
@@ -140,11 +140,12 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
-    func updateArticle(/*category: ANBDCategory, title: String, content: String*/article: Article, imageDatas: [Data]) async {
+    @MainActor
+    func updateArticle(category: ANBDCategory, title: String, content: String, imageDatas: [Data]) async {
         
-        //        self.article.category = category
-        //        self.article.title = title
-        //        self.article.content = content
+        self.article.category = category
+        self.article.title = title
+        self.article.content = content
         
         //이미지 리사이징
         var newImages: [Data] = []
@@ -154,8 +155,8 @@ final class ArticleViewModel: ObservableObject {
         }
         
         do {
-            try await articleUseCase.updateArticle(article: article, imageDatas: newImages)
-            //            article = try await articleUseCase.loadArticle(articleID: article.id)
+            try await articleUseCase.updateArticle(article: self.article, imageDatas: newImages)
+            article = try await articleUseCase.loadArticle(articleID: article.id)
         } catch {
             print(error.localizedDescription)
         }
@@ -259,7 +260,7 @@ final class ArticleViewModel: ObservableObject {
         do {
             let loadedComment = try await commentUseCase.loadCommentList(articleID: articleID)
             self.comments = loadedComment
-//            print("loadedComment: \(loadedComment)")
+            //            print("loadedComment: \(loadedComment)")
         } catch {
             print(error.localizedDescription)
         }

@@ -24,10 +24,10 @@ struct UserLikedContentsView: View {
             switch category {
             case .accua, .dasi:
                 TabView(selection: $category) {
-                    userLikedArticleListView(category: .accua)
+                    userLikedArticleListView(list: myPageViewModel.userLikedAccuaArticles)
                         .tag(ANBDCategory.accua)
                     
-                    userLikedArticleListView(category: .dasi)
+                    userLikedArticleListView(list: myPageViewModel.userLikedDasiArticles)
                         .tag(ANBDCategory.dasi)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
@@ -35,10 +35,10 @@ struct UserLikedContentsView: View {
                 
             case .nanua, .baccua:
                 TabView(selection: $category) {
-                    userHeartTradeListView(category: .nanua)
+                    userHeartTradeListView(list: myPageViewModel.userHeartedNanuaTrades)
                         .tag(ANBDCategory.nanua)
                     
-                    userHeartTradeListView(category: .baccua)
+                    userHeartTradeListView(list: myPageViewModel.userHeartedBaccuaTrades)
                         .tag(ANBDCategory.baccua)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
@@ -55,28 +55,20 @@ struct UserLikedContentsView: View {
             Task {
                 await myPageViewModel.loadUserLikedArticles(user: UserStore.shared.user)
                 await myPageViewModel.loadUserHeartedTrades(user: UserStore.shared.user)
+                
+                myPageViewModel.filterUserLikedAndHeartedList()
             }
         }
     }
     
-    private func listEmptyView() -> some View {
-        switch category {
-        case .accua, .dasi:
-            ListEmptyView(description: "\(UserStore.shared.user.nickname)님이 좋아요한\n\(category.description) 게시글이 없습니다.")
-        case .nanua, .baccua:
-            ListEmptyView(description: "\(UserStore.shared.user.nickname)님이 찜한\n\(category.description) 거래가 없습니다.")
-        }
-    }
-    
     @ViewBuilder
-    private func userLikedArticleListView(category: ANBDCategory) -> some View {
-        if myPageViewModel.userLikedArticles.isEmpty {
-            listEmptyView()
+    private func userLikedArticleListView(list: [Article]) -> some View {
+        if list.isEmpty {
+            ListEmptyView(description: "\(UserStore.shared.user.nickname)님이 좋아요한\n\(category.description) 게시글이 없습니다.")
         } else {
             ScrollView(.vertical) {
                 LazyVStack {
-                    ForEach(myPageViewModel.userLikedArticles.filter({$0.category == category})) { article in
-                        
+                    ForEach(list) { article in
                         ArticleListCell(value: .article(article))
                             .padding(.vertical, 5)
                             .onTapGesture {
@@ -88,21 +80,20 @@ struct UserLikedContentsView: View {
                     }
                 }
                 .padding(.horizontal, 20)
-                .background(.white)
+                .background(Color(UIColor.systemBackground))
             }
             .background(.gray50)
         }
     }
     
     @ViewBuilder
-    private func userHeartTradeListView(category: ANBDCategory) -> some View {
-        if myPageViewModel.userHeartedTrades.isEmpty {
-            listEmptyView()
+    private func userHeartTradeListView(list: [Trade]) -> some View {
+        if list.isEmpty {
+            ListEmptyView(description: "\(UserStore.shared.user.nickname)님이 찜한\n\(category.description) 거래가 없습니다.")
         } else {
             ScrollView(.vertical) {
                 LazyVStack {
-                    ForEach(myPageViewModel.userHeartedTrades.filter({$0.category == category})) { trade in
-
+                    ForEach(list) { trade in
                         ArticleListCell(value: .trade(trade))
                             .padding(.vertical, 5)
                             .onTapGesture {
@@ -115,7 +106,7 @@ struct UserLikedContentsView: View {
                     }
                 }
                 .padding(.horizontal, 20)
-                .background(.white)
+                .background(Color(UIColor.systemBackground))
             }
             .background(.gray50)
         }

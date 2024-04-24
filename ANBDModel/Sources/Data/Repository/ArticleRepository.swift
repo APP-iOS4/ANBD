@@ -96,6 +96,11 @@ struct ArticleRepositoryImpl: ArticleRepository {
         return articleList
     }
     
+    func readAllArticleList(writerID: String) async throws -> [Article] {
+        let articleList = try await articleDataSource.readAllItemList(writerID: writerID)
+        return articleList
+    }
+    
     func refreshAll(limit: Int) async throws -> [Article] {
         let refreshedList = try await articleDataSource.refreshAll(limit: limit)
         return refreshedList
@@ -133,6 +138,10 @@ struct ArticleRepositoryImpl: ArticleRepository {
         }
         
         try await articleDataSource.updateItem(item: updatedArticle)
+    }
+    
+    func updateArticle(articleID: String, nickname: String) async throws {
+        try await articleDataSource.updateItem(itemID: articleID, writerNickname: nickname)
     }
     
     func likeArticle(articleID: String) async throws {

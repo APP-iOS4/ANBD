@@ -29,6 +29,10 @@ public struct DefaultCommentUsecase: CommentUsecase {
             throw ArticleError.invalidArticleIDField
         }
         
+        if comment.content.isEmpty {
+            throw CommentError.invalidParameter
+        }
+        
         try await commentRepository.createComment(articleID: articleID, comment: comment)
     }
     
@@ -46,6 +50,10 @@ public struct DefaultCommentUsecase: CommentUsecase {
     
     /// Comment를 수정하는 메서드
     public func updateComment(comment: Comment) async throws {
+        if comment.id.isEmpty {
+            throw CommentError.invalidCommentID
+        }
+        
         try await commentRepository.updateComment(comment: comment)
     }
     
@@ -54,6 +62,10 @@ public struct DefaultCommentUsecase: CommentUsecase {
     public func deleteComment(articleID: String, commentID: String) async throws {
         if articleID.isEmpty {
             throw ArticleError.invalidArticleIDField
+        }
+        
+        if commentID.isEmpty {
+            throw CommentError.invalidCommentID
         }
         
         try await commentRepository.deleteComment(articleID: articleID, commentID: commentID)

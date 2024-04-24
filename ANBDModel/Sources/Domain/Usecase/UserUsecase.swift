@@ -10,7 +10,8 @@ import Foundation
 @available(iOS 15, *)
 public protocol UserUsecase {
     func getUserInfo(userID: String) async throws -> User
-    func getUserInfoList() async throws -> [User]
+    func getUserInfoList(limit: Int) async throws -> [User]
+    func refreshAllUserInfoList(limit: Int) async throws -> [User]
     func checkDuplicatedNickname(nickname: String) async -> Bool
     func updateUserInfo(user: User) async throws
     func updateUserProfile(user: User, profileImage: Data?) async throws
@@ -19,7 +20,7 @@ public protocol UserUsecase {
 @available(iOS 15, *)
 public struct DefaultUserUsecase: UserUsecase {
 
-    private let userRepository = DefaultUserRepository()
+    private let userRepository: UserRepository = DefaultUserRepository()
     
     public init() { }
     
@@ -34,8 +35,12 @@ public struct DefaultUserUsecase: UserUsecase {
     }
     
     /// [관리자용] 가입된 User의 목록을 반환한다.
-    public func getUserInfoList() async throws -> [User] {
-        try await userRepository.readUserInfoList()
+    public func getUserInfoList(limit: Int) async throws -> [User] {
+        try await userRepository.readUserInfoList(limit: limit)
+    }
+    
+    public func refreshAllUserInfoList(limit: Int) async throws -> [User] {
+        try await userRepository.refreshAll(limit: limit)
     }
     
     /// User의 정보를 수정한다. (profile, level)

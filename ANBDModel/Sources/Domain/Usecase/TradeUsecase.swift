@@ -50,6 +50,10 @@ public struct DefaultTradeUsecase: TradeUsecase {
             throw TradeError.invalidCategory
         }
         
+        if trade.title.isEmpty || trade.content.isEmpty {
+            throw TradeError.invalidTitleContentField
+        }
+        
         if imageDatas.isEmpty {
             throw TradeError.invalidImageField
         }
@@ -227,6 +231,10 @@ public struct DefaultTradeUsecase: TradeUsecase {
             throw TradeError.invalidCategory
         }
         
+        if trade.id.isEmpty {
+            throw TradeError.invalidTradeIDField
+        }
+        
         if trade.category == .baccua && trade.wantProduct == nil {
             throw TradeError.invalidWantProductField
         }
@@ -264,6 +272,10 @@ public struct DefaultTradeUsecase: TradeUsecase {
     /// - Parameters:
     ///   - trade: 삭제하려는 trade의 정보
     public func deleteTrade(trade: Trade) async throws {
+        if trade.id.isEmpty {
+            throw TradeError.invalidTradeIDField
+        }
+        
         try await tradeRepository.deleteTrade(trade: trade)
     }
     

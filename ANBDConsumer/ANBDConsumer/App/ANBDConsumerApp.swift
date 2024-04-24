@@ -12,6 +12,7 @@ import FirebaseFirestore
 import ANBDModel
 
 class AppDelegate: NSObject, UIApplicationDelegate {
+    
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
@@ -20,6 +21,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         return true
     }
+    
     
 //    func application(
 //        _ app: UIApplication,
@@ -38,9 +40,7 @@ struct ANBDConsumerApp: App {
     @StateObject private var articleViewModel = ArticleViewModel()
     @StateObject private var authenticationViewModel = AuthenticationViewModel()
     @StateObject private var searchViewModel = SearchViewModel()
-    @StateObject private var chatViewModel = ChatViewModel()
     @StateObject private var reportViewModel = ReportViewModel()
-    @StateObject private var coordinator = Coordinator()
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
@@ -54,9 +54,7 @@ struct ANBDConsumerApp: App {
                 .environmentObject(articleViewModel)
                 .environmentObject(authenticationViewModel)
                 .environmentObject(searchViewModel)
-                .environmentObject(chatViewModel)
                 .environmentObject(reportViewModel)
-                .environmentObject(coordinator)
         }
     }
 }

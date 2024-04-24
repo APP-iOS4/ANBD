@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import ANBDModel
 
+@MainActor
 final class MyPageViewModel: ObservableObject {
     static let mockUser = User(id: "abcd1234",
                                nickname: "알수 없음",
@@ -58,13 +59,10 @@ final class MyPageViewModel: ObservableObject {
     @Published private(set) var userLikedArticles: [Article] = []
     @Published private(set) var userHeartedTrades: [Trade] = []
     
-    /*
-     // 좋아요, 찜 기능 완료 후 테스트
-     @Published private(set) var userLikedAccuaArticles: [Article] = []
-     @Published private(set) var userLikedDasiArticles: [Article] = []
-     @Published private(set) var userHeartedNanuaTrades: [Trade] = []
-     @Published private(set) var userHeartedBaccuaTrades: [Trade] = []
-     */
+    @Published private(set) var userLikedAccuaArticles: [Article] = []
+    @Published private(set) var userLikedDasiArticles: [Article] = []
+    @Published private(set) var userHeartedNanuaTrades: [Trade] = []
+    @Published private(set) var userHeartedBaccuaTrades: [Trade] = []
     
     @Published var tempUserProfileImage: Data?
     @Published var tempUserNickname = ""
@@ -119,7 +117,6 @@ final class MyPageViewModel: ObservableObject {
         }
     }
     
-    @MainActor
     func loadAllUserActivityList(by userID: String) async {
         accuaArticlesWrittenByUser = await loadArticleList(of: .accua, by: userID)
         dasiArticlesWrittenByUser = await loadArticleList(of: .dasi, by: userID)
@@ -129,37 +126,40 @@ final class MyPageViewModel: ObservableObject {
     }
     
     func loadUserLikedArticles(user: User) async {
+        var list: [Article] = []
+        
         for articleID in user.likeArticles {
             do {
                 let article = try await articleUsecase.loadArticle(articleID: articleID)
-                userLikedArticles.append(article)
+                list.append(article)
             } catch {
                 print("Error load to article that the user likes: \(error.localizedDescription)")
             }
         }
+        userLikedArticles = list
     }
     
     func loadUserHeartedTrades(user: User) async {
+        var list: [Trade] = []
+        
         for tradeID in user.likeTrades {
             do {
                 let trade = try await tradeUsecase.loadTrade(tradeID: tradeID)
-                userHeartedTrades.append(trade)
+                list.append(trade)
             } catch {
                 print("Error load to trade that the user hearted: \(error.localizedDescription)")
             }
         }
+        userHeartedTrades = list
     }
     
-    /*
-     // 좋아요, 찜 기능 완료 후 테스트
-     func filterUserLikedAndHeartedList() {
-     userLikedAccuaArticles = userLikedArticles.filter({ $0.category == .accua})
-     userLikedDasiArticles = userLikedArticles.filter({ $0.category == .dasi})
-     
-     userHeartedNanuaTrades = userHeartedTrades.filter({ $0.category == .nanua})
-     userHeartedBaccuaTrades = userHeartedTrades.filter({ $0.category == .baccua})
-     }
-     */
+    func filterUserLikedAndHeartedList() {
+        userLikedAccuaArticles = userLikedArticles.filter({ $0.category == .accua})
+        userLikedDasiArticles = userLikedArticles.filter({ $0.category == .dasi})
+        
+        userHeartedNanuaTrades = userHeartedTrades.filter({ $0.category == .nanua})
+        userHeartedBaccuaTrades = userHeartedTrades.filter({ $0.category == .baccua})
+    }
     
     // MARK: - 유저 정보 수정
     func updateUserProfile(proflieImage: Data?) async {

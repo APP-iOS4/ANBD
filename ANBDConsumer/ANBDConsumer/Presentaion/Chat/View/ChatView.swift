@@ -13,6 +13,7 @@ struct ChatView: View {
     
     @State private var isShowingConfirmSheet: Bool = false
     @State private var isShowingCustomAlertView: Bool = false
+    
     var body: some View {
         VStack {
             if chatViewModel.chatRooms.isEmpty {
@@ -33,7 +34,6 @@ struct ChatView: View {
                                         .padding(.vertical, 3)
                                 })
                             }
-                            Text("현재 안읽은 메시지 총 갯수:(\(chatViewModel.totalUnreadCount))")
                         }
                     }
                     
@@ -55,11 +55,10 @@ struct ChatView: View {
         .navigationTitle("채팅")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            chatViewModel.loadUserInfo()
             chatViewModel.fetchChatRooms()
         }
         .onDisappear {
-            chatViewModel.resetChannelListener()
+//            chatViewModel.resetChannelListener()
         }
     }
 }

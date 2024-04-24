@@ -48,6 +48,10 @@ final class ArticleViewModel: ObservableObject {
         self.article = article
     }
     
+    func filteringArticles(category: ANBDCategory) {
+        filteredArticles = articles.filter({ $0.category == category })
+    }
+    
     //MARK: - ARTICLE
     
     @MainActor
@@ -265,4 +269,16 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
+    //MARK: - SEARCH
+    
+    func searchArticle(keyword: String, category: ANBDCategory?) async {
+        do {
+            articles = try await articleUseCase.refreshSearchArticleList(keyword: keyword, limit: 100)
+            if let category {
+                filteringArticles(category: category)
+            }
+        } catch {
+            print("Error: \(error)")
+        }
+    }
 }

@@ -235,10 +235,16 @@ struct HomeView: View {
                 
                 Spacer()
                 
-                Button(action: {
-                    coordinator.category = category
-                    coordinator.homePath.append(Page.articleListView)
+                HStack {
+                    Text("더보기")
+                    
+                    Image(systemName: "chevron.forward")
+                }
+                .font(ANBDFont.body2)
+                .onTapGesture {
                     Task {
+                        coordinator.category = category
+                        coordinator.homePath.append(Page.articleListView)
                         switch coordinator.category {
                         case .accua, .dasi:
                             await articleViewModel.refreshSortedArticleList(category: category)
@@ -246,14 +252,7 @@ struct HomeView: View {
                             await tradeViewModel.reloadFilteredTrades(category: category)
                         }
                     }
-                }, label: {
-                    HStack {
-                        Text("더보기")
-                        
-                        Image(systemName: "chevron.forward")
-                    }
-                    .font(ANBDFont.body2)
-                })
+                }
             }
             .padding(.bottom, 3)
             

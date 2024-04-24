@@ -100,6 +100,7 @@ struct ArticleView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {
+                    coordinator.category = category
                     coordinator.appendPath(.searchView)
                 }, label: {
                     Image(systemName: "magnifyingglass")

@@ -63,6 +63,7 @@ struct ArticleListView: View {
                                 Spacer()
                                 VStack(alignment: .leading) {
                                     Text("\(article.title)")
+                                        .lineLimit(1)
                                         .font(.title3)
                                         .foregroundColor(.black)
                                 }
@@ -71,6 +72,7 @@ struct ArticleListView: View {
                                 Spacer()
                                 VStack(alignment: .leading) {
                                     Text("\(article.writerNickname)")
+                                        .lineLimit(2)
                                         .foregroundColor(.black)
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)

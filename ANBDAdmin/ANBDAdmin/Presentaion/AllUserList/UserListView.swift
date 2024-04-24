@@ -73,6 +73,7 @@ struct UserListView: View {
                                 VStack(alignment: .leading) {
                                     Text("\(user.nickname)")
                                         .font(.title3)
+                                        .lineLimit(2)
                                         .foregroundColor(.black)
                                 }
                                 .frame(minWidth: 0, maxWidth: 200, alignment: .leading)

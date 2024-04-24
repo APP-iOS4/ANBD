@@ -61,7 +61,7 @@ final class DefaultUserDataSource: UserDataSource {
             requestQuery = allQuery
         } else {
             requestQuery = userDB
-                .order(by: "createdAt", descending: true)
+                .order(by: "email", descending: true)
                 .limit(to: limit)
             
             guard let lastSnapshot = try await requestQuery

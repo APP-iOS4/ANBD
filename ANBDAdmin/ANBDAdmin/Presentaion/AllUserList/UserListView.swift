@@ -116,6 +116,15 @@ struct UserListView: View {
                     userListViewModel.firstLoadUsers()
                 }
                 .navigationBarTitle("유저 목록")
+                .toolbar {
+                    Button(action: {
+                        self.searchUserText = ""
+                        userListViewModel.userList = []
+                        userListViewModel.firstLoadUsers()
+                    }) {
+                        Image(systemName: "arrow.clockwise")
+                    }
+                }
             }
             .padding(.top, 10)
             .background(Color(.systemGroupedBackground))

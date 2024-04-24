@@ -16,7 +16,7 @@ class UserListViewModel: ObservableObject {
     func firstLoadUsers() {
         Task {
             do {
-                let users = try await userUsecase.getUserInfoList()
+                let users = try await userUsecase.refreshAllUserInfoList(limit: 10)
                 DispatchQueue.main.async {
                     self.userList = users
                     self.canLoadMoreUsers = true
@@ -31,7 +31,7 @@ class UserListViewModel: ObservableObject {
         
         Task {
             do {
-                let users = try await userUsecase.getUserInfoList()
+                let users = try await userUsecase.getUserInfoList(limit: 10)
                 DispatchQueue.main.async {
                     self.userList.append(contentsOf: users)
                     if users.count < 10 {
@@ -39,7 +39,7 @@ class UserListViewModel: ObservableObject {
                     }
                 }
             } catch {
-                print("게시물 목록을 가져오는데 실패했습니다: \(error)")
+                print("유저 목록을 가져오는데 실패했습니다: \(error)")
             }
         }
     }
@@ -50,6 +50,7 @@ class UserListViewModel: ObservableObject {
         do {
             let searchedUser = try await loadUser(userID: userID)
             DispatchQueue.main.async {
+                self.canLoadMoreUsers = false
                 self.userList = [searchedUser]
             }
         } catch {

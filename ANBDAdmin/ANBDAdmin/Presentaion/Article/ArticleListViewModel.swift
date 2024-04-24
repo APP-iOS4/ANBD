@@ -30,7 +30,7 @@ class ArticleListViewModel: ObservableObject {
             }
         }
     }
-    func loadMoreArticles(){ //articleUsecase.loadArticleList() 는 데이터를 10개씩 불러오는 함수
+    func loadMoreArticles(){
         guard canLoadMoreArticles else { return }
 
         Task {
@@ -54,6 +54,7 @@ class ArticleListViewModel: ObservableObject {
         do {
             let searchedArticle = try await loadArticle(articleID: articleID)
             DispatchQueue.main.async {
+                self.canLoadMoreArticles = false
                 self.articleList = [searchedArticle]
             }
         } catch {

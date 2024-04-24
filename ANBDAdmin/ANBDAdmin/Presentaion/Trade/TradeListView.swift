@@ -64,6 +64,7 @@ struct TradeListView: View {
                                 VStack(alignment: .leading) {
                                     Text("\(trade.title)")
                                         .font(.title3)
+                                        .lineLimit(1)
                                         .foregroundColor(.black)
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
@@ -71,6 +72,7 @@ struct TradeListView: View {
                                 Spacer()
                                 VStack(alignment: .leading) {
                                     Text("\(trade.writerNickname)")
+                                        .lineLimit(2)
                                         .foregroundColor(.black)
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)

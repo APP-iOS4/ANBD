@@ -54,6 +54,7 @@ struct ReportListView: View {
                                 Spacer()
                                 VStack(alignment: .leading) {
                                     Text("\(report.reportReason)")
+                                        .lineLimit(1)
                                         .foregroundColor(.black)
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)

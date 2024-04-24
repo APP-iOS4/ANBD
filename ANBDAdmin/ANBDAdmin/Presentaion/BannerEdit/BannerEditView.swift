@@ -35,7 +35,7 @@ struct BannerEditView: View {
                                             image
                                                 .resizable()
                                                 .scaledToFit()
-                                                .frame(width: 250)
+                                                .frame(width: 220)
                                         case .failure:
                                             Text("Failed to load image")
                                         @unknown default:

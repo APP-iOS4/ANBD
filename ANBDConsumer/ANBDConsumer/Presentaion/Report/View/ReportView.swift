@@ -20,6 +20,24 @@ struct ReportView: View {
     @State private var isShowingCustomAlert: Bool = false
     
     var body: some View {
+        if #available(iOS 17.0, *) {
+            reportView
+                .onChange(of: reportReason) {
+                    if reportReason.count > 200 {
+                        reportReason = String(reportReason.prefix(200))
+                    }
+                }
+        } else {
+            reportView
+                .onChange(of: reportReason) { report in
+                    if report.count > 200 {
+                        reportReason = String(report.prefix(200))
+                    }
+                }
+        }
+    }
+    
+    private var reportView: some View {
         ZStack {
             VStack(alignment: .leading) {
                 Text("\(reportTitle) 신고하기")

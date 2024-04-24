@@ -34,7 +34,6 @@ final class ChatViewModel: ObservableObject {
     
     init() {
         Task {
-            user = await UserStore.shared.getUserInfo(userID: UserStore.shared.user.id)
             fetchChatRooms()
         }
     }
@@ -92,9 +91,13 @@ final class ChatViewModel: ObservableObject {
     
     /// 전체 채팅방 리스트 불러오기
     func fetchChatRooms() {
-        chatUsecase.loadChannelList(userID: user.id) { [weak self] channel in
-            self?.chatRooms = channel
-            self?.getTotalUnreadCount()
+        Task {
+            guard let userID = UserDefaultsClient.shared.userID else { return }
+            user = await UserStore.shared.getUserInfo(userID: userID)
+            chatUsecase.loadChannelList(userID: user.id) { [weak self] channel in
+                self?.chatRooms = channel
+                self?.getTotalUnreadCount()
+            }
         }
     }
     

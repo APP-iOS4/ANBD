@@ -16,47 +16,46 @@ struct ArticleView: View {
     
     @State private var isShowingArticleCreateView: Bool = false
     @State private var isShowingTradeCreateView: Bool = false
+    
     @Binding var category: ANBDCategory
     
-    //true - accua, dasi / false - nanua, baccua
     @State private var isArticle: Bool = true
-    //private var cancellables = Set<AnyCancellable>()
     
     var body: some View {
+        
         //TODO: combine으로 고치기
         if #available(iOS 17.0, *) {
             listView
                 .onChange(of: category) {
                     if isArticle {
                         Task {
-                            await articleViewModel.refreshSortedArticleList(category: category, by: articleViewModel.sortOption, limit: 10)
+                            await articleViewModel.refreshSortedArticleList(category: category)
                         }
                     } else {
                         Task {
                             await tradeViewModel.reloadFilteredTrades(category: category)
                         }
                     }
-                    print("🤍\(category)")
                 }
         } else {
             listView
-                .onChange(of: category, perform: { newValue in
+                .onChange(of: category, perform: { _ in
                     if isArticle {
                         Task {
-                            await articleViewModel.refreshSortedArticleList(category: category, by: articleViewModel.sortOption, limit: 10)
+                            await articleViewModel.refreshSortedArticleList(category: category)
                         }
                     } else {
                         Task {
-                            await tradeViewModel.reloadFilteredTrades(category: newValue)
+                            await tradeViewModel.reloadFilteredTrades(category: category)
                         }
                     }
-                    print("🤍\(category)")
                 })
             
         }
     }
     
     //MARK: - article 서브뷰
+    
     private var listView: some View {
         ZStack(alignment: .bottomTrailing) {
             
@@ -88,8 +87,7 @@ struct ArticleView: View {
             if category == .accua || category == .dasi {
                 isArticle = true
                 Task {
-                    await articleViewModel.reloadAllArticles()
-                    articleViewModel.filteringArticles(category: category)
+                    await articleViewModel.refreshSortedArticleList(category: category)
                 }
             } else {
                 isArticle = false
@@ -114,8 +112,7 @@ struct ArticleView: View {
         }
         .fullScreenCover(isPresented: $isShowingArticleCreateView, onDismiss: {
             Task {
-                await articleViewModel.reloadAllArticles()
-                articleViewModel.filteringArticles(category: category)
+                await articleViewModel.refreshSortedArticleList(category: category)
             }
         }, content: {
             ArticleCreateView(isShowingCreateView: $isShowingArticleCreateView, category: category, isNewArticle: true)

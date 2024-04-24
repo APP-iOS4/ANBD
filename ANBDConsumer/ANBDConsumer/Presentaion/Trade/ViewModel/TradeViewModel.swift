@@ -23,16 +23,7 @@ final class TradeViewModel: ObservableObject {
     @Published var selectedItemCategory: ItemCategory = .digital
     @Published var selectedLocation: Location = .seoul
     
-    private var hasMoreList: Bool = true
-    
-    init() {
-        
-    }
-    
-    func filteringTrades(category: ANBDCategory) {
-        filteredTrades = trades.filter({ $0.category == category })
-        filteredTrades = filteredTrades.filter({ $0.category == category })
-    }
+    //MARK: - 로컬 함수 (네트워크 호출 X)
     
     func pickerItemCategory(itemCategory: ItemCategory) {
         self.selectedItemCategory = itemCategory
@@ -52,53 +43,25 @@ final class TradeViewModel: ObservableObject {
     @MainActor
     func reloadFilteredTrades(category: ANBDCategory) async {
         do {
-            self.hasMoreList = true
-            filteredTrades.removeAll()
-            
             if self.selectedLocations.isEmpty && self.selectedItemCategories.isEmpty {
                 print("둘다 엠티여요")
                 
-                self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: nil, itemCategory: nil, limit: 5)
+                self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: nil, itemCategory: nil, limit: 8)
                 
                 //print("🥹\(filteredTrades)")
                 
             } else if self.selectedLocations.isEmpty {
                 print("지역 엠티여요")
-                self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: nil, itemCategory: self.selectedItemCategories, limit: 5)
+                self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: nil, itemCategory: self.selectedItemCategories, limit: 8)
                 
             } else if self.selectedItemCategories.isEmpty {
                 print("카테고리 엠티여요")
-                self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: nil, limit: 5)
+                self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: nil, limit: 8)
                 
             } else {
                 print("둘다 풀")
-                self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: self.selectedItemCategories, limit: 5)
+                self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: self.selectedItemCategories, limit: 8)
             }
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
-    
-    /// 탭 전환 시 호출 -> 아직 잘 모르겠음
-    @MainActor
-    func loadFilteredTrades(category: ANBDCategory) async {
-        do {
-            self.hasMoreList = true
-            
-            if self.selectedLocations.isEmpty && self.selectedItemCategories.isEmpty {
-                //print("둘다 엠티여요")
-                self.filteredTrades = try await tradeUseCase.loadFilteredTradeList(category: category, location: nil, itemCategory: nil, limit: 5)
-            } else if self.selectedLocations.isEmpty {
-                //print("지역 엠티여요")
-                self.filteredTrades = try await tradeUseCase.loadFilteredTradeList(category: category, location: nil, itemCategory: self.selectedItemCategories, limit: 5)
-            } else if self.selectedItemCategories.isEmpty {
-                //print("카테고리 엠티여요")
-                self.filteredTrades = try await tradeUseCase.loadFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: nil, limit: 5)
-            } else {
-                //print("둘다 풀")
-                self.filteredTrades = try await tradeUseCase.loadFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: self.selectedItemCategories, limit: 5)
-            }
-            print("✔️✔️\(filteredTrades)")
         } catch {
             print(error.localizedDescription)
         }

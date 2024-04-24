@@ -22,7 +22,9 @@ extension ChatDetailView {
         @State var imageUrl: URL?
         @State private var isMine: Bool = false
         
-        var channelID: String
+        //        var channelID: String
+        
+        var channel: Channel
         
         @Binding var isShowingImageDetailView: Bool
         @Binding var detailImage: Image
@@ -44,18 +46,27 @@ extension ChatDetailView {
                     .font(ANBDFont.Caption2)
                 }
                 
+                if !isMine && chatViewModel.otherUserLastMessages.contains(message){
+                    ZStack {
+                        CachedAsyncImage(url: URL(string: chatViewModel.otherUserProfileImageUrl)) { image in
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .clipShape(Circle())
+                                .overlay(Circle().stroke(Color.gray, lineWidth: 0.5))
+                        } placeholder: {
+                            ProgressView()
+                        }
+                        .frame(width: 30)
+                    }
+                }else if !isMine {
+                    Circle()
+                        .fill(Color.clear)
+                        .frame(width: 30)
+                }
+                
                 // 텍스트
                 if let content = message.content {
-                    if !isMine{
-                        ZStack {
-                            Circle()
-                                .fill(Color.gray100)
-                                .frame(width: 30)
-                            
-                            Text("🐳")
-                                .font(.system(size: 20))
-                        }
-                    }
                     Text(content)
                         .padding(15)
                         .foregroundStyle(isMine ? .white : (colorScheme == .dark ? Color(red: 13/255, green: 15/255, blue: 20/255) : .gray900))
@@ -67,7 +78,7 @@ extension ChatDetailView {
                                 Button("메시지 신고하기", role: .destructive) {
                                     coordinator.reportType = .messages
                                     coordinator.reportedObjectID = message.id
-                                    coordinator.reportedChannelID = channelID
+                                    coordinator.reportedChannelID = channel.id
                                     coordinator.appendPath(.reportView)
                                 }
                             }
@@ -92,7 +103,7 @@ extension ChatDetailView {
                                 Button("메시지 신고하기", role: .destructive) {
                                     coordinator.reportType = .messages
                                     coordinator.reportedObjectID = message.id
-                                    coordinator.reportedChannelID = channelID
+                                    coordinator.reportedChannelID = channel.id
                                     coordinator.appendPath(.reportView)
                                 }
                             }
@@ -110,6 +121,7 @@ extension ChatDetailView {
                 }
             }
             .onAppear {
+                
                 if let user = chatViewModel.user {
                     isMine = message.userID == user.id
                 }

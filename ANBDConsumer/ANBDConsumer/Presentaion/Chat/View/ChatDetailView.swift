@@ -47,18 +47,21 @@ struct ChatDetailView: View {
                 ScrollView {
                     LazyVStack {
                         ForEach(chatViewModel.groupedMessages, id: \.day) { day, messages in
-                            ForEach(messages) { message in
-                                MessageCell(message: message, isLast: message == chatViewModel.messages.last, channelID: channel?.id ?? "ChannelID", isShowingImageDetailView: $isShowingImageDetailView, detailImage: $detailImage)
-                                    .padding(.vertical, 1)
-                                    .padding(.horizontal, 20)
-                            }
-                            if let last = chatViewModel.groupedMessages.last , last.day == day{
-                                MessageDateDividerView(dateString: day)
-                                    .padding(.horizontal, 20)
-                                    .padding(.bottom, 20)
-                            } else {
-                                MessageDateDividerView(dateString: day)
-                                    .padding(20)
+                            
+                            if let channel = channel {
+                                ForEach(messages) { message in
+                                    MessageCell(message: message, isLast: message == chatViewModel.messages.last, channel: channel, isShowingImageDetailView: $isShowingImageDetailView, detailImage: $detailImage)
+                                        .padding(.vertical, 1)
+                                        .padding(.horizontal, 20)
+                                }
+                                if let last = chatViewModel.groupedMessages.last , last.day == day{
+                                    MessageDateDividerView(dateString: day)
+                                        .padding(.horizontal, 20)
+                                        .padding(.bottom, 20)
+                                } else {
+                                    MessageDateDividerView(dateString: day)
+                                        .padding(20)
+                                }
                             }
                         }
                         .rotationEffect(Angle(degrees: 180))
@@ -175,6 +178,7 @@ struct ChatDetailView: View {
                 
                 /// 채널만 알 때 ......
                 if let channel = channel {
+                    await chatViewModel.getOtherUserImage(channel: channel)
                     /// trade 불러오기
                     trade = try await chatViewModel.getTrade(channelID: channel.id)
                     
@@ -374,6 +378,7 @@ extension ChatDetailView {
                     
                     if let channel {
                         try await chatViewModel.addListener(channelID: channel.id)
+                        await chatViewModel.getOtherUserImage(channel: channel)
                     }
                 }
                 
@@ -409,6 +414,7 @@ extension ChatDetailView {
                         channel = try await chatViewModel.makeChannel(channel: newChannel)
                         
                         if let channel {
+                            await chatViewModel.getOtherUserImage(channel: channel)
                             try await chatViewModel.addListener(channelID: channel.id)
                         }
                     }

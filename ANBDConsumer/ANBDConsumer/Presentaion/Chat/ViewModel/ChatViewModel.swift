@@ -23,6 +23,8 @@ final class ChatViewModel: ObservableObject {
     @Published var user: User?
     @Published var chatRooms: [Channel] = []
     @Published var messages: [Message] = []
+    @Published var otherUserLastMessages: [Message] = []
+    @Published var otherUserProfileImageUrl: String = ""
     @Published var totalUnreadCount: Int = 0
     
     @Published var groupedMessages: [(day:String , messages:[Message])] = []
@@ -48,13 +50,14 @@ final class ChatViewModel: ObservableObject {
                     }
                     self.messages.insert(contentsOf: preMessages, at: 0)
                     updateGroupedMessagesByDate()
+                    updateLastMessage()
                 }
                 
                 if !isListener {
                     if let lastMessage = messages.last {
                         try await chatUsecase.updateMessageReadStatus(channelID: channelID, lastMessage: lastMessage, userID: user.id)
                     }
-                
+                    
                     isListener = true
                     chatUsecase.listenNewMessage(channelID: channelID, userID: user.id) { [weak self] message in
                         if let lastMessageID = self?.messages.last?.id, lastMessageID == message.id, let lastIndex = self?.messages.indices.last {
@@ -63,6 +66,7 @@ final class ChatViewModel: ObservableObject {
                         } else {
                             /// 메시지 전송 (추가)
                             self?.messages.append(message)
+                            self?.addMessageUpdate(addMessage: message)
                         }
                         self?.updateGroupedMessagesByDate()
                     }
@@ -85,14 +89,8 @@ final class ChatViewModel: ObservableObject {
         
         self.groupedMessages = messageGroup
         
-//        for (day,messages) in messageGroup {
-//            if let index = groupedMessages.firstIndex(where: {$0.day == day }) {
-//                self.groupedMessages[index].messages.insert(contentsOf: messages, at: 0)
-//            } else {
-//                self.groupedMessages.append((day: day, messages: messages))
-//            }
-//        }
     }
+    
     
     
     /// 전체 채팅방 리스트 불러오기
@@ -104,7 +102,7 @@ final class ChatViewModel: ObservableObject {
             }
         }
     }
-
+    
     
     /// 채널 생성 (처음 채팅을 남길 때) : ChannelID 반환
     func makeChannel(channel: Channel) async throws -> Channel {
@@ -127,6 +125,66 @@ final class ChatViewModel: ObservableObject {
             print("getChannel Error: \(error)")
             return nil
         }
+    }
+    
+    func getOtherUserImage(channel: Channel) async {
+        
+        guard let user = user else {
+            return
+        }
+        do {
+            let otherUser = try await chatUsecase.getOtherUser(channel: channel, userID: user.id)
+            self.otherUserProfileImageUrl = otherUser.profileImage
+        } catch {
+            print("error: \(error)")
+        }
+    }
+    
+    func setOtherUserImage(channel: Channel) async -> String? {
+        
+        guard let user = user else {
+            return nil
+        }
+        do {
+            let otherUser = try await chatUsecase.getOtherUser(channel: channel, userID: user.id)
+            return otherUser.profileImage
+        } catch {
+            print("error: \(error)")
+            return nil
+        }
+    }
+    
+    func updateLastMessage() {
+        var otherMessages: [Message] = []
+        
+        guard let user = user else {
+            return
+        }
+        for message in messages {
+            if message.userID != user.id {
+                if let lastMessage = otherMessages.last, lastMessage.dateStringWithYear != message.dateStringWithYear {
+                    self.otherUserLastMessages.append(lastMessage)
+                    otherMessages = []
+                }
+                otherMessages.append(message)
+            } else {
+                if let lastMessage = otherMessages.last {
+                    self.otherUserLastMessages.append(lastMessage)
+                    otherMessages = []
+                }
+            }
+        }
+        
+        if let lastMessage = otherMessages.last {
+            self.otherUserLastMessages.append(lastMessage)
+        }
+    }
+    
+    func addMessageUpdate(addMessage: Message) {
+        if let lastMessage = otherUserLastMessages.last , lastMessage.dateStringWithYear == addMessage.dateStringWithYear{
+            otherUserLastMessages.removeLast()
+        }
+        otherUserLastMessages.append(addMessage)
     }
     
     func getTotalUnreadCount(){
@@ -158,7 +216,7 @@ final class ChatViewModel: ObservableObject {
             return try await storageManager.downloadImage(path: .trade, containerID: "\(containerID)/thumbnail", imagePath: imagePath)
         } catch {
             print("HomeViewModel Error loadImage : \(error) \(error.localizedDescription)")
-
+            
             /// 이미지 예외 처리
             let image = UIImage(named: "ANBDWarning")
             let imageData = image?.pngData()

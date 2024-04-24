@@ -7,10 +7,12 @@
 
 import SwiftUI
 import ANBDModel
+import CachedAsyncImage
 
 struct ChatListCell: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
     var channel: Channel
+    @State var otherUserImage: String?
     
     var body: some View {
         HStack {
@@ -20,8 +22,18 @@ struct ChatListCell: View {
                     .fill(Color.gray100)
                     .frame(width: 55)
                 
-                Text("🐳")
-                    .font(.system(size: 33))
+                if let otherUserImage {
+                    CachedAsyncImage(url: URL(string: otherUserImage)) { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .clipShape(Circle())
+                            .overlay(Circle().stroke(Color.gray, lineWidth: 0.5))
+                    } placeholder: {
+                        ProgressView()
+                    }
+                    .frame(width: 55)
+                }
             }
             .padding(.trailing, 10)
             
@@ -55,6 +67,12 @@ struct ChatListCell: View {
                 }
             }
             .padding(.vertical, 9)
+        }
+        .onAppear {
+            Task {
+                otherUserImage = await chatViewModel.setOtherUserImage(channel:channel)
+            }
+
         }
         .frame(height: 70)
     }

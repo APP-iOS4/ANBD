@@ -279,5 +279,4 @@ final class ArticleViewModel: ObservableObject {
             print("Error: \(error)")
         }
     }
-    
 }

@@ -35,7 +35,7 @@ struct CustomAlertView: View {
                         .foregroundStyle(.gray900)
                         .padding(.bottom, 15)
                     
-                    if viewType == .duplicatedEmail || viewType == .duplicatedNickname {
+                    if viewType == .duplicatedEmail || viewType == .duplicatedNickname || viewType == .signInFail {
                         Button(action: {
                             completionHandler()
                             isShowingCustomAlert.toggle()
@@ -102,6 +102,7 @@ extension CustomAlertView {
         case withdrawal
         case duplicatedEmail
         case duplicatedNickname
+        case signInFail
         //trade
         case changeState
         case tradeDelete
@@ -124,6 +125,8 @@ extension CustomAlertView {
             return "중복된 이메일"
         case .duplicatedNickname:
             return "중복된 닉네임"
+        case .signInFail:
+            return "로그인 실패"
         case .changeState:
             return "거래 상태 변경"
         case .tradeDelete:
@@ -153,6 +156,8 @@ extension CustomAlertView {
             return "이미 사용중인 이메일 입니다."
         case .duplicatedNickname:
             return "이미 사용중인 닉네임 입니다."
+        case .signInFail:
+            return "이메일 또는 비밀번호를 확인하세요."
         case .changeState:
             return "거래 상태를 변경하시겠습니까?"
         case .tradeDelete:
@@ -182,6 +187,8 @@ extension CustomAlertView {
             return "확인"
         case .duplicatedNickname:
             return "확인"
+        case .signInFail:
+            return "확인"
         case .changeState:
             return "변경하기"
         case .tradeDelete, .writingCancel:
@@ -209,6 +216,8 @@ extension CustomAlertView {
             return .accent
         case .duplicatedNickname:
             return .accent
+        case .signInFail:
+            return .accent
         case .changeState:
             return .accent
         case .tradeDelete, .writingCancel:
@@ -235,6 +244,8 @@ extension CustomAlertView {
         case .duplicatedEmail:
             return .medium
         case .duplicatedNickname:
+            return .medium
+        case .signInFail:
             return .medium
         case .changeState:
             return .medium

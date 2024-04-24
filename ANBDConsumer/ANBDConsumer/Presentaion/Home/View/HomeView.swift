@@ -238,6 +238,14 @@ struct HomeView: View {
                 Button(action: {
                     coordinator.category = category
                     coordinator.homePath.append(Page.articleListView)
+                    Task {
+                        switch coordinator.category {
+                        case .accua, .dasi:
+                            await articleViewModel.refreshSortedArticleList(category: category)
+                        case .nanua, .baccua:
+                            await tradeViewModel.reloadFilteredTrades(category: category)
+                        }
+                    }
                 }, label: {
                     HStack {
                         Text("더보기")

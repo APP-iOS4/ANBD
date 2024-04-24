@@ -256,7 +256,7 @@ extension AuthenticationViewModel {
         showingTermsView.toggle()
     }
     
-    func signIn() async throws {
+    func signIn() async {
         do {
             let signedInUser = try await authUsecase.signIn(email: loginEmailString,
                                                             password: loginPasswordString)
@@ -264,21 +264,21 @@ extension AuthenticationViewModel {
             UserDefaultsClient.shared.userID = signedInUser.id
             UserStore.shared.user = signedInUser
         } catch {
-            print("\(error.localizedDescription)")
+            print("Error sign in: \(error.localizedDescription)")
         }
     }
     
-    func signOut(completion: @escaping () -> Void) async throws {
+    func signOut(completion: @escaping () -> Void) async {
         do {
             try await authUsecase.signOut()
             
             completion()
         } catch {
-            print("\(error.localizedDescription)")
+            print("Error sign out: \(error.localizedDescription)")
         }
     }
     
-    func signUp() async throws {
+    func signUp() async {
         do {
             let signedUpUser = try await authUsecase.signUp(email: signUpEmailString,
                                                             password: signUpPasswordString,
@@ -292,7 +292,7 @@ extension AuthenticationViewModel {
             UserDefaultsClient.shared.userID = signedUpUser.id
             UserStore.shared.user = signedUpUser
         } catch {
-            print("\(error.localizedDescription)")
+            print("Error sign up: \(error.localizedDescription)")
         }
     }
     
@@ -316,14 +316,14 @@ extension AuthenticationViewModel {
         }
     }
     
-    func withdrawal(completion: @escaping () -> Void) async throws {
+    func withdrawal(completion: @escaping () -> Void) async {
         do {
-            try await signOut(completion: { })
+            await signOut(completion: { })
             try await authUsecase.withdrawal(userID: UserStore.shared.user.id)
             
             completion()
         } catch {
-            print("\(error.localizedDescription)")
+            print("Error withdrawal: \(error.localizedDescription)")
         }
     }
     

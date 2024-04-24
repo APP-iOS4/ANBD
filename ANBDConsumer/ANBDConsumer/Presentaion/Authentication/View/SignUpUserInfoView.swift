@@ -28,14 +28,14 @@ struct SignUpUserInfoView: View {
                 
                 if #available(iOS 17.0, *) {
                     textFieldWithTitle
-                    .onChange(of: authenticationViewModel.signUpNicknameString) {
-                        authenticationViewModel.signUpNicknameString = authenticationViewModel.checkNicknameLength(authenticationViewModel.signUpNicknameString)
-                    }
+                        .onChange(of: authenticationViewModel.signUpNicknameString) {
+                            authenticationViewModel.signUpNicknameString = authenticationViewModel.checkNicknameLength(authenticationViewModel.signUpNicknameString)
+                        }
                 } else {
                     textFieldWithTitle
-                    .onChange(of: authenticationViewModel.signUpNicknameString) { _ in
-                        authenticationViewModel.signUpNicknameString = authenticationViewModel.checkNicknameLength(authenticationViewModel.signUpNicknameString)
-                    }
+                        .onChange(of: authenticationViewModel.signUpNicknameString) { _ in
+                            authenticationViewModel.signUpNicknameString = authenticationViewModel.checkNicknameLength(authenticationViewModel.signUpNicknameString)
+                        }
                 }
                 
                 HStack {

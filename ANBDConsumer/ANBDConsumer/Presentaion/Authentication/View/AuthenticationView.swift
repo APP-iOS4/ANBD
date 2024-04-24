@@ -52,7 +52,7 @@ struct AuthenticationView: View {
                             .submitLabel(.go)
                             .onSubmit {
                                 Task {
-                                    try await authenticationViewModel.signIn()
+                                    await authenticationViewModel.signIn()
                                     authenticationViewModel.checkAuthState()
                                 }
                             }
@@ -71,16 +71,16 @@ struct AuthenticationView: View {
                             BlueSquareButton(title: "로그인",
                                              isDisabled: !authenticationViewModel.isValidLogin) {
                                 Task {
-                                    try await authenticationViewModel.signIn()
+                                    await authenticationViewModel.signIn()
                                     authenticationViewModel.checkAuthState()
                                 }
                             }
                             
                             Button(action: {
-                                // 구글 로그인
-#if DEBUG
+                                // TODO: 구글 로그인 메서드 넣기
+                                #if DEBUG
                                 print("구글 로그인 - 프로토타입")
-#endif
+                                #endif
                             }, label: {
                                 RoundedRectangle(cornerRadius: 14)
                                     .stroke(Color.gray200)

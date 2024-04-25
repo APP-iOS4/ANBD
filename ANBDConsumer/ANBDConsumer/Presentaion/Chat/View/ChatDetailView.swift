@@ -176,7 +176,7 @@ struct ChatDetailView: View {
                 
                 /// 채널만 알 때 ......
                 if let channel = channel {
-                    await chatViewModel.getOtherUserImage(channel: channel)
+                    await chatViewModel.setOtherUserImage(channel: channel)
                     /// trade 불러오기
                     trade = try await chatViewModel.getTrade(channelID: channel.id)
                     
@@ -296,7 +296,7 @@ extension ChatDetailView {
                 
                 if let channel {
                     try await chatViewModel.addListener(channelID: channel.id)
-                    await chatViewModel.getOtherUserImage(channel: channel)
+                    await chatViewModel.setOtherUserImage(channel: channel)
                 }
             }
             
@@ -331,7 +331,7 @@ extension ChatDetailView {
                     
                     if let channel {
                         try await chatViewModel.addListener(channelID: channel.id)
-                        await chatViewModel.getOtherUserImage(channel: channel)
+                        await chatViewModel.setOtherUserImage(channel: channel)
                     }
                 }
                 

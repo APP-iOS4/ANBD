@@ -23,10 +23,8 @@ struct ChatHeaderView: View {
         Button(action: {
             if trade != nil {
                 switch coordinator.selectedTab {
-                case .home, .trade:
+                case .home, .article, .trade, .mypage:
                     coordinator.pop()
-                case .article, .mypage:
-                    return
                 case .chat:
                     if let trade {
                         coordinator.trade = trade

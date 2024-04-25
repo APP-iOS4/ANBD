@@ -83,6 +83,8 @@ struct ArticleView: View {
             }
         }
         .onAppear {
+            coordinator.isFromUserPage = false
+            
             if category == .accua || category == .dasi {
                 isArticle = true
                 Task {

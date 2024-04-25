@@ -12,6 +12,7 @@ class UserListViewModel: ObservableObject {
     @Published var userList: [User] = []
     let userUsecase = DefaultUserUsecase()
     @Published var canLoadMoreUsers: Bool = true
+    var lastUser: User?
     
     func firstLoadUsers() {
         Task {
@@ -28,15 +29,19 @@ class UserListViewModel: ObservableObject {
     }
     func loadMoreUsers() {
         guard canLoadMoreUsers else { return }
-
+        
         Task {
             do {
                 let users = try await userUsecase.getUserInfoList(limit: 11)
                 DispatchQueue.main.async {
                     if users.count == 11 {
+                        self.lastUser = users.last
                         self.userList.append(contentsOf: users.dropLast())
                         self.canLoadMoreUsers = true
                     } else {
+                        if let lastUser = self.lastUser {
+                            self.userList.append(lastUser)
+                        }
                         self.userList.append(contentsOf: users)
                         self.canLoadMoreUsers = false
                     }

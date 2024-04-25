@@ -14,6 +14,9 @@ public protocol UserUsecase {
     func refreshAllUserInfoList(limit: Int) async throws -> [User]
     func checkDuplicatedNickname(nickname: String) async -> Bool
     func updateUserInfo(user: User) async throws
+    func updateUserPostCount(user: User,
+                             before: ANBDCategory,
+                             after: ANBDCategory) async throws
     func updateUserProfile(user: User, profileImage: Data?) async throws
 }
 
@@ -59,6 +62,21 @@ public struct DefaultUserUsecase: UserUsecase {
         }
         
         try await userRepository.updateUserInfo(user: userInfo)
+    }
+    
+    public func updateUserPostCount(
+        user: User,
+        before: ANBDCategory,
+        after: ANBDCategory
+    ) async throws {
+        if user.id.isEmpty { throw UserError.invalidUserID }
+        if before == after { return }
+        
+        try await userRepository.updateUserPostCount(
+            user: user,
+            before: before,
+            after: after
+        )
     }
     
     /// 닉네임 중복체크 API

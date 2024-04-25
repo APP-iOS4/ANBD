@@ -55,6 +55,31 @@ struct DefaultUserRepository: UserRepository {
         try await userDataSource.updateUserInfo(user: user)
     }
     
+    func updateUserPostCount(
+        user: User,
+        before: ANBDCategory,
+        after: ANBDCategory
+    ) async throws {
+        var userInfo = user
+        
+        switch after {
+        case .accua:
+            userInfo.dasiCount -= 1
+            userInfo.accuaCount += 1
+        case .nanua:
+            userInfo.baccuaCount -= 1
+            userInfo.nanuaCount += 1
+        case .baccua:
+            userInfo.nanuaCount -= 1
+            userInfo.baccuaCount += 1
+        case .dasi:
+            userInfo.accuaCount -= 1
+            userInfo.dasiCount += 1
+        }
+        
+        try await userDataSource.updateUserPostCount(user: userInfo)
+    }
+    
     /// 좋아요한 게시글이 삭제됐을 때 User의 좋아요한 배열에서 삭제하는 메서드
     func updateUserInfoList(articleID: String) async throws {
         try await userDataSource.updateUserInfoList(articleID: articleID)

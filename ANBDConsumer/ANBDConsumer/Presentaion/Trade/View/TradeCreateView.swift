@@ -26,6 +26,7 @@ struct TradeCreateView: View {
     
     //photo
     @State private var selectedItems: [PhotosPickerItem] = []
+    @State private var tmpSelectedItems: [PhotosPickerItem] = []
     @State private var selectedPhotosData: [Data] = []
     
     //@State private var itemCategory
@@ -58,7 +59,7 @@ struct TradeCreateView: View {
                     
                     isCancelable = false
                 })
-                
+            
         } else {
             wholeView
                 .onChange(of: mustTextFields) { _ in
@@ -84,7 +85,7 @@ struct TradeCreateView: View {
 extension TradeCreateView {
     fileprivate var photosView: some View {
         HStack {
-            PhotosPicker(selection: $selectedItems, maxSelectionCount: 5-selectedPhotosData.count, matching: .images) {
+            PhotosPicker(selection: $selectedItems, maxSelectionCount: 5, matching: .images) {
                 VStack {
                     Image(systemName: "camera.fill")
                         .font(.system(size: 25))
@@ -109,31 +110,41 @@ extension TradeCreateView {
                 HStack {
                     ForEach(selectedPhotosData, id: \.self) { photoData in
                         ZStack(alignment:.topTrailing){
-                            if let image = UIImage(data: photoData) {
+                            
+                            ZStack {
+                                if let image = UIImage(data: photoData) {
+                                    
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .frame(width : 80 , height: 80)
+                                        .cornerRadius(10)
+                                        .clipped()
+                                        .padding(5)
+                                    
+                                    
+                                }
                                 
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .frame(width : 80 , height: 80)
-                                    .cornerRadius(10)
-                                    .clipped()
-                                    .padding(5)
-                                
+                                HStack {
+                                    //
+                                    
+                                    //
+                                }
                             }
                             
-                            Button {
-                                if let idx = selectedPhotosData.firstIndex(of: photoData) {
-                                    selectedPhotosData.remove(at: idx)
+                            Circle()
+                                .overlay (
+                                    Image(systemName: "xmark.circle.fill")
+                                        .font(.system(size: 20))
+                                        .foregroundStyle(.black)
+                                )
+                                .foregroundStyle(.white)
+                                .frame(width: 20, height:20)
+                                .onTapGesture {
+                                    if let idx = selectedPhotosData.firstIndex(of: photoData) {
+                                        selectedPhotosData.remove(at: idx)
+                                        selectedItems.remove(at: idx)
+                                    }
                                 }
-                            } label: {
-                                Circle()
-                                    .overlay (
-                                        Image(systemName: "xmark.circle.fill")
-                                            .font(.system(size: 20))
-                                            .foregroundStyle(.black)
-                                    )
-                                    .foregroundStyle(.white)
-                                    .frame(width: 20, height:20)
-                            }
                         }
                     }
                 }
@@ -201,6 +212,7 @@ extension TradeCreateView {
                     if #available(iOS 17.0, *) {
                         photosView
                             .onChange(of: selectedItems) {
+                                selectedPhotosData = []
                                 for newItem in selectedItems {
                                     Task {
                                         if let data = try? await newItem.loadTransferable(type: Data.self) {
@@ -215,6 +227,7 @@ extension TradeCreateView {
                     } else {
                         photosView
                             .onChange(of: selectedItems) { _ in
+                                selectedPhotosData = []
                                 for newItem in selectedItems {
                                     Task {
                                         if let data = try? await newItem.loadTransferable(type: Data.self) {

@@ -45,11 +45,11 @@ struct ChatHeaderView: View {
                             .frame(width: 60, height: 60)
                             .padding(.trailing, 10)
                             .foregroundStyle(.gray500)
-                    }
-                    else if imageData == nil {
+                    } else if imageData == nil {
                         SkeletonView(size: CGSize(width: 70, height: 70))
                             .padding(.trailing, 10)
                     }
+                    
                     if let imageData {
                         if let uiImage = UIImage(data: imageData) {
                             Image(uiImage: uiImage)
@@ -59,33 +59,7 @@ struct ChatHeaderView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                                 .padding(.trailing, 10)
                         }
-                    } else {
-                        //                        Image(systemName: "exclamationmark.square.fill")
-                        //                            .resizable()
-                        //                            .scaledToFill()
-                        //                            .frame(width: 70, height: 70)
-                        //                            .padding(.trailing, 10)
-                        //                            .foregroundStyle(.gray500)
                     }
-                    //                    if trade == nil {
-                    //                        Image(systemName: "exclamationmark.square.fill")
-                    //                            .resizable()
-                    //                            .scaledToFill()
-                    //                            .frame(width: 70, height: 70)
-                    //                            .padding(.trailing, 10)
-                    //                            .foregroundStyle(.gray500)
-                    //                    } else {
-                    //                        if let imageData {
-                    //                            if let uiImage = UIImage(data: imageData) {
-                    //                                Image(uiImage: uiImage)
-                    //                                    .resizable()
-                    //                                    .scaledToFill()
-                    //                                    .frame(width: 70, height: 70)
-                    //                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    //                                    .padding(.trailing, 10)
-                    //                            }
-                    //                        }
-                    //                    }
                 }
                 
                 VStack(alignment: .leading) {

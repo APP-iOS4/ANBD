@@ -129,11 +129,12 @@ final class ArticleViewModel: ObservableObject {
     }
     
     @MainActor
-    func updateArticle(category: ANBDCategory, title: String, content: String, imageDatas: [Data]) async {
+    func updateArticle(category: ANBDCategory, title: String, content: String, commentCount: Int, imageDatas: [Data]) async {
         
         self.article.category = category
         self.article.title = title
         self.article.content = content
+        self.article.commentCount = commentCount
         
         //이미지 리사이징
         var newImages: [Data] = []

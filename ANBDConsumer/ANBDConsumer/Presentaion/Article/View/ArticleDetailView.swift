@@ -100,10 +100,10 @@ struct ArticleDetailView: View {
                                         await articleViewModel.updateLikeCount(articleID: articleViewModel.article.id, increment: articleViewModel.isArticleLiked(articleID: articleViewModel.article.id))
                                     }
                                 } label: {
-                                    Image(systemName: articleViewModel.isLiked ? "hand.thumbsup" : "hand.thumbsup.fill")
+                                    Image(systemName: articleViewModel.isLiked ? "hand.thumbsup.fill" : "hand.thumbsup")
                                         .resizable()
                                         .frame(width: 16, height: 16)
-                                        .foregroundStyle(articleViewModel.isLiked ? .gray900 : .accent)
+                                        .foregroundStyle(articleViewModel.isLiked ? .accent : .gray900)
                                         .padding(.leading, 10)
                                 }
                                 Text("\(articleViewModel.article.likeCount)")
@@ -310,7 +310,7 @@ struct ArticleDetailView: View {
             }
         }
         .fullScreenCover(isPresented: $isShowingCreateView) {
-            ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, isNewArticle: false, article: article)
+            ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, commentCount: articleViewModel.comments.count, isNewArticle: false, article: article)
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
             ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)

@@ -45,6 +45,7 @@ struct UserActivityListView: View {
         
         .onAppear {
             Task {
+                coordinator.isFromUserPage = true
                 await myPageViewModel.loadAllUserActivityList(by: myPageViewModel.user.id)
             }
         }

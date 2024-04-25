@@ -41,9 +41,6 @@ final class ArticleViewModel: ObservableObject {
 
     @Published var commentText: String = ""
     
-    @Published private(set) var isLiked: Bool = false
-    @Published private var isLikedDictionary: [String: Bool] = [:]
-    
     func getOneArticle(article: Article) {
         self.article = article
     }
@@ -129,11 +126,12 @@ final class ArticleViewModel: ObservableObject {
     }
     
     @MainActor
-    func updateArticle(category: ANBDCategory, title: String, content: String, imageDatas: [Data]) async {
+    func updateArticle(category: ANBDCategory, title: String, content: String, commentCount: Int, imageDatas: [Data]) async {
         
         self.article.category = category
         self.article.title = title
         self.article.content = content
+        self.article.commentCount = commentCount
         
         //이미지 리사이징
         var newImages: [Data] = []
@@ -160,6 +158,18 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
+    func loadOneArticle(articleID: String) async {
+        do {
+            let loadedArticle = try await articleUseCase.loadArticle(articleID: articleID)
+            self.article = loadedArticle
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+
+    
+    
+    
     func deleteArticle(article: Article) async {
         do {
             try await articleUseCase.deleteArticle(article: article)
@@ -181,46 +191,14 @@ final class ArticleViewModel: ObservableObject {
     }
     
     //MARK: - LIKE
-    
-    func likeArticle(articleID: String) async {
+
+    func likeArticle(article: Article) async {
         do {
-            try await articleUseCase.likeArticle(articleID: articleID)
+            try await articleUseCase.likeArticle(articleID: article.id)
+            guard let userID = UserDefaultsClient.shared.userID else { return }
+            UserStore.shared.user = await UserStore.shared.getUserInfo(userID: userID)
         } catch {
             print(error.localizedDescription)
-        }
-    }
-    
-    func toggleLikeArticle(articleID: String) async {
-        if isLikedDictionary[articleID] != nil {
-            isLikedDictionary[articleID] = true
-        } else {
-            isLikedDictionary[articleID] = false
-        }
-        
-        do {
-            try await articleUseCase.likeArticle(articleID: articleID)
-            
-            let updatedArticle = try await articleUseCase.loadArticle(articleID: articleID)
-            article.likeCount = updatedArticle.likeCount
-            isLiked.toggle()
-            print("좋아요: \(isLiked)")
-        } catch {
-            print("좋아요 실패요.... \(error.localizedDescription)")
-        }
-    }
-    
-    func isArticleLiked(articleID: String) -> Bool {
-        return isLikedDictionary[articleID] ?? false
-        
-    }
-    
-    func updateLikeCount(articleID: String, increment: Bool) async {
-        if let index = filteredArticles.firstIndex(where: { $0.id == articleID }) {
-            if increment {
-                filteredArticles[index].likeCount += 1
-            } else {
-                filteredArticles[index].likeCount -= 1
-            }
         }
     }
     

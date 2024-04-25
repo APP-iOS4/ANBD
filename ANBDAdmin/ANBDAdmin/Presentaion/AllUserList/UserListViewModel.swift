@@ -19,6 +19,7 @@ class UserListViewModel: ObservableObject {
                 let users = try await userUsecase.refreshAllUserInfoList(limit: 10)
                 DispatchQueue.main.async {
                     self.userList = users
+                    self.canLoadMoreUsers = true
                 }
             } catch {
                 print("사용자 목록을 가져오는데 실패했습니다: \(error)")

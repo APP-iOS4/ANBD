@@ -75,6 +75,7 @@ struct ReportView: View {
                 Spacer()
                 
                 Button(action: {
+                    endTextEditing()
                     if !reportReason.isEmpty {
                         isShowingCustomAlert.toggle()
                     }
@@ -105,6 +106,9 @@ struct ReportView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
         .toolbarRole(.editor)
+        .onTapGesture {
+            endTextEditing()
+        }
     }
 }
 

@@ -49,6 +49,7 @@ final class Coordinator: ObservableObject {
     @Published var user: User?
     @Published var searchText: String = ""
     @Published var channel: Channel?
+    @Published var isFromUserPage: Bool = false
     
     
     @ViewBuilder
@@ -114,19 +115,20 @@ final class Coordinator: ObservableObject {
         }
     }
     
+    
     /// dismiss
-    func pop() {
+    func pop(_ depth: Int = 1) {
         switch selectedTab {
         case .home:
-            homePath.removeLast()
+            homePath.removeLast(depth)
         case .article:
-            articlePath.removeLast()
+            articlePath.removeLast(depth)
         case .trade:
-            tradePath.removeLast()
+            tradePath.removeLast(depth)
         case .chat:
-            chatPath.removeLast()
+            chatPath.removeLast(depth)
         case .mypage:
-            mypagePath.removeLast()
+            mypagePath.removeLast(depth)
         }
     }
 }

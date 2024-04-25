@@ -69,9 +69,14 @@ struct TradeDetailView: View {
                                     coordinator.user = writerUser
                                     switch coordinator.selectedTab {
                                     case .home, .article, .trade, .chat:
-                                        coordinator.appendPath(.userPageView)
+                                        if coordinator.isFromUserPage {
+                                            coordinator.pop(2)
+                                        } else {
+                                            coordinator.appendPath(.userPageView)
+                                        }
+                                        coordinator.isFromUserPage.toggle()
                                     case .mypage:
-                                        coordinator.pop()
+                                        coordinator.pop(coordinator.mypagePath.count)
                                     }
                                 }
                             
@@ -254,17 +259,12 @@ extension TradeDetailView {
                         coordinator.channel = nil
                         coordinator.trade = trade
                         tradeViewModel.getOneTrade(trade: trade)
+                        
                         switch coordinator.selectedTab {
-                        case .home:
-                            coordinator.homePath.append(Page.chatDetailView)
-                        case .article:
-                            return
-                        case .trade:
-                            coordinator.tradePath.append(Page.chatDetailView)
+                        case .home, .article, .trade, .mypage:
+                            coordinator.appendPath(Page.chatDetailView)
                         case .chat:
                             coordinator.pop()
-                        case .mypage:
-                            return
                         }
                     }
             }

@@ -56,9 +56,14 @@ struct ArticleDetailView: View {
                                         coordinator.user = writerUser
                                         switch coordinator.selectedTab {
                                         case .home, .article, .trade, .chat:
-                                            coordinator.appendPath(.userPageView)
+                                            if coordinator.isFromUserPage {
+                                                coordinator.pop(2)
+                                            } else {
+                                                coordinator.appendPath(.userPageView)
+                                            }
+                                            coordinator.isFromUserPage.toggle()
                                         case .mypage:
-                                            coordinator.pop()
+                                            coordinator.pop(coordinator.mypagePath.count)
                                         }
                                     }
                                 

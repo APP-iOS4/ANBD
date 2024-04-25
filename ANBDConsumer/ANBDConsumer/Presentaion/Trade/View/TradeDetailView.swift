@@ -14,7 +14,7 @@ struct TradeDetailView: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     @EnvironmentObject private var coordinator: Coordinator
-    // @EnvironmentObject private var myPageViewMode: MyPageViewModel
+    // @EnvironmentObject private var myPageViewModel: MyPageViewModel
     @State var trade: Trade
     
     @State private var isShowingCreat: Bool = false

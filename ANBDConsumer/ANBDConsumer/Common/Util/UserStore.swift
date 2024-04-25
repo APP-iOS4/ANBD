@@ -44,7 +44,7 @@ final class UserStore: ObservableObject {
         } catch {
             print("Error get user information: \(error.localizedDescription)")
             
-            return MyPageViewModel.mockUser
+            return await MyPageViewModel.mockUser
         }
     }
 }

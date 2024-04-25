@@ -31,20 +31,23 @@ class TradeListViewModel: ObservableObject {
             }
         }
     }
-    func loadMoreTrades(){
+    func loadMoreTrades() {
         guard canLoadMoreTrades else { return }
 
         Task {
             do {
-                let trades = try await tradeUsecase.loadTradeList(limit: 10)
+                let trades = try await tradeUsecase.loadTradeList(limit: 11)
                 DispatchQueue.main.async {
-                    self.tradeList.append(contentsOf: trades)
-                    if trades.count < 10 {
+                    if trades.count == 11 {
+                        self.tradeList.append(contentsOf: trades.dropLast())
+                        self.canLoadMoreTrades = true
+                    } else {
+                        self.tradeList.append(contentsOf: trades)
                         self.canLoadMoreTrades = false
                     }
                 }
             } catch {
-                print("게시물 목록을 가져오는데 실패했습니다: \(error)")
+                print("유저 목록을 가져오는데 실패했습니다: \(error)")
             }
         }
     }

@@ -10,7 +10,7 @@ import ANBDModel
 
 struct ArticleDetailView: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
-    @EnvironmentObject private var myPageViewModel: MyPageViewModel
+    @EnvironmentObject private var myPageViewMode: MyPageViewModel
     @EnvironmentObject private var coordinator: Coordinator
     
     private var article: Article
@@ -49,7 +49,7 @@ struct ArticleDetailView: View {
                             HStack {
                                 Image(.defaultUserProfile)
                                     .resizable()
-                                    .frame(width: 33, height: 33)
+                                    .frame(width: 40, height: 40)
                                     .scaledToFill()
                                     .clipShape(Circle())
                                     .onTapGesture {
@@ -67,33 +67,23 @@ struct ArticleDetailView: View {
                                         }
                                     }
                                 
-//                                VStack(alignment: .leading) {
+                                VStack(alignment: .leading) {
                                     Text("\(articleViewModel.article.writerNickname)")
-                                        .font(ANBDFont.pretendardMedium(13))
-                                
-                                Text("・")
-                                    .padding(.leading, -5)
-                                
+                                        .font(ANBDFont.SubTitle3)
+                                    
                                     Text("\(articleViewModel.article.createdAt.relativeTimeNamed)")
                                         .font(ANBDFont.Caption1)
                                         .foregroundStyle(.gray400)
-                                        .padding(.leading, -5)
-
-//                                }
+                                }
                             }
-                            .padding(.vertical ,-5)
+                            .padding(.bottom, 20)
                             
-                            Divider()
-                                .padding(.top, 10)
-                            
-                            
-
                             Text("\(articleViewModel.article.title)")
-                                .font(ANBDFont.pretendardBold(26))
-                                .padding(.bottom, 13)
+                                .font(ANBDFont.pretendardBold(24))
+                                .padding(.bottom, 10)
                             
                             Text("\(articleViewModel.article.content)")
-                                .font(ANBDFont.body2)
+                                .font(ANBDFont.body1)
                                 .padding(.bottom, 10)
                             
                             ForEach(imageData, id: \.self) { photoData in
@@ -321,8 +311,8 @@ struct ArticleDetailView: View {
             articleViewModel.getOneArticle(article: article)
             isLiked = user.likeArticles.contains(articleViewModel.article.id)
             Task {
-                writerUser = await myPageViewModel.getUserInfo(userID: article.writerID)
-                // commentUser = await myPageViewModel.getUserInfo(userID: articleViewModel.comment.writerID)
+                writerUser = await myPageViewMode.getUserInfo(userID: article.writerID)
+                // commentUser = await myPageViewMode.getUserInfo(userID: articleViewModel.comment.writerID)
                 
                 imageData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
                 await articleViewModel.loadCommentList(articleID: article.id)

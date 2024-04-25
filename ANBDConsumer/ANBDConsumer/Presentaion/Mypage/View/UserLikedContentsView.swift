@@ -15,8 +15,6 @@ struct UserLikedContentsView: View {
     
     @State var category: ANBDCategory
     
-    @State private var isRefreshView = false
-    
     var body: some View {
         VStack {
             CategoryDividerView(category: $category)
@@ -34,7 +32,6 @@ struct UserLikedContentsView: View {
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .ignoresSafeArea(edges: .bottom)
-                .id(isRefreshView)
                 
             case .nanua, .baccua:
                 TabView(selection: $category) {
@@ -46,7 +43,6 @@ struct UserLikedContentsView: View {
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .ignoresSafeArea(edges: .bottom)
-                .id(isRefreshView)
             }
         }
         .navigationTitle("\(navigationTitile)")

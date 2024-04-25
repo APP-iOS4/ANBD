@@ -30,20 +30,23 @@ class ArticleListViewModel: ObservableObject {
             }
         }
     }
-    func loadMoreArticles(){
+    func loadMoreArticles() {
         guard canLoadMoreArticles else { return }
 
         Task {
             do {
-                let articles = try await articleUsecase.loadArticleList()
+                let articles = try await articleUsecase.loadArticleList(limit: 11)
                 DispatchQueue.main.async {
-                    self.articleList.append(contentsOf: articles)
-                    if articles.count < 10 {
+                    if articles.count == 11 {
+                        self.articleList.append(contentsOf: articles.dropLast())
+                        self.canLoadMoreArticles = true
+                    } else {
+                        self.articleList.append(contentsOf: articles)
                         self.canLoadMoreArticles = false
                     }
                 }
             } catch {
-                print("게시물 목록을 가져오는데 실패했습니다: \(error)")
+                print("유저 목록을 가져오는데 실패했습니다: \(error)")
             }
         }
     }

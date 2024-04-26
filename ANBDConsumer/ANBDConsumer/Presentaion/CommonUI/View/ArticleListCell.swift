@@ -121,11 +121,26 @@ struct ArticleListCell: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 5) {
-                    Text("\(trade.title)")
-                        .font(ANBDFont.SubTitle1)
-                        .foregroundStyle(.gray900)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.leading)
+                    HStack {
+                        Text("\(trade.title)")
+                            .font(ANBDFont.SubTitle1)
+                            .foregroundStyle(.gray900)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.leading)
+                        
+                        Spacer()
+                        
+                        if trade.tradeState == .finish {
+                            RoundedRectangle(cornerRadius: 5)
+                                .foregroundColor(.gray800)
+                                .frame(width: 60, height: 25)
+                                .overlay {
+                                    Text("\(trade.tradeState.description)")
+                                        .font(ANBDFont.body2)
+                                        .foregroundStyle(.gray50)
+                                }
+                        }
+                    }
                     
                     HStack {
                         Text("\(trade.location.description)")
@@ -143,8 +158,9 @@ struct ArticleListCell: View {
                     Spacer(minLength: 0)
                     
                     HStack {
-                        Spacer()
                         
+                        Spacer()
+                
                         Image(systemName: isLiked ? "heart.fill" : "heart")
                             .resizable()
                             .aspectRatio(contentMode: .fit)

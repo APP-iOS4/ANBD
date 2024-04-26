@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ANBDModel
+import CachedAsyncImage
 
 struct TradeDetailView: View {
     @EnvironmentObject private var homeViewModel: HomeViewModel
@@ -60,25 +61,32 @@ struct TradeDetailView: View {
                         
                         //작성자 이미지, 닉네임, 작성시간
                         HStack {
-                            Image(.dummyImage1)
-                                .resizable()
-                                .frame(width: 40, height: 40)
-                                .scaledToFill()
-                                .clipShape(Circle())
-                                .onTapGesture {
-                                    coordinator.user = writerUser
-                                    switch coordinator.selectedTab {
-                                    case .home, .article, .trade, .chat:
-                                        if coordinator.isFromUserPage {
-                                            coordinator.pop(2)
-                                        } else {
-                                            coordinator.appendPath(.userPageView)
+                            if let writerUser {
+                                CachedAsyncImage(url: URL(string: writerUser.profileImage)) { image in
+                                    image
+                                        .resizable()
+                                        .frame(width: 40, height: 40)
+                                        .scaledToFill()
+                                        .clipShape(Circle())
+                                        .onTapGesture {
+                                            coordinator.user = writerUser
+                                            switch coordinator.selectedTab {
+                                            case .home, .article, .trade, .chat:
+                                                if coordinator.isFromUserPage {
+                                                    coordinator.pop(2)
+                                                } else {
+                                                    coordinator.appendPath(.userPageView)
+                                                }
+                                                coordinator.isFromUserPage.toggle()
+                                            case .mypage:
+                                                coordinator.pop(coordinator.mypagePath.count)
+                                            }
                                         }
-                                        coordinator.isFromUserPage.toggle()
-                                    case .mypage:
-                                        coordinator.pop(coordinator.mypagePath.count)
-                                    }
+                                } placeholder: {
+                                    ProgressView()
+                                        .frame(width: 40, height: 40)
                                 }
+                            }
                             
                             VStack(alignment: .leading) {
                                 Text("\(tradeViewModel.trade.writerNickname)")
@@ -214,34 +222,41 @@ extension TradeDetailView {
                 .padding()
                 .padding(.leading, -10)
             
-            VStack(alignment: .leading) {
+            switch tradeViewModel.trade.category {
+            case .nanua:
+                Text("\(tradeViewModel.trade.myProduct)")
+                    .font(ANBDFont.SubTitle1)
+            case .baccua:
                 
-                switch tradeViewModel.trade.category {
-                case .nanua:
-                    Text("나눠쓰기")
-                        .fontWeight(.bold)
-                    Text("\(tradeViewModel.trade.myProduct)")
-                case .baccua:
-                    Text("바꿔쓰기")
-                        .fontWeight(.bold)
+                VStack(alignment: .leading, spacing: 5) {
                     HStack {
+                        Text("줄 것")
+                            .foregroundStyle(.gray400)
+                            .font(ANBDFont.SubTitle3)
                         Text("\(tradeViewModel.trade.myProduct)")
-                        Image(systemName: "arrow.left.and.right")
+                            .font(ANBDFont.SubTitle2)
+                        
+                    }
+                    HStack {
                         if let want = tradeViewModel.trade.wantProduct {
-                            Text("\(want)")
+                            Text("받을 것")
+                                .foregroundStyle(.gray400)
+                                .font(ANBDFont.SubTitle3)
+                            Text("\(want)") //8자 제한주기
+                                .font(ANBDFont.SubTitle2)
+                            
                         } else {
                             Text("제시")
+                                .font(ANBDFont.SubTitle2)
                         }
                     }
-                    .font(ANBDFont.SubTitle2)
-                    .foregroundStyle(.gray900)
-                case .accua:
-                    EmptyView()
-                case .dasi:
-                    EmptyView()
                 }
+                .padding(.leading, -10)
+            case .accua:
+                EmptyView()
+            case .dasi:
+                EmptyView()
             }
-            .padding(.leading, -10)
             
             Spacer()
             

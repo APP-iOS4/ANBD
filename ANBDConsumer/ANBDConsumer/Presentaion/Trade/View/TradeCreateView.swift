@@ -26,7 +26,7 @@ struct TradeCreateView: View {
     
     //photo
     @State private var selectedItems: [PhotosPickerItem] = []
-    @State private var tmpSelectedItems: [PhotosPickerItem] = []
+    @State private var tmpSelectedData: [Data] = []
     @State private var selectedPhotosData: [Data] = []
     
     //@State private var itemCategory
@@ -82,78 +82,8 @@ struct TradeCreateView: View {
     }
 }
 
-extension TradeCreateView {
-    fileprivate var photosView: some View {
-        HStack {
-            PhotosPicker(selection: $selectedItems, maxSelectionCount: 5, matching: .images) {
-                VStack {
-                    Image(systemName: "camera.fill")
-                        .font(.system(size: 25))
-                        .foregroundStyle(.gray)
-                        .padding(3)
-                    Text("0 / 5")
-                        .foregroundStyle(.gray)
-                        .font(.system(size: 15))
-                }//VStack
-                .padding()
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10.0)
-                        .stroke(.gray, lineWidth: 1)
-                        .foregroundStyle(.clear)
-                        .frame(width: 80, height: 80)
-                )
-                .padding(.bottom, 30)
-            }
-            .padding(.leading, 20)
-            
-            ScrollView(.horizontal) {
-                HStack {
-                    ForEach(selectedPhotosData, id: \.self) { photoData in
-                        ZStack(alignment:.topTrailing){
-                            
-                            ZStack {
-                                if let image = UIImage(data: photoData) {
-                                    
-                                    Image(uiImage: image)
-                                        .resizable()
-                                        .frame(width : 80 , height: 80)
-                                        .cornerRadius(10)
-                                        .clipped()
-                                        .padding(5)
-                                    
-                                    
-                                }
-                                
-                                HStack {
-                                    //
-                                    
-                                    //
-                                }
-                            }
-                            
-                            Circle()
-                                .overlay (
-                                    Image(systemName: "xmark.circle.fill")
-                                        .font(.system(size: 20))
-                                        .foregroundStyle(.black)
-                                )
-                                .foregroundStyle(.white)
-                                .frame(width: 20, height:20)
-                                .onTapGesture {
-                                    if let idx = selectedPhotosData.firstIndex(of: photoData) {
-                                        selectedPhotosData.remove(at: idx)
-                                        selectedItems.remove(at: idx)
-                                    }
-                                }
-                        }
-                    }
-                }
-                .padding(.bottom, 30)
-            }//Horizontal ScrollView
-            .padding(.horizontal, 10)
-        }
-    }
-    fileprivate var wholeView: some View {
+fileprivate extension TradeCreateView {
+    var wholeView: some View {
         ZStack {
             VStack(alignment: .leading) {
                 HStack {
@@ -212,9 +142,11 @@ extension TradeCreateView {
                     if #available(iOS 17.0, *) {
                         photosView
                             .onChange(of: selectedItems) {
-                                selectedPhotosData = []
-                                for newItem in selectedItems {
-                                    Task {
+                                
+                                Task {
+                                    selectedPhotosData = []
+                                    for newItem in selectedItems {
+                                        
                                         if let data = try? await newItem.loadTransferable(type: Data.self) {
                                             selectedPhotosData.append(data)
                                         }
@@ -223,13 +155,16 @@ extension TradeCreateView {
                                         }
                                     }
                                 }
+                                
                             }
                     } else {
                         photosView
                             .onChange(of: selectedItems) { _ in
-                                selectedPhotosData = []
-                                for newItem in selectedItems {
-                                    Task {
+                                
+                                Task {
+                                    selectedPhotosData = []
+                                    for newItem in selectedItems {
+                                        
                                         if let data = try? await newItem.loadTransferable(type: Data.self) {
                                             selectedPhotosData.append(data)
                                         }
@@ -237,6 +172,7 @@ extension TradeCreateView {
                                             selectedPhotosData.removeLast()
                                         }
                                     }
+                                    
                                 }
                             }
                     }
@@ -257,68 +193,34 @@ extension TradeCreateView {
                     
                     //MARK: - 거래 방식 선택 버튼
                     
-                    VStack(alignment: .leading) {
-                        Text("거래 방식")
-                            .font(.system(size: 18))
-                            .fontWeight(.bold)
-                            .padding(.bottom, 10)
-                        VStack(alignment: .leading) {
-                            //나눠쓰기
-                            if category == .nanua {
-                                HStack {
-                                    CapsuleButtonView(text: "나눠쓰기", buttonColor: .accent, fontColor: .white)
-                                    
-                                    CapsuleButtonView(text: "바꿔쓰기")
-                                        .onTapGesture {
-                                            self.category = .baccua
-                                        }
+                    if #available(iOS 17.0, *) {
+                        selectCategoryView
+                            .onChange(of: myProduct) {
+                                if myProduct.count > 8 {
+                                    myProduct = String(myProduct.prefix(8))
                                 }
-                                .padding(.bottom, 10)
-                                
-                                HStack {
-                                    TextField("나눌 물건", text: $myProduct)
-                                        .modifier(TextFieldModifier())
-                                }
-                            } else {
-                                //바꿔쓰기
-                                HStack {
-                                    CapsuleButtonView(text: "나눠쓰기")
-                                        .onTapGesture {
-                                            self.category = .nanua
-                                        }
-                                    
-                                    CapsuleButtonView(text: "바꿔쓰기", buttonColor: .accent, fontColor: .white)
-                                    
-                                    Rectangle()
-                                        .frame(width: 100, height: 0)
-                                }
-                                .padding(.bottom, 20)
-                                
-                                HStack {
-                                    TextField("바꿀 물건", text: $myProduct)
-                                        .modifier(TextFieldModifier())
-                                    
-                                    Image(systemName: "arrow.left.and.right")
-                                    TextField("받고 싶은 물건", text: $wantProduct)
-                                        .modifier(TextFieldModifier())
-                                        .onAppear() {
-                                            if !isNewProduct {
-                                                if let trade = trade {
-                                                    if let want = trade.wantProduct {
-                                                        self.wantProduct = want
-                                                    }
-                                                }
-                                            }
-                                        }
-                                }
-                                
                             }
-                        }
-                        .padding(.bottom, 30)
+                            .onChange(of: wantProduct) {
+                                if wantProduct.count > 8 {
+                                    wantProduct = String(wantProduct.prefix(8))
+                                }
+                            }
+                    } else {
+                        selectCategoryView
+                            .onChange(of: myProduct) { _ in
+                                if myProduct.count > 8 {
+                                    myProduct = String(myProduct.prefix(8))
+                                }
+                            }
+                            .onChange(of: wantProduct) { _ in
+                                if wantProduct.count > 8 {
+                                    wantProduct = String(wantProduct.prefix(8))
+                                }
+                            }
                     }
-                    .padding(.horizontal, 20)
                     
-                    //카테고리
+                    //MARK: - 카테고리 & 지역 선택
+                    
                     VStack(alignment: .leading) {
                         Text("카테고리")
                             .font(.system(size: 18))
@@ -332,7 +234,6 @@ extension TradeCreateView {
                     .padding(.horizontal, 20)
                     .padding(.bottom, 30)
                     
-                    //지역
                     VStack(alignment: .leading) {
                         Text("지역")
                             .font(.system(size: 18))
@@ -346,7 +247,8 @@ extension TradeCreateView {
                     .padding(.horizontal, 20)
                     .padding(.bottom, 30)
                     
-                    //상세설명
+                    //MARK: - 상세 설명
+                    
                     VStack(alignment: .leading) {
                         Text("상세설명")
                             .font(.system(size: 18))
@@ -388,6 +290,8 @@ extension TradeCreateView {
                                 tradeViewModel.selectedItemCategory = .digital
                             }
                         } else {
+                            selectedPhotosData += tmpSelectedData
+                            
                             if trade != nil {
                                 Task {
                                     await tradeViewModel.updateTrade(category: category, title: title, content: content, myProduct: myProduct, wantProduct: wantProduct, images: selectedPhotosData)
@@ -426,7 +330,7 @@ extension TradeCreateView {
                     self.wantProduct = trade.wantProduct ?? ""
                     self.content = trade.content
                     Task {
-                        selectedPhotosData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: trade.id, imagePath: trade.imagePaths)
+                        tmpSelectedData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: trade.id, imagePath: trade.imagePaths)
                     }
                 }
             }
@@ -437,6 +341,161 @@ extension TradeCreateView {
                 self.isShowingLocationMenuList = false
             }
         }
+    }
+    
+    var photosView: some View {
+       HStack {
+           PhotosPicker(selection: $selectedItems, maxSelectionCount: 5, matching: .images) {
+               VStack {
+                   Image(systemName: "camera.fill")
+                       .font(.system(size: 25))
+                       .foregroundStyle(.gray)
+                       .padding(3)
+                   Text("\(selectedItems.count) / 5")
+                       .foregroundStyle(.gray)
+                       .font(.system(size: 15))
+               }//VStack
+               .padding()
+               .overlay(
+                   RoundedRectangle(cornerRadius: 10.0)
+                       .stroke(.gray, lineWidth: 1)
+                       .foregroundStyle(.clear)
+                       .frame(width: 80, height: 80)
+               )
+               .padding(.bottom, 30)
+           }
+           .padding(.leading, 20)
+           
+           ScrollView(.horizontal) {
+               HStack {
+                   ForEach(tmpSelectedData, id: \.self) {photoData in
+                       ZStack(alignment:.topTrailing){
+                           
+                           if let image = UIImage(data: photoData) {
+                               
+                               Image(uiImage: image)
+                                   .resizable()
+                                   .frame(width : 80 , height: 80)
+                                   .cornerRadius(10)
+                                   .clipped()
+                                   .padding(5)
+                           }
+                           
+                           Circle()
+                               .overlay (
+                                   Image(systemName: "xmark.circle.fill")
+                                       .font(.system(size: 20))
+                                       .foregroundStyle(.black)
+                               )
+                               .foregroundStyle(.white)
+                               .frame(width: 20, height:20)
+                               .onTapGesture {
+                                   
+                                   if let idx = tmpSelectedData.firstIndex(of: photoData) {
+                                       tmpSelectedData.remove(at: idx)
+                                   }
+                               }
+                       }
+                   }
+                   ForEach(selectedPhotosData, id: \.self) { photoData in
+                       ZStack(alignment:.topTrailing){
+                           
+                           if let image = UIImage(data: photoData) {
+                               
+                               Image(uiImage: image)
+                                   .resizable()
+                                   .frame(width : 80 , height: 80)
+                                   .cornerRadius(10)
+                                   .clipped()
+                                   .padding(5)
+                           }
+                           
+                           Circle()
+                               .overlay (
+                                   Image(systemName: "xmark.circle.fill")
+                                       .font(.system(size: 20))
+                                       .foregroundStyle(.black)
+                               )
+                               .foregroundStyle(.white)
+                               .frame(width: 20, height:20)
+                               .onTapGesture {
+                                   
+                                   if let idx = selectedPhotosData.firstIndex(of: photoData) {
+                                       selectedPhotosData.remove(at: idx)
+                                       selectedItems.remove(at: idx)
+                                   }
+                                   
+                               }
+                       }
+                   }
+               }
+               .padding(.bottom, 30)
+           }//Horizontal ScrollView
+           .padding(.horizontal, 10)
+       }
+   }
+    
+    var selectCategoryView: some View {
+        VStack(alignment: .leading) {
+            Text("거래 방식")
+                .font(.system(size: 18))
+                .fontWeight(.bold)
+                .padding(.bottom, 10)
+            VStack(alignment: .leading) {
+                //나눠쓰기
+                if category == .nanua {
+                    HStack {
+                        CapsuleButtonView(text: "나눠쓰기", buttonColor: .accent, fontColor: .white)
+                        
+                        CapsuleButtonView(text: "바꿔쓰기")
+                            .onTapGesture {
+                                self.category = .baccua
+                            }
+                    }
+                    .padding(.bottom, 10)
+                    
+                    HStack {
+                        TextField("나눌 물건", text: $myProduct)
+                            .modifier(TextFieldModifier())
+                    }
+                } else {
+                    //바꿔쓰기
+                    HStack {
+                        CapsuleButtonView(text: "나눠쓰기")
+                            .onTapGesture {
+                                self.category = .nanua
+                            }
+                        
+                        CapsuleButtonView(text: "바꿔쓰기", buttonColor: .accent, fontColor: .white)
+                        
+                        Rectangle()
+                            .frame(width: 100, height: 0)
+                    }
+                    .padding(.bottom, 20)
+                    
+                    HStack {
+                        TextField("바꿀 물건", text: $myProduct)
+                            .modifier(TextFieldModifier())
+                        
+                        Image(systemName: "arrow.left.and.right")
+                        TextField("받고 싶은 물건", text: $wantProduct)
+                            .modifier(TextFieldModifier())
+                            .onAppear() {
+                                if !isNewProduct {
+                                    if let trade = trade {
+                                        if let want = trade.wantProduct {
+                                            self.wantProduct = want
+                                        }
+                                    }
+                                }
+                            }
+                    }
+                    
+                }
+            }
+            .padding(.bottom, 30)
+        }
+        .padding(.horizontal, 20)
     }
 }
 

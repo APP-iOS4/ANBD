@@ -18,7 +18,6 @@ struct ArticleCreateView: View {
     @State private var title: String = ""
     @State private var content: String = ""
     @State var commentCount: Int = 0
-    @State var placeHolder: String = "ANBD 이용자들을 위해 여러분들의 아껴쓰기/다시쓰기 Tip을 전수해주세요!"
     
     @State private var isShowingImageAlert: Bool = false
     @State private var selectedItems: [PhotosPickerItem] = []
@@ -31,7 +30,9 @@ struct ArticleCreateView: View {
     @State var isAnimation = false
     
     @Environment(\.dismiss) private var dismiss
-    
+
+    private let placeHolder: String = "ANBD 이용자들을 위해 여러분들의 아껴쓰기/다시쓰기 Tip을 전수해주세요!"
+
     var isNewArticle: Bool
     var article: Article?
     
@@ -54,6 +55,11 @@ struct ArticleCreateView: View {
                             }
                             selectedItems = []
                         }
+                        .onChange(of: title) {
+                            if title.count > 50 {
+                                title = String(title.prefix(50))
+                            }
+                        }
                 } else {
                     articleCreateView
                         .onChange(of: selectedItems, perform:  { _ in
@@ -70,12 +76,23 @@ struct ArticleCreateView: View {
                             }
                             selectedItems = []
                         })
+                        .onChange(of: title) { _ in
+                            if title.count > 50 {
+                                title = String(title.prefix(50))
+                            }
+                        }
                 }
             }
             
             if isShowingCustomAlert {
                 CustomAlertView(isShowingCustomAlert: $isShowingCustomAlert, viewType: .articleEdit) {
                     isShowingCreateView = false
+                }
+                .zIndex(1)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                
+            } else if isShowingImageAlert {
+                CustomAlertView(isShowingCustomAlert: $isShowingImageAlert, viewType: .imageSelelct) {
                 }
                 .zIndex(1)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -87,7 +104,7 @@ struct ArticleCreateView: View {
         VStack {
             InstructionsView()
             VStack {
-                TextField("제목을 입력하세요", text: $title)
+                TextField("제목을 입력하세요", text: $title, axis: .vertical)
                     .onAppear {
                         UITextField.appearance().clearButtonMode = .never
                         if !isNewArticle {
@@ -229,7 +246,7 @@ struct ArticleCreateView: View {
                             
                             let isTitleChanged = title != article.title
                             let isContentChanged = content != article.content
-
+                            
                             if isTitleChanged || isContentChanged {
                                 isShowingCustomAlert.toggle()
                             } else {
@@ -259,12 +276,7 @@ struct ArticleCreateView: View {
                 Text("다시쓰기")
             }
         }
-        .alert("이미지는 최대 5장만 가능합니다", isPresented: $isShowingImageAlert) {
-            Button("확인", role: .cancel) { }
-        }
         .navigationTitle(category == .accua ? "아껴쓰기" : "다시쓰기")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
-
-

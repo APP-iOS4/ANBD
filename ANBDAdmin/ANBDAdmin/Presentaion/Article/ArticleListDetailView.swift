@@ -31,9 +31,6 @@ struct ArticleListDetailView: View {
                             ProgressView()
                         }
                         .fade(duration: 1)
-                        .onSuccess { r in
-                            print("Task done for: \(r.source.url?.absoluteString ?? "")")
-                        }
                         .onFailure { e in
                             print("Job failed: \(e.localizedDescription)")
                         }

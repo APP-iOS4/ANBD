@@ -83,9 +83,9 @@ struct ArticleListView: View {
                         if isArticle {
                             ForEach(articleViewModel.filteredArticles) { item in
                                 Button(action: {
-                                        coordinator.article = item
-                                        articleViewModel.getOneArticle(article: item)
-                                        coordinator.appendPath(.articleDeatilView)
+                                    coordinator.article = item
+                                    articleViewModel.getOneArticle(article: item)
+                                    coordinator.appendPath(.articleDeatilView)
                                 }, label: {
                                     if item == articleViewModel.filteredArticles.last {
                                         ArticleListCell(value: .article(item))
@@ -160,17 +160,20 @@ struct ArticleListView: View {
         .toolbarRole(.editor)
         .sheet(isPresented: $isShowingLocation) {
             LocationBottomSheet(isShowingLocation: $isShowingLocation, category: category)
-                        .presentationDetents([.fraction(0.6)])
-                }
-                .sheet(isPresented: $isShowingItemCategory) {
-                    CategoryBottomSheet(isShowingCategory: $isShowingItemCategory, category: category)
-                        .presentationDetents([.fraction(0.6)])
-                }
+                .presentationDetents([.fraction(0.6)])
+        }
+        .sheet(isPresented: $isShowingItemCategory) {
+            CategoryBottomSheet(isShowingCategory: $isShowingItemCategory, category: category)
+                .presentationDetents([.fraction(0.6)])
+        }
     }
 }
 
 fileprivate extension ArticleListView {
-     var loacationAndCategoryButtons: some View {
+    
+    //MARK: - 지역 / 카테고리 필터 뷰
+    
+    var loacationAndCategoryButtons: some View {
         HStack {
             if !isSearchView {
                 /// 지역 필터링
@@ -198,6 +201,8 @@ fileprivate extension ArticleListView {
         }
         .padding(EdgeInsets(top: 7, leading: 17, bottom: 10, trailing: 0))
     }
+    
+    //MARK: - navigationTitle
     
     var navigationTitle: String {
         if let searchText = searchText {

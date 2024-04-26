@@ -10,12 +10,13 @@ import ANBDModel
 
 struct ArticleDetailView: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
-    @EnvironmentObject private var myPageViewMode: MyPageViewModel
+    @EnvironmentObject private var myPageViewModel: MyPageViewModel
     @EnvironmentObject private var coordinator: Coordinator
     
     private var article: Article
     private let user = UserStore.shared.user
     
+    @State private var isLiked: Bool = false
     @State private var isShowingComment: Bool = false
     @State private var commentText: String = ""
     
@@ -48,7 +49,7 @@ struct ArticleDetailView: View {
                             HStack {
                                 Image(.defaultUserProfile)
                                     .resizable()
-                                    .frame(width: 40, height: 40)
+                                    .frame(width: 33, height: 33)
                                     .scaledToFill()
                                     .clipShape(Circle())
                                     .onTapGesture {
@@ -66,23 +67,29 @@ struct ArticleDetailView: View {
                                         }
                                     }
                                 
-                                VStack(alignment: .leading) {
                                     Text("\(articleViewModel.article.writerNickname)")
-                                        .font(ANBDFont.SubTitle3)
+                                    .font(ANBDFont.pretendardMedium(13))
+                            
+                            Text("・")
+                                .padding(.leading, -5)
                                     
                                     Text("\(articleViewModel.article.createdAt.relativeTimeNamed)")
                                         .font(ANBDFont.Caption1)
                                         .foregroundStyle(.gray400)
-                                }
+                                        .padding(.leading, -5)
+
                             }
-                            .padding(.bottom, 20)
+                            .padding(.vertical ,-5)
+
+                            Divider()
+                                .padding(.top, 10)
                             
                             Text("\(articleViewModel.article.title)")
-                                .font(ANBDFont.pretendardBold(24))
-                                .padding(.bottom, 10)
+                                .font(ANBDFont.pretendardBold(26))
+                                .padding(.bottom, 13)
                             
                             Text("\(articleViewModel.article.content)")
-                                .font(ANBDFont.body1)
+                                .font(ANBDFont.body2)
                                 .padding(.bottom, 10)
                             
                             ForEach(imageData, id: \.self) { photoData in
@@ -101,16 +108,18 @@ struct ArticleDetailView: View {
                             HStack {
                                 Button {
                                     Task {
-                                        await articleViewModel.toggleLikeArticle(articleID: articleViewModel.article.id)
-                                        await articleViewModel.updateLikeCount(articleID: articleViewModel.article.id, increment: articleViewModel.isArticleLiked(articleID: articleViewModel.article.id))
+                                        await articleViewModel.likeArticle(article: article)
+                                        await articleViewModel.loadOneArticle(articleID: article.id)
                                     }
+                                    isLiked.toggle()
                                 } label: {
-                                    Image(systemName: articleViewModel.isLiked ? "hand.thumbsup" : "hand.thumbsup.fill")
+                                    Image(systemName: isLiked ? "hand.thumbsup.fill" : "hand.thumbsup")
                                         .resizable()
                                         .frame(width: 16, height: 16)
-                                        .foregroundStyle(articleViewModel.isLiked ? .gray900 : .accent)
+                                        .foregroundStyle(isLiked ? .accent : .gray900)
                                         .padding(.leading, 10)
                                 }
+                                
                                 Text("\(articleViewModel.article.likeCount)")
                                     .foregroundStyle(.gray900)
                                     .font(.system(size: 12))
@@ -231,7 +240,7 @@ struct ArticleDetailView: View {
                 CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertComment, viewType: .commentDelete) {
                     Task {
                         await articleViewModel.deleteComment(articleID: article.id, commentID: articleViewModel.comment.id)
-                        await articleViewModel.loadArticle(article: article)
+                        await articleViewModel.loadOneArticle(articleID: article.id)
                     }
                 }
                 .zIndex(2)
@@ -306,16 +315,17 @@ struct ArticleDetailView: View {
         }
         .onAppear {
             articleViewModel.getOneArticle(article: article)
+            isLiked = user.likeArticles.contains(articleViewModel.article.id)
             Task {
-                writerUser = await myPageViewMode.getUserInfo(userID: article.writerID)
-                // commentUser = await myPageViewMode.getUserInfo(userID: articleViewModel.comment.writerID)
+                writerUser = await myPageViewModel.getUserInfo(userID: article.writerID)
+                // commentUser = await myPageViewModel.getUserInfo(userID: articleViewModel.comment.writerID)
                 
                 imageData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
                 await articleViewModel.loadCommentList(articleID: article.id)
             }
         }
         .fullScreenCover(isPresented: $isShowingCreateView) {
-            ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, isNewArticle: false, article: article)
+            ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, commentCount: articleViewModel.comments.count, isNewArticle: false, article: article)
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
             ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)

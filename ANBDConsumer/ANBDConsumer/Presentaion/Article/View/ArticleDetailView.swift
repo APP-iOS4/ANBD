@@ -203,8 +203,9 @@ struct ArticleDetailView: View {
                                             }
                                         } else {
                                             Button(role: .destructive) {
-                                                // TODO: 댓글 신고
                                                 coordinator.reportType = .comment
+                                                coordinator.reportedObjectID = comment.id
+                                                coordinator.appendPath(.reportView)
                                             } label: {
                                                 Label("신고하기", systemImage: "exclamationmark.bubble")
                                             }

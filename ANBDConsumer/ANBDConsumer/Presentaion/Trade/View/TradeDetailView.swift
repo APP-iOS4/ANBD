@@ -267,7 +267,7 @@ extension TradeDetailView {
             
             Spacer()
             
-            if user.id != tradeViewModel.trade.writerID {
+            if user.id != tradeViewModel.trade.writerID && tradeViewModel.trade.tradeState == .trading {
                 RoundedRectangle(cornerRadius: 14)
                     .foregroundStyle(.accent)
                     .overlay {

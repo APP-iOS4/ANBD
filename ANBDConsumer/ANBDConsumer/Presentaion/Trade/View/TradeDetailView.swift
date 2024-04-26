@@ -7,7 +7,7 @@
 
 import SwiftUI
 import ANBDModel
-import CachedAsyncImage
+import Kingfisher
 
 struct TradeDetailView: View {
     @EnvironmentObject private var homeViewModel: HomeViewModel
@@ -62,30 +62,29 @@ struct TradeDetailView: View {
                         //작성자 이미지, 닉네임, 작성시간
                         HStack {
                             if let writerUser {
-                                CachedAsyncImage(url: URL(string: writerUser.profileImage)) { image in
-                                    image
-                                        .resizable()
-                                        .frame(width: 40, height: 40)
-                                        .scaledToFill()
-                                        .clipShape(Circle())
-                                        .onTapGesture {
-                                            coordinator.user = writerUser
-                                            switch coordinator.selectedTab {
-                                            case .home, .article, .trade, .chat:
-                                                if coordinator.isFromUserPage {
-                                                    coordinator.pop(2)
-                                                } else {
-                                                    coordinator.appendPath(.userPageView)
-                                                }
-                                                coordinator.isFromUserPage.toggle()
-                                            case .mypage:
-                                                coordinator.pop(coordinator.mypagePath.count)
+                                KFImage(URL(string: writerUser.profileImage))
+                                    .placeholder({ _ in
+                                        ProgressView()
+                                            .frame(width: 40, height: 40)
+                                    })
+                                    .resizable()
+                                    .frame(width: 40, height: 40)
+                                    .scaledToFill()
+                                    .clipShape(Circle())
+                                    .onTapGesture {
+                                        coordinator.user = writerUser
+                                        switch coordinator.selectedTab {
+                                        case .home, .article, .trade, .chat:
+                                            if coordinator.isFromUserPage {
+                                                coordinator.pop(2)
+                                            } else {
+                                                coordinator.appendPath(.userPageView)
                                             }
+                                            coordinator.isFromUserPage.toggle()
+                                        case .mypage:
+                                            coordinator.pop(coordinator.mypagePath.count)
                                         }
-                                } placeholder: {
-                                    ProgressView()
-                                        .frame(width: 40, height: 40)
-                                }
+                                    }
                             }
                             
                             VStack(alignment: .leading) {

@@ -325,7 +325,7 @@ struct HomeView: View {
                                 .frame(height: 130)
                         }
                     } else {
-                        HStack n{
+                        HStack {
                             Spacer()
                             ProgressView()
                             Spacer()

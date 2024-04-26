@@ -46,7 +46,7 @@ struct ChatHeaderView: View {
                             .frame(width: 60, height: 60)
                             .padding(.trailing, 10)
                             .foregroundStyle(.gray500)
-                    } 
+                    }
                     Color.clear
                         .skeleton(with: isLoading , shape: .rectangle)
                         .frame(width: 75, height: 75)
@@ -67,7 +67,7 @@ struct ChatHeaderView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                                 .padding(.trailing, 10)
                                 .onAppear {
-                                    isLoading.toggle()
+                                    isLoading = false
                                 }
                         }
                     }

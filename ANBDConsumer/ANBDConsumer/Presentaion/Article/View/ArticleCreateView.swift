@@ -267,7 +267,4 @@ struct ArticleCreateView: View {
     }
 }
 
-//#Preview {
-//    ArticleCreateView(isShowingCreateView: .constant(true), category: .accua, commentCount: 0, isNewArticle: false)
-//}
 

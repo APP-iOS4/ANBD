@@ -359,7 +359,7 @@ struct ArticleDetailView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 30))
                         .frame(height: 43)
                         .foregroundStyle(.gray50)
-                    TextField("댓글을 입력해주세요.", text: $commentText, axis: .vertical)
+                    TextField("댓글을 입력해주세요.", text: $commentText/*, axis: .vertical*/)
                         .font(ANBDFont.Caption3)
                         .padding(20)
                 }

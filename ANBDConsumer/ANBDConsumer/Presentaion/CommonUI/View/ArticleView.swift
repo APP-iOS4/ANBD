@@ -58,16 +58,16 @@ struct ArticleView: View {
         ZStack(alignment: .bottomTrailing) {
             VStack(alignment: .leading) {
                 CategoryDividerView(category: $category)
-                    .frame(height: 45)
+                    .frame(height: 35)
                 
                 TabView(selection: $category) {
                     ArticleListView(category: isArticle ? .accua : .nanua,
                                     isArticle: isArticle)
-                        .tag(isArticle ? ANBDCategory.accua : ANBDCategory.nanua)
+                    .tag(isArticle ? ANBDCategory.accua : ANBDCategory.nanua)
                     
                     ArticleListView(category: isArticle ? .dasi : .baccua,
                                     isArticle: isArticle)
-                        .tag(isArticle ? ANBDCategory.dasi : ANBDCategory.baccua)
+                    .tag(isArticle ? ANBDCategory.dasi : ANBDCategory.baccua)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }

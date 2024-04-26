@@ -7,10 +7,12 @@
 
 import ANBDModel
 import SwiftUI
+import PhotosUI
 
 final class TradeViewModel: ObservableObject {
     private let storageManager = StorageManager.shared
     private let tradeUseCase: TradeUsecase = DefaultTradeUsecase()
+    private let userUseCase: UserUsecase = DefaultUserUsecase()
     
     /// 필터링 옵션 : Location · ItemCateogry
     @Published var selectedLocations: [Location] = []
@@ -179,6 +181,9 @@ final class TradeViewModel: ObservableObject {
     @MainActor
     func updateTrade(category: ANBDCategory, title: String, content: String, myProduct: String, wantProduct: String, images: [Data]) async {
         
+        let user = UserStore.shared.user
+        let originCategory = self.trade.category
+        
         self.trade.category = category
         self.trade.itemCategory = self.selectedItemCategory
         self.trade.location = self.selectedLocation
@@ -200,6 +205,7 @@ final class TradeViewModel: ObservableObject {
         
         do {
             try await tradeUseCase.updateTrade(trade: self.trade, imageDatas: newImages)
+            try await userUseCase.updateUserPostCount(user: user, before: originCategory, after: trade.category)
             trade = try await tradeUseCase.loadTrade(tradeID: trade.id)
         } catch {
             print("수정 실패: \(error.localizedDescription)")

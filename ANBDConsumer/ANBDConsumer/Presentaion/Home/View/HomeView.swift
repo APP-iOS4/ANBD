@@ -28,7 +28,6 @@ struct HomeView: View {
                     
                     accuaView(geo: geometry)
                     
-                    
                     Divider()
                         .padding(.top, 10)
                         .padding(.bottom, 5)
@@ -191,8 +190,6 @@ struct HomeView: View {
                         }
                     }
                 }
-                .scrollIndicators(.hidden)
-                
             }
         }
         .onAppear {
@@ -328,7 +325,7 @@ struct HomeView: View {
                                 .frame(height: 130)
                         }
                     } else {
-                        HStack{
+                        HStack n{
                             Spacer()
                             ProgressView()
                             Spacer()

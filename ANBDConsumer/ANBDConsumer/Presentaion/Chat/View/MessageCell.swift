@@ -94,9 +94,6 @@ struct MessageCell: View {
                         .placeholder { _ in
                             ProgressView()
                         }
-                        .onSuccess { r in
-                            isLoading = false
-                        }
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 150)

@@ -71,6 +71,9 @@ struct HomeView: View {
             SafariWebView(url: URL(string: blogURL) ?? URL(string: "www.naver.com")!)
                 .ignoresSafeArea(edges: .bottom)
         }
+        .onAppear {
+            coordinator.isFromUserPage = false
+        }
     }
     
     

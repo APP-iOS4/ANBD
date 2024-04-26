@@ -21,13 +21,13 @@ struct ChatListCell: View {
                 CachedAsyncImage(url: URL(string: otherUser.profileImage)) { image in
                     image
                         .resizable()
-                        .aspectRatio(contentMode: .fit)
+                        .aspectRatio(contentMode: .fill)
                         .clipShape(Circle())
-                        .overlay(Circle().stroke(Color.gray, lineWidth: 0.5))
+                        .overlay(Circle().stroke(Color.gray, lineWidth: 0.2))
                 } placeholder: {
                     ProgressView()
                 }
-                .frame(width: 55)
+                .frame(width: 55 , height: 55)
                 .padding(.trailing, 10)
                 
                 
@@ -66,7 +66,7 @@ struct ChatListCell: View {
         }
         .onAppear {
             Task {
-                otherUser = await chatViewModel.setOtherUserImage(channel:channel)
+                otherUser = await chatViewModel.getOtherUserImage(channel:channel)
             }
             
         }

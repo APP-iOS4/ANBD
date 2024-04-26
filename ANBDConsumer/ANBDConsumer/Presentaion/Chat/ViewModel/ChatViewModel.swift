@@ -122,7 +122,7 @@ final class ChatViewModel: ObservableObject {
         }
     }
     
-    func getOtherUserImage(channel: Channel) async {
+    func setOtherUserImage(channel: Channel) async {
         do {
             let otherUser = try await chatUsecase.getOtherUser(channel: channel, userID: user.id)
             self.otherUserProfileImageUrl = otherUser.profileImage
@@ -131,7 +131,7 @@ final class ChatViewModel: ObservableObject {
         }
     }
     
-    func setOtherUserImage(channel: Channel) async -> User? {
+    func getOtherUserImage(channel: Channel) async -> User? {
         do {
             let otherUser = try await chatUsecase.getOtherUser(channel: channel, userID: user.id)
             return otherUser
@@ -165,6 +165,9 @@ final class ChatViewModel: ObservableObject {
     }
     
     func addMessageUpdate(addMessage: Message) {
+        guard addMessage.userID != user.id  else{
+            return
+        }
         if let lastMessage = otherUserLastMessages.last , lastMessage.dateStringWithYear == addMessage.dateStringWithYear{
             otherUserLastMessages.removeLast()
         }

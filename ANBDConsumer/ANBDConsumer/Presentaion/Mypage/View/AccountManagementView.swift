@@ -98,7 +98,7 @@ struct AccountManagementView: View {
                     myPageViewModel.tempUserFavoriteLocation = UserStore.shared.user.favoriteLocation
                     isShowingEditorView.toggle()
                 }, label: {
-                    Text("수정")
+                    Label("수정하기", systemImage: "square.and.pencil")
                 })
             }
         }

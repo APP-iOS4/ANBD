@@ -16,8 +16,9 @@ struct ArticleCreateView: View {
     
     @State var category: ANBDCategory = .accua
     @State private var title: String = ""
-    @State private var content : String = ""
-    @State var placeHolder : String = "ANBD 이용자들을 위해 여러분들의 아껴쓰기/다시쓰기 Tip을 전수해주세요!"
+    @State private var content: String = ""
+    @State var commentCount: Int = 0
+    @State var placeHolder: String = "ANBD 이용자들을 위해 여러분들의 아껴쓰기/다시쓰기 Tip을 전수해주세요!"
     
     @State private var isShowingImageAlert: Bool = false
     @State private var selectedItems: [PhotosPickerItem] = []
@@ -204,8 +205,9 @@ struct ArticleCreateView: View {
                                 article.title = self.title
                                 article.content = self.content
                                 article.category = self.category
+                                article.commentCount = self.commentCount
                                 
-                                await articleViewModel.updateArticle(category: category, title: title, content: content, imageDatas: selectedImageData)
+                                await articleViewModel.updateArticle(category: category, title: title, content: content, commentCount: commentCount,imageDatas: selectedImageData)
                                 await articleViewModel.refreshSortedArticleList(category: category)
                                 await articleViewModel.loadArticle(article: article)
                             }
@@ -265,7 +267,7 @@ struct ArticleCreateView: View {
     }
 }
 
-#Preview {
-    ArticleCreateView(isShowingCreateView: .constant(true), category: .accua, isNewArticle: false)
-}
+//#Preview {
+//    ArticleCreateView(isShowingCreateView: .constant(true), category: .accua, commentCount: 0, isNewArticle: false)
+//}
 

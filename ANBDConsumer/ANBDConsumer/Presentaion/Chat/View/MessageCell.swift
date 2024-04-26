@@ -105,6 +105,7 @@ struct MessageCell: View {
                     }
                 } placeholder: {
                     ProgressView()
+                        .frame(width: 150)
                 }
             }
             

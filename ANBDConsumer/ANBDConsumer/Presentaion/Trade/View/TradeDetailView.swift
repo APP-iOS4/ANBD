@@ -32,6 +32,7 @@ struct TradeDetailView: View {
     @State private var user = UserStore.shared.user
     
     @State private var isLiked: Bool = false
+    @State private var showToastAnimation: CGFloat = .zero
     
     var body: some View {
         ZStack {
@@ -141,6 +142,25 @@ struct TradeDetailView: View {
                         await tradeViewModel.reloadFilteredTrades(category: trade.category)
                         self.dismiss()
                     }
+                }
+            }
+            
+            /// 토스트 뷰
+            if coordinator.isShowingToastView {
+                VStack {
+                    CustomToastView()
+                        .padding(.vertical)
+                        .opacity(showToastAnimation)
+                        .onAppear {
+                            Task {
+                                showToastAnimation = 1
+                                try await Task.sleep(nanoseconds: 2_000_000_000)
+                                showToastAnimation = 0
+                                coordinator.isShowingToastView = false
+                            }
+                        }
+                    
+                    Spacer()
                 }
             }
         }//ZStack

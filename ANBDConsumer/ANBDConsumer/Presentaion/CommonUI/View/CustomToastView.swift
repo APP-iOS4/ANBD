@@ -7,27 +7,26 @@
 
 import SwiftUI
 
+enum ToastViewType {
+    case report
+}
+
 struct CustomToastView: View {
     
     var toastViewType: ToastViewType = .report
     
     var body: some View {
-        VStack {
-            ZStack {
-                RoundedRectangle(cornerRadius: 15)
-                    .fill(Color.accentColor)
-                    .frame(height: 55)
-                
-                Text(toastTitle)
-                    .foregroundStyle(.white)
-                    .font(ANBDFont.SubTitle2)
-            }
-            .padding(.horizontal)
+        ZStack {
+            RoundedRectangle(cornerRadius: 15)
+                .fill(Color.accentColor)
+                .frame(height: 55)
+            
+            Text(toastTitle)
+                .foregroundStyle(.white)
+                .font(ANBDFont.SubTitle2)
+                .lineLimit(1)
         }
-    }
-    
-    enum ToastViewType {
-        case report
+        .padding(.horizontal)
     }
     
     private var toastTitle: String {

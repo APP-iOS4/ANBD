@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Combine
 import ANBDModel
 
 @MainActor
@@ -31,8 +32,6 @@ final class MyPageViewModel: ObservableObject {
     private let userUsecase: UserUsecase = DefaultUserUsecase()
     private let articleUsecase: ArticleUsecase = DefaultArticleUsecase()
     private let tradeUsecase: TradeUsecase = DefaultTradeUsecase()
-    
-    private let storageManager = StorageManager.shared
     
     @Published var user = User(id: "",
                                nickname: "",
@@ -68,9 +67,30 @@ final class MyPageViewModel: ObservableObject {
     @Published var tempUserNickname = ""
     @Published var tempUserFavoriteLocation: Location = .seoul
     
-    @Published var myPageNaviPath = NavigationPath()
+    @Published private(set) var updatingNicknameStringDebounced = ""
+    @Published private(set) var isValidUpdatingNickname = false
+    @Published private(set) var errorMessage = ""
     
-    init() { }
+    private var cancellables = Set<AnyCancellable>()
+    
+    init() {
+        $tempUserNickname
+            .removeDuplicates()
+            .debounce(for: .seconds(0.02), scheduler: DispatchQueue.main)
+            .sink { [weak self] nickname in
+                guard let self = self else { return }
+                self.updatingNicknameStringDebounced = nickname
+            }
+            .store(in: &cancellables)
+        
+        $isValidUpdatingNickname
+            .combineLatest($updatingNicknameStringDebounced)
+            .map { [weak self] _, nickname in
+                guard let self = self else { return false }
+                return self.validateUpdatingNickname(nickname: nickname)
+            }
+            .assign(to: &$isValidUpdatingNickname)
+    }
     
     // MARK: - 유저 관련 정보 불러오기
     func checkSignInedUser(userID: String) -> Bool {
@@ -188,10 +208,22 @@ final class MyPageViewModel: ObservableObject {
         }
     }
     
+    func validateUpdatingNickname(nickname: String) -> Bool {
+        if !nickname.isEmpty && !nickname.isValidateNickname() {
+            errorMessage = "잘못된 닉네임 형식입니다."
+        } else {
+            errorMessage = ""
+        }
+        
+        return !nickname.isEmpty && nickname.isValidateNickname()
+    }
+    
     func validateUpdatingComplete() -> Bool {
         if (tempUserProfileImage == nil) && (user.nickname == tempUserNickname) && (user.favoriteLocation == tempUserFavoriteLocation) {
             return false
         } else if tempUserNickname.isEmpty {
+            return false
+        } else if !isValidUpdatingNickname {
             return false
         } else {
             return true

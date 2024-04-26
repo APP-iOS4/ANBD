@@ -76,6 +76,14 @@ struct UserInfoEditingView: View {
                         Divider()
                         
                         HStack {
+                            if !myPageViewModel.errorMessage.isEmpty {
+                                Text("\(myPageViewModel.errorMessage)")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.horizontal, 5)
+                                    .font(ANBDFont.Caption1)
+                                    .foregroundStyle(Color.heartRed)
+                            }
+                            
                             Spacer()
                             
                             Text("\(myPageViewModel.tempUserNickname.count) / 20")

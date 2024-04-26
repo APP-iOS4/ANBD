@@ -11,6 +11,7 @@ import ANBDModel
 struct ReportView: View {
     
     @EnvironmentObject private var reportViewModel: ReportViewModel
+    @EnvironmentObject private var coordinator: Coordinator
     @Environment(\.dismiss) private var dismiss
     
     var reportViewType: ReportType = .article
@@ -75,6 +76,7 @@ struct ReportView: View {
                 Spacer()
                 
                 Button(action: {
+                    endTextEditing()
                     if !reportReason.isEmpty {
                         isShowingCustomAlert.toggle()
                     }
@@ -96,7 +98,10 @@ struct ReportView: View {
                 CustomAlertView(isShowingCustomAlert: $isShowingCustomAlert, viewType: .report) {
                     Task {
                         await reportViewModel.submitReport(reportType: reportViewType, reportReason: reportReason, reportedObjectID: reportedObjectID, reportChannelID: reportedChannelID)
+                        coordinator.toastViewType = .report
                         dismiss()
+                        try await Task.sleep(nanoseconds: 500_000_000)
+                        coordinator.isShowingToastView = true
                     }
                 }
             }
@@ -105,6 +110,9 @@ struct ReportView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
         .toolbarRole(.editor)
+        .onTapGesture {
+            endTextEditing()
+        }
     }
 }
 

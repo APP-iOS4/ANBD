@@ -124,6 +124,14 @@ struct ChatDetailView: View {
                     }
                 }
             }
+            
+            if coordinator.isShowingToastView {
+                VStack {
+                    CustomToastView()
+
+                    Spacer()
+                }
+            }
         }
         .onTapGesture {
             endTextEditing()

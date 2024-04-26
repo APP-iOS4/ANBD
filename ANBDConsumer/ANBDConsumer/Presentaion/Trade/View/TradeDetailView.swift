@@ -149,6 +149,15 @@ struct TradeDetailView: View {
                     }
                 }
             }
+            
+            /// 토스트 뷰
+            if coordinator.isShowingToastView {
+                VStack {
+                    CustomToastView()
+                    
+                    Spacer()
+                }
+            }
         }//ZStack
         .onAppear {
             tradeViewModel.getOneTrade(trade: trade)

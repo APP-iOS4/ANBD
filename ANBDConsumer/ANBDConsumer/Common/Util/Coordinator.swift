@@ -50,6 +50,8 @@ final class Coordinator: ObservableObject {
     @Published var searchText: String = ""
     @Published var channel: Channel?
     @Published var isFromUserPage: Bool = false
+    @Published var toastViewType: ToastViewType = .report
+    @Published var isShowingToastView: Bool = false
     
     
     @ViewBuilder

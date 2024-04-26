@@ -44,14 +44,23 @@ struct TradeCreateView: View {
         if #available(iOS 17.0, *) {
             wholeView
                 .onChange(of: mustTextFields, {
-                    if self.selectedPhotosData.count != 0 && self.title != "" && self.myProduct != "" && self.content != "" {
+                    if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
                         self.isFinished = false
                     } else {
                         self.isFinished = true
                     }
                 })
                 .onChange(of: selectedPhotosData, {
-                    if self.selectedPhotosData.count != 0 && self.title != "" && self.myProduct != "" && self.content != "" {
+                    if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
+                        self.isFinished = false
+                    } else {
+                        self.isFinished = true
+                    }
+                    
+                    isCancelable = false
+                })
+                .onChange(of: tmpSelectedData, {
+                    if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
                         self.isFinished = false
                     } else {
                         self.isFinished = true
@@ -60,17 +69,27 @@ struct TradeCreateView: View {
                     isCancelable = false
                 })
             
+            
         } else {
             wholeView
                 .onChange(of: mustTextFields) { _ in
-                    if self.selectedPhotosData.count != 0 && self.title != "" && self.myProduct != "" && self.content != "" {
+                    if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
                         self.isFinished = false
                     } else {
                         self.isFinished = true
                     }
                 }
                 .onChange(of: selectedPhotosData) { _ in
-                    if self.selectedPhotosData.count != 0 && self.title != "" && self.myProduct != "" && self.content != "" {
+                    if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
+                        self.isFinished = false
+                    } else {
+                        self.isFinished = true
+                    }
+                    
+                    isCancelable = false
+                }
+                .onChange(of: tmpSelectedData) { _ in
+                    if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
                         self.isFinished = false
                     } else {
                         self.isFinished = true
@@ -323,16 +342,17 @@ fileprivate extension TradeCreateView {
             UITextField.appearance().clearButtonMode = .never
             
             if !isNewProduct {
-                if let trade = trade {
-                    self.title = trade.title
-                    self.myProduct = trade.myProduct
-                    self.category = trade.category
-                    self.wantProduct = trade.wantProduct ?? ""
-                    self.content = trade.content
-                    Task {
-                        tmpSelectedData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: trade.id, imagePath: trade.imagePaths)
-                    }
+                guard let trade else { return }
+                
+                self.title = trade.title
+                self.myProduct = trade.myProduct
+                self.category = trade.category
+                self.wantProduct = trade.wantProduct ?? ""
+                self.content = trade.content
+                Task {
+                    tmpSelectedData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: trade.id, imagePath: trade.imagePaths)
                 }
+                self.isFinished = false
             }
         }
         .onTapGesture {
@@ -344,96 +364,96 @@ fileprivate extension TradeCreateView {
     }
     
     var photosView: some View {
-       HStack {
-           PhotosPicker(selection: $selectedItems, maxSelectionCount: 5, matching: .images) {
-               VStack {
-                   Image(systemName: "camera.fill")
-                       .font(.system(size: 25))
-                       .foregroundStyle(.gray)
-                       .padding(3)
-                   Text("\(selectedItems.count) / 5")
-                       .foregroundStyle(.gray)
-                       .font(.system(size: 15))
-               }//VStack
-               .padding()
-               .overlay(
-                   RoundedRectangle(cornerRadius: 10.0)
-                       .stroke(.gray, lineWidth: 1)
-                       .foregroundStyle(.clear)
-                       .frame(width: 80, height: 80)
-               )
-               .padding(.bottom, 30)
-           }
-           .padding(.leading, 20)
-           
-           ScrollView(.horizontal) {
-               HStack {
-                   ForEach(tmpSelectedData, id: \.self) {photoData in
-                       ZStack(alignment:.topTrailing){
-                           
-                           if let image = UIImage(data: photoData) {
-                               
-                               Image(uiImage: image)
-                                   .resizable()
-                                   .frame(width : 80 , height: 80)
-                                   .cornerRadius(10)
-                                   .clipped()
-                                   .padding(5)
-                           }
-                           
-                           Circle()
-                               .overlay (
-                                   Image(systemName: "xmark.circle.fill")
-                                       .font(.system(size: 20))
-                                       .foregroundStyle(.black)
-                               )
-                               .foregroundStyle(.white)
-                               .frame(width: 20, height:20)
-                               .onTapGesture {
-                                   
-                                   if let idx = tmpSelectedData.firstIndex(of: photoData) {
-                                       tmpSelectedData.remove(at: idx)
-                                   }
-                               }
-                       }
-                   }
-                   ForEach(selectedPhotosData, id: \.self) { photoData in
-                       ZStack(alignment:.topTrailing){
-                           
-                           if let image = UIImage(data: photoData) {
-                               
-                               Image(uiImage: image)
-                                   .resizable()
-                                   .frame(width : 80 , height: 80)
-                                   .cornerRadius(10)
-                                   .clipped()
-                                   .padding(5)
-                           }
-                           
-                           Circle()
-                               .overlay (
-                                   Image(systemName: "xmark.circle.fill")
-                                       .font(.system(size: 20))
-                                       .foregroundStyle(.black)
-                               )
-                               .foregroundStyle(.white)
-                               .frame(width: 20, height:20)
-                               .onTapGesture {
-                                   
-                                   if let idx = selectedPhotosData.firstIndex(of: photoData) {
-                                       selectedPhotosData.remove(at: idx)
-                                       selectedItems.remove(at: idx)
-                                   }
-                                   
-                               }
-                       }
-                   }
-               }
-               .padding(.bottom, 30)
-           }//Horizontal ScrollView
-           .padding(.horizontal, 10)
-       }
-   }
+        HStack {
+            PhotosPicker(selection: $selectedItems, maxSelectionCount: 5, matching: .images) {
+                VStack {
+                    Image(systemName: "camera.fill")
+                        .font(.system(size: 25))
+                        .foregroundStyle(.gray)
+                        .padding(3)
+                    Text("\(selectedItems.count) / 5")
+                        .foregroundStyle(.gray)
+                        .font(.system(size: 15))
+                }//VStack
+                .padding()
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10.0)
+                        .stroke(.gray, lineWidth: 1)
+                        .foregroundStyle(.clear)
+                        .frame(width: 80, height: 80)
+                )
+                .padding(.bottom, 30)
+            }
+            .padding(.leading, 20)
+            
+            ScrollView(.horizontal) {
+                HStack {
+                    ForEach(tmpSelectedData, id: \.self) {photoData in
+                        ZStack(alignment:.topTrailing){
+                            
+                            if let image = UIImage(data: photoData) {
+                                
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .frame(width : 80 , height: 80)
+                                    .cornerRadius(10)
+                                    .clipped()
+                                    .padding(5)
+                            }
+                            
+                            Circle()
+                                .overlay (
+                                    Image(systemName: "xmark.circle.fill")
+                                        .font(.system(size: 20))
+                                        .foregroundStyle(.black)
+                                )
+                                .foregroundStyle(.white)
+                                .frame(width: 20, height:20)
+                                .onTapGesture {
+                                    
+                                    if let idx = tmpSelectedData.firstIndex(of: photoData) {
+                                        tmpSelectedData.remove(at: idx)
+                                    }
+                                }
+                        }
+                    }
+                    ForEach(selectedPhotosData, id: \.self) { photoData in
+                        ZStack(alignment:.topTrailing){
+                            
+                            if let image = UIImage(data: photoData) {
+                                
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .frame(width : 80 , height: 80)
+                                    .cornerRadius(10)
+                                    .clipped()
+                                    .padding(5)
+                            }
+                            
+                            Circle()
+                                .overlay (
+                                    Image(systemName: "xmark.circle.fill")
+                                        .font(.system(size: 20))
+                                        .foregroundStyle(.black)
+                                )
+                                .foregroundStyle(.white)
+                                .frame(width: 20, height:20)
+                                .onTapGesture {
+                                    
+                                    if let idx = selectedPhotosData.firstIndex(of: photoData) {
+                                        selectedPhotosData.remove(at: idx)
+                                        selectedItems.remove(at: idx)
+                                    }
+                                    
+                                }
+                        }
+                    }
+                }
+                .padding(.bottom, 30)
+            }//Horizontal ScrollView
+            .padding(.horizontal, 10)
+        }
+    }
     
     var selectCategoryView: some View {
         VStack(alignment: .leading) {

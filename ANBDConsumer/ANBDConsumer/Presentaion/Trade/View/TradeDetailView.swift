@@ -15,7 +15,7 @@ struct TradeDetailView: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     @EnvironmentObject private var coordinator: Coordinator
-    // @EnvironmentObject private var myPageViewMode: MyPageViewModel
+
     @State var trade: Trade
     
     @State private var isShowingCreat: Bool = false
@@ -68,8 +68,8 @@ struct TradeDetailView: View {
                                             .frame(width: 40, height: 40)
                                     })
                                     .resizable()
-                                    .frame(width: 40, height: 40)
                                     .scaledToFill()
+                                    .frame(width: 40, height: 40)
                                     .clipShape(Circle())
                                     .onTapGesture {
                                         coordinator.user = writerUser
@@ -98,7 +98,6 @@ struct TradeDetailView: View {
                             }
                             
                             Spacer()
-                            
                             
                             if user.id == tradeViewModel.trade.writerID {
                                 TradeStateChangeView(tradeState: $tradeViewModel.trade.tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert, fontSize: 17)
@@ -268,7 +267,7 @@ extension TradeDetailView {
             
             Spacer()
             
-            if user.id != tradeViewModel.trade.writerID {
+            if user.id != tradeViewModel.trade.writerID && tradeViewModel.trade.tradeState == .trading {
                 RoundedRectangle(cornerRadius: 14)
                     .foregroundStyle(.accent)
                     .overlay {

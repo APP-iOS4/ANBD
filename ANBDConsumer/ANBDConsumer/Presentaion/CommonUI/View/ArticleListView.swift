@@ -107,27 +107,30 @@ struct ArticleListView: View {
                             .padding(.horizontal)
                         } else {
                             ForEach(tradeViewModel.filteredTrades) { item in
-                                Button(action: {
-                                    coordinator.trade = item
-                                    tradeViewModel.getOneTrade(trade: item)
-                                    coordinator.appendPath(.tradeDetailView)
-                                }, label: {
-                                    if item == tradeViewModel.filteredTrades.last {
-                                        ArticleListCell(value: .trade(item))
-                                            .padding(.vertical, 5)
-                                            .onAppear {
-                                                Task {
-                                                    if !isSearchView {
-                                                        await tradeViewModel.loadMoreFilteredTrades(category: category)
+                                if item.tradeState == .trading {
+                                    Button(action: {
+                                        coordinator.trade = item
+                                        tradeViewModel.getOneTrade(trade: item)
+                                        coordinator.appendPath(.tradeDetailView)
+                                    }, label: {
+                                        if item == tradeViewModel.filteredTrades.last {
+                                            ArticleListCell(value: .trade(item))
+                                                .padding(.vertical, 5)
+                                                .onAppear {
+                                                    Task {
+                                                        if !isSearchView {
+                                                            await tradeViewModel.loadMoreFilteredTrades(category: category)
+                                                        }
                                                     }
                                                 }
-                                            }
-                                    } else {
-                                        ArticleListCell(value: .trade(item))
-                                            .padding(.vertical, 5)
-                                    }
-                                })
-                                Divider()
+                                        } else {
+                                            ArticleListCell(value: .trade(item))
+                                                .padding(.vertical, 5)
+                                        }
+                                    })
+                                    
+                                    Divider()
+                                }
                             }
                             .padding(.horizontal)
                         }

@@ -7,7 +7,7 @@
 
 import SwiftUI
 import ANBDModel
-import CachedAsyncImage
+import Kingfisher
 
 struct BannerEditView: View {
     @StateObject private var bannerEditViewModel = BannerEditViewModel()
@@ -28,21 +28,22 @@ struct BannerEditView: View {
                                     .foregroundColor(.gray)
                                 Spacer()
                                 if let imageUrl = URL(string: banner.thumbnailImageURLString) {
-                                    CachedAsyncImage(url: imageUrl) { phase in
-                                        switch phase {
-                                        case .empty:
+                                    KFImage(imageUrl)
+                                        .placeholder {
                                             ProgressView()
-                                        case .success(let image):
-                                            image
-                                                .resizable()
-                                                .scaledToFit()
-                                                .frame(width: 220)
-                                        case .failure:
-                                            Text("Failed to load image")
-                                        @unknown default:
-                                            EmptyView()
                                         }
-                                    }
+                                        .resizable()
+                                        .setProcessor(DownsamplingImageProcessor(size: CGSize(width: 660, height: 220)))
+                                        .fade(duration: 1)
+                                        .onSuccess { r in
+                                            print("Task done for: \(r.source.url?.absoluteString ?? "")")
+                                        }
+                                        .onFailure { e in
+                                            print("Job failed: \(e.localizedDescription)")
+                                        }
+                                        .resizable()
+                                        .frame(minWidth: 220, maxHeight: 73)
+                                        
                                 }
                                 Spacer()
                             }
@@ -65,7 +66,7 @@ struct BannerEditView: View {
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
                                 Spacer()
-                                Text("\(dateFormatter(banner.createdAt))")
+                                Text("\(DateFormatterSingleton.shared.dateFormatter(banner.createdAt))")
                                 Spacer()
                             }
                             .padding()

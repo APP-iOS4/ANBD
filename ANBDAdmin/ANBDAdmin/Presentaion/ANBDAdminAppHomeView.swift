@@ -60,7 +60,7 @@ struct ANBDAdminAppHomeView: View {
             Text("항목을 선택하세요.")
         }
         if isShowingSignOutAlertView {
-            InquiryView()
+            EmptyInfoView()
                 .sheet(isPresented: $isShowingSignOutAlertView) {
                     CustomAlertView(isShowingCustomAlert: $isShowingSignOutAlertView, viewType: .signOut) {
                         Task {

@@ -8,7 +8,7 @@
 import SwiftUI
 import ANBDModel
 import FirebaseStorage
-import CachedAsyncImage
+import Kingfisher
 
 struct TradeListDetailView: View {
     @Environment(\.presentationMode) var tradepresentationMode
@@ -22,15 +22,20 @@ struct TradeListDetailView: View {
     var body: some View {
         List {
             Text("이미지:").foregroundColor(.gray)
-            ForEach(tradeImageUrls.indices, id: \.self) { index in
-                if let url = tradeImageUrls[index] {
-                    CachedAsyncImage(url: url) { image in
-                        image.resizable()
-                            .scaledToFit()
-                            .frame(height: 300)
-                    } placeholder: {
-                        ProgressView()
-                    }
+            ForEach(tradeImageUrls, id: \.self) { url in
+                if let url = url {
+                    KFImage(url)
+                        .scaleFactor(UIScreen.main.scale)
+                        .placeholder {
+                            ProgressView()
+                        }
+                        .fade(duration: 1)
+                        .onSuccess { r in
+                            print("Task done for: \(r.source.url?.absoluteString ?? "")")
+                        }
+                        .onFailure { e in
+                            print("Job failed: \(e.localizedDescription)")
+                        }
                 } else {
                     ProgressView()
                 }
@@ -63,7 +68,7 @@ struct TradeListDetailView: View {
             HStack {
                 Text("생성일자:").foregroundColor(.gray)
                 Spacer()
-                Text(" \(dateFormatter(trade.createdAt))")
+                Text(" \(DateFormatterSingleton.shared.dateFormatter(trade.createdAt))")
             }
             HStack {
                 Text("카테고리:").foregroundColor(.gray)

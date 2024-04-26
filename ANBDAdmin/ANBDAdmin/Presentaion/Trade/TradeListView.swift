@@ -79,7 +79,7 @@ struct TradeListView: View {
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
-                                    Text("\(dateFormatter(trade.createdAt))")
+                                    Text("\(DateFormatterSingleton.shared.dateFormatter(trade.createdAt))")
                                         .foregroundColor(.black)
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)

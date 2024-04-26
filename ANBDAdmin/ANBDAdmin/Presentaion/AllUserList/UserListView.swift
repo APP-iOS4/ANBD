@@ -7,7 +7,7 @@
 
 import SwiftUI
 import ANBDModel
-import CachedAsyncImage
+import Kingfisher
 
 struct UserListView: View {
     @StateObject private var userListViewModel = UserListViewModel()
@@ -81,18 +81,23 @@ struct UserListView: View {
                                 Spacer()
                                 VStack(alignment: .leading) {
                                     if let imageUrl = URL(string: user.profileImage) {
-                                        CachedAsyncImage(url: imageUrl) { phase in
-                                            switch phase {
-                                            case .empty:
+                                        KFImage(imageUrl)
+                                            .placeholder {
+                                                // Placeholder while downloading.
                                                 ProgressView()
-                                            case .success(let image):
-                                                image.resizable().frame(width: 40, height: 40)
-                                            case .failure:
-                                                Text("Failed to load image")
-                                            @unknown default:
-                                                EmptyView()
                                             }
-                                        }
+                                            .resizable()
+                                            .cacheOriginalImage()
+                                            .fade(duration: 1)
+                                            .onSuccess { r in
+                                                print("Task done for: \(r.source.url?.absoluteString ?? "")")
+                                            }
+                                            .onFailure { e in
+                                                print("Job failed: \(e.localizedDescription)")
+                                            }
+                                            .resizable()
+                                            .frame(width: 40, height: 40)
+                                            .cornerRadius(20)
                                     }
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
@@ -107,10 +112,10 @@ struct UserListView: View {
                     if !userListViewModel.userList.isEmpty {
                         Text("List End")
                             .foregroundColor(.gray)
-                          .onAppear {
-                              userListViewModel.loadMoreUsers()
-                          }
-                      }
+                            .onAppear {
+                                userListViewModel.loadMoreUsers()
+                            }
+                    }
                 }
                 .onAppear {
                     userListViewModel.firstLoadUsers()

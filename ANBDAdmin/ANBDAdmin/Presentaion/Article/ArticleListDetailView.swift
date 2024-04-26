@@ -8,7 +8,7 @@
 import SwiftUI
 import ANBDModel
 import FirebaseStorage
-import CachedAsyncImage
+import Kingfisher
 
 struct ArticleListDetailView: View {
     @Environment(\.presentationMode) var articlePresentationMode
@@ -23,15 +23,20 @@ struct ArticleListDetailView: View {
     var body: some View {
         List {
             Text("이미지:").foregroundColor(.gray)
-            ForEach(articleImageUrls.indices, id: \.self) { index in
-                if let url = articleImageUrls[index] {
-                    CachedAsyncImage(url: url) { image in
-                        image.resizable()
-                            .scaledToFit()
-                            .frame(height: 300)
-                    } placeholder: {
-                        ProgressView()
-                    }
+            ForEach(articleImageUrls, id: \.self) { url in
+                if let url = url {
+                    KFImage(url)
+                        .scaleFactor(UIScreen.main.scale)
+                        .placeholder {
+                            ProgressView()
+                        }
+                        .fade(duration: 1)
+                        .onSuccess { r in
+                            print("Task done for: \(r.source.url?.absoluteString ?? "")")
+                        }
+                        .onFailure { e in
+                            print("Job failed: \(e.localizedDescription)")
+                        }
                 } else {
                     ProgressView()
                 }
@@ -64,7 +69,7 @@ struct ArticleListDetailView: View {
             HStack {
                 Text("생성일자:").foregroundColor(.gray)
                 Spacer()
-                Text(" \(dateFormatter(article.createdAt))")
+                Text("\(DateFormatterSingleton.shared.dateFormatter(article.createdAt))")
             }
             HStack {
                 Text("카테고리:").foregroundColor(.gray)

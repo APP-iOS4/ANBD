@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ANBDModel
+import SkeletonUI
 
 struct HomeView: View {
     @EnvironmentObject private var coordinator: Coordinator
@@ -15,6 +16,7 @@ struct HomeView: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     
     @State private var isShowingWebView: Bool = false
+    @State private var isLoading: Bool = true
     @State private var blogURL: String = "https://www.naver.com"
     
     var body: some View {
@@ -25,6 +27,7 @@ struct HomeView: View {
                         .padding(.bottom, 20)
                     
                     accuaView(geo: geometry)
+                    
                     
                     Divider()
                         .padding(.top, 10)
@@ -79,59 +82,75 @@ struct HomeView: View {
     
     // MARK: - 광고 배너
     private var adView: some View {
-        TabView() {
-            ForEach(homeViewModel.bannerItemList) { banner in
-                Button(action: {
-                    blogURL = banner.urlString
-                    isShowingWebView.toggle()
-                }, label: {
-                    ZStack {
-                        AsyncImage(url: URL(string: banner.thumbnailImageURLString)) { img in
-                            img
-                                .resizable()
-                                .scaledToFill()
+        ZStack {
+            TabView() {
+                ForEach(homeViewModel.bannerItemList) { banner in
+                    Button(action: {
+                        blogURL = banner.urlString
+                        isShowingWebView.toggle()
+                    }, label: {
+                        ZStack {
+                            AsyncImage(url: URL(string: banner.thumbnailImageURLString)) { img in
+                                img
+                                    .resizable()
+                                    .scaledToFill()
+                                    .onAppear {
+                                        isLoading = false
+                                    }
+                                
+                            } placeholder: {
+                                ProgressView()
+                            }
                             
-                        } placeholder: {
-                            ProgressView()
+                            LinearGradient(
+                                gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.4)]),
+                                startPoint: .center,
+                                endPoint: .bottom
+                            )
                         }
-                        
-                        LinearGradient(
-                            gradient: Gradient(colors: [Color.clear, Color.black.opacity(0.4)]),
-                            startPoint: .center,
-                            endPoint: .bottom
-                        )
-                    }
-                })
+                    })
+                }
             }
-        }
-        .onAppear {
-            Task {
-                await homeViewModel.loadBanners()
-                blogURL = homeViewModel.bannerItemList.first?.urlString ?? "https://www.naver.com"
+            .onAppear {
+                Task {
+                    await homeViewModel.loadBanners()
+                    blogURL = homeViewModel.bannerItemList.first?.urlString ?? "https://www.naver.com"
+                }
             }
+            .frame(height: 130)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .tabViewStyle(PageTabViewStyle())
+            .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .automatic))
+            Color.clear
+                .skeleton(with: isLoading , shape: .rectangle)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
         }
-        .frame(height: 130)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .tabViewStyle(PageTabViewStyle())
-        .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .automatic))
     }
     
     // MARK: - 아껴쓰기 Section
     private func accuaView(geo: GeometryProxy) -> some View {
         VStack {
             sectionHeaderView(.accua)
-            
-            if let article = homeViewModel.accuaArticle {
-                Button(action: {
-                    Task {
-                        coordinator.article = article
-                        await articleViewModel.loadArticle(article: article)
-                        coordinator.homePath.append(Page.articleDeatilView)
-                    }
-                }, label: {
-                    ArticleCellView(article: article)
-                        .frame(width: geo.size.width * 0.9, height: 130)
-                })
+            ZStack {
+                if let article = homeViewModel.accuaArticle {
+                    Button(action: {
+                        Task {
+                            coordinator.article = article
+                            await articleViewModel.loadArticle(article: article)
+                            coordinator.homePath.append(Page.articleDeatilView)
+                        }
+                    }, label: {
+                        ZStack {
+                            ArticleCellView(article: article)
+                                .frame(width: geo.size.width * 0.9, height: 130)
+                        }
+                        
+                    })
+                }
+                Color.clear
+                    .skeleton(with: isLoading , shape: .rectangle)
+                    .frame(width: geo.size.width * 0.9, height: 130)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
             }
         }
         .onAppear {
@@ -146,22 +165,35 @@ struct HomeView: View {
         VStack(alignment: .leading) {
             sectionHeaderView(.nanua)
             
-            ScrollView(.horizontal) {
-                LazyHStack {
-                    ForEach(homeViewModel.nanuaTrades) { trade in
-                        Button(action: {
-                            coordinator.trade = trade
-                            tradeViewModel.getOneTrade(trade: trade)
-                            coordinator.homePath.append(Page.tradeDetailView)
-                        }, label: {
-                            NanuaCellView(trade: trade)
+            ScrollView(.horizontal , showsIndicators: false) {
+                ZStack(alignment: .topLeading) {
+                    LazyHStack {
+                        ForEach(homeViewModel.nanuaTrades) { trade in
+                            Button(action: {
+                                coordinator.trade = trade
+                                tradeViewModel.getOneTrade(trade: trade)
+                                coordinator.homePath.append(Page.tradeDetailView)
+                            }, label: {
+                                NanuaCellView(trade: trade)
+                                    .frame(width: 140, height: 140)
+                                    .padding(.horizontal, 1)
+                                
+                            })
+                        }
+                    }
+                    LazyHStack {
+                        ForEach(1..<4) { _ in
+                            Color.clear
+                                .skeleton(with: isLoading , shape: .rectangle)
                                 .frame(width: 140, height: 140)
                                 .padding(.horizontal, 1)
-                        })
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                        }
                     }
                 }
+                .scrollIndicators(.hidden)
+                
             }
-            .scrollIndicators(.hidden)
         }
         .onAppear {
             Task {
@@ -174,15 +206,16 @@ struct HomeView: View {
     private var baccuaView: some View {
         VStack(alignment: .leading) {
             sectionHeaderView(.baccua)
-            
-            ForEach(homeViewModel.baccuaTrades) { trade in
-                Button(action: {
-                    coordinator.trade = trade
-                    tradeViewModel.getOneTrade(trade: trade)
-                    coordinator.homePath.append(Page.tradeDetailView)
-                }, label: {
-                    ArticleListCell(value: .trade(trade))
-                })
+            VStack {
+                ForEach(homeViewModel.baccuaTrades) { trade in
+                    Button(action: {
+                        coordinator.trade = trade
+                        tradeViewModel.getOneTrade(trade: trade)
+                        coordinator.homePath.append(Page.tradeDetailView)
+                    }, label: {
+                        ArticleListCell(value: .trade(trade))
+                    })
+                }
             }
         }
         .onAppear {
@@ -265,7 +298,7 @@ struct HomeView: View {
                 Text("환경을 위해 아껴쓰세요.")
                     .font(ANBDFont.body1)
             case .nanua:
-                Text("환경을 위해 Divide.")
+                Text("환경을 위해 마음을 나눠주세요.")
                     .font(ANBDFont.body1)
             case .baccua:
                 Text("어? 너도? 나도!")
@@ -295,7 +328,7 @@ struct HomeView: View {
                                 .frame(height: 130)
                         }
                     } else {
-                        HStack {
+                        HStack{
                             Spacer()
                             ProgressView()
                             Spacer()

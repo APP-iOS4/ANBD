@@ -6,8 +6,9 @@
 //
 
 import SwiftUI
+import Foundation
 import ANBDModel
-import CachedAsyncImage
+import Kingfisher
 
 struct MessageCell: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
@@ -18,6 +19,7 @@ struct MessageCell: View {
     var isLast: Bool = false
     @State var imageUrl: URL?
     @State private var isMine: Bool = false
+    @State private var isLoading: Bool = true
     
     var channel: Channel
     
@@ -42,17 +44,16 @@ struct MessageCell: View {
             }
             
             if !isMine && chatViewModel.otherUserLastMessages.contains(message){
-                ZStack {
-                    CachedAsyncImage(url: URL(string: chatViewModel.otherUserProfileImageUrl)) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(Color.gray, lineWidth: 0.5))
-                    } placeholder: {
-                        ProgressView()
-                    }
-                    .frame(width: 30)
+                ZStack {           
+                    KFImage(URL(string: chatViewModel.otherUserProfileImageUrl))
+                        .placeholder { _ in
+                            ProgressView()
+                        }
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .clipShape(Circle())
+                        .overlay(Circle().stroke(Color.gray, lineWidth: 0.5))
+                        .frame(width: 30)
                 }
             }else if !isMine {
                 Circle()
@@ -82,32 +83,37 @@ struct MessageCell: View {
             
             // 이미지
             if let imageUrl {
-                CachedAsyncImage(url: imageUrl) { image in
-                    Button(action: {
-                        detailImage = image
+                Button {
+                    Task {
+                        let (data, _) = try await URLSession.shared.data(from: imageUrl)
+                        detailImage = Image(uiImage: UIImage(data: data))
                         isShowingImageDetailView.toggle()
-                    }, label: {
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 150)
-                            .clipShape(RoundedRectangle(cornerRadius: 15))
-                    })
-                    .contextMenu {
-                        if !isMine {
-                            Button("메시지 신고하기", role: .destructive) {
-                                coordinator.reportType = .messages
-                                coordinator.reportedObjectID = message.id
-                                coordinator.reportedChannelID = channel.id
-                                coordinator.appendPath(.reportView)
+                    }
+                } label: {
+                    KFImage(imageUrl)
+                        .placeholder { _ in
+                            ProgressView()
+                        }
+                        .onSuccess { r in
+                            isLoading = false
+                        }
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 150)
+                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                        .contextMenu {
+                            if !isMine {
+                                Button("메시지 신고하기", role: .destructive) {
+                                    coordinator.reportType = .messages
+                                    coordinator.reportedObjectID = message.id
+                                    coordinator.reportedChannelID = channel.id
+                                    coordinator.appendPath(.reportView)
+                                }
                             }
                         }
-                    }
-                } placeholder: {
-                    ProgressView()
-                        .frame(width: 150)
                 }
             }
+                
             
             if !isMine {
                 Text("\(message.dateString)")

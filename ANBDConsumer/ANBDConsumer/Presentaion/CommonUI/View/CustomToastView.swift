@@ -12,7 +12,7 @@ enum ToastViewType {
 }
 
 struct CustomToastView: View {
-    
+    @EnvironmentObject private var coordinator: Coordinator
     var toastViewType: ToastViewType = .report
     
     var body: some View {
@@ -26,7 +26,13 @@ struct CustomToastView: View {
                 .font(ANBDFont.SubTitle2)
                 .lineLimit(1)
         }
-        .padding(.horizontal)
+        .padding()
+        .onAppear {
+            Task {
+                try await Task.sleep(nanoseconds: 1_500_000_000)
+                coordinator.isShowingToastView = false
+            }
+        }
     }
     
     private var toastTitle: String {

@@ -25,7 +25,7 @@ struct UserListView: View {
                 .onSubmit {
                     if !searchUserText.isEmpty {
                         Task {
-                            await userListViewModel.searchUser(userID: searchUserText)
+                            await userListViewModel.searchUser(userID:searchUserText)
                         }
                     }
                 }

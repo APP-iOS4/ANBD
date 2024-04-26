@@ -21,39 +21,49 @@ struct ReportListDetailView: View {
             HStack {
                 Text("신고함 ID:").foregroundColor(.gray)
                 Spacer()
-                Text(" \(report.id)")
+                Text("\(report.id)")
             }
             HStack {
-                Text("신고당한 오브젝트의 타입:").foregroundColor(.gray)
+                Text("신고당한 오브젝트 타입:").foregroundColor(.gray)
                 Spacer()
-                Text(" \(report.type)")
+                Text("\(report.type)")
             }
             HStack {
-                Text("신고당한 오브젝트 ID:").foregroundColor(.gray)
+                Text("신고당한 \(report.type)의 ID:").foregroundColor(.gray)
                 Spacer()
-                Text(" \(report.reportedObjectID)")
+                Text(report.reportedObjectID)
+                    .textSelection(.enabled)
             }
             if report.reportedChannelID != nil{
                 HStack {
-                    Text("신고당한 채널 ID:").foregroundColor(.gray)
+                    Text("신고당한 채팅 채널 ID:").foregroundColor(.gray)
                     Spacer()
-                    Text(" \(String(describing: report.reportedChannelID))")
+                    Text(report.reportedChannelID ?? "")
+                        .textSelection(.enabled)
                 }
+            }
+            HStack {
+                Text("신고한 유저:").foregroundColor(.gray)
+                Spacer()
+                Text("\(report.reportedUser)")
+                    .textSelection(.enabled)
             }
             HStack {
                 Text("신고 사유:").foregroundColor(.gray)
                 Spacer()
-                Text(" \(report.reportReason)")
-            }
-            HStack {
-                Text("신고 받은 유저:").foregroundColor(.gray)
-                Spacer()
-                Text(" \(report.reportedUser)")
+                Text("\(report.reportReason)")
             }
             HStack {
                 Text("생성일자:").foregroundColor(.gray)
                 Spacer()
-                Text(" \(report.reportedDate)")
+                Text("\(report.reportedDate)")
+            }
+            HStack{
+                Spacer()
+                Text("각 ID는 눌러서 홀드하면 복사 할 수 있습니다.")
+                    .foregroundColor(.gray)
+                    .font(ANBDFont.body1)
+                Spacer()
             }
         }
         .navigationBarTitle("신고 내역")
@@ -80,6 +90,5 @@ struct ReportListDetailView: View {
                 secondaryButton: .cancel()
             )
         }
-        
     }
 }

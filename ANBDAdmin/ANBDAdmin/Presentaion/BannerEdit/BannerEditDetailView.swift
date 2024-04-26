@@ -7,7 +7,7 @@
 
 import SwiftUI
 import ANBDModel
-import CachedAsyncImage
+import Kingfisher
 
 struct BannerEditDetailView: View {
     @Environment(\.presentationMode) var bannerDeletePresentationMode
@@ -21,21 +21,19 @@ struct BannerEditDetailView: View {
             Text("배너 링크:").foregroundColor(.gray) + Text(" \(banner.urlString)")
             if let imageUrl = URL(string: banner.thumbnailImageURLString) {
                 Text("썸네일:").foregroundColor(.gray)
-                CachedAsyncImage(url: imageUrl) { phase in
-                    switch phase {
-                    case .empty:
+                Text("썸네일:").foregroundColor(.gray)
+                KFImage(imageUrl)
+                    .placeholder {
                         ProgressView()
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: 200)
-                    case .failure:
-                        Text("Failed to load image")
-                    @unknown default:
-                        EmptyView()
                     }
-                }
+                    .setProcessor(DownsamplingImageProcessor(size: CGSize(width: 660, height: 220)))
+                    .fade(duration: 1)
+                    .onSuccess { r in
+                        print("Task done for: \(r.source.url?.absoluteString ?? "")")
+                    }
+                    .onFailure { e in
+                        print("Job failed: \(e.localizedDescription)")
+                    }
             }
             HStack {
                 Text("배너 ID:").foregroundColor(.gray)
@@ -45,7 +43,7 @@ struct BannerEditDetailView: View {
             HStack {
                 Text("생성일자:").foregroundColor(.gray)
                 Spacer()
-                Text(" \(dateFormatter(banner.createdAt))")
+                Text(" \(DateFormatterSingleton.shared.dateFormatter(banner.createdAt))")
             }
         }
         .navigationBarTitle(banner.id)

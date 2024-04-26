@@ -7,7 +7,7 @@
 
 import SwiftUI
 import ANBDModel
-import CachedAsyncImage
+import Kingfisher
 
 struct UserListDetailView: View {
     @Environment(\.presentationMode) var userLevelEditPresentationMode
@@ -29,21 +29,28 @@ struct UserListDetailView: View {
     
     var body: some View {
         List {
-            if let imageUrl = URL(string: user.profileImage) {
-                Text("프로필 이미지:").foregroundColor(.gray)
-                CachedAsyncImage(url: imageUrl) { phase in
-                    switch phase {
-                    case .empty:
-                        ProgressView()
-                    case .success(let image):
-                        image.resizable().frame(width: 200, height: 200)
-                    case .failure:
-                        Text("Failed to load image")
-                    @unknown default:
-                        EmptyView()
-                    }
+            VStack(alignment: .leading) {
+                Text("이미지:").foregroundColor(.gray)
+                if let imageUrl = URL(string: user.profileImage) {
+                    KFImage(imageUrl)
+                        .placeholder {
+                            ProgressView()
+                        }
+                        .resizable()
+                        .setProcessor(DownsamplingImageProcessor(size: CGSize(width: 200, height: 200)) |> RoundCornerImageProcessor(cornerRadius: 20))
+                        .fade(duration: 1)
+                        .onSuccess { r in
+                            print("Task done for: \(r.source.url?.absoluteString ?? "")")
+                        }
+                        .onFailure { e in
+                            print("Job failed: \(e.localizedDescription)")
+                        }
+                        .resizable()
+                        .frame(width: 200, height: 200)
+                        .clipShape(Circle())
                 }
             }
+            
             HStack {
                 Text("ID:").foregroundColor(.gray)
                 Spacer()
@@ -87,17 +94,17 @@ struct UserListDetailView: View {
             HStack {
                 Text("작성한 게시글 목록:").foregroundColor(.gray)
                 Spacer()
-                Text("\(userArticleList.map { "\($0.id),  \(dateFormatter($0.createdAt))" }.joined(separator: ", \n "))")
+                Text("\(userArticleList.map { "\($0.id),  \(DateFormatterSingleton.shared.dateFormatter($0.createdAt))" }.joined(separator: ", \n "))")
             }
             HStack {
                 Text("작성한 거래글 목록:").foregroundColor(.gray)
                 Spacer()
-                Text("\(userTradeList.map { "\($0.id),  \(dateFormatter($0.createdAt))" }.joined(separator: ", \n "))")
+                Text("\(userTradeList.map { "\($0.id),  \(DateFormatterSingleton.shared.dateFormatter($0.createdAt))" }.joined(separator: ", \n "))")
             }
             HStack {
                 Text("좋아요한 게시글 목록:").foregroundColor(.gray)
                 Spacer()
-                Text("\(userLikeArticleList.map { "\($0.id),  \(dateFormatter($0.createdAt))" }.joined(separator: ", \n "))")
+                Text("\(userLikeArticleList.map { "\($0.id),  \(DateFormatterSingleton.shared.dateFormatter($0.createdAt))" }.joined(separator: ", \n "))")
             }
             HStack {
                 Text("찜한 거래글 목록:").foregroundColor(.gray)

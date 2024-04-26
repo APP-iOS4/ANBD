@@ -79,7 +79,7 @@ struct ArticleListView: View {
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
-                                    Text("\(dateFormatter(article.createdAt))")
+                                    Text("\(DateFormatterSingleton.shared.dateFormatter(article.createdAt))")
                                         .foregroundColor(.black)
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)

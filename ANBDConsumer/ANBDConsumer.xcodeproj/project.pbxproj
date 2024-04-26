@@ -21,8 +21,8 @@
 		42C151712BD1014400917F30 /* ListEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C151702BD1014400917F30 /* ListEmptyView.swift */; };
 		42C7BBD82BC2518000F0805A /* AccountManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C7BBD72BC2518000F0805A /* AccountManagementView.swift */; };
 		42EE634E2BC2BCA100100FF4 /* LocationPickerMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42EE634D2BC2BCA100100FF4 /* LocationPickerMenu.swift */; };
-		469FA5CE2BDA32F500D2222B /* SkeletonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 469FA5CD2BDA32F500D2222B /* SkeletonView.swift */; };
-		46ED42252BD63F3900E4245F /* CachedAsyncImage in Frameworks */ = {isa = PBXBuildFile; productRef = 46ED42242BD63F3900E4245F /* CachedAsyncImage */; };
+		469FA5D12BDA3DE800D2222B /* SkeletonUI in Frameworks */ = {isa = PBXBuildFile; productRef = 469FA5D02BDA3DE800D2222B /* SkeletonUI */; };
+		469FA5D42BDB405800D2222B /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 469FA5D32BDB405800D2222B /* Kingfisher */; };
 		A816E5FA2BC1056F00138CFC /* ChatListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A816E5F92BC1056F00138CFC /* ChatListCell.swift */; };
 		A816E5FC2BC11B7800138CFC /* ChatDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A816E5FB2BC11B7800138CFC /* ChatDetailView.swift */; };
 		A816E5FE2BC1254B00138CFC /* TradeStateChangeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A816E5FD2BC1254B00138CFC /* TradeStateChangeView.swift */; };
@@ -102,7 +102,6 @@
 		42C7BBD72BC2518000F0805A /* AccountManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountManagementView.swift; sourceTree = "<group>"; };
 		42C7BBD92BC2793B00F0805A /* UserInfoEditingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoEditingView.swift; sourceTree = "<group>"; };
 		42EE634D2BC2BCA100100FF4 /* LocationPickerMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPickerMenu.swift; sourceTree = "<group>"; };
-		469FA5CD2BDA32F500D2222B /* SkeletonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonView.swift; sourceTree = "<group>"; };
 		A816E5F92BC1056F00138CFC /* ChatListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListCell.swift; sourceTree = "<group>"; };
 		A816E5FB2BC11B7800138CFC /* ChatDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatDetailView.swift; sourceTree = "<group>"; };
 		A816E5FD2BC1254B00138CFC /* TradeStateChangeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeStateChangeView.swift; sourceTree = "<group>"; };
@@ -167,8 +166,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				469FA5D42BDB405800D2222B /* Kingfisher in Frameworks */,
 				CB7BEE3E2BBD587200C0F298 /* ANBDModel in Frameworks */,
-				46ED42252BD63F3900E4245F /* CachedAsyncImage in Frameworks */,
+				469FA5D12BDA3DE800D2222B /* SkeletonUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -504,7 +504,6 @@
 				A816E5FB2BC11B7800138CFC /* ChatDetailView.swift */,
 				A82860212BD2356200BCA57A /* ChatHeaderView.swift */,
 				A828601F2BD22F6300BCA57A /* MessageCell.swift */,
-				469FA5CD2BDA32F500D2222B /* SkeletonView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -594,7 +593,8 @@
 			name = ANBDConsumer;
 			packageProductDependencies = (
 				CB7BEE3D2BBD587200C0F298 /* ANBDModel */,
-				46ED42242BD63F3900E4245F /* CachedAsyncImage */,
+				469FA5D02BDA3DE800D2222B /* SkeletonUI */,
+				469FA5D32BDB405800D2222B /* Kingfisher */,
 			);
 			productName = ANBDConsumer;
 			productReference = CB7BEDB52BBD4E9D00C0F298 /* ANBDConsumer.app */;
@@ -625,7 +625,8 @@
 			);
 			mainGroup = CB7BEDAC2BBD4E9D00C0F298;
 			packageReferences = (
-				46ED42232BD63F3900E4245F /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */,
+				469FA5CF2BDA3DE800D2222B /* XCRemoteSwiftPackageReference "SkeletonUI" */,
+				469FA5D22BDB405800D2222B /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			productRefGroup = CB7BEDB62BBD4E9D00C0F298 /* Products */;
 			projectDirPath = "";
@@ -690,7 +691,6 @@
 				A828602B2BD3C34300BCA57A /* ReportViewModel.swift in Sources */,
 				CB7BEE332BBD57B500C0F298 /* TradeViewModel.swift in Sources */,
 				42EE634E2BC2BCA100100FF4 /* LocationPickerMenu.swift in Sources */,
-				469FA5CE2BDA32F500D2222B /* SkeletonView.swift in Sources */,
 				CB198CF02BBF8E84000C2709 /* Category.swift in Sources */,
 				42C151712BD1014400917F30 /* ListEmptyView.swift in Sources */,
 				424CA0052BC397A600F83F8D /* TextFieldWithTitle.swift in Sources */,
@@ -943,21 +943,34 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		46ED42232BD63F3900E4245F /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */ = {
+		469FA5CF2BDA3DE800D2222B /* XCRemoteSwiftPackageReference "SkeletonUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/lorenzofiamingo/swiftui-cached-async-image.git";
+			repositoryURL = "https://github.com/CSolanaM/SkeletonUI.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.1.1;
+				minimumVersion = 2.0.1;
+			};
+		};
+		469FA5D22BDB405800D2222B /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.11.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		46ED42242BD63F3900E4245F /* CachedAsyncImage */ = {
+		469FA5D02BDA3DE800D2222B /* SkeletonUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 46ED42232BD63F3900E4245F /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */;
-			productName = CachedAsyncImage;
+			package = 469FA5CF2BDA3DE800D2222B /* XCRemoteSwiftPackageReference "SkeletonUI" */;
+			productName = SkeletonUI;
+		};
+		469FA5D32BDB405800D2222B /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 469FA5D22BDB405800D2222B /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
 		};
 		CB7BEE3D2BBD587200C0F298 /* ANBDModel */ = {
 			isa = XCSwiftPackageProductDependency;

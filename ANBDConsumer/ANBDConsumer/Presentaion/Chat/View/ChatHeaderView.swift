@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ANBDModel
+import SkeletonUI
 
 struct ChatHeaderView: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
@@ -15,6 +16,8 @@ struct ChatHeaderView: View {
     
     var trade: Trade?
     var imageData: Data?
+    
+    @State private var isLoading: Bool = true
     
     @Binding var tradeState: TradeState
     @Binding var isShowingStateChangeCustomAlert: Bool
@@ -43,10 +46,17 @@ struct ChatHeaderView: View {
                             .frame(width: 60, height: 60)
                             .padding(.trailing, 10)
                             .foregroundStyle(.gray500)
-                    } else if imageData == nil {
-                        SkeletonView(size: CGSize(width: 70, height: 70))
-                            .padding(.trailing, 10)
                     }
+                    Color.clear
+                        .skeleton(with: isLoading , shape: .rectangle)
+                        .frame(width: 75, height: 75)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .padding(.trailing, 10)
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                self.isLoading = false
+                            }
+                        }
                     
                     if let imageData {
                         if let uiImage = UIImage(data: imageData) {
@@ -56,6 +66,9 @@ struct ChatHeaderView: View {
                                 .frame(width: 70, height: 70)
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                                 .padding(.trailing, 10)
+                                .onAppear {
+                                    isLoading = false
+                                }
                         }
                     }
                 }
@@ -66,6 +79,7 @@ struct ChatHeaderView: View {
                             .lineLimit(2)
                             .multilineTextAlignment(.leading)
                             .font(ANBDFont.SubTitle3)
+                            .skeleton(with: isLoading,size: CGSize(width: 150, height: 15))
                         
                         Spacer()
                         
@@ -73,6 +87,7 @@ struct ChatHeaderView: View {
                             if trade.writerID == chatViewModel.user.id {
                                 TradeStateChangeView(tradeState: $tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert)
                                     .padding(.trailing, 10)
+                                    .skeleton(with: isLoading,size: CGSize(width: 50, height: 20))
                             }
                         }
                     }
@@ -81,6 +96,7 @@ struct ChatHeaderView: View {
                     Text(tradeProductString)
                         .foregroundStyle(.gray400)
                         .font(ANBDFont.Caption3)
+                        .skeleton(with: isLoading,size: CGSize(width: 200, height: 12))
                 }
                 .padding(.vertical)
             }

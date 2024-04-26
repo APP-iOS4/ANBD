@@ -7,7 +7,7 @@
 
 import SwiftUI
 import ANBDModel
-import CachedAsyncImage
+import Kingfisher
 
 struct ChatListCell: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
@@ -18,17 +18,16 @@ struct ChatListCell: View {
         HStack {
             /// 유저 프로필
             if let otherUser {
-                CachedAsyncImage(url: URL(string: otherUser.profileImage)) { image in
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .clipShape(Circle())
-                        .overlay(Circle().stroke(Color.gray, lineWidth: 0.2))
-                } placeholder: {
-                    ProgressView()
-                }
-                .frame(width: 55 , height: 55)
-                .padding(.trailing, 10)
+                KFImage(URL(string: otherUser.profileImage))
+                    .placeholder { _ in
+                        ProgressView()
+                    }
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .clipShape(Circle())
+                    .overlay(Circle().stroke(Color.gray, lineWidth: 0.2))
+                    .frame(width: 55 , height: 55)
+                    .padding(.trailing, 10)
                 
                 
                 

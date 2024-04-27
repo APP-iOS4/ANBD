@@ -146,31 +146,31 @@ final class MyPageViewModel: ObservableObject {
     }
     
     func loadUserLikedArticles(user: User) async {
-        var list: [Article] = []
+        var articles: [Article] = []
         
         for articleID in user.likeArticles {
             do {
                 let article = try await articleUsecase.loadArticle(articleID: articleID)
-                list.append(article)
+                articles.append(article)
             } catch {
                 print("Error load to article that the user likes: \(error.localizedDescription)")
             }
         }
-        userLikedArticles = list
+        userLikedArticles = articles
     }
     
     func loadUserHeartedTrades(user: User) async {
-        var list: [Trade] = []
+        var trades: [Trade] = []
         
         for tradeID in user.likeTrades {
             do {
                 let trade = try await tradeUsecase.loadTrade(tradeID: tradeID)
-                list.append(trade)
+                trades.append(trade)
             } catch {
                 print("Error load to trade that the user hearted: \(error.localizedDescription)")
             }
         }
-        userHeartedTrades = list
+        userHeartedTrades = trades
     }
     
     func filterUserLikedAndHeartedList() {
@@ -242,14 +242,5 @@ final class MyPageViewModel: ObservableObject {
         } catch {
             print("\(error.localizedDescription)")
         }
-    }
-}
-
-extension MyPageViewModel {
-    enum MyPageNaviPaths {
-        case userLikedArticleList
-        case userHeartedTradeList
-        case accountManagement
-        case report
     }
 }

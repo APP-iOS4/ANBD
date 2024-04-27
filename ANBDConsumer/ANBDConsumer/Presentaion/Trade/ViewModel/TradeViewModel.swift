@@ -161,6 +161,7 @@ final class TradeViewModel: ObservableObject {
         //저장
         do {
             try await tradeUseCase.writeTrade(trade: newTrade, imageDatas: newImages)
+            await UserStore.shared.updateLocalUserInfo()
         } catch {
             print(error.localizedDescription)
         }
@@ -171,6 +172,7 @@ final class TradeViewModel: ObservableObject {
     func deleteTrade(trade: Trade) async {
         do {
             try await tradeUseCase.deleteTrade(trade: trade)
+            await UserStore.shared.updateLocalUserInfo()
         } catch {
             print("삭제 실패: \(error.localizedDescription)")
         }
@@ -207,6 +209,7 @@ final class TradeViewModel: ObservableObject {
             try await tradeUseCase.updateTrade(trade: self.trade, imageDatas: newImages)
             try await userUseCase.updateUserPostCount(user: user, before: originCategory, after: trade.category)
             trade = try await tradeUseCase.loadTrade(tradeID: trade.id)
+            await UserStore.shared.updateLocalUserInfo()
         } catch {
             print("수정 실패: \(error.localizedDescription)")
         }
@@ -233,8 +236,7 @@ final class TradeViewModel: ObservableObject {
     func updateLikeTrade(trade: Trade) async {
         do {
             try await tradeUseCase.likeTrade(tradeID: trade.id)
-            guard let userID = UserDefaultsClient.shared.userID else { return }
-            UserStore.shared.user = await UserStore.shared.getUserInfo(userID: userID)
+            await UserStore.shared.updateLocalUserInfo()
         } catch {
             print("좋아요 실패: \(error.localizedDescription)")
         }

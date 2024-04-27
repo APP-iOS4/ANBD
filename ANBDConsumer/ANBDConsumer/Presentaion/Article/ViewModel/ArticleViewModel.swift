@@ -39,7 +39,7 @@ final class ArticleViewModel: ObservableObject {
                                               writerProfileImageURL: "",
                                               createdAt: Date(),
                                               content: "")
-
+    
     @Published var commentText: String = ""
     
     func getOneArticle(article: Article) {
@@ -101,7 +101,7 @@ final class ArticleViewModel: ObservableObject {
     }
     
     func writeArticle(category: ANBDCategory, title: String, content: String, imageDatas: [Data]) async {
-
+        
         let user = UserStore.shared.user
         
         let newArticle = Article(writerID: user.id,
@@ -173,7 +173,7 @@ final class ArticleViewModel: ObservableObject {
             print(error.localizedDescription)
         }
     }
-
+    
     
     
     
@@ -199,12 +199,11 @@ final class ArticleViewModel: ObservableObject {
     }
     
     //MARK: - LIKE
-
+    
     func likeArticle(article: Article) async {
         do {
             try await articleUseCase.likeArticle(articleID: article.id)
-            guard let userID = UserDefaultsClient.shared.userID else { return }
-            UserStore.shared.user = await UserStore.shared.getUserInfo(userID: userID)
+            await UserStore.shared.updateLocalUserInfo()
         } catch {
             print(error.localizedDescription)
         }

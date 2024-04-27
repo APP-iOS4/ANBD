@@ -61,13 +61,24 @@ struct CommentView: View {
             .padding(.horizontal, 48)
             .padding(.vertical, 5)
             List {
+                HStack{
+                    Spacer()
+                    Text("각 댓글은 눌러서 홀드하면 삭제할 수 있습니다.")
+                        .foregroundColor(.gray)
+                        .font(ANBDFont.body1)
+                    Spacer()
+                }
+                .alignmentGuide(
+                                .listRowSeparatorLeading
+                            ) { dimensions in
+                                dimensions[.leading]
+                            }
                 ForEach(commentViewModel.commentList, id: \.id) { comment in
                     HStack{
                         Spacer()
                         VStack(alignment: .leading) {
                             Text("\(comment.content)")
                                 .font(.title3)
-                                .lineLimit(1)
                                 .foregroundColor(.black)
                         }
                         .frame(minWidth: 0, maxWidth: 200, alignment: .leading)

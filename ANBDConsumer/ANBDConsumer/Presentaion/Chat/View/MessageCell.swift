@@ -20,6 +20,7 @@ struct MessageCell: View {
     @State var imageUrl: URL?
     @State private var isMine: Bool = false
     @State private var isLoading: Bool = true
+    @State private var otherUser: User?
     
     var channel: Channel
     
@@ -44,16 +45,22 @@ struct MessageCell: View {
             }
             
             if !isMine && chatViewModel.otherUserLastMessages.contains(message){
-                ZStack {           
-                    KFImage(URL(string: chatViewModel.otherUserProfileImageUrl))
-                        .placeholder { _ in
-                            ProgressView()
-                        }
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .clipShape(Circle())
-                        .overlay(Circle().stroke(Color.gray, lineWidth: 0.5))
-                        .frame(width: 30)
+                ZStack {
+                    Button(action: {
+                        guard let otherUser else { return }
+                        coordinator.user = otherUser
+                        coordinator.appendPath(.userPageView)
+                    }, label: {
+                        KFImage(URL(string: chatViewModel.otherUserProfileImageUrl))
+                            .placeholder { _ in
+                                ProgressView()
+                            }
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .clipShape(Circle())
+                            .overlay(Circle().stroke(Color.gray, lineWidth: 0.5))
+                            .frame(width: 30)
+                    })
                 }
             }else if !isMine {
                 Circle()
@@ -110,7 +117,7 @@ struct MessageCell: View {
                         }
                 }
             }
-                
+            
             
             if !isMine {
                 Text("\(message.dateString)")
@@ -120,10 +127,10 @@ struct MessageCell: View {
             }
         }
         .onAppear {
-            isMine = message.userID == chatViewModel.user.id
-            
-            if let imagePath = message.imagePath {
-                Task {
+            Task {
+                isMine = message.userID == chatViewModel.user.id
+                otherUser = await chatViewModel.getOtherUserImage(channel: channel)
+                if let imagePath = message.imagePath {
                     /// 이미지 로드
                     imageUrl = try await chatViewModel.downloadImageUrl(messageID: message.id, imagePath: imagePath)
                 }

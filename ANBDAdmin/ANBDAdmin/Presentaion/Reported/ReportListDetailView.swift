@@ -18,6 +18,18 @@ struct ReportListDetailView: View {
     
     var body: some View {
         List {
+            HStack{
+                Spacer()
+                Text("각 ID는 눌러서 홀드하면 복사 할 수 있습니다.")
+                    .foregroundColor(.gray)
+                    .font(ANBDFont.body1)
+                Spacer()
+            }
+            .alignmentGuide(
+                            .listRowSeparatorLeading
+                        ) { dimensions in
+                            dimensions[.leading]
+                        }
             HStack {
                 Text("신고함 ID:").foregroundColor(.gray)
                 Spacer()
@@ -57,13 +69,6 @@ struct ReportListDetailView: View {
                 Text("생성일자:").foregroundColor(.gray)
                 Spacer()
                 Text("\(report.reportedDate)")
-            }
-            HStack{
-                Spacer()
-                Text("각 ID는 눌러서 홀드하면 복사 할 수 있습니다.")
-                    .foregroundColor(.gray)
-                    .font(ANBDFont.body1)
-                Spacer()
             }
         }
         .navigationBarTitle("신고 내역")

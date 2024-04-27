@@ -19,20 +19,15 @@ struct ArticleCreateView: View {
     @State private var content: String = ""
     @State var commentCount: Int = 0
     
+    @State private var isShowingCustomAlert: Bool = false
     @State private var isShowingImageAlert: Bool = false
+    
     @State private var selectedItems: [PhotosPickerItem] = []
     @State private var selectedImageData: [Data] = []
-    
     @State private var selectedMenuText: String = "아껴쓰기"
     
-    @State private var isShowingCustomAlert: Bool = false
-    
-    @State var isAnimation = false
-    
-    @Environment(\.dismiss) private var dismiss
-
     private let placeHolder: String = "ANBD 이용자들을 위해 여러분들의 아껴쓰기/다시쓰기 Tip을 전수해주세요!"
-
+    
     var isNewArticle: Bool
     var article: Article?
     
@@ -92,8 +87,7 @@ struct ArticleCreateView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 
             } else if isShowingImageAlert {
-                CustomAlertView(isShowingCustomAlert: $isShowingImageAlert, viewType: .imageSelelct) {
-                }
+                CustomAlertView(isShowingCustomAlert: $isShowingImageAlert, viewType: .imageSelelct) { }
                 .zIndex(1)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }

@@ -47,4 +47,13 @@ final class UserStore: ObservableObject {
             return await MyPageViewModel.mockUser
         }
     }
+    
+    func updateLocalUserInfo() async {
+        do {
+            guard let userID = UserDefaultsClient.shared.userID else { return }
+            self.user = try await userUsecase.getUserInfo(userID: userID)
+        } catch {
+            print("Error save user information: \(error.localizedDescription)")
+        }
+    }
 }

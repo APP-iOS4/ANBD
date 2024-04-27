@@ -13,6 +13,7 @@ final class ArticleViewModel: ObservableObject {
     
     private let articleUseCase: ArticleUsecase = DefaultArticleUsecase()
     private let commentUseCase: CommentUsecase = DefaultCommentUsecase()
+    private let userUsecase: UserUsecase = DefaultUserUsecase()
     private let storageManager = StorageManager.shared
     
     @Published var sortOption: ArticleOrder = .latest
@@ -120,6 +121,7 @@ final class ArticleViewModel: ObservableObject {
         
         do {
             try await articleUseCase.writeArticle(article: newArticle, imageDatas: newImages)
+            await UserStore.shared.updateLocalUserInfo()
         } catch {
             print(error.localizedDescription)
         }
@@ -127,6 +129,9 @@ final class ArticleViewModel: ObservableObject {
     
     @MainActor
     func updateArticle(category: ANBDCategory, title: String, content: String, commentCount: Int, imageDatas: [Data]) async {
+        
+        let user = UserStore.shared.user
+        let originCategory = self.article.category
         
         self.article.category = category
         self.article.title = title
@@ -142,7 +147,9 @@ final class ArticleViewModel: ObservableObject {
         
         do {
             try await articleUseCase.updateArticle(article: self.article, imageDatas: newImages)
+            try await userUsecase.updateUserPostCount(user: user, before: originCategory, after: category)
             article = try await articleUseCase.loadArticle(articleID: article.id)
+            await UserStore.shared.updateLocalUserInfo()
         } catch {
             print(error.localizedDescription)
         }
@@ -173,6 +180,7 @@ final class ArticleViewModel: ObservableObject {
     func deleteArticle(article: Article) async {
         do {
             try await articleUseCase.deleteArticle(article: article)
+            await UserStore.shared.updateLocalUserInfo()
         } catch {
             print(error.localizedDescription)
             print("삭제실패")

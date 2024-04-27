@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ANBDModel
+import Kingfisher
 
 struct ArticleDetailView: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
@@ -31,10 +32,10 @@ struct ArticleDetailView: View {
     @State private var imageData: [Data] = []
     
     @State private var writerUser: User?
-    //    @State private var commentUser: User?
+    @State private var commentUser: User?
     
+    @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) private var dismiss
-    
     init(article: Article) {
         self.article = article
     }
@@ -47,45 +48,53 @@ struct ArticleDetailView: View {
                     HStack {
                         VStack(alignment: .leading) {
                             HStack {
-                                Image(.defaultUserProfile)
-                                    .resizable()
-                                    .frame(width: 33, height: 33)
-                                    .scaledToFill()
-                                    .clipShape(Circle())
-                                    .onTapGesture {
-                                        coordinator.user = writerUser
-                                        switch coordinator.selectedTab {
-                                        case .home, .article, .trade, .chat:
-                                            if coordinator.isFromUserPage {
-                                                coordinator.pop(2)
-                                            } else {
-                                                coordinator.appendPath(.userPageView)
+                                if let writerUser {
+                                    KFImage(URL(string: writerUser.profileImage))
+                                        .placeholder({ _ in
+                                            ProgressView()
+                                        })
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 33, height: 33)
+                                        .clipShape(.circle)
+                                        .overlay(
+                                            Circle()
+                                                .stroke(.gray100, lineWidth: 1)
+                                        )
+                                        .onTapGesture {
+                                            coordinator.user = writerUser
+                                            switch coordinator.selectedTab {
+                                            case .home, .article, .trade, .chat:
+                                                if coordinator.isFromUserPage {
+                                                    coordinator.pop(2)
+                                                } else {
+                                                    coordinator.appendPath(.userPageView)
+                                                }
+                                                coordinator.isFromUserPage.toggle()
+                                            case .mypage:
+                                                coordinator.pop(coordinator.mypagePath.count)
                                             }
-                                            coordinator.isFromUserPage.toggle()
-                                        case .mypage:
-                                            coordinator.pop(coordinator.mypagePath.count)
                                         }
-                                    }
-                                
-                                    Text("\(articleViewModel.article.writerNickname)")
+                                }
+                                Text("\(articleViewModel.article.writerNickname)")
                                     .font(ANBDFont.pretendardMedium(13))
-                            
-                            Text("・")
-                                .padding(.leading, -5)
-                                    
-                                    Text("\(articleViewModel.article.createdAt.relativeTimeNamed)")
-                                        .font(ANBDFont.Caption1)
-                                        .foregroundStyle(.gray400)
-                                        .padding(.leading, -5)
-
+                                
+                                Text("・")
+                                    .padding(.leading, -5)
+                                
+                                Text("\(articleViewModel.article.createdAt.relativeTimeNamed)")
+                                    .font(ANBDFont.Caption1)
+                                    .foregroundStyle(.gray400)
+                                    .padding(.leading, -5)
+                                
                             }
                             .padding(.vertical ,-5)
-
+                            
                             Divider()
                                 .padding(.top, 10)
                             
                             Text("\(articleViewModel.article.title)")
-                                .font(ANBDFont.pretendardBold(26))
+                                .font(ANBDFont.pretendardSemiBold(26))
                                 .padding(.bottom, 13)
                             
                             Text("\(articleViewModel.article.content)")
@@ -122,7 +131,7 @@ struct ArticleDetailView: View {
                                 
                                 Text("\(articleViewModel.article.likeCount)")
                                     .foregroundStyle(.gray900)
-                                    .font(.system(size: 12))
+                                    .font(ANBDFont.pretendardRegular(12))
                                     .padding(.trailing, 10)
                                     .padding(.top, 2)
                             }
@@ -151,24 +160,31 @@ struct ArticleDetailView: View {
                             
                             ForEach(articleViewModel.comments) { comment in
                                 HStack(alignment: .top) {
-                                    Image(.defaultUserProfile)
+                                    KFImage(URL(string: comment.writerProfileImageURL))
+                                        .placeholder({ _ in
+                                            ProgressView()
+                                        })
                                         .resizable()
+                                        .aspectRatio(contentMode: .fill)
                                         .frame(width: 40, height: 40)
-                                        .scaledToFill()
-                                        .clipShape(Circle())
-                                    /*
-                                     댓글 프로필 이동 관련
-                                     .onTapGesture {
-                                     articleViewModel.comment = comment
-                                     coordinator.user = commentUser
-                                     switch coordinator.selectedTab {
-                                     case .home, .article, .trade, .chat:
-                                     coordinator.appendPath(.userPageView)
-                                     case .mypage:
-                                     coordinator.pop()
-                                     }
-                                     }
-                                     */
+                                        .clipShape(.circle)
+                                        .overlay(
+                                            Circle()
+                                                .stroke(.gray100, lineWidth: 1)
+                                        )
+                                        .onTapGesture {
+                                            Task {
+                                                commentUser = await myPageViewModel.getUserInfo(userID: comment.writerID)
+                                                coordinator.user = commentUser
+                                                switch coordinator.selectedTab {
+                                                case .home, .article, .trade, .chat:
+                                                    coordinator.appendPath(.userPageView)
+                                                case .mypage:
+                                                    coordinator.pop()
+                                                }
+                                            }
+                                        }
+                                    
                                     VStack(alignment: .leading) {
                                         HStack {
                                             Text("\(comment.writerNickname)")
@@ -212,7 +228,7 @@ struct ArticleDetailView: View {
                                         }
                                     } label: {
                                         Image(systemName: "ellipsis")
-                                            .font(.system(size: 13))
+                                            .font(ANBDFont.pretendardRegular(12))
                                             .rotationEffect(.degrees(90))
                                             .foregroundStyle(.gray900)
                                     }
@@ -240,7 +256,11 @@ struct ArticleDetailView: View {
             
             if isShowingCustomAlertArticle {
                 CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertArticle, viewType: .articleDelete) {
-                    dismiss()
+                    Task {
+                        await articleViewModel.deleteArticle(article: article)
+                        await articleViewModel.refreshSortedArticleList(category: article.category)
+                        dismiss()
+                    }
                 }
                 .zIndex(2)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -256,34 +276,21 @@ struct ArticleDetailView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             
-            VStack {
-                Spacer()
-                HStack {
-                    ZStack {
-                        Rectangle()
-                            .clipShape(RoundedRectangle(cornerRadius: 30))
-                            .frame(height: 43)
-                            .foregroundStyle(.gray50)
-                        TextField("댓글을 입력해주세요.", text: $commentText)
-                            .font(ANBDFont.Caption3)
-                            .padding(20)
-                    }
-                    Button {
-                        Task {
-                            await articleViewModel.writeComment(articleID: article.id, commentText: commentText)
-                            commentText = ""
+            // MARK: - 댓글 입력 부분
+            if #available(iOS 17.0, *) {
+                commentTextView
+                    .onChange(of: commentText) {
+                        if commentText.count > 800 {
+                            commentText = String(commentText.prefix(800))
                         }
-                    } label: {
-                        Image(systemName: "paperplane.fill")
-                            .font(ANBDFont.pretendardSemiBold(28))
-                            .rotationEffect(.degrees(45))
-                            .foregroundStyle(commentText.isEmpty ? .gray300 : .accent)
                     }
-                    .disabled(commentText.isEmpty)
-                }
-                .padding(.horizontal, 10)
-                .toolbar(.hidden, for: .tabBar)
-                .background(Color.white)
+            } else {
+                commentTextView
+                    .onChange(of: commentText) { _ in
+                        if commentText.count > 800 {
+                            commentText = String(commentText.prefix(800))
+                        }
+                    }
             }
         }
         .toolbar {
@@ -297,10 +304,6 @@ struct ArticleDetailView: View {
                         }
                         
                         Button(role: .destructive) {
-                            Task {
-                                await articleViewModel.deleteArticle(article: article)
-                                await articleViewModel.refreshSortedArticleList(category: article.category)
-                            }
                             isShowingCustomAlertArticle.toggle()
                         } label: {
                             Label("삭제하기", systemImage: "trash")
@@ -316,7 +319,7 @@ struct ArticleDetailView: View {
                     }
                 } label: {
                     Image(systemName: "ellipsis")
-                        .font(.system(size: 13))
+                        .font(ANBDFont.pretendardRegular(13))
                         .rotationEffect(.degrees(90))
                         .foregroundStyle(.gray900)
                 }
@@ -326,11 +329,11 @@ struct ArticleDetailView: View {
             articleViewModel.getOneArticle(article: article)
             isLiked = user.likeArticles.contains(articleViewModel.article.id)
             Task {
+                await articleViewModel.loadCommentList(articleID: article.id)
+                
                 writerUser = await myPageViewModel.getUserInfo(userID: article.writerID)
-                // commentUser = await myPageViewModel.getUserInfo(userID: articleViewModel.comment.writerID)
                 
                 imageData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
-                await articleViewModel.loadCommentList(articleID: article.id)
             }
         }
         .fullScreenCover(isPresented: $isShowingCreateView) {
@@ -346,8 +349,44 @@ struct ArticleDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarRole(.editor)
     }
+    
+    var commentTextView: some View {
+        VStack {
+            Spacer()
+            HStack {
+                ZStack {
+                    Rectangle()
+                        .clipShape(RoundedRectangle(cornerRadius: 30))
+                        .frame(height: 43)
+                        .foregroundStyle(.gray50)
+                    TextField("댓글을 입력해주세요.", text: $commentText/*, axis: .vertical*/)
+                        .font(ANBDFont.Caption3)
+                        .padding(20)
+                }
+                Button {
+                    Task {
+                        await articleViewModel.writeComment(articleID: article.id, commentText: commentText)
+                        commentText = ""
+                    }
+                } label: {
+                    Image(systemName: "paperplane.fill")
+                        .font(ANBDFont.pretendardSemiBold(28))
+                        .rotationEffect(.degrees(45))
+                        .foregroundStyle(commentText.isEmpty ? .gray300 : .accent)
+                }
+                .disabled(commentText.isEmpty)
+            }
+            .padding(.horizontal, 10)
+            .toolbar(.hidden, for: .tabBar)
+            .background(backgroundForColorScheme())
+        }
+    }
+    
+    func backgroundForColorScheme() -> Color {
+        if colorScheme == .dark {
+            return Color.gray50
+        } else {
+            return Color.white
+        }
+    }
 }
-
-//#Preview {
-//    ArticleDetailView(article: Article(writerID: "IDID", writerNickname: "닉네임", category: .accua, title: "제목제목", content: "내용", thumbnailImagePath: ""))
-//}

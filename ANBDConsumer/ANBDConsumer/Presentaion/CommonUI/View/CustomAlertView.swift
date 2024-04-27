@@ -35,7 +35,7 @@ struct CustomAlertView: View {
                         .foregroundStyle(.gray900)
                         .padding(.bottom, 15)
                     
-                    if viewType == .duplicatedEmail || viewType == .duplicatedNickname || viewType == .signInFail {
+                    if viewType == .duplicatedEmail || viewType == .duplicatedNickname || viewType == .signInFail || viewType == .imageSelelct {
                         Button(action: {
                             completionHandler()
                             isShowingCustomAlert.toggle()
@@ -112,6 +112,7 @@ extension CustomAlertView {
         case writingCancel
         case report
         case commentEdit
+        case imageSelelct
     }
     
     private var title: String {
@@ -144,6 +145,8 @@ extension CustomAlertView {
             return "신고"
         case .commentEdit:
             return "수정 취소"
+        case .imageSelelct:
+            return "이미지 개수 제한"
         }
     }
     
@@ -170,13 +173,15 @@ extension CustomAlertView {
         case .articleDelete:
             return "해당 게시글을 삭제하시겠습니까?\n삭제한 게시글은 복구되지 않습니다."
         case .commentDelete:
-            return "해당 댓글을 삭제하시겠습니까?\n삭제한 댓글은 복구되지 않습니다." 
+            return "해당 댓글을 삭제하시겠습니까?\n삭제한 댓글은 복구되지 않습니다."
         case .writingCancel:
             return "작성하던 내용을 삭제하고\n돌아가시겠습니까?"
         case .report:
             return "해당 내역을 신고하시겠습니까?"
         case .commentEdit:
             return "댓글 수정을 취소하시겠습니까?\n취소한 수정사항은 복구되지 않습니다."
+        case .imageSelelct:
+            return "이미지는 최대 5장만 가능합니다."
         }
     }
     
@@ -188,88 +193,34 @@ extension CustomAlertView {
             return "로그아웃하기"
         case .withdrawal:
             return "탈퇴하기"
-        case .duplicatedEmail:
-            return "확인"
-        case .duplicatedNickname:
-            return "확인"
-        case .signInFail:
+        case .duplicatedEmail, .duplicatedNickname, .signInFail, .imageSelelct:
             return "확인"
         case .changeState:
             return "변경하기"
-        case .tradeDelete, .writingCancel:
+        case .tradeDelete, .writingCancel, .articleDelete, .commentDelete:
             return "삭제하기"
-        case .articleEdit:
+        case .articleEdit, .commentEdit:
             return "취소하기"
-        case .articleDelete:
-            return "삭제하기"
-        case .commentDelete:
-            return "삭제하기"
         case .report:
             return "신고하기"
-        case .commentEdit:
-            return "취소하기"
         }
     }
     
     private var confirmButtonColor: Color {
         switch viewType {
-        case .leaveChatRoom:
+        case .leaveChatRoom, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .imageSelelct:
             return .accent
-        case .signOut:
-            return .heartRed
-        case .withdrawal:
-            return .heartRed
-        case .duplicatedEmail:
-            return .accent
-        case .duplicatedNickname:
-            return .accent
-        case .signInFail:
-            return .accent
-        case .changeState:
-            return .accent
-        case .tradeDelete, .writingCancel:
-            return .heartRed
-        case .articleEdit:
-            return .heartRed
-        case .articleDelete:
-            return .heartRed
-        case .commentDelete:
-            return .heartRed
-        case .report:
-            return .heartRed
-        case .commentEdit:
+        case .signOut, .withdrawal, .tradeDelete, .writingCancel, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit:
             return .heartRed
         }
     }
     
     private var textWeight: Font.Weight {
         switch viewType {
-        case .leaveChatRoom:
-            return .medium
-        case .signOut:
+        case .leaveChatRoom, .signOut, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .tradeDelete, .writingCancel, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .imageSelelct:
             return .medium
         case .withdrawal:
             return .heavy
-        case .duplicatedEmail:
-            return .medium
-        case .duplicatedNickname:
-            return .medium
-        case .signInFail:
-            return .medium
-        case .changeState:
-            return .medium
-        case .tradeDelete, .writingCancel:
-            return .medium
-        case .articleEdit:
-            return .medium
-        case .articleDelete:
-            return .medium
-        case .commentDelete:
-            return .medium
-        case .report:
-            return .medium
-        case .commentEdit:
-            return .medium
         }
     }
 }

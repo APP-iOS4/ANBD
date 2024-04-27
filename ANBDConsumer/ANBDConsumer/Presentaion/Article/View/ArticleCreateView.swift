@@ -19,7 +19,8 @@ struct ArticleCreateView: View {
     @State private var content: String = ""
     @State var commentCount: Int = 0
     
-    @State private var isShowingCustomAlert: Bool = false
+    @State private var isShowingCustomEditAlert: Bool = false
+    @State private var isShowingCustomCreateAlert: Bool = false
     @State private var isShowingImageAlert: Bool = false
     
     @State private var selectedItems: [PhotosPickerItem] = []
@@ -78,18 +79,21 @@ struct ArticleCreateView: View {
                         }
                 }
             }
+            .onTapGesture {
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            }
             
-            if isShowingCustomAlert {
-                CustomAlertView(isShowingCustomAlert: $isShowingCustomAlert, viewType: .articleEdit) {
+            if isShowingCustomEditAlert {
+                CustomAlertView(isShowingCustomAlert: $isShowingCustomEditAlert, viewType: .articleEdit) {
                     isShowingCreateView = false
                 }
-                .zIndex(1)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                
             } else if isShowingImageAlert {
                 CustomAlertView(isShowingCustomAlert: $isShowingImageAlert, viewType: .imageSelelct) { }
-                .zIndex(1)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                
+            } else if isShowingCustomCreateAlert {
+                CustomAlertView(isShowingCustomAlert: $isShowingCustomCreateAlert, viewType: .articleCreate) {
+                    isShowingCreateView = false
+                }
             }
         }
     }
@@ -98,7 +102,7 @@ struct ArticleCreateView: View {
         VStack {
             InstructionsView()
             VStack {
-                TextField("제목을 입력하세요", text: $title, axis: .vertical)
+                TextField("제목을 입력하세요.", text: $title, axis: .vertical)
                     .onAppear {
                         UITextField.appearance().clearButtonMode = .never
                         if !isNewArticle {
@@ -237,18 +241,21 @@ struct ArticleCreateView: View {
                 Button {
                     if !isNewArticle {
                         if let article = article {
-                            
                             let isTitleChanged = title != article.title
                             let isContentChanged = content != article.content
                             
                             if isTitleChanged || isContentChanged {
-                                isShowingCustomAlert.toggle()
+                                isShowingCustomEditAlert.toggle()
                             } else {
                                 isShowingCreateView.toggle()
                             }
                         }
                     } else {
-                        isShowingCreateView.toggle()
+                        if !title.isEmpty || !content.isEmpty {
+                            isShowingCustomCreateAlert.toggle()
+                        } else {
+                            isShowingCreateView.toggle()
+                        }
                     }
                 } label: {
                     Text("취소")

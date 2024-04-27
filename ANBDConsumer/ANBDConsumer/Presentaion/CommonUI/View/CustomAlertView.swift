@@ -113,6 +113,7 @@ extension CustomAlertView {
         case report
         case commentEdit
         case imageSelelct
+        case articleCreate
     }
     
     private var title: String {
@@ -131,20 +132,16 @@ extension CustomAlertView {
             return "로그인 실패"
         case .changeState:
             return "거래 상태 변경"
-        case .tradeDelete:
+        case .tradeDelete, .articleDelete:
             return "삭제"
-        case .articleEdit:
+        case .articleEdit, .commentEdit:
             return "수정 취소"
-        case .articleDelete:
-            return "게시글 삭제"
         case .commentDelete:
             return "댓글 삭제"
-        case .writingCancel:
+        case .writingCancel, .articleCreate:
             return "작성 취소"
         case .report:
             return "신고"
-        case .commentEdit:
-            return "수정 취소"
         case .imageSelelct:
             return "이미지 개수 제한"
         }
@@ -182,6 +179,8 @@ extension CustomAlertView {
             return "댓글 수정을 취소하시겠습니까?\n취소한 수정사항은 복구되지 않습니다."
         case .imageSelelct:
             return "이미지는 최대 5장만 가능합니다."
+        case .articleCreate:
+            return "게시글 작성을 취소하시겠습니까?\n취소한 작성사항은 복구되지 않습니다."
         }
     }
     
@@ -199,7 +198,7 @@ extension CustomAlertView {
             return "변경하기"
         case .tradeDelete, .writingCancel, .articleDelete, .commentDelete:
             return "삭제하기"
-        case .articleEdit, .commentEdit:
+        case .articleEdit, .commentEdit, .articleCreate:
             return "취소하기"
         case .report:
             return "신고하기"
@@ -210,14 +209,14 @@ extension CustomAlertView {
         switch viewType {
         case .leaveChatRoom, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .imageSelelct:
             return .accent
-        case .signOut, .withdrawal, .tradeDelete, .writingCancel, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit:
+        case .signOut, .withdrawal, .tradeDelete, .writingCancel, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .articleCreate:
             return .heartRed
         }
     }
     
     private var textWeight: Font.Weight {
         switch viewType {
-        case .leaveChatRoom, .signOut, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .tradeDelete, .writingCancel, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .imageSelelct:
+        case .leaveChatRoom, .signOut, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .tradeDelete, .writingCancel, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .imageSelelct, .articleCreate:
             return .medium
         case .withdrawal:
             return .heavy

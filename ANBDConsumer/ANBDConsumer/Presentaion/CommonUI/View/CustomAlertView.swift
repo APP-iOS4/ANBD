@@ -10,7 +10,7 @@ import SwiftUI
 struct CustomAlertView: View {
     
     @Binding var isShowingCustomAlert: Bool
-    var viewType: AlertViewType = .leaveChatRoom
+    var viewType: AlertViewType = .editingCancel
     var completionHandler: () -> Void
     
     var body: some View {
@@ -35,7 +35,7 @@ struct CustomAlertView: View {
                         .foregroundStyle(.gray900)
                         .padding(.bottom, 15)
                     
-                    if viewType == .duplicatedEmail || viewType == .duplicatedNickname {
+                    if viewType == .duplicatedEmail || viewType == .duplicatedNickname || viewType == .signInFail || viewType == .imageSelelct {
                         Button(action: {
                             completionHandler()
                             isShowingCustomAlert.toggle()
@@ -59,10 +59,11 @@ struct CustomAlertView: View {
                             }, label: {
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 10)
-                                        .fill(.gray100)
+                                        .fill(.gray300)
                                         .frame(height: 45)
                                     
-                                    Text("취소")
+                                    Text("취소하기")
+                                        .foregroundStyle(.white)
                                 }
                             })
                             .padding(.leading, 15)
@@ -102,7 +103,8 @@ extension CustomAlertView {
         case withdrawal
         case duplicatedEmail
         case duplicatedNickname
-        //trade
+        case signInFail
+        // trade
         case changeState
         case tradeDelete
         case articleEdit
@@ -110,6 +112,11 @@ extension CustomAlertView {
         case commentDelete
         case writingCancel
         case report
+        case commentEdit
+        case imageSelelct
+        case articleCreate
+        // setting
+        case editingCancel
     }
     
     private var title: String {
@@ -124,20 +131,24 @@ extension CustomAlertView {
             return "중복된 이메일"
         case .duplicatedNickname:
             return "중복된 닉네임"
+        case .signInFail:
+            return "로그인 실패"
         case .changeState:
             return "거래 상태 변경"
-        case .tradeDelete:
+        case .tradeDelete, .articleDelete:
             return "삭제"
-        case .articleEdit:
+        case .articleEdit, .commentEdit:
             return "수정 취소"
-        case .articleDelete:
-            return "게시글 삭제"
         case .commentDelete:
             return "댓글 삭제"
-        case .writingCancel:
+        case .writingCancel, .articleCreate:
             return "작성 취소"
         case .report:
             return "신고"
+        case .imageSelelct:
+            return "이미지 개수 제한"
+        case .editingCancel:
+            return "정보 수정 그만두기"
         }
     }
     
@@ -153,6 +164,8 @@ extension CustomAlertView {
             return "이미 사용중인 이메일 입니다."
         case .duplicatedNickname:
             return "이미 사용중인 닉네임 입니다."
+        case .signInFail:
+            return "이메일 또는 비밀번호를 확인하세요."
         case .changeState:
             return "거래 상태를 변경하시겠습니까?"
         case .tradeDelete:
@@ -162,11 +175,19 @@ extension CustomAlertView {
         case .articleDelete:
             return "해당 게시글을 삭제하시겠습니까?\n삭제한 게시글은 복구되지 않습니다."
         case .commentDelete:
-            return "해당 댓글을 삭제하시겠습니까?\n삭제한 댓글은 복구되지 않습니다." 
+            return "해당 댓글을 삭제하시겠습니까?\n삭제한 댓글은 복구되지 않습니다."
         case .writingCancel:
             return "작성하던 내용을 삭제하고\n돌아가시겠습니까?"
         case .report:
             return "해당 내역을 신고하시겠습니까?"
+        case .commentEdit:
+            return "댓글 수정을 취소하시겠습니까?\n취소한 수정사항은 복구되지 않습니다."
+        case .imageSelelct:
+            return "이미지는 최대 5장만 가능합니다."
+        case .articleCreate:
+            return "게시글 작성을 취소하시겠습니까?\n취소한 작성사항은 복구되지 않습니다."
+        case .editingCancel:
+            return "변경된 내용은 저장되지 않습니다."
         }
     }
     
@@ -178,76 +199,38 @@ extension CustomAlertView {
             return "로그아웃하기"
         case .withdrawal:
             return "탈퇴하기"
-        case .duplicatedEmail:
-            return "확인"
-        case .duplicatedNickname:
+        case .duplicatedEmail, .duplicatedNickname, .signInFail, .imageSelelct:
             return "확인"
         case .changeState:
             return "변경하기"
-        case .tradeDelete, .writingCancel:
+        case .tradeDelete, .articleDelete, .commentDelete:
             return "삭제하기"
-        case .articleEdit:
+        case .articleEdit, .commentEdit, .articleCreate:
             return "취소하기"
-        case .articleDelete:
-            return "삭제하기"
-        case .commentDelete:
-            return "삭제하기"
         case .report:
             return "신고하기"
+        case .editingCancel:
+            return "그만두기"
+        case .writingCancel:
+            return "돌아가기"
         }
     }
     
     private var confirmButtonColor: Color {
         switch viewType {
-        case .leaveChatRoom:
+        case .leaveChatRoom, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .imageSelelct, .signOut, .editingCancel, .writingCancel:
             return .accent
-        case .signOut:
-            return .heartRed
-        case .withdrawal:
-            return .heartRed
-        case .duplicatedEmail:
-            return .accent
-        case .duplicatedNickname:
-            return .accent
-        case .changeState:
-            return .accent
-        case .tradeDelete, .writingCancel:
-            return .heartRed
-        case .articleEdit:
-            return .heartRed
-        case .articleDelete:
-            return .heartRed
-        case .commentDelete:
-            return .heartRed
-        case .report:
+        case .withdrawal, .tradeDelete, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .articleCreate:
             return .heartRed
         }
     }
     
     private var textWeight: Font.Weight {
         switch viewType {
-        case .leaveChatRoom:
-            return .medium
-        case .signOut:
+        case .leaveChatRoom, .signOut, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .tradeDelete, .writingCancel, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .imageSelelct, .editingCancel, .articleCreate:
             return .medium
         case .withdrawal:
             return .heavy
-        case .duplicatedEmail:
-            return .medium
-        case .duplicatedNickname:
-            return .medium
-        case .changeState:
-            return .medium
-        case .tradeDelete, .writingCancel:
-            return .medium
-        case .articleEdit:
-            return .medium
-        case .articleDelete:
-            return .medium
-        case .commentDelete:
-            return .medium
-        case .report:
-            return .medium
         }
     }
 }

@@ -16,6 +16,7 @@ public protocol UserRepository {
     func checkUser(email: String) async throws
     func checkUser(nickname: String) async throws
     func updateUserInfo(user: User) async throws
+    func updateUserFCMToken(userID: String, fcmToken: String) async throws
     func updateUserPostCount(user: User,
                              before: ANBDCategory,
                              after: ANBDCategory) async throws

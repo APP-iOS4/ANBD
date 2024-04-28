@@ -32,6 +32,7 @@ struct ListEmptyView: View {
             Spacer()
         }
         .foregroundStyle(Color.gray400)
+        .background(Color.gray50)
     }
 }
 

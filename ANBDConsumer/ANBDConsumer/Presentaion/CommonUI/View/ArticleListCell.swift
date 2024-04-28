@@ -16,6 +16,7 @@ struct ArticleListCell: View {
         case article(Article)
         case trade(Trade)
     }
+    
     @State private var thumbnailImageData: Data?
     @State private var isLiked: Bool = false
     
@@ -63,6 +64,7 @@ struct ArticleListCell: View {
                     
                     HStack {
                         Spacer()
+                        
                         Image(systemName: "hand.thumbsup")
                             .resizable()
                             .frame(width: 16, height: 16)
@@ -101,7 +103,7 @@ struct ArticleListCell: View {
             
         case .trade(let trade):
             HStack(alignment: .top) {
-
+                
                 if let thumbnailImageData {
                     if let uiImage = UIImage(data: thumbnailImageData) {
                         Image(uiImage: uiImage)
@@ -119,14 +121,29 @@ struct ArticleListCell: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 5) {
-                    Text("\(trade.title)")
-                        .font(ANBDFont.SubTitle1)
-                        .foregroundStyle(.gray900)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.leading)
+                    HStack {
+                        Text("\(trade.title)")
+                            .font(ANBDFont.SubTitle1)
+                            .foregroundStyle(.gray900)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.leading)
+                        
+                        Spacer()
+                        
+                        if trade.tradeState == .finish {
+                            RoundedRectangle(cornerRadius: 5)
+                                .foregroundColor(.gray800)
+                                .frame(width: 60, height: 25)
+                                .overlay {
+                                    Text("\(trade.tradeState.description)")
+                                        .font(ANBDFont.body2)
+                                        .foregroundStyle(.gray50)
+                                }
+                        }
+                    }
                     
                     HStack {
-                        Text("\(trade.writerNickname)")
+                        Text("\(trade.location.description)")
                         
                         Text("・")
                             .padding(.leading, -5)
@@ -141,14 +158,18 @@ struct ArticleListCell: View {
                     Spacer(minLength: 0)
                     
                     HStack {
-                        Spacer()
                         
+                        Spacer()
+                
                         Image(systemName: isLiked ? "heart.fill" : "heart")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 20)
                             .foregroundStyle(isLiked ? .heartRed : .gray800)
                             .onTapGesture {
+                                Task {
+                                    await tradeViewModel.updateLikeTrade(trade: trade)
+                                }
                                 isLiked.toggle()
                             }
                             .padding(.leading, 10)
@@ -158,6 +179,7 @@ struct ArticleListCell: View {
             }
             .frame(height: 100)
             .onAppear {
+                isLiked = UserStore.shared.user.likeTrades.contains(trade.id)
                 Task {
                     do {
                         let image = try await StorageManager.shared.downloadImage(
@@ -172,10 +194,9 @@ struct ArticleListCell: View {
                 }
             }
         }
-        
     }
 }
 
 #Preview {
-    ArticleListCell(value: .article(Article(writerID: "asd", writerNickname: "asd", category: .accua, title: "asd", content: "asd", thumbnailImagePath: "")))
+    ArticleListCell(value: .article(Article(writerID: "id", writerNickname: "코딩신", category: .accua, title: "코딩 잘하는 꿀팁~", content: "아몰랑", thumbnailImagePath: "")))
 }

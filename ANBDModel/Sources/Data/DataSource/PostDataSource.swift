@@ -24,8 +24,10 @@ protocol Postable<Item>: AnyObject {
     func readItem(itemID: String) async throws -> Item
     func readItemList(limit: Int) async throws -> [Item]
     func readItemList(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [Item]
+    func readAllItemList(writerID: String) async throws -> [Item]
     func refreshAll(limit: Int) async throws -> [Item]
     func refreshWriterID(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [Item]
+    func updateItem(itemID: String, writerNickname: String) async throws
     func deleteItem(itemID: String) async throws
     func resetSearchQuery()
 }
@@ -122,7 +124,7 @@ final class PostDataSource<T: Codable & Identifiable>: Postable {
             if let category {
                 requestQuery = database
                     .whereField("writerID", isEqualTo: writerID)
-                    .whereField("category", isEqualTo: category)
+                    .whereField("category", isEqualTo: category.rawValue)
                     .order(by: "createdAt", descending: true)
                     .limit(to: limit)
             } else {
@@ -156,6 +158,19 @@ final class PostDataSource<T: Codable & Identifiable>: Postable {
         return itemList
     }
     
+    func readAllItemList(writerID: String) async throws -> [T] {
+        guard let snapshot = try? await database
+            .whereField("writerID", isEqualTo: writerID)
+            .getDocuments()
+            .documents
+        else {
+            throw DBError.getDocumentError
+        }
+        
+        let itemList = snapshot.compactMap { try? $0.data(as: T.self) }
+        return itemList
+    }
+    
     func refreshAll(limit: Int) async throws -> [T] {
         allQuery = nil
         return try await readItemList(limit: limit)
@@ -166,7 +181,14 @@ final class PostDataSource<T: Codable & Identifiable>: Postable {
         return try await readItemList(writerID: writerID, category: category, limit: limit)
     }
     
-//    func updateItem(item: T) async throws { }
+    func updateItem(itemID: String, writerNickname: String) async throws {
+        guard let _ = try? await database.document(itemID).updateData([
+            "writerNickname": writerNickname
+        ])
+        else {
+            throw DBError.updateDocumentError
+        }
+    }
     
     func deleteItem(itemID: String) async throws {
         guard let _ = try? await database.document(itemID).delete()

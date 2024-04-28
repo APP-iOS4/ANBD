@@ -27,6 +27,12 @@ struct TradeRepositoryImpl: TradeRepository {
     
     // MARK: Create
     func createTrade(trade: Trade, imageDatas: [Data]) async throws {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            throw UserError.invalidUserID
+        }
+        
+        var userInfo = try await userDataSource.readUserInfo(userID: userID)
+        
         let imagePaths = try await storage.uploadImageList(
             path: .trade,
             containerID: trade.id,
@@ -40,6 +46,19 @@ struct TradeRepositoryImpl: TradeRepository {
         }
         
         try await tradeDataSource.createItem(item: newTrade)
+        
+        switch trade.category {
+        case .accua:
+            userInfo.accuaCount += 1
+        case .nanua:
+            userInfo.nanuaCount += 1
+        case .baccua:
+            userInfo.baccuaCount += 1
+        case .dasi:
+            userInfo.dasiCount += 1
+        }
+        
+        try await userDataSource.updateUserPostCount(user: userInfo)
     }
     
     
@@ -86,6 +105,11 @@ struct TradeRepositoryImpl: TradeRepository {
         return tradeList
     }
     
+    func readAllTradeList(writerID: String) async throws -> [Trade] {
+        let tradeList = try await tradeDataSource.readAllItemList(writerID: writerID)
+        return tradeList
+    }
+    
     func refreshAll(limit: Int) async throws -> [Trade] {
         let refreshedList = try await tradeDataSource.refreshAll(limit: limit)
         return refreshedList
@@ -102,7 +126,7 @@ struct TradeRepositoryImpl: TradeRepository {
         itemCategory: [ItemCategory]?,
         limit: Int
     ) async throws -> [Trade] {
-        let refreshedList = try await tradeDataSource.readItemList(
+        let refreshedList = try await tradeDataSource.refreshFilter(
             category: category,
             location: location,
             itemCategory: itemCategory,
@@ -120,19 +144,22 @@ struct TradeRepositoryImpl: TradeRepository {
     
     
     // MARK: Update
-    func updateTrade(trade: Trade, imageDatas: [Data]) async throws {
-        let imagePaths = try await storage.updateImageList(
-            path: .trade,
-            containerID: trade.id,
-            imagePaths: trade.imagePaths,
-            imageDatas: imageDatas
-        )
-        var updatedTrade = trade
-        updatedTrade.thumbnailImagePath = imagePaths.first ?? ""
+    func updateTrade(
+        trade: Trade,
+        add images: [Data],
+        delete paths: [String]
+    ) async throws {
+        let storagePathList = try await storage
+            .updateImageList(
+                path: .trade,
+                containerID: trade.id,
+                thumbnailPath: trade.thumbnailImagePath,
+                addImageList: images,
+                deleteList: paths
+            )
         
-        if !imagePaths.isEmpty {
-            updatedTrade.imagePaths = Array(imagePaths[1...])
-        }
+        var updatedTrade = trade
+        updatedTrade.imagePaths = storagePathList
         
         try await tradeDataSource.updateItem(item: updatedTrade)
     }
@@ -157,21 +184,39 @@ struct TradeRepositoryImpl: TradeRepository {
     
     // MARK: Delete
     func deleteTrade(trade: Trade) async throws {
-        if !trade.thumbnailImagePath.isEmpty {
-            try await storage.deleteImage(
-                path: .trade,
-                containerID: "\(trade.id)/thumbnail",
-                imagePath: trade.thumbnailImagePath
-            )
+        guard let userID = Auth.auth().currentUser?.uid else {
+            throw UserError.invalidUserID
         }
+        
+        var userInfo = try await userDataSource.readUserInfo(userID: userID)
+        
+        try await storage.deleteImage(
+            path: .trade,
+            containerID: "\(trade.id)/thumbnail",
+            imagePath: trade.thumbnailImagePath
+        )
         
         try await storage.deleteImageList(
             path: .trade,
             containerID: trade.id,
             imagePaths: trade.imagePaths
         )
+        
         try await tradeDataSource.deleteItem(itemID: trade.id)
         try await userDataSource.updateUserInfoList(tradeID: trade.id)
+        
+        switch trade.category {
+        case .accua:
+            userInfo.accuaCount -= 1
+        case .nanua:
+            userInfo.nanuaCount -= 1
+        case .baccua:
+            userInfo.baccuaCount -= 1
+        case .dasi:
+            userInfo.dasiCount -= 1
+        }
+        
+        try await userDataSource.updateUserPostCount(user: userInfo)
     }
     
     func resetQuery() {

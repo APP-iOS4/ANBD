@@ -15,6 +15,7 @@ public protocol AuthUsecase {
                 password: String,
                 nickname: String,
                 favoriteLocation: Location,
+                fcmToken: String,
                 isOlderThanFourteen: Bool,
                 isAgreeService: Bool,
                 isAgreeCollectInfo: Bool,
@@ -28,7 +29,10 @@ public protocol AuthUsecase {
 @available(iOS 15, *)
 public struct DefaultAuthUsecase: AuthUsecase {
     
-    private let userRepository = DefaultUserRepository()
+    private let userRepository: UserRepository = DefaultUserRepository()
+    private let articleRepository: ArticleRepository = ArticleRepositoryImpl()
+    private let commentRepository: CommentRepository = CommentRepositoryImpl()
+    private let tradeRepository: TradeRepository = TradeRepositoryImpl()
     
     public init() { }
     
@@ -68,6 +72,7 @@ public struct DefaultAuthUsecase: AuthUsecase {
         password: String,
         nickname: String,
         favoriteLocation: Location,
+        fcmToken: String,
         isOlderThanFourteen: Bool,
         isAgreeService: Bool,
         isAgreeCollectInfo: Bool,
@@ -87,7 +92,7 @@ public struct DefaultAuthUsecase: AuthUsecase {
         
         if nickname.isEmpty {
             throw AuthError.invalidNicknameField
-        } else if !password.isValidateNickname() {
+        } else if !nickname.isValidateNickname() {
             throw AuthError.invalidNicknameRegularExpression
         }
         
@@ -99,6 +104,7 @@ public struct DefaultAuthUsecase: AuthUsecase {
             nickname: nickname,
             email: email,
             favoriteLocation: favoriteLocation,
+            fcmToken: fcmToken,
             isOlderThanFourteen: isOlderThanFourteen,
             isAgreeService: isAgreeService,
             isAgreeCollectInfo: isAgreeCollectInfo,
@@ -132,8 +138,29 @@ public struct DefaultAuthUsecase: AuthUsecase {
 //        var credential = EmailAuthProvider.credential(withEmail: <#T##String#>, password: <#T##String#>)
 //        try await user?.reauthenticate(with: credential)
         
-        try await user?.delete()
+        let articleList = try await articleRepository.readAllArticleList(writerID: userID)
+        
+        for article in articleList {
+            try await articleRepository.updateArticle(articleID: article.id, nickname: "탈퇴한 사용자")
+        }
+        
+        let commentList = try await commentRepository.readAllCommentList(writerID: userID)
+        
+        for comment in commentList {
+            var updatedComment = comment
+            updatedComment.writerNickname = "탈퇴한 사용자"
+            
+            try await commentRepository.updateComment(comment: updatedComment)
+        }
+        
+        let tradeList = try await tradeRepository.readAllTradeList(writerID: userID)
+        
+        for trade in tradeList {
+            try await tradeRepository.deleteTrade(trade: trade)
+        }
+        
         try await userRepository.deleteUserInfo(userID: userID)
+        try await user?.delete()
     }
     
     /// 이메일 중복체크 API

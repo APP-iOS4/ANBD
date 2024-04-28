@@ -20,7 +20,9 @@ public protocol ArticleUsecase {
     func refreshWriterIDArticleList(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [Article]
     func refreshSortedArticleList(category: ANBDCategory, by order: ArticleOrder, limit: Int) async throws -> [Article]
     func refreshSearchArticleList(keyword: String, limit: Int) async throws -> [Article]
-    func updateArticle(article: Article, imageDatas: [Data]) async throws
+    func updateArticle(article: Article, 
+                       add images: [Data],
+                       delete paths: [String]) async throws
     func likeArticle(articleID: String) async throws
     func deleteArticle(article: Article) async throws
     func resetQuery()
@@ -196,16 +198,24 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     /// - Parameters:
     ///   - article: 수정할 Article의 정보
     ///   - imageDatas: 수정할 이미지 Data 배열
-    public func updateArticle(article: Article, imageDatas: [Data]) async throws {
+    public func updateArticle(
+        article: Article,
+        add images: [Data],
+        delete paths: [String]
+    ) async throws {
         guard article.category == .accua || article.category == .dasi else {
             throw ArticleError.invalidCategory
         }
         
-        if imageDatas.isEmpty {
-            throw ArticleError.invalidImageField
+        if article.id.isEmpty {
+            throw ArticleError.invalidArticleIDField
         }
         
-        try await articleRepository.updateArticle(article: article, imageDatas: imageDatas)
+        try await articleRepository.updateArticle(
+            article: article,
+            add: images,
+            delete: paths
+        )
     }
     
     /// Article을 좋아요하는 메서드
@@ -227,6 +237,10 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     /// 댓글 목록 -> 사진 -> 게시글 순으로 삭제됩니다.
     /// 삭제 성공 시 좋아요한 User들의 좋아요 목록에서도 사라집니다.
     public func deleteArticle(article: Article) async throws {
+        if article.id.isEmpty {
+            throw ArticleError.invalidArticleIDField
+        }
+        
         try await articleRepository.deleteArticle(article: article)
     }
     

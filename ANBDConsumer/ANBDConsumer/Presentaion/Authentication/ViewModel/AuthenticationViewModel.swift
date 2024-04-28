@@ -202,16 +202,18 @@ extension AuthenticationViewModel {
         
         return !nickname.isEmpty && nickname.isValidateNickname()
     }
-    
 }
 
 // MARK: Sign Up Method
 extension AuthenticationViewModel {
     func checkAuthState() {
-        if UserDefaultsClient.shared.userID == nil {
-            authState = false
-        } else {
+        if let _ = UserDefaultsClient.shared.userID, UserStore.shared.user.userLevel != .banned {
             authState = true
+        } else {
+            authState = false
+            if UserStore.shared.user.userLevel == .banned {
+                errorMessage = "접근 권한이 없습니다."
+            }
         }
     }
     
@@ -253,34 +255,39 @@ extension AuthenticationViewModel {
         showingTermsView.toggle()
     }
     
-    func signIn() async throws {
+    func signIn() async -> Bool {
         do {
             let signedInUser = try await authUsecase.signIn(email: loginEmailString,
                                                             password: loginPasswordString)
             
             UserDefaultsClient.shared.userID = signedInUser.id
             UserStore.shared.user = signedInUser
+            
+            return true
         } catch {
-            print("\(error.localizedDescription)")
+            print("Error sign in: \(error.localizedDescription)")
+            
+            return false
         }
     }
     
-    func signOut(completion: @escaping () -> Void) async throws {
+    func signOut(completion: @escaping () -> Void) async {
         do {
             try await authUsecase.signOut()
             
             completion()
         } catch {
-            print("\(error.localizedDescription)")
+            print("Error sign out: \(error.localizedDescription)")
         }
     }
     
-    func signUp() async throws {
+    func signUp() async {
         do {
             let signedUpUser = try await authUsecase.signUp(email: signUpEmailString,
                                                             password: signUpPasswordString,
                                                             nickname: signUpNicknameString,
-                                                            favoriteLocation: signUpUserFavoriteLoaction,
+                                                            favoriteLocation: signUpUserFavoriteLoaction, 
+                                                            fcmToken: "",
                                                             isOlderThanFourteen: isOlderThanFourteen,
                                                             isAgreeService: isAgreeService,
                                                             isAgreeCollectInfo: isAgreeCollectInfo,
@@ -289,7 +296,7 @@ extension AuthenticationViewModel {
             UserDefaultsClient.shared.userID = signedUpUser.id
             UserStore.shared.user = signedUpUser
         } catch {
-            print("\(error.localizedDescription)")
+            print("Error sign up: \(error.localizedDescription)")
         }
     }
     
@@ -313,14 +320,14 @@ extension AuthenticationViewModel {
         }
     }
     
-    func withdrawal(completion: @escaping () -> Void) async throws {
+    func withdrawal(completion: @escaping () -> Void) async {
         do {
-            try await signOut(completion: { })
+            await signOut(completion: { })
             try await authUsecase.withdrawal(userID: UserStore.shared.user.id)
             
             completion()
         } catch {
-            print("\(error.localizedDescription)")
+            print("Error withdrawal: \(error.localizedDescription)")
         }
     }
     
@@ -367,23 +374,5 @@ extension AuthenticationViewModel {
         isAgreeMarketing = false
         
         isValidSignUp = false
-    }
-}
-
-extension String {
-    func isValidateEmail() -> Bool {
-        let emailRegEx = #"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,64}"#
-        let last = self.contains("com") || self.contains("net") || self.contains("co.kr")
-        return NSPredicate(format: "SELF MATCHES %@", emailRegEx).evaluate(with: self) && last
-    }
-    
-    func isValidatePassword() -> Bool {
-        let regex = #"^(?!([A-Za-z]+|[~!@#$%^&*()_+=]+|[0-9]+)$)[A-Za-z\d~!@#$%^&*()_+=]{8,16}$"#
-        return NSPredicate(format: "SELF MATCHES %@", regex).evaluate(with: self)
-    }
-    
-    func isValidateNickname() -> Bool {
-        let regex = #"(?i)^[0-9a-z가-힣][0-9a-z가-힣._]{0,18}[0-9a-z가-힣]$"#
-        return NSPredicate(format: "SELF MATCHES %@", regex).evaluate(with: self)
     }
 }

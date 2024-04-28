@@ -21,7 +21,7 @@ public extension String {
     }
     
     func isValidateNickname() -> Bool {
-        let regex = #"^[0-9a-z가-힣][0-9a-z가-힣._]{0,18}[0-9a-z가-힣]$"#
+        let regex = #"^[0-9a-zA-Z가-힣][0-9a-zA-Z가-힣._]{0,18}[0-9a-zA-Z가-힣]$"#
         return NSPredicate(format: "SELF MATCHES %@", regex).evaluate(with: self)
     }
     

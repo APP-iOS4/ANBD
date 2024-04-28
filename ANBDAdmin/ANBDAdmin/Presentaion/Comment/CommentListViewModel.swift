@@ -7,41 +7,59 @@
 
 import SwiftUI
 import ANBDModel
-/*
-class CommentListViewModel: ObservableObject {
-    @Published var commentList: [Comment] = []
-    var deletedCommentID: String? // 삭제 변수
-    let commentUsecase = DefaultCommentUsecase()
 
-    func loadComments() {
-        if commentList.isEmpty || commentList.contains(where: { $0.id == deletedCommentID })  {
+class CommentViewModel: ObservableObject {
+    @Published var commentList: [Comment] = []
+    var deletedCommentID: String?
+    let commentUsecase = DefaultCommentUsecase()
+    @Published var canLoadMoreComments: Bool = true
+
+    
+    func firstLoadComments(articleID: String) {
+        if commentList.isEmpty {
             Task {
                 do {
-                    let comments = try await commentUsecase.loadCommentList()
-                                    DispatchQueue.main.async {
-                                        self.commentList = comments
-                                    }
+                    let comments = try await commentUsecase.loadCommentList(articleID: articleID)
+                    DispatchQueue.main.async {
+                        self.commentList = comments
+                        self.canLoadMoreComments = true
+                    }
                 } catch {
                     print("댓글 목록을 가져오는데 실패했습니다: \(error)")
                 }
             }
         }
     }
-    func loadComment(commentID: String) async throws -> Comment {
-        return try await commentUsecase.loadComment(commentID: commentID)
-    }
-    func searchComment(commentID: String) async {
-        do {
-            let searchedComment = try await loadComment(commentID: commentID)
-            DispatchQueue.main.async {
-                self.commentList = [searchedComment]
+    func loadMoreComments(articleID: String){
+        guard canLoadMoreComments else { return }
+
+        Task {
+            do {
+                let comments = try await commentUsecase.loadCommentList(articleID: articleID)
+                DispatchQueue.main.async {
+                    self.commentList.append(contentsOf: comments)
+                    if comments.count < 10 {
+                        self.canLoadMoreComments = false
+                    }
+                }
+            } catch {
+                print("게시물 목록을 가져오는데 실패했습니다: \(error)")
             }
-        } catch {
-            print(error)
-            DispatchQueue.main.async {
-                self.commentList = []
+        }
+    }
+    func deleteComment(articleID: String, at offsets: IndexSet) {
+        offsets.forEach { index in
+            let comment = commentList[index]
+            Task {
+                do {
+                    try await commentUsecase.deleteComment(articleID: articleID, commentID: comment.id)
+                    DispatchQueue.main.async {
+                        self.commentList.remove(at: index)
+                    }
+                } catch {
+                    print("댓글을 삭제하는데 실패했습니다: \(error)")
+                }
             }
         }
     }
 }
-*/

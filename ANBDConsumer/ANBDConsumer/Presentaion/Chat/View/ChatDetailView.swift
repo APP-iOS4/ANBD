@@ -12,16 +12,8 @@ import ANBDModel
 struct ChatDetailView: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
-    @EnvironmentObject private var homeViewModel: HomeViewModel
-    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var coordinator: Coordinator
     
-    /// 채팅방 구분 변수
-    @State var channel: Channel? = nil
-    @State var trade: Trade? = nil
-    @State private var imageData: Data?
-    @State private var tradeState: TradeState = .trading
-    
-    var anbdViewType: ANBDViewType = .chat
     
     /// 보낼 메시지 관련 변수
     @State private var message: String = ""
@@ -29,51 +21,66 @@ struct ChatDetailView: View {
     @State private var selectedPhoto: Data?
     
     /// Sheet 관련 변수
-    @State private var isShowingConfirmSheet: Bool = false
     @State private var isShowingCustomAlertView: Bool = false
     @State private var isShowingImageDetailView: Bool = false
     @State private var detailImage: Image = Image("DummyPuppy3")
     @State private var isShowingStateChangeCustomAlert: Bool = false
+    @State private var isWithdrawlUser: Bool = false
     
     var body: some View {
         ZStack {
             VStack {
-                ChatHeaderView(trade: trade, imageData: imageData, anbdViewType: anbdViewType, tradeState: $tradeState, isShowingStateChangeCustomAlert: $isShowingStateChangeCustomAlert)
+                ChatHeaderView(trade: chatViewModel.selectedTrade, isShowingStateChangeCustomAlert: $isShowingStateChangeCustomAlert)
                     .padding(.vertical, 5)
                     .padding(.horizontal, 15)
+                    .onAppear {
+                        Task {
+                            if let trade = chatViewModel.selectedTrade {
+                                await chatViewModel.loadTrade(tradeID: trade.id)
+                            }
+                        }
+                    }
                 
                 Divider()
                 
                 /// message 내역
                 ScrollView {
-                    LazyVStack {
-                        ForEach(chatViewModel.messages.reversed()) { message in
-                            MessageCell(message: message, isLast: message == chatViewModel.messages.last, anbdViewType: anbdViewType, channelID: channel?.id ?? "ChannelID", isShowingImageDetailView: $isShowingImageDetailView, detailImage: $detailImage)
-                                .padding(.vertical, 1)
-                                .padding(.horizontal, 20)
-                        }
-                        .rotationEffect(Angle(degrees: 180))
-                        .scaleEffect(x: -1.0, y: 1.0, anchor: .center)
-                        
-                        Color.clear
-                            .onAppear {
-                                Task {
-                                    if let channel = channel {
+                    if let channel = chatViewModel.selectedChannel {
+                        LazyVStack {
+                            ForEach(chatViewModel.groupedMessages, id: \.day) { day, messages in
+                                ForEach(messages) { message in
+                                    MessageCell(message: message, isLast: message == chatViewModel.messages.last, channel: channel, isShowingImageDetailView: $isShowingImageDetailView, detailImage: $detailImage)
+                                        .padding(.vertical, 1)
+                                        .padding(.horizontal, 20)
+                                }
+                                if let last = chatViewModel.groupedMessages.last , last.day == day{
+                                    MessageDateDividerView(dateString: day)
+                                        .padding(.horizontal, 20)
+                                        .padding(.bottom, 20)
+                                } else {
+                                    MessageDateDividerView(dateString: day)
+                                        .padding(20)
+                                }
+                            }
+                            .rotationEffect(Angle(degrees: 180))
+                            .scaleEffect(x: -1.0, y: 1.0, anchor: .center)
+                            
+                            Color.clear
+                                .onAppear {
+                                    Task {
                                         try await chatViewModel.addListener(channelID: channel.id)
                                     }
                                 }
+                        }
+                        .onChange(of: chatViewModel.messages) { message in
+                            Task {
+                                try await chatViewModel.resetUnreadCount(channelID: channel.id)
                             }
+                        }
                     }
                 }
                 .rotationEffect(Angle(degrees: 180))
                 .scaleEffect(x: -1.0, y: 1.0, anchor: .center)
-                .onChange(of: chatViewModel.messages) { message in
-                    Task {
-                        if let channel {
-                            try await chatViewModel.resetUnreadCount(channelID: channel.id)
-                        }
-                    }
-                }
                 
                 if #available(iOS 17.0, *) {
                     messageSendView
@@ -96,11 +103,10 @@ struct ChatDetailView: View {
             
             if isShowingStateChangeCustomAlert {
                 CustomAlertView(isShowingCustomAlert: $isShowingStateChangeCustomAlert, viewType: .changeState) {
-                    //task로 변경해주기~
-                    if tradeState == .trading {
-                        tradeState = .finish
-                    } else {
-                        tradeState = .trading
+                    Task {
+                        guard chatViewModel.selectedTrade != nil else { return }
+                        guard let trade = chatViewModel.selectedTrade else { return}
+                        await chatViewModel.updateTradeState(tradeID: trade.id, tradeState: trade.tradeState == .trading ? .finish : .trading)
                     }
                 }
             }
@@ -108,54 +114,55 @@ struct ChatDetailView: View {
             if isShowingCustomAlertView {
                 CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertView, viewType: .leaveChatRoom) {
                     Task {
-                        print("채팅방 나가기")
-                        if let channel, let lastMessage = chatViewModel.messages.last {
+                        if let channel = chatViewModel.selectedChannel, let lastMessage = chatViewModel.messages.last {
                             try await chatViewModel.leaveChatRoom(channelID: channel.id, lastMessageID: lastMessage.id)
                         }
-                        dismiss()
+                        coordinator.pop()
                     }
+                }
+            }
+            
+            if coordinator.isShowingToastView {
+                VStack {
+                    CustomToastView()
+                    
+                    Spacer()
                 }
             }
         }
         .onTapGesture {
             endTextEditing()
         }
-        .navigationTitle("")
+        .navigationTitle(chatViewModel.selectedUser.nickname)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
         .toolbarRole(.editor)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    isShowingConfirmSheet.toggle()
-                }, label: {
-                    Image(systemName: "ellipsis")
-                        .font(.system(size: 13))
-                        .rotationEffect(.degrees(90))
-                        .foregroundStyle(.gray900)
-                })
-            }
-        }
-        .confirmationDialog("", isPresented: $isShowingConfirmSheet) {
-            Button("채팅 신고하기") {
-                homeViewModel.reportType = .chatRoom
-                chatViewModel.reportType = .chatRoom
-                
-                homeViewModel.reportedObjectID = channel?.id ?? "Unknown ChannelID"
-                chatViewModel.reportedObjectID = channel?.id ?? "Unknown ChannelID"
-                
-                switch anbdViewType {
-                case .home:
-                    homeViewModel.homePath.append(ANBDNavigationPaths.reportView)
-                case .trade:
-                    tradeViewModel.tradePath.append(ANBDNavigationPaths.reportView)
-                case .chat:
-                    chatViewModel.chatPath.append(ANBDNavigationPaths.reportView)
+            if !chatViewModel.messages.isEmpty {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Button {
+                            coordinator.reportType = .chatRoom
+                            if let channel = chatViewModel.selectedChannel {
+                                coordinator.reportedObjectID = channel.id
+                            }
+                            coordinator.appendPath(.reportView)
+                        } label: {
+                            Label("채팅방 신고하기", systemImage: "exclamationmark.bubble")
+                        }
+                        
+                        Button(role: .destructive) {
+                            isShowingCustomAlertView.toggle()
+                        } label: {
+                            Label("채팅방 나가기", systemImage: "rectangle.portrait.and.arrow.forward")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .font(.system(size: 13))
+                            .rotationEffect(.degrees(90))
+                            .foregroundStyle(.gray900)
+                    }
                 }
-            }
-            
-            Button("채팅방 나가기", role: .destructive) {
-                isShowingCustomAlertView.toggle()
             }
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
@@ -163,27 +170,11 @@ struct ChatDetailView: View {
         }
         .onAppear {
             Task {
-                chatViewModel.loadUserInfo()
-                
-                /// 채팅방 불러오기 (trade만 알때)
-                if channel == nil, let trade {
-                    channel = try await chatViewModel.getChannel(tradeID: trade.id)
-                    if let channel = channel {
-                        try await chatViewModel.addListener(channelID: channel.id)
-                    }
+                ///탈퇴한 회원일 경우
+                if chatViewModel.selectedUser.id == "" {
+                    isWithdrawlUser = true
                 }
-                
-                /// 채널만 알 때 ......
-                if let channel = channel {
-                    /// trade 불러오기
-                    trade = try await chatViewModel.getTrade(channelID: channel.id)
-                    
-                    /// Trade 이미지 · 상태 확인
-                    if let trade {
-                        imageData = try await chatViewModel.loadThumnailImage(containerID: trade.id, imagePath: trade.thumbnailImagePath)
-                        tradeState = trade.tradeState
-                    }
-                    
+                if let channel = chatViewModel.selectedChannel {
                     /// 안읽음 메시지 개수 갱신
                     try await chatViewModel.resetUnreadCount(channelID: channel.id)
                 }
@@ -194,95 +185,6 @@ struct ChatDetailView: View {
         }
     }
     
-    // MARK: - 메시지 해더 뷰 (Trade 관련)
-    // TODO: ProgressView 필요 ... 합니다 ㅠㅠ
-    struct MessageHeaderView: View {
-        var trade: Trade?
-        @State private var imageData: Data?
-        @EnvironmentObject private var chatViewModel: ChatViewModel
-        @Binding var tradeState: TradeState
-        @Binding var isShowingStateChangeCustomAlert: Bool
-        
-        var body: some View {
-            HStack {
-                if trade == nil {
-                    Image(systemName: "exclamationmark.square.fill")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 60, height: 60)
-                        .padding(.trailing, 10)
-                        .foregroundStyle(.gray500)
-                } else {
-                    if let imageData {
-                        if let uiImage = UIImage(data: imageData) {
-                            Image(uiImage: uiImage)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 70, height: 70)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                                .padding(.trailing, 10)
-                        }
-                    } else {
-                        Image("ANBDWarning")
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 70, height: 70)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                            .padding(.trailing, 10)
-                    }
-                }
-                
-                VStack(alignment: .leading) {
-                    Text(trade == nil ? "삭제된 게시물" : trade?.title ?? "Unknown")
-                        .lineLimit(1)
-                        .font(ANBDFont.SubTitle3)
-                        .padding(.bottom, 3)
-                    
-                    Text(tradeProductString)
-                        .foregroundStyle(.gray400)
-                        .font(ANBDFont.Caption3)
-                }
-                
-                Spacer()
-                
-                if trade != nil {
-                    VStack(alignment: .leading) {
-                        // TODO: TradeStateChangeView 수정해야 함 : tradeState 매개변수가 아니라 trade 전체 넘겨주기
-                        TradeStateChangeView(tradeState: $tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert)
-                        
-                        Text(tradeProductString)
-                            .foregroundStyle(.clear)
-                            .font(ANBDFont.Caption3)
-                    }
-                    .padding(.vertical, 8)
-                }
-            }
-            .onAppear {
-                Task {
-                    if let trade = trade {
-                        imageData = try await chatViewModel.loadThumnailImage(containerID: trade.id, imagePath: trade.thumbnailImagePath)
-                    }
-                }
-            }
-        }
-        
-        /// Trade 상품 String
-        private var tradeProductString: String {
-            if trade == nil {
-                return "글쓴이가 삭제한 게시물이에요."
-            } else {
-                if let trade = trade {
-                    if trade.category == .nanua {
-                        return trade.myProduct
-                    } else if trade.category == .baccua {
-                        return "\(trade.myProduct) ↔ \(trade.wantProduct ?? "제시")"
-                    }
-                }
-                return ""
-            }
-        }
-    }
-
     private func MessageDateDividerView(dateString: String) -> some View {
         GeometryReader { geometry in
             HStack {
@@ -318,6 +220,7 @@ struct ChatDetailView: View {
                     .foregroundStyle(.gray400)
                     .padding(.horizontal, 5)
             }
+            .disabled(isWithdrawlUser)
             
             /// 메시지 입력
             ZStack {
@@ -325,10 +228,11 @@ struct ChatDetailView: View {
                     .fill(.gray50)
                     .clipShape(RoundedRectangle(cornerRadius: 30))
                 
-                TextField("메시지 보내기", text: $message)
+                TextField(isWithdrawlUser ? "탈퇴한 회원이므로 메시지를 보낼 수 없습니다" : "메시지 보내기", text: $message)
                     .foregroundStyle(.gray900)
                     .font(ANBDFont.Caption3)
                     .padding(15)
+                    .disabled(isWithdrawlUser)
             }
             .frame(height: 40)
             
@@ -354,33 +258,32 @@ struct ChatDetailView: View {
 
 // MARK: - 필요 함수 · 변수 모아두기
 extension ChatDetailView {
+    
     /// 메시지 전송 함수
     private func sendMessage() {
-        if let user = chatViewModel.user {
-            let newMessage = Message(userID: user.id, userNickname: user.nickname, content: message)
-            
-            Task {
-                /// 채널이 없을 때
-                if channel == nil, let trade {
-                    let newChannel = Channel(participants: [trade.writerID, user.id],
-                                             participantNicknames: [trade.writerNickname, user.nickname],
-                                             lastMessage: "",
-                                             lastSendDate: .now,
-                                             lastSendId: user.id,
-                                             unreadCount: 0,
-                                             tradeId: trade.id)
-                    
-                    channel = try await chatViewModel.makeChannel(channel: newChannel)
-                    
-                    if let channel {
-                        try await chatViewModel.addListener(channelID: channel.id)
-                    }
-                }
+        let newMessage = Message(userID: chatViewModel.user.id, userNickname: chatViewModel.user.nickname, content: message)
+        
+        Task {
+            /// 채널이 없을 때
+            if chatViewModel.selectedChannel == nil, let trade = chatViewModel.selectedTrade {
+                let newChannel = Channel(participants: [trade.writerID, chatViewModel.user.id],
+                                         participantNicknames: [trade.writerNickname, chatViewModel.user.nickname],
+                                         lastMessage: "",
+                                         lastSendDate: .now,
+                                         lastSendId: chatViewModel.user.id,
+                                         unreadCount: 0,
+                                         tradeId: trade.id)
                 
-                /// 채널 생성 후
-                if let channel = channel {
-                    try await chatViewModel.sendMessage(message: newMessage, channelID: channel.id)
+                try await chatViewModel.makeChannel(channel: newChannel)
+                
+                if let channel = chatViewModel.selectedChannel {
+                    try await chatViewModel.addListener(channelID: channel.id)
                 }
+            }
+            
+            /// 채널 생성 후
+            if let channel = chatViewModel.selectedChannel {
+                try await chatViewModel.sendMessage(message: newMessage, channelID: channel.id)
             }
         }
     }
@@ -392,33 +295,32 @@ extension ChatDetailView {
                 selectedPhoto = data
             }
             
-            if let user = chatViewModel.user {
-                let newMessage = Message(userID: user.id, userNickname: user.nickname)
-                
-                if let imageData = selectedPhoto {
-                    /// 채널이 없을 때
-                    if channel == nil, let trade {
-                        let newChannel = Channel(participants: [trade.writerID, user.id],
-                                                 participantNicknames: [trade.writerNickname, user.nickname],
-                                                 lastMessage: "",
-                                                 lastSendDate: .now,
-                                                 lastSendId: user.id,
-                                                 unreadCount: 0,
-                                                 tradeId: trade.id)
-                        
-                        channel = try await chatViewModel.makeChannel(channel: newChannel)
-                        
-                        if let channel {
-                            try await chatViewModel.addListener(channelID: channel.id)
-                        }
-                    }
+            let newMessage = Message(userID: chatViewModel.user.id, userNickname: chatViewModel.user.nickname)
+            
+            if let imageData = selectedPhoto {
+                /// 채널이 없을 때
+                if chatViewModel.selectedChannel == nil, let trade = chatViewModel.selectedTrade {
+                    let newChannel = Channel(participants: [trade.writerID, chatViewModel.user.id],
+                                             participantNicknames: [trade.writerNickname, chatViewModel.user.nickname],
+                                             lastMessage: "",
+                                             lastSendDate: .now,
+                                             lastSendId: chatViewModel.user.id,
+                                             unreadCount: 0,
+                                             tradeId: trade.id)
                     
-                    /// 채널 있
-                    if let channel = channel {
-                        try await chatViewModel.sendImageMessage(message: newMessage, imageData: imageData, channelID: channel.id)
+                    try await chatViewModel.makeChannel(channel: newChannel)
+                    
+                    if let channel = chatViewModel.selectedChannel {
+                        try await chatViewModel.addListener(channelID: channel.id)
                     }
                 }
+                
+                /// 채널 있
+                if let channel = chatViewModel.selectedChannel {
+                    try await chatViewModel.sendImageMessage(message: newMessage, imageData: imageData, channelID: channel.id)
+                }
             }
+            
             selectedImage = nil
         }
     }

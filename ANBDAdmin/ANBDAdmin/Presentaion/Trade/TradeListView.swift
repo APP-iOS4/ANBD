@@ -64,6 +64,7 @@ struct TradeListView: View {
                                 VStack(alignment: .leading) {
                                     Text("\(trade.title)")
                                         .font(.title3)
+                                        .lineLimit(1)
                                         .foregroundColor(.black)
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
@@ -71,16 +72,17 @@ struct TradeListView: View {
                                 Spacer()
                                 VStack(alignment: .leading) {
                                     Text("\(trade.writerNickname)")
+                                        .lineLimit(2)
                                         .foregroundColor(.black)
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
-                                    Text("\(dateFormatter(trade.createdAt))")
+                                    Text("\(DateFormatterSingleton.shared.dateFormatter(trade.createdAt))")
                                         .foregroundColor(.black)
                                 }
-                                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                                .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Spacer()
                             }
                             .frame(maxWidth: .infinity, minHeight: 50)
@@ -89,6 +91,13 @@ struct TradeListView: View {
                             .padding(.horizontal)
                         }
                     }
+                    if !tradeListViewModel.tradeList.isEmpty {
+                        Text("List End")
+                            .foregroundColor(.gray)
+                          .onAppear {
+                              tradeListViewModel.loadMoreTrades()
+                          }
+                      }
                 }
                 
                 .onAppear {
@@ -97,7 +106,9 @@ struct TradeListView: View {
                 .navigationBarTitle("거래글 목록")
                 .toolbar {
                     Button(action: {
-                        //새로고침 함수 뷰모델에 작성예정
+                        self.searchTradeText = ""
+                        tradeListViewModel.tradeList = []
+                        tradeListViewModel.firstLoadTrades()
                     }) {
                         Image(systemName: "arrow.clockwise")
                     }

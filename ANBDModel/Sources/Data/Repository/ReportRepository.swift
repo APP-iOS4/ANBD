@@ -26,7 +26,7 @@ final class DefaultReportRepository: ReportRepository {
         
         let commonQuery = reportDB
             .whereField("type", isEqualTo: reportType.rawValue)
-            .order(by: "createdAt" ,descending: true)
+            .order(by: "createDate" ,descending: true)
             .limit(toLast: 20)
         
         var requestQuery : Query
@@ -47,7 +47,8 @@ final class DefaultReportRepository: ReportRepository {
         
         nextDoc = snapshot.documents.first
         
-        return snapshot.documents.compactMap {try? $0.data(as: Report.self)}
+        let reportList = try snapshot.documents.compactMap { try $0.data(as: Report.self) }
+        return reportList
     }
     
     func deleteReport(reportID : String) async throws {

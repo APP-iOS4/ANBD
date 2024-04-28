@@ -1,45 +1,28 @@
 //
-//  SwiftUIView.swift
+//  ReportedCommentListView.swift
 //  ANBDAdmin
 //
-//  Created by sswv on 4/11/24.
+//  Created by sswv on 4/8/24.
 //
 
 import SwiftUI
-import ANBDModel
-import CachedAsyncImage
 
-struct TradeListView: View {
-    @StateObject private var tradeListViewModel = TradeListViewModel()
-    @State private var searchTradeText = ""
+struct ReportListView: View {
+    @StateObject private var reportListViewModel = ReportListViewModel()
     
     var body: some View {
         VStack {
-            TextField("제목이나 ID값으로 검색...", text: $searchTradeText)
-                .textCase(.lowercase)
-                .padding(7)
-                .background(Color(.systemGray6))
-                .cornerRadius(8)
-                .padding(.horizontal, 10)
-                .onSubmit {
-                    if !searchTradeText.isEmpty {
-                        Task {
-                            await tradeListViewModel.searchTrade(tradeID: searchTradeText)
-                        }
-                    }
-                }
-                .textInputAutocapitalization(.characters)// 항상 대문자로 입력받음
             HStack{
                 Spacer()
                 VStack(alignment: .leading) {
-                    Text("제목")
+                    Text("신고당한 오브젝트 타입")
                         .font(.title3)
                 }
                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                 Divider()
                 Spacer()
                 VStack(alignment: .leading) {
-                    Text("작성자 닉네임")
+                    Text("내용")
                         .font(.title3)
                 }
                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
@@ -55,15 +38,22 @@ struct TradeListView: View {
             .frame(maxWidth: .infinity, maxHeight: 30)
             .padding(.horizontal, 15)
             .padding(.vertical, 5)
-            ScrollView {
-                LazyVStack{
-                    ForEach(tradeListViewModel.tradeList, id: \.id) { trade in
-                        NavigationLink(destination: TradeListDetailView(trade: trade, deletedTradeID: $tradeListViewModel.deletedTradeID)) {
+            ScrollView{
+                LazyVStack {
+                    ForEach(reportListViewModel.reportList, id: \.id) { report in
+                        NavigationLink(destination: ReportListDetailView(report: report, deletedReportID: $reportListViewModel.deletedReportID)) {
                             HStack{
                                 Spacer()
                                 VStack(alignment: .leading) {
-                                    Text("\(trade.title)")
+                                    Text("\(report.type)")
                                         .font(.title3)
+                                        .foregroundColor(.black)
+                                }
+                                .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
+                                Divider()
+                                Spacer()
+                                VStack(alignment: .leading) {
+                                    Text("\(report.reportReason)")
                                         .lineLimit(1)
                                         .foregroundColor(.black)
                                 }
@@ -71,15 +61,7 @@ struct TradeListView: View {
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
-                                    Text("\(trade.writerNickname)")
-                                        .lineLimit(2)
-                                        .foregroundColor(.black)
-                                }
-                                .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
-                                Divider()
-                                Spacer()
-                                VStack(alignment: .leading) {
-                                    Text("\(DateFormatterSingleton.shared.dateFormatter(trade.createdAt))")
+                                    Text("\(report.reportedDate)")
                                         .foregroundColor(.black)
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
@@ -91,24 +73,22 @@ struct TradeListView: View {
                             .padding(.horizontal)
                         }
                     }
-                    if !tradeListViewModel.tradeList.isEmpty {
+                    if !reportListViewModel.reportList.isEmpty {
                         Text("List End")
                             .foregroundColor(.gray)
                           .onAppear {
-                              tradeListViewModel.loadMoreTrades()
+                              //페이지네이션 로딩 함수 추가 예정
                           }
                       }
                 }
-                
                 .onAppear {
-                    tradeListViewModel.firstLoadTrades()
+                    reportListViewModel.firstLoadReports()
                 }
-                .navigationBarTitle("거래글 목록")
+                .navigationBarTitle("신고함 목록")
                 .toolbar {
                     Button(action: {
-                        self.searchTradeText = ""
-                        tradeListViewModel.tradeList = []
-                        tradeListViewModel.firstLoadTrades()
+                        reportListViewModel.reportList = []
+                        reportListViewModel.firstLoadReports()
                     }) {
                         Image(systemName: "arrow.clockwise")
                     }
@@ -119,3 +99,4 @@ struct TradeListView: View {
         }
     }
 }
+

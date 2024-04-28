@@ -11,129 +11,139 @@ import ANBDModel
 struct UserPageView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
+    @EnvironmentObject private var coordinator: Coordinator
     
-    var writerUser: User
-    
-    @State private var userProfileImageData = Data()
+    private var writerUser: User
     
     @State private var category: ANBDCategory = .accua
     
     @State private var isSignedInUser: Bool = false
     
-    @State private var isShowingPolicyView = false
     @State private var isShowingReportView = false
+    @State private var refreshView = false
+    
+    init(writerUser: User) {
+        self.writerUser = writerUser
+    }
     
     var body: some View {
-        VStack(spacing: 20) {
-            // UserInfo
-            HStack {
-                Image(uiImage: UIImage(data: userProfileImageData) ?? UIImage(named: "DefaultUserProfileImage")!)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 90, height: 90)
-                    .clipShape(.circle)
-                    .padding(.horizontal)
-                
-                VStack(alignment: .leading, spacing: 3) {
-                    Text("\(writerUser.nickname)")
-                        .foregroundStyle(Color.gray900)
-                        .font(ANBDFont.pretendardBold(24))
-                        .padding(.bottom, 10)
+        ZStack(alignment: .top) {
+            VStack(spacing: 20) {
+                // UserInfo
+                HStack {
+                    if #available(iOS 17.0, *) {
+                        userProfileImage
+                            .onChange(of: myPageViewModel.tempUserProfileImage) {
+                                Task {
+                                    try await Task.sleep(nanoseconds: 800_000_000)
+                                    refreshView.toggle()
+                                }
+                            }
+                    } else {
+                        userProfileImage
+                            .onChange(of: myPageViewModel.tempUserProfileImage) { _ in
+                                Task {
+                                    try await Task.sleep(nanoseconds: 800_000_000)
+                                    refreshView.toggle()
+                                }
+                            }
+                    }
                     
-                    Text("선호 지역 : \(writerUser.favoriteLocation.description)")
-                        .foregroundStyle(Color.gray400)
-                        .font(ANBDFont.Caption3)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    if isSignedInUser {
-                        HStack {
-                            Text(verbatim: "\(writerUser.email)")
-                                .foregroundStyle(Color.gray400)
-                            
-                            Spacer()
-                            
-                            Button(action: {
-                                myPageViewModel.myPageNaviPath.append(MyPageViewModel.MyPageNaviPaths.accountManagement)
-                            }, label: {
-                                Text("계정관리")
-                            })
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("\(myPageViewModel.user.nickname)")
+                            .foregroundStyle(Color.gray900)
+                            .font(ANBDFont.pretendardBold(24))
+                            .padding(.bottom, 10)
+                        
+                        Text("선호 지역 : \(myPageViewModel.user.favoriteLocation.description)")
+                            .foregroundStyle(Color.gray400)
+                            .font(ANBDFont.Caption3)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        if isSignedInUser {
+                            HStack {
+                                Text(verbatim: "\(myPageViewModel.user.email)")
+                                    .foregroundStyle(Color.gray400)
+                                
+                                Spacer()
+                            }
+                            .font(ANBDFont.Caption3)
                         }
-                        .font(ANBDFont.Caption3)
                     }
                 }
-            }
-            .padding()
-            
-            // User Activities
-            HStack(spacing: 12) {
-                activityInfoComponent(title: "아껴 쓴 개수", count: 0, category: .accua)
+                .padding()
                 
-                Divider()
-                    .frame(height: 60)
-                
-                activityInfoComponent(title: "나눠 쓴 개수", count: 0, category: .nanua)
-                
-                Divider()
-                    .frame(height: 60)
-                
-                activityInfoComponent(title: "바꿔 쓴 개수", count: 0, category: .baccua)
-                
-                Divider()
-                    .frame(height: 60)
-                
-                activityInfoComponent(title: "다시 쓴 개수", count: 0, category: .dasi)
-            }
-            
-            if isSignedInUser {
-                // Another Functions
-                VStack(alignment: .leading) {
-                    Divider()
-                    
-                    Button(action: {
-                        myPageViewModel.myPageNaviPath.append(MyPageViewModel.MyPageNaviPaths.userHeartedTradeList)
-                    }, label: {
-                        listButtonView(title: "내가 찜한 나눔・거래 보기")
-                    })
+                HStack(spacing: 12) {
+                    activityInfoComponent(title: "아껴 쓴 개수", category: .accua)
                     
                     Divider()
+                        .frame(height: 60)
                     
-                    Button(action: {
-                        myPageViewModel.myPageNaviPath.append(MyPageViewModel.MyPageNaviPaths.userLikedArticleList)
-                    }, label: {
-                        listButtonView(title: "내가 좋아요한 게시글 보기")
-                    })
+                    activityInfoComponent(title: "나눠 쓴 개수", category: .nanua)
                     
                     Divider()
+                        .frame(height: 60)
                     
-                    Button(action: {
-                        isShowingPolicyView.toggle()
-                    }, label: {
-                        listButtonView(title: "약관 및 정책")
-                    })
+                    activityInfoComponent(title: "바꿔 쓴 개수", category: .baccua)
                     
                     Divider()
+                        .frame(height: 60)
+                    
+                    activityInfoComponent(title: "다시 쓴 개수", category: .dasi)
                 }
-                .fullScreenCover(isPresented: $isShowingPolicyView) {
-                    SafariWebView(url: URL(string: "https://maru-study-note.tistory.com/")!)
-                        .ignoresSafeArea(edges: .bottom)
+                
+                if isSignedInUser {
+                    // Another Functions
+                    VStack(alignment: .leading) {
+                        Divider()
+                        
+                        Button(action: {
+                            coordinator.category = .accua
+                            coordinator.mypagePath.append(Page.userLikedContentView)
+                        }, label: {
+                            listButtonView(title: "내가 좋아요한 게시글 보기")
+                        })
+                        
+                        Divider()
+                        
+                        Button(action: {
+                            coordinator.category = .nanua
+                            coordinator.mypagePath.append(Page.userLikedContentView)
+                        }, label: {
+                            listButtonView(title: "내가 찜한 나눔・거래 보기")
+                                .padding(.bottom, -10)
+                        })
+                    }
                 }
-            }
-            
-            if isSignedInUser {
-                Spacer()
-            } else {
+                
                 Rectangle()
                     .fill(Color.gray50)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .ignoresSafeArea()
+            }
+            
+            if coordinator.isShowingToastView {
+                CustomToastView()
             }
         }
         .toolbarRole(.editor)
         .toolbar {
-            if !isSignedInUser {
+            if isSignedInUser {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        coordinator.mypagePath.append(Page.settingsView)
+                    }, label: {
+                        Image(systemName: "gearshape")
+                            .font(.system(size: 14))
+                    })
+                }
+            } else {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button(role: .destructive) {
-                            tradeViewModel.tradePath.append("tradeToReport")
+                            coordinator.reportType = .users
+                            coordinator.reportedObjectID = writerUser.id
+                            coordinator.appendPath(.reportView)
                         } label: {
                             Label("신고하기", systemImage: "exclamationmark.bubble")
                         }
@@ -155,25 +165,57 @@ struct UserPageView: View {
         
         .onAppear {
             isSignedInUser = myPageViewModel.checkSignInedUser(userID: writerUser.id)
+            
             Task {
-                userProfileImageData = await myPageViewModel.loadUserProfileImage(containerID: "",
-                                                                                  imagePath: myPageViewModel.user.profileImage)
+                myPageViewModel.user = await myPageViewModel.getUserInfo(userID: writerUser.id)
             }
         }
     }
     
-    private func activityInfoComponent(title: String, count: Int, category: ANBDCategory) -> some View {
-        NavigationLink(value: category) {
+    private var userProfileImage: some View {
+        AsyncImage(url: URL(string: myPageViewModel.user.profileImage)) { image in
+            image
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+        } placeholder: {
+            ProgressView()
+        }
+        .frame(width: 95, height: 95)
+        .clipShape(.circle)
+        .padding(.horizontal, 10)
+        .overlay(
+            Circle()
+                .stroke(.gray100, lineWidth: 1)
+        )
+        .id(refreshView)
+    }
+    
+    private func activityInfoComponent(title: String, category: ANBDCategory) -> some View {
+        Button(action: {
+            coordinator.category = category
+            coordinator.appendPath(.userActivityView)
+        }, label: {
             VStack(alignment: .center, spacing: 5) {
                 
                 Text("\(title)")
                     .foregroundStyle(Color.gray500)
                     .font(ANBDFont.SubTitle3)
                 
-                Text("\(count)")
-                    .font(ANBDFont.pretendardSemiBold(22))
+                Group {
+                    switch category {
+                    case .accua:
+                        Text("\(myPageViewModel.user.accuaCount)")
+                    case .nanua:
+                        Text("\(myPageViewModel.user.nanuaCount)")
+                    case .baccua:
+                        Text("\(myPageViewModel.user.baccuaCount)")
+                    case .dasi:
+                        Text("\(myPageViewModel.user.dasiCount)")
+                    }
+                }
+                .font(ANBDFont.pretendardSemiBold(22))
             }
-        }
+        })
     }
     
     private func listButtonView(title: String) -> some View {
@@ -192,20 +234,13 @@ extension UserPageView {
         case false: return "사용자 정보"
         }
     }
-    
-    private var userProfileImage: UIImage {
-        switch isSignedInUser {
-        case true:
-            return UIImage(data: userProfileImageData) ?? UIImage(named: "DefaultUserProfileImage")!
-        case false:
-            return UIImage(named: "DefaultUserProfileImage")!
-        }
-    }
 }
 
 #Preview {
     NavigationStack {
         UserPageView(writerUser: MyPageViewModel.mockUser)
             .environmentObject(MyPageViewModel())
+            .environmentObject(TradeViewModel())
+            .environmentObject(Coordinator())
     }
 }

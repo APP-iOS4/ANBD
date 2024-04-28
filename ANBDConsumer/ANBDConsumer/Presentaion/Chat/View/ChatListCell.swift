@@ -7,54 +7,67 @@
 
 import SwiftUI
 import ANBDModel
+import Kingfisher
 
 struct ChatListCell: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
     var channel: Channel
+    @State var otherUser: User?
     
     var body: some View {
         HStack {
             /// 유저 프로필
-            ZStack {
-                Circle()
-                    .fill(Color.gray100)
-                    .frame(width: 55)
+            if let otherUser {
+                KFImage(URL(string: otherUser.profileImage))
+                    .placeholder { _ in
+                        ProgressView()
+                    }
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .clipShape(Circle())
+                    .overlay(Circle().stroke(Color.gray, lineWidth: 0.2))
+                    .frame(width: 55 , height: 55)
+                    .padding(.trailing, 10)
                 
-                Text("🐳")
-                    .font(.system(size: 33))
-            }
-            .padding(.trailing, 10)
-            
-            /// 유저 닉넴 · 마지막 메시지
-            VStack(alignment: .leading) {
-                Text(chatViewModel.getOtherUserNickname(channel: channel))
-                    .foregroundStyle(Color.gray900)
-                    .font(ANBDFont.SubTitle2)
                 
-                Spacer()
                 
-                Text(channel.lastMessage)
-                    .lineLimit(1)
-                    .foregroundStyle(Color.gray400)
-                    .font(ANBDFont.body2)
-            }
-            .padding(.vertical, 12)
-            
-            Spacer()
-            
-            /// 날짜 · 뱃지
-            VStack(alignment: .trailing) {
-                Text(channel.lastDateString)
-                    .foregroundStyle(Color.gray400)
-                    .font(ANBDFont.Caption1)
-                
-                Spacer()
-                
-                if chatViewModel.getUnreadCount(channel: channel) > 0 {
-                    unreadMessageBage
+                /// 유저 닉넴 · 마지막 메시지
+                VStack(alignment: .leading) {
+                    Text(otherUser.nickname)
+                        .foregroundStyle(Color.gray900)
+                        .font(ANBDFont.SubTitle2)
+                    
+                    Spacer()
+                    
+                    Text(channel.lastMessage)
+                        .lineLimit(1)
+                        .foregroundStyle(Color.gray400)
+                        .font(ANBDFont.body2)
                 }
+                .padding(.vertical, 12)
+                
+                Spacer()
+                
+                /// 날짜 · 뱃지
+                VStack(alignment: .trailing) {
+                    Text(channel.lastDateString)
+                        .foregroundStyle(Color.gray400)
+                        .font(ANBDFont.Caption1)
+                    
+                    Spacer()
+                    
+                    if chatViewModel.getUnreadCount(channel: channel) > 0 {
+                        unreadMessageBage
+                    }
+                }
+                .padding(.vertical, 9)
             }
-            .padding(.vertical, 9)
+        }
+        .onAppear {
+            Task {
+                otherUser = await chatViewModel.getOtherUser(channel:channel)
+            }
+            
         }
         .frame(height: 70)
     }
@@ -80,7 +93,7 @@ struct ChatListCell: View {
                                       lastSendId: "",
                                       unreadCount: 13,
                                       tradeId: ""))
-            .padding(.vertical, 5)
+        .padding(.vertical, 5)
     }
     .padding(20)
     .environmentObject(ChatViewModel())

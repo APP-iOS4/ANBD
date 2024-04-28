@@ -17,6 +17,7 @@ protocol UserDataSource {
     func checkUser(email: String) async throws
     func checkUser(nickname: String) async throws
     func updateUserInfo(user: User) async throws
+    func updateUserFCMToken(userID: String, fcmToken: String) async throws
     func updateUserPostCount(user: User) async throws
     func updateUserInfoList(articleID: String) async throws
     func updateUserInfoList(tradeID: String) async throws
@@ -123,6 +124,15 @@ final class DefaultUserDataSource: UserDataSource {
         ])
         else {
             throw DBError.updateUserDocumentError
+        }
+    }
+    
+    func updateUserFCMToken(userID: String, fcmToken: String) async throws {
+        guard let _ = try? await userDB.document(userID).updateData([
+            "fcmToken": fcmToken
+        ])
+        else {
+            throw DBError.updateDocumentError
         }
     }
     

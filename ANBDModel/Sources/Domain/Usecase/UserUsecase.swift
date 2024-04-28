@@ -14,6 +14,7 @@ public protocol UserUsecase {
     func refreshAllUserInfoList(limit: Int) async throws -> [User]
     func checkDuplicatedNickname(nickname: String) async -> Bool
     func updateUserInfo(user: User) async throws
+    func updateUserFCMToken(userID: String, fcmToken: String) async throws
     func updateUserPostCount(user: User,
                              before: ANBDCategory,
                              after: ANBDCategory) async throws
@@ -49,6 +50,13 @@ public struct DefaultUserUsecase: UserUsecase {
     /// User의 정보를 수정한다. (profile, level)
     public func updateUserInfo(user: User) async throws {
         try await userRepository.updateUserInfo(user: user)
+    }
+    
+    public func updateUserFCMToken(userID: String, fcmToken: String) async throws {
+        if userID.isEmpty { throw UserError.invalidUserID }
+        if fcmToken.isEmpty { throw NSError(domain: "invalid fcmToken", code: 4444) }
+        
+        try await userRepository.updateUserFCMToken(userID: userID, fcmToken: fcmToken)
     }
     
     public func updateUserProfile(user: User, profileImage: Data?) async throws {

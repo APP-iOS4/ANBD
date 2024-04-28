@@ -181,7 +181,7 @@ final class TradeViewModel: ObservableObject {
     //MARK: - UPDATE
     
     @MainActor
-    func updateTrade(category: ANBDCategory, title: String, content: String, myProduct: String, wantProduct: String, images: [Data]) async {
+    func updateTrade(category: ANBDCategory, title: String, content: String, myProduct: String, wantProduct: String, addImages: [Data], deletedImagesIndex: [Int]) async {
         
         let user = UserStore.shared.user
         let originCategory = self.trade.category
@@ -198,15 +198,22 @@ final class TradeViewModel: ObservableObject {
             self.trade.wantProduct = "제시"
         }
         
+        //삭제된 이미지
+        var deletedImages: [String] = []
+        for i in deletedImagesIndex {
+            deletedImages.append(self.trade.imagePaths[i])
+            self.trade.imagePaths.remove(at: i)
+        }
+        
         //이미지 리사이징
         var newImages: [Data] = []
-        for image in images {
+        for image in addImages {
             let imageData = await UIImage(data: image)?.byPreparingThumbnail(ofSize: .init(width: 1024, height: 1024))?.jpegData(compressionQuality: 0.5)
             newImages.append(imageData ?? Data())
         }
         
         do {
-            // try await tradeUseCase.updateTrade(trade: self.trade, imageDatas: newImages)
+            try await tradeUseCase.updateTrade(trade: self.trade, add: newImages, delete: deletedImages)
             try await userUseCase.updateUserPostCount(user: user, before: originCategory, after: trade.category)
             trade = try await tradeUseCase.loadTrade(tradeID: trade.id)
             await UserStore.shared.updateLocalUserInfo()

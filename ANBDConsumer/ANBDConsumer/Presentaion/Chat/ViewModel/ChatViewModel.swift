@@ -30,7 +30,7 @@ final class ChatViewModel: ObservableObject {
     @Published var totalUnreadCount: Int = 0
     
     //채팅방 내부에 필요한 변수
-    var selectedUser: User = User(id: "", nickname: "(알수없음)", email: "", favoriteLocation: .seoul, isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
+    var selectedUser: User = User(id: "", nickname: "(알수없음)", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
     
     var selectedTrade: Trade?
     var selectedChannel: Channel?
@@ -141,7 +141,7 @@ final class ChatViewModel: ObservableObject {
             self.selectedTrade = nil
         }
         catch {
-            self.selectedUser = User(id: "", nickname: "(알수없음)", email: "", favoriteLocation: .seoul, isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
+            self.selectedUser = User(id: "", nickname: "(알수없음)", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
         }
     }
     
@@ -158,7 +158,7 @@ final class ChatViewModel: ObservableObject {
             return otherUser
         } catch {
             print("getOtherUser error: \(error)")
-            return User(id: "", nickname: "알수없음", email: "", favoriteLocation: .seoul, isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
+            return User(id: "", nickname: "알수없음", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
         }
     }
     

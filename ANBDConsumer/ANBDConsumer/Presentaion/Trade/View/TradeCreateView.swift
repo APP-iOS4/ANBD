@@ -28,6 +28,7 @@ struct TradeCreateView: View {
     @State private var selectedItems: [PhotosPickerItem] = []
     @State private var tmpSelectedData: [Data] = []
     @State private var selectedPhotosData: [Data] = []
+    @State private var deletedPhotosData: [Int] = []
     
     //@State private var itemCategory
     private var mustTextFields: [String] {[
@@ -50,6 +51,7 @@ struct TradeCreateView: View {
                         self.isFinished = true
                     }
                 })
+            
                 .onChange(of: selectedPhotosData, {
                     if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
                         self.isFinished = false
@@ -59,16 +61,17 @@ struct TradeCreateView: View {
                     
                     isCancelable = false
                 })
-                .onChange(of: tmpSelectedData, {
-                    if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
-                        self.isFinished = false
-                    } else {
-                        self.isFinished = true
-                    }
-                    
-                    isCancelable = false
-                })
             
+                .onChange(of: tmpSelectedData, {
+                    if tmpSelectedData.count != tradeViewModel.trade.imagePaths.count {
+                        if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
+                            self.isFinished = false
+                        } else {
+                            self.isFinished = true
+                        }
+                        isCancelable = false
+                    }
+                })
             
         } else {
             wholeView
@@ -79,6 +82,7 @@ struct TradeCreateView: View {
                         self.isFinished = true
                     }
                 }
+            
                 .onChange(of: selectedPhotosData) { _ in
                     if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
                         self.isFinished = false
@@ -88,14 +92,16 @@ struct TradeCreateView: View {
                     
                     isCancelable = false
                 }
+            
                 .onChange(of: tmpSelectedData) { _ in
-                    if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
-                        self.isFinished = false
-                    } else {
-                        self.isFinished = true
+                    if tmpSelectedData.count != tradeViewModel.trade.imagePaths.count {
+                        if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
+                            self.isFinished = false
+                        } else {
+                            self.isFinished = true
+                        }
+                        isCancelable = false
                     }
-                    
-                    isCancelable = false
                 }
         }
     }
@@ -112,22 +118,25 @@ fileprivate extension TradeCreateView {
                     Button(action: {
                         endTextEditing()
                         
-                        // 수정: 바뀐 정보가 없다면 backAlert X
+                        // 수정: 바뀐 정보가 있다면 backAlert
                         if let trade = trade {
-                            if title != trade.title || content != trade.content || category != trade.category || myProduct != trade.myProduct || self.itemCategory != trade.itemCategory || self.location != trade.location {
+                            if self.title != trade.title || self.content != trade.content || self.category != trade.category || self.myProduct != trade.myProduct || tradeViewModel.selectedItemCategory != trade.itemCategory || tradeViewModel.selectedLocation != trade.location {
                                 isCancelable = false
+                            } else {
+                                isFinished = false
+                            }
+                        } else {
+                            // 새로 작성: 쓰여진 필드가 있다면 backAleart
+                            for item in mustTextFields {
+                                if item != "" {
+                                    isCancelable = false
+                                }
                             }
                         }
-                        
-                        for item in mustTextFields {
-                            if item != "" {
-                                isCancelable = false
-                            }
-                        }
-                        
+ 
                         if isCancelable {
                             //지역은 user 선호 지역으로 선택되게
-                            tradeViewModel.selectedLocation = .seoul
+                            tradeViewModel.selectedLocation = UserStore.shared.user.favoriteLocation
                             tradeViewModel.selectedItemCategory = .digital
                             isShowingCreate.toggle()
                         } else {
@@ -309,11 +318,9 @@ fileprivate extension TradeCreateView {
                                 tradeViewModel.selectedItemCategory = .digital
                             }
                         } else {
-                            selectedPhotosData += tmpSelectedData
-                            
                             if trade != nil {
                                 Task {
-                                    await tradeViewModel.updateTrade(category: category, title: title, content: content, myProduct: myProduct, wantProduct: wantProduct, images: selectedPhotosData)
+                                    await tradeViewModel.updateTrade(category: category, title: title, content: content, myProduct: myProduct, wantProduct: wantProduct, addImages: selectedPhotosData, deletedImagesIndex: deletedPhotosData)
                                     
                                     tradeViewModel.selectedLocation = .seoul
                                     tradeViewModel.selectedItemCategory = .digital
@@ -349,10 +356,12 @@ fileprivate extension TradeCreateView {
                 self.category = trade.category
                 self.wantProduct = trade.wantProduct ?? ""
                 self.content = trade.content
+                self.itemCategory = trade.itemCategory
+                self.location = trade.location
                 Task {
                     tmpSelectedData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: trade.id, imagePath: trade.imagePaths)
                 }
-                self.isFinished = false
+                //self.isFinished = false
             }
         }
         .onTapGesture {
@@ -371,7 +380,7 @@ fileprivate extension TradeCreateView {
                         .font(.system(size: 25))
                         .foregroundStyle(.gray)
                         .padding(3)
-                    Text("\(selectedItems.count) / 5")
+                    Text("\(selectedItems.count + tmpSelectedData.count) / 5")
                         .foregroundStyle(.gray)
                         .font(.system(size: 15))
                 }//VStack
@@ -410,8 +419,9 @@ fileprivate extension TradeCreateView {
                                 .foregroundStyle(.white)
                                 .frame(width: 20, height:20)
                                 .onTapGesture {
-                                    
                                     if let idx = tmpSelectedData.firstIndex(of: photoData) {
+                                        //deletedPhotosData.append(tmpSelectedData[idx])
+                                        deletedPhotosData.append(idx)
                                         tmpSelectedData.remove(at: idx)
                                     }
                                 }
@@ -439,12 +449,10 @@ fileprivate extension TradeCreateView {
                                 .foregroundStyle(.white)
                                 .frame(width: 20, height:20)
                                 .onTapGesture {
-                                    
                                     if let idx = selectedPhotosData.firstIndex(of: photoData) {
                                         selectedPhotosData.remove(at: idx)
                                         selectedItems.remove(at: idx)
                                     }
-                                    
                                 }
                         }
                     }

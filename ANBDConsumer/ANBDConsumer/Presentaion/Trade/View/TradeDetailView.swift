@@ -236,24 +236,24 @@ extension TradeDetailView {
                 
                 VStack(alignment: .leading, spacing: 5) {
                     HStack {
-                        Text("줄 것")
-                            .foregroundStyle(.gray400)
-                            .font(ANBDFont.SubTitle3)
-                        Text("\(tradeViewModel.trade.myProduct)")
-                            .font(ANBDFont.SubTitle2)
-                        
-                    }
-                    HStack {
-                        if let want = tradeViewModel.trade.wantProduct {
+                        VStack(alignment: .leading) {
+                            Text("줄 것")
+                                .foregroundStyle(.gray400)
+                                .font(ANBDFont.SubTitle3)
                             Text("받을 것")
                                 .foregroundStyle(.gray400)
                                 .font(ANBDFont.SubTitle3)
-                            Text("\(want)") //8자 제한주기
+                        }
+                        VStack(alignment: .leading) {
+                            Text("\(tradeViewModel.trade.myProduct)")
                                 .font(ANBDFont.SubTitle2)
-                            
-                        } else {
-                            Text("제시")
-                                .font(ANBDFont.SubTitle2)
+                            if let want = tradeViewModel.trade.wantProduct {
+                                Text("\(want)")
+                                    .font(ANBDFont.SubTitle2)
+                            } else {
+                                Text("제시")
+                                    .font(ANBDFont.SubTitle2)
+                            }
                         }
                     }
                 }

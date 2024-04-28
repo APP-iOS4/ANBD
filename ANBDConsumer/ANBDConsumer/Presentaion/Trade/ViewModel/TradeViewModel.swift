@@ -206,7 +206,7 @@ final class TradeViewModel: ObservableObject {
         }
         
         do {
-            try await tradeUseCase.updateTrade(trade: self.trade, imageDatas: newImages)
+            // try await tradeUseCase.updateTrade(trade: self.trade, imageDatas: newImages)
             try await userUseCase.updateUserPostCount(user: user, before: originCategory, after: trade.category)
             trade = try await tradeUseCase.loadTrade(tradeID: trade.id)
             await UserStore.shared.updateLocalUserInfo()

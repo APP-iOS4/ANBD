@@ -146,7 +146,7 @@ final class ArticleViewModel: ObservableObject {
         }
         
         do {
-            try await articleUseCase.updateArticle(article: self.article, imageDatas: newImages)
+            // try await articleUseCase.updateArticle(article: self.article, imageDatas: newImages)
             try await userUsecase.updateUserPostCount(user: user, before: originCategory, after: category)
             article = try await articleUseCase.loadArticle(articleID: article.id)
             await UserStore.shared.updateLocalUserInfo()

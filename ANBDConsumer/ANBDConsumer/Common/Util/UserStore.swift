@@ -19,6 +19,7 @@ final class UserStore: ObservableObject {
                                email: "",
                                favoriteLocation: .seoul,
                                userLevel: .consumer,
+                               fcmToken: "",
                                isOlderThanFourteen: false,
                                isAgreeService: false,
                                isAgreeCollectInfo: false,

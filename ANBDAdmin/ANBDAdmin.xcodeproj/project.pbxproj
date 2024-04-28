@@ -38,6 +38,7 @@
 		82318E892BD5B5360071DB7A /* ANBDFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82318E652BD5B5360071DB7A /* ANBDFont.swift */; };
 		82318E8A2BD5B5360071DB7A /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82318E662BD5B5360071DB7A /* DateFormatter.swift */; };
 		82318E8B2BD5B5360071DB7A /* UserDefaultsClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82318E672BD5B5360071DB7A /* UserDefaultsClient.swift */; };
+		8244A0382BDE950500A91852 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8244A0372BDE950500A91852 /* GoogleService-Info.plist */; };
 		825EC3062BDA484D00BED004 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 825EC3052BDA484D00BED004 /* GoogleService-Info.plist */; };
 		825EC3082BDA506900BED004 /* CopyableText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825EC3072BDA506900BED004 /* CopyableText.swift */; };
 		825EC30A2BDB983700BED004 /* EmptyInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825EC3092BDB983700BED004 /* EmptyInfoView.swift */; };
@@ -79,6 +80,7 @@
 		82318E652BD5B5360071DB7A /* ANBDFont.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ANBDFont.swift; sourceTree = "<group>"; };
 		82318E662BD5B5360071DB7A /* DateFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateFormatter.swift; sourceTree = "<group>"; };
 		82318E672BD5B5360071DB7A /* UserDefaultsClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaultsClient.swift; sourceTree = "<group>"; };
+		8244A0372BDE950500A91852 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		825EC3052BDA484D00BED004 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		825EC3072BDA506900BED004 /* CopyableText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyableText.swift; sourceTree = "<group>"; };
 		825EC3092BDB983700BED004 /* EmptyInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyInfoView.swift; sourceTree = "<group>"; };
@@ -243,6 +245,7 @@
 				82318E602BD5B5360071DB7A /* Font */,
 				82318E612BD5B5360071DB7A /* Assets.xcassets */,
 				82318E622BD5B5360071DB7A /* Colors.xcassets */,
+				8244A0372BDE950500A91852 /* GoogleService-Info.plist */,
 				825EC3052BDA484D00BED004 /* GoogleService-Info.plist */,
 			);
 			path = Resource;
@@ -371,6 +374,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				82318E822BD5B5360071DB7A /* Pretendard-Bold.otf in Resources */,
+				8244A0382BDE950500A91852 /* GoogleService-Info.plist in Resources */,
 				82318E842BD5B5360071DB7A /* Pretendard-Regular.otf in Resources */,
 				82318E832BD5B5360071DB7A /* Pretendard-Medium.otf in Resources */,
 				82318E872BD5B5360071DB7A /* Colors.xcassets in Resources */,

@@ -9,7 +9,6 @@ import SwiftUI
 import ANBDModel
 
 struct TradeStateChangeView: View {
-    //@Binding var isTrading: Bool
     @Binding var tradeState: TradeState
     @State private var isShowingConfirm: Bool = false
     @Binding var isShowingCustomAlert: Bool
@@ -22,7 +21,6 @@ struct TradeStateChangeView: View {
             HStack {
                 Text("\(tradeState.description)")
                     .font(ANBDFont.pretendardSemiBold(fontSize))
-//                    .font(ANBDFont.SubTitle3)
                 
                 Image(systemName: "chevron.down")
                     .resizable()

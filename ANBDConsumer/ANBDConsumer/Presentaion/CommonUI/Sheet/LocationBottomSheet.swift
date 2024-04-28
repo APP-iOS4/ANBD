@@ -25,6 +25,7 @@ struct LocationBottomSheet: View {
                     
                 Spacer()
             }
+            .padding(.bottom, 5)
             
             ScrollView {
                 ForEach(Location.allCases, id: \.self) { item in
@@ -52,10 +53,10 @@ struct LocationBottomSheet: View {
                 }, label: {
                     ZStack {
                         RoundedRectangle(cornerRadius: 10)
-                            .fill(.gray100)
+                            .fill(.gray300)
                         
                         Text("초기화")
-                            .foregroundStyle(.gray900)
+                            .foregroundStyle(.white)
                     }
                 })
                 .padding(.trailing, 40)

@@ -63,6 +63,7 @@ struct CustomAlertView: View {
                                         .frame(height: 45)
                                     
                                     Text("취소하기")
+                                        .foregroundStyle(.white)
                                 }
                             })
                             .padding(.leading, 15)
@@ -202,7 +203,7 @@ extension CustomAlertView {
             return "확인"
         case .changeState:
             return "변경하기"
-        case .tradeDelete, .writingCancel, .articleDelete, .commentDelete:
+        case .tradeDelete, .articleDelete, .commentDelete:
             return "삭제하기"
         case .articleEdit, .commentEdit, .articleCreate:
             return "취소하기"
@@ -210,14 +211,16 @@ extension CustomAlertView {
             return "신고하기"
         case .editingCancel:
             return "그만두기"
+        case .writingCancel:
+            return "돌아가기"
         }
     }
     
     private var confirmButtonColor: Color {
         switch viewType {
-        case .leaveChatRoom, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .imageSelelct, .signOut, .editingCancel:
+        case .leaveChatRoom, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .imageSelelct, .signOut, .editingCancel, .writingCancel:
             return .accent
-        case .withdrawal, .tradeDelete, .writingCancel, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .articleCreate:
+        case .withdrawal, .tradeDelete, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .articleCreate:
             return .heartRed
         }
     }

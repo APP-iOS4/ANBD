@@ -17,7 +17,7 @@ struct ChatDetailView: View {
     /// 채팅방 구분 변수
     @State var channel: Channel? = nil
     @State var trade: Trade? = nil
-//    @State private var imageData: Data?
+    //    @State private var imageData: Data?
     @State private var tradeState: TradeState = .trading
     
     /// 보낼 메시지 관련 변수
@@ -42,8 +42,9 @@ struct ChatDetailView: View {
                 Divider()
                 
                 /// message 내역
-                if let channel = chatViewModel.selectedChannel {
-                    ScrollView {
+                ScrollView {
+                    if let channel = chatViewModel.selectedChannel {
+                        
                         LazyVStack {
                             ForEach(chatViewModel.groupedMessages, id: \.day) { day, messages in
                                 
@@ -73,12 +74,13 @@ struct ChatDetailView: View {
                                     }
                                 }
                         }
-                    }
-                    .rotationEffect(Angle(degrees: 180))
-                    .scaleEffect(x: -1.0, y: 1.0, anchor: .center)
-                    .onChange(of: chatViewModel.messages) { message in
-                        Task {
-                            try await chatViewModel.resetUnreadCount(channelID: channel.id)
+                        
+                        .rotationEffect(Angle(degrees: 180))
+                        .scaleEffect(x: -1.0, y: 1.0, anchor: .center)
+                        .onChange(of: chatViewModel.messages) { message in
+                            Task {
+                                try await chatViewModel.resetUnreadCount(channelID: channel.id)
+                            }
                         }
                     }
                 }

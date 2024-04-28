@@ -234,7 +234,7 @@ struct ArticleCreateView: View {
                 } label: {
                     Text("완료")
                 }
-                .disabled(title.isEmpty || content.isEmpty || selectedImageData.isEmpty)
+                .disabled(title.isEmpty || content.isEmpty || selectedImageData.isEmpty || title == article?.title && content == article?.content && category == article?.category)
             }
             
             ToolbarItem(placement: .cancellationAction) {

@@ -26,7 +26,9 @@ public protocol TradeUsecase {
                                   itemCategory: [ItemCategory]?,
                                   limit: Int?) async throws -> [Trade]
     func refreshSearchTradeList(keyword: String, limit: Int?) async throws -> [Trade]
-    func updateTrade(trade: Trade, imageDatas: [Data]) async throws
+    func updateTrade(trade: Trade, 
+                     add images: [Data],
+                     delete paths: [String]) async throws
     func updateTradeState(tradeID: String, tradeState: TradeState) async throws
     func likeTrade(tradeID: String) async throws
     func deleteTrade(trade: Trade) async throws
@@ -48,6 +50,10 @@ public struct DefaultTradeUsecase: TradeUsecase {
     public func writeTrade(trade: Trade, imageDatas: [Data]) async throws {
         guard trade.category == .nanua || trade.category == .baccua else {
             throw TradeError.invalidCategory
+        }
+        
+        if trade.title.isEmpty || trade.content.isEmpty {
+            throw TradeError.invalidTitleContentField
         }
         
         if imageDatas.isEmpty {
@@ -222,16 +228,28 @@ public struct DefaultTradeUsecase: TradeUsecase {
     /// - Parameters:
     ///   - trade: 수정한 Trade 정보
     ///   - imageDatas: 수정한 Trade의 이미지 Data 배열
-    public func updateTrade(trade: Trade, imageDatas: [Data]) async throws {
+    public func updateTrade(
+        trade: Trade,
+        add images: [Data],
+        delete paths: [String]
+    ) async throws {
         guard trade.category == .nanua || trade.category == .baccua else {
             throw TradeError.invalidCategory
+        }
+        
+        if trade.id.isEmpty {
+            throw TradeError.invalidTradeIDField
         }
         
         if trade.category == .baccua && trade.wantProduct == nil {
             throw TradeError.invalidWantProductField
         }
         
-        try await tradeRepository.updateTrade(trade: trade, imageDatas: imageDatas)
+        try await tradeRepository.updateTrade(
+            trade: trade,
+            add: images,
+            delete: paths
+        )
     }
     
     
@@ -264,6 +282,10 @@ public struct DefaultTradeUsecase: TradeUsecase {
     /// - Parameters:
     ///   - trade: 삭제하려는 trade의 정보
     public func deleteTrade(trade: Trade) async throws {
+        if trade.id.isEmpty {
+            throw TradeError.invalidTradeIDField
+        }
+        
         try await tradeRepository.deleteTrade(trade: trade)
     }
     

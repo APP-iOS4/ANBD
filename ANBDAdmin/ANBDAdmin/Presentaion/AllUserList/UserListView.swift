@@ -7,7 +7,7 @@
 
 import SwiftUI
 import ANBDModel
-import CachedAsyncImage
+import Kingfisher
 
 struct UserListView: View {
     @StateObject private var userListViewModel = UserListViewModel()
@@ -25,7 +25,7 @@ struct UserListView: View {
                 .onSubmit {
                     if !searchUserText.isEmpty {
                         Task {
-                            await userListViewModel.searchUser(userID: searchUserText)
+                            await userListViewModel.searchUser(userID:searchUserText)
                         }
                     }
                 }
@@ -35,28 +35,21 @@ struct UserListView: View {
                     Text("닉네임")
                         .font(.title3)
                 }
-                .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
+                .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                 Divider()
                 Spacer()
                 VStack(alignment: .leading) {
                     Text("이메일")
                         .font(.title3)
                 }
-                .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
-                Divider()
-                Spacer()
-                VStack(alignment: .leading) {
-                    Text("유저권한")
-                        .font(.title3)
-                }
-                .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
+                .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                 Divider()
                 Spacer()
                 VStack(alignment: .leading) {
                     Text("프로필 사진")
                         .font(.title3)
                 }
-                .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
+                .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: 30)
@@ -73,42 +66,38 @@ struct UserListView: View {
                                 VStack(alignment: .leading) {
                                     Text("\(user.nickname)")
                                         .font(.title3)
+                                        .lineLimit(2)
                                         .foregroundColor(.black)
                                 }
-                                .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
+                                .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
                                     Text("\(user.email)")
                                         .foregroundColor(.black)
                                 }
-                                .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
-                                Divider()
-                                Spacer()
-                                VStack(alignment: .leading) {
-                                    Text("\(user.userLevel)")
-                                        .foregroundColor(.black)
-                                }
-                                .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
+                                .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
                                     if let imageUrl = URL(string: user.profileImage) {
-                                        CachedAsyncImage(url: imageUrl) { phase in
-                                            switch phase {
-                                            case .empty:
+                                        KFImage(imageUrl)
+                                            .placeholder {
+                                                // Placeholder while downloading.
                                                 ProgressView()
-                                            case .success(let image):
-                                                image.resizable().frame(width: 40, height: 40)
-                                            case .failure:
-                                                Text("Failed to load image")
-                                            @unknown default:
-                                                EmptyView()
                                             }
-                                        }
+                                            .resizable()
+                                            .cacheOriginalImage()
+                                            .fade(duration: 1)
+                                            .onFailure { e in
+                                                print("Job failed: \(e.localizedDescription)")
+                                            }
+                                            .resizable()
+                                            .frame(width: 40, height: 40)
+                                            .cornerRadius(20)
                                     }
                                 }
-                                .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
+                                .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Spacer()
                             }
                             .frame(maxWidth: .infinity, minHeight: 50)
@@ -117,11 +106,27 @@ struct UserListView: View {
                             .padding(.horizontal)
                         }
                     }
+                    if !userListViewModel.userList.isEmpty {
+                        Text("List End")
+                            .foregroundColor(.gray)
+                            .onAppear {
+                                userListViewModel.loadMoreUsers()
+                            }
+                    }
                 }
                 .onAppear {
-                    userListViewModel.loadUsers()
+                    userListViewModel.firstLoadUsers()
                 }
                 .navigationBarTitle("유저 목록")
+                .toolbar {
+                    Button(action: {
+                        self.searchUserText = ""
+                        userListViewModel.userList = []
+                        userListViewModel.firstLoadUsers()
+                    }) {
+                        Image(systemName: "arrow.clockwise")
+                    }
+                }
             }
             .padding(.top, 10)
             .background(Color(.systemGroupedBackground))

@@ -7,14 +7,15 @@
 
 import SwiftUI
 import ANBDModel
+import Kingfisher
 
 struct TradeDetailView: View {
-    @EnvironmentObject private var homeViewModel: HomeViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @EnvironmentObject private var chatViewModel: ChatViewModel
-    // @EnvironmentObject private var myPageViewMode: MyPageViewModel
+    @EnvironmentObject private var myPageViewModel: MyPageViewModel
+    @EnvironmentObject private var coordinator: Coordinator
+
     @State var trade: Trade
-    var anbdViewType: ANBDViewType = .trade
     
     @State private var isShowingCreat: Bool = false
     @State private var isGoingToProfileView: Bool = false
@@ -27,9 +28,9 @@ struct TradeDetailView: View {
     @State private var detailImage: Image = Image("DummyPuppy1")
     @State private var imageData: [Data] = []
     
-    // @State private var writerUser: User?
+    @State private var writerUser: User?
+    @State private var user = UserStore.shared.user
     
-    //임시..
     @State private var isLiked: Bool = false
     
     var body: some View {
@@ -59,14 +60,32 @@ struct TradeDetailView: View {
                         
                         //작성자 이미지, 닉네임, 작성시간
                         HStack {
-//                            NavigationLink(value: writerUser) {
-//                                Image(.dummyImage1)
-//                                    .resizable()
-//                                    .frame(width: 40, height: 40)
-//                                    .scaledToFill()
-//                                    .clipShape(Circle())
-//                            }
-
+                            if let writerUser {
+                                KFImage(URL(string: writerUser.profileImage))
+                                    .placeholder({ _ in
+                                        ProgressView()
+                                            .frame(width: 40, height: 40)
+                                    })
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 40, height: 40)
+                                    .clipShape(Circle())
+                                    .onTapGesture {
+                                        coordinator.user = writerUser
+                                        switch coordinator.selectedTab {
+                                        case .home, .article, .trade, .chat:
+                                            if coordinator.isFromUserPage {
+                                                coordinator.pop(2)
+                                            } else {
+                                                coordinator.appendPath(.userPageView)
+                                            }
+                                            coordinator.isFromUserPage.toggle()
+                                        case .mypage:
+                                            coordinator.pop(coordinator.mypagePath.count)
+                                        }
+                                    }
+                            }
+                            
                             VStack(alignment: .leading) {
                                 Text("\(tradeViewModel.trade.writerNickname)")
                                     .font(ANBDFont.SubTitle1)
@@ -79,11 +98,10 @@ struct TradeDetailView: View {
                             
                             Spacer()
                             
-                            if let user = UserDefaultsClient.shared.userInfo {
-                                if user.id == tradeViewModel.trade.writerID {
-                                    TradeStateChangeView(tradeState: $tradeViewModel.trade.tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert, fontSize: 17)
-                                }
+                            if user.id == tradeViewModel.trade.writerID {
+                                TradeStateChangeView(tradeState: tradeViewModel.trade.tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert, fontSize: 17)
                             }
+                            
                         }//HStack
                         .padding(5)
                         .padding(.horizontal, 5)
@@ -125,32 +143,30 @@ struct TradeDetailView: View {
                     Task {
                         print("삭제!")
                         await tradeViewModel.deleteTrade(trade: tradeViewModel.trade)
-                        await tradeViewModel.reloadAllTrades()
+                        await tradeViewModel.reloadFilteredTrades(category: trade.category)
                         self.dismiss()
                     }
                 }
             }
+            
+            /// 토스트 뷰
+            if coordinator.isShowingToastView {
+                VStack {
+                    CustomToastView()
+                    
+                    Spacer()
+                }
+            }
         }//ZStack
         .onAppear {
-            //tradeViewModel.getOneTrade(trade: trade)
+            tradeViewModel.getOneTrade(trade: trade)
+            isLiked = user.likeTrades.contains(tradeViewModel.trade.id)
             Task {
-                // writerUser = await myPageViewMode.getUserInfo(userID: trade.writerID)
-                imageData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: trade.id, imagePath: trade.imagePaths)
+                writerUser = await myPageViewModel.getUserInfo(userID: tradeViewModel.trade.writerID)
+                imageData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: tradeViewModel.trade.id, imagePath: tradeViewModel.trade.imagePaths)
             }
         }
         .toolbar(.hidden, for: .tabBar)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    isShowingConfirm.toggle()
-                }) {
-                    Image(systemName: "ellipsis")
-                        .font(.system(size: 13))
-                        .rotationEffect(.degrees(90))
-                        .foregroundStyle(.gray900)
-                }
-            }
-        }
         .fullScreenCover(isPresented: $isShowingCreat) {
             TradeCreateView(isShowingCreate: $isShowingCreat, isNewProduct: false, trade: tradeViewModel.trade)
         }
@@ -160,35 +176,36 @@ struct TradeDetailView: View {
         .navigationTitle("나눔 · 거래")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarRole(.editor)
-        .confirmationDialog("", isPresented: $isShowingConfirm) {
-            if let user = UserDefaultsClient.shared.userInfo {
-                if user.id == tradeViewModel.trade.writerID {
-                    Button("수정하기") {
-                        isShowingCreat.toggle()
-                        tradeViewModel.selectedLocation = tradeViewModel.trade.location
-                        tradeViewModel.selectedItemCategory = tradeViewModel.trade.itemCategory
-                    }
-                    
-                    Button("삭제하기", role: .destructive) {
-                        isShowingDeleteCustomAlert.toggle()
-                    }
-                } else {
-                    Button("신고하기", role: .destructive) {
-                        homeViewModel.reportType = .trade
-                        chatViewModel.reportType = .trade
-                        
-                        homeViewModel.reportedObjectID = trade.id
-                        chatViewModel.reportedObjectID = trade.id
-                        
-                        switch anbdViewType {
-                        case .home:
-                            homeViewModel.homePath.append(ANBDNavigationPaths.reportView)
-                        case .trade:
-                            tradeViewModel.tradePath.append(ANBDNavigationPaths.reportView)
-                        case .chat:
-                            chatViewModel.chatPath.append(ANBDNavigationPaths.reportView)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    if user.id != tradeViewModel.trade.writerID {
+                        Button(role: .destructive) {
+                            coordinator.reportType = .trade
+                            coordinator.reportedObjectID = trade.id
+                            coordinator.appendPath(.reportView)
+                        } label: {
+                            Label("신고하기", systemImage: "exclamationmark.bubble")
+                        }
+                    } else {
+                        Button {
+                            isShowingCreat.toggle()
+                            tradeViewModel.selectedLocation = tradeViewModel.trade.location
+                            tradeViewModel.selectedItemCategory = tradeViewModel.trade.itemCategory
+                        } label: {
+                            Label("수정하기", systemImage: "square.and.pencil")
+                        }
+                        Button(role: .destructive) {
+                            isShowingDeleteCustomAlert.toggle()
+                        } label: {
+                            Label("삭제하기", systemImage: "trash")
                         }
                     }
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(ANBDFont.pretendardRegular(12))
+                        .rotationEffect(.degrees(90))
+                        .foregroundStyle(.gray900)
                 }
             }
         }
@@ -198,72 +215,84 @@ struct TradeDetailView: View {
 extension TradeDetailView {
     private var bottomView: some View {
         HStack {
-            Image(systemName: isLiked ? "heart": "heart.fill")
+            Image(systemName: !isLiked ? "heart": "heart.fill")
                 .font(.system(size: 30))
-                .foregroundStyle(isLiked ? .gray800 : .heartRed)
+                .foregroundStyle(!isLiked ? .gray800 : .heartRed)
                 .padding(.leading, 15)
                 .onTapGesture {
+                    Task {
+                        await tradeViewModel.updateLikeTrade(trade: tradeViewModel.trade)
+                    }
                     isLiked.toggle()
                 }
                 .padding()
                 .padding(.leading, -10)
             
-            VStack(alignment: .leading) {
+            switch tradeViewModel.trade.category {
+            case .nanua:
+                Text("\(tradeViewModel.trade.myProduct)")
+                    .font(ANBDFont.SubTitle1)
+            case .baccua:
                 
-                switch tradeViewModel.trade.category {
-                case .nanua:
-                    Text("나눠쓰기")
-                        .fontWeight(.bold)
-                    Text("\(tradeViewModel.trade.myProduct)")
-                case .baccua:
-                    Text("바꿔쓰기")
-                        .fontWeight(.bold)
+                VStack(alignment: .leading, spacing: 5) {
                     HStack {
-                        Text("\(tradeViewModel.trade.myProduct)")
-                        Image(systemName: "arrow.left.and.right")
-                        if let want = tradeViewModel.trade.wantProduct {
-                            Text("\(want)")
-                        } else {
-                            Text("제시")
+                        VStack(alignment: .leading) {
+                            Text("줄 것")
+                                .foregroundStyle(.gray400)
+                                .font(ANBDFont.SubTitle3)
+                            Text("받을 것")
+                                .foregroundStyle(.gray400)
+                                .font(ANBDFont.SubTitle3)
+                        }
+                        VStack(alignment: .leading) {
+                            Text("\(tradeViewModel.trade.myProduct)")
+                                .font(ANBDFont.SubTitle2)
+                            if let want = tradeViewModel.trade.wantProduct {
+                                Text("\(want)")
+                                    .font(ANBDFont.SubTitle2)
+                            } else {
+                                Text("제시")
+                                    .font(ANBDFont.SubTitle2)
+                            }
                         }
                     }
-                    .font(ANBDFont.SubTitle2)
-                    .foregroundStyle(.gray900)
-                case .accua:
-                    EmptyView()
-                case .dasi:
-                    EmptyView()
                 }
+                .padding(.leading, -10)
+            case .accua:
+                EmptyView()
+            case .dasi:
+                EmptyView()
             }
-            .padding(.leading, -10)
             
             Spacer()
             
-            if let user = UserDefaultsClient.shared.userInfo {
-                if user.id != tradeViewModel.trade.writerID {
-                    RoundedRectangle(cornerRadius: 14)
-                        .foregroundStyle(.accent)
-                        .overlay {
-                            Text("채팅하기")
-                                .font(ANBDFont.pretendardMedium(16))
-                                .foregroundStyle(.white)
-                        }
-                        .frame(width: 100, height: 45)
-                        .padding()
-                        .onTapGesture {
-                            homeViewModel.chatDetailTrade = trade
+            if user.id != tradeViewModel.trade.writerID && tradeViewModel.trade.tradeState == .trading {
+                RoundedRectangle(cornerRadius: 14)
+                    .foregroundStyle(.accent)
+                    .overlay {
+                        Text("채팅하기")
+                            .font(ANBDFont.pretendardMedium(16))
+                            .foregroundStyle(.white)
+                    }
+                    .frame(width: 100, height: 45)
+                    .padding()
+                    .onTapGesture {
+                        Task {
+                            try await chatViewModel.setSelectedUser(trade: trade)
+                            coordinator.channel = nil
+                            coordinator.trade = trade
+                            tradeViewModel.getOneTrade(trade: trade)
                             
-                            switch anbdViewType {
-                            case .home:
-                                homeViewModel.homePath.append(ANBDNavigationPaths.chatDetailView)
-                            case .trade:
-                                tradeViewModel.tradePath.append(ANBDNavigationPaths.chatDetailView)
+                            switch coordinator.selectedTab {
+                            case .home, .article, .trade, .mypage:
+                                coordinator.appendPath(Page.chatDetailView)
                             case .chat:
-                                dismiss()
+                                coordinator.pop()
                             }
                         }
-                }
+                    }
             }
+            
         }
     }
 }

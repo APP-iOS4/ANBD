@@ -11,6 +11,7 @@ import ANBDModel
 struct ReportView: View {
     
     @EnvironmentObject private var reportViewModel: ReportViewModel
+    @EnvironmentObject private var coordinator: Coordinator
     @Environment(\.dismiss) private var dismiss
     
     var reportViewType: ReportType = .article
@@ -20,6 +21,24 @@ struct ReportView: View {
     @State private var isShowingCustomAlert: Bool = false
     
     var body: some View {
+        if #available(iOS 17.0, *) {
+            reportView
+                .onChange(of: reportReason) {
+                    if reportReason.count > 200 {
+                        reportReason = String(reportReason.prefix(200))
+                    }
+                }
+        } else {
+            reportView
+                .onChange(of: reportReason) { report in
+                    if report.count > 200 {
+                        reportReason = String(report.prefix(200))
+                    }
+                }
+        }
+    }
+    
+    private var reportView: some View {
         ZStack {
             VStack(alignment: .leading) {
                 Text("\(reportTitle) 신고하기")
@@ -31,12 +50,12 @@ struct ReportView: View {
                         RoundedRectangle(cornerRadius: 10)
                             .fill(.clear)
                             .overlay(RoundedRectangle(cornerRadius: 10).stroke(.gray400))
-                            
+                        
                         
                         TextEditor(text: $reportReason)
                             .foregroundStyle(.gray900)
                             .padding(13)
-                            
+                        
                         
                         if reportReason.isEmpty {
                             Text("신고 내용을 입력해주세요. (최대 200자)")
@@ -57,13 +76,14 @@ struct ReportView: View {
                 Spacer()
                 
                 Button(action: {
+                    endTextEditing()
                     if !reportReason.isEmpty {
                         isShowingCustomAlert.toggle()
                     }
                 }, label: {
                     ZStack {
                         RoundedRectangle(cornerRadius: 10)
-                            .fill(reportReason.isEmpty ? .gray200 : Color.accentColor)
+                            .fill(reportReason.isEmpty ? .gray300 : Color.accentColor)
                         
                         Text("신고하기")
                             .foregroundStyle(.white)
@@ -77,8 +97,11 @@ struct ReportView: View {
             if isShowingCustomAlert {
                 CustomAlertView(isShowingCustomAlert: $isShowingCustomAlert, viewType: .report) {
                     Task {
-                        try await reportViewModel.submitReport(reportType: reportViewType, reportReason: reportReason, reportedObjectID: reportedObjectID, reportChannelID: reportedChannelID)
+                        await reportViewModel.submitReport(reportType: reportViewType, reportReason: reportReason, reportedObjectID: reportedObjectID, reportChannelID: reportedChannelID)
+                        coordinator.toastViewType = .report
                         dismiss()
+                        try await Task.sleep(nanoseconds: 500_000_000)
+                        coordinator.isShowingToastView = true
                     }
                 }
             }
@@ -87,8 +110,8 @@ struct ReportView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
         .toolbarRole(.editor)
-        .onAppear {
-            reportViewModel.loadUserInfo()
+        .onTapGesture {
+            endTextEditing()
         }
     }
 }
@@ -102,11 +125,11 @@ extension ReportView {
             return "게시물"
         case .comment:
             return "댓글"
-        case .messages:
+        case .message:
             return "메시지"
         case .chatRoom:
             return "채팅"
-        case .users:
+        case .user:
             return "사용자"
         }
     }

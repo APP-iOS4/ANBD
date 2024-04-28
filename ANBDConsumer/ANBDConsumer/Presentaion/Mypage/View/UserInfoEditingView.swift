@@ -19,8 +19,12 @@ struct UserInfoEditingView: View {
     @State private var isShowingPhotosPicker = false
     @State private var isShowingMenuList = false
     @State private var isShwoingDuplicatedNicknameAlert = false
+    @State private var isShowingEditingCancelAlert = false
+    @State private var isChangedProfileImage = false
     
     @State private var photosPickerItem: PhotosPickerItem?
+    
+    @State private var refreshView = false
     
     var body: some View {
         NavigationStack {
@@ -32,10 +36,11 @@ struct UserInfoEditingView: View {
                                 Task {
                                     if let photosPickerItem, let data = try? await photosPickerItem.loadTransferable(type: Data.self) {
                                         if let image = await UIImage(data: data)?.byPreparingThumbnail(ofSize: .init(width: 512, height: 512)) {
-                                            myPageViewModel.userProfileImage = image
+                                            myPageViewModel.tempUserProfileImage = image.jpegData(compressionQuality: 0.5)!
                                         }
                                     }
                                 }
+                                isChangedProfileImage = true
                             }
                     } else {
                         userProfilImageButton
@@ -43,10 +48,11 @@ struct UserInfoEditingView: View {
                                 Task {
                                     if let photosPickerItem, let data = try? await photosPickerItem.loadTransferable(type: Data.self) {
                                         if let image = await UIImage(data: data)?.byPreparingThumbnail(ofSize: .init(width: 512, height: 512)) {
-                                            myPageViewModel.userProfileImage = image
+                                            myPageViewModel.tempUserProfileImage = image.jpegData(compressionQuality: 0.5)!
                                         }
                                     }
                                 }
+                                isChangedProfileImage = true
                             })
                     }
                     
@@ -58,22 +64,30 @@ struct UserInfoEditingView: View {
                         
                         if #available(iOS 17.0, *) {
                             nicknameTextField
-                            .onChange(of: myPageViewModel.editedUserNickname) {
-                                myPageViewModel.editedUserNickname = myPageViewModel.checkNicknameLength(myPageViewModel.editedUserNickname)
-                            }
+                                .onChange(of: myPageViewModel.tempUserNickname) {
+                                    myPageViewModel.tempUserNickname = myPageViewModel.checkNicknameLength(myPageViewModel.tempUserNickname)
+                                }
                         } else {
                             nicknameTextField
-                            .onChange(of: myPageViewModel.editedUserNickname) { _ in
-                                myPageViewModel.editedUserNickname = myPageViewModel.checkNicknameLength(myPageViewModel.editedUserNickname)
-                            }
+                                .onChange(of: myPageViewModel.tempUserNickname) { _ in
+                                    myPageViewModel.tempUserNickname = myPageViewModel.checkNicknameLength(myPageViewModel.tempUserNickname)
+                                }
                         }
                         
                         Divider()
                         
                         HStack {
+                            if !myPageViewModel.errorMessage.isEmpty {
+                                Text("\(myPageViewModel.errorMessage)")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.horizontal, 5)
+                                    .font(ANBDFont.Caption1)
+                                    .foregroundStyle(Color.heartRed)
+                            }
+                            
                             Spacer()
                             
-                            Text("\(myPageViewModel.editedUserNickname.count) / 20")
+                            Text("\(myPageViewModel.tempUserNickname.count) / 20")
                                 .padding(.horizontal, 5)
                                 .font(ANBDFont.body2)
                                 .foregroundStyle(.gray400)
@@ -100,6 +114,12 @@ struct UserInfoEditingView: View {
                         focus = .nickname
                     }
                 }
+                
+                if isShowingEditingCancelAlert {
+                    CustomAlertView(isShowingCustomAlert: $isShowingEditingCancelAlert, viewType: .editingCancel) {
+                        dismiss()
+                    }
+                }
             }
             .toolbar {
                 ToolbarItemGroup(placement: .keyboard) {
@@ -114,7 +134,12 @@ struct UserInfoEditingView: View {
                 
                 ToolbarItem(placement: .topBarLeading) {
                     Button(action: {
-                        dismiss()
+                        if myPageViewModel.validateUpdatingComplete() {
+                            downKeyboard()
+                            isShowingEditingCancelAlert.toggle()
+                        } else {
+                            dismiss()
+                        }
                     }, label: {
                         Image(systemName: "xmark")
                     })
@@ -129,14 +154,18 @@ struct UserInfoEditingView: View {
                             } else {
                                 dismiss()
                                 
-                                await myPageViewModel.updateUserInfo(updatedNickname: myPageViewModel.editedUserNickname,
+                                await myPageViewModel.updateUserInfo(updatedNickname: myPageViewModel.tempUserNickname,
                                                                      updatedLocation: myPageViewModel.tempUserFavoriteLocation)
+                                
+                                if myPageViewModel.tempUserProfileImage != nil {
+                                    await myPageViewModel.updateUserProfile(proflieImage: myPageViewModel.tempUserProfileImage)
+                                }
                             }
                         }
                     }, label: {
                         Text("완료")
                     })
-                    //.disabled(myPageViewModel.validateEditing())
+                    .disabled(!myPageViewModel.validateUpdatingComplete())
                 }
             }
             
@@ -144,7 +173,7 @@ struct UserInfoEditingView: View {
             .navigationBarTitleDisplayMode(.inline)
             
             .onAppear {
-                myPageViewModel.editedUserNickname = UserStore.shared.user.nickname
+                myPageViewModel.tempUserNickname = UserStore.shared.user.nickname
             }
         }
     }
@@ -153,12 +182,22 @@ struct UserInfoEditingView: View {
         Button(action: {
             isShowingProfileImageEditingDialog.toggle()
         }, label: {
-            Image(uiImage: myPageViewModel.userProfileImage)
-                .resizable()
-                .aspectRatio(contentMode: .fill)
+            if isChangedProfileImage == false {
+                AsyncImage(url: URL(string: myPageViewModel.user.profileImage)) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } placeholder: {
+                    ProgressView()
+                }
                 .frame(width: 120, height: 120)
                 .clipShape(.circle)
-                .overlay {
+                .padding(.horizontal, 10)
+                .overlay(
+                    Circle()
+                        .stroke(.gray100, lineWidth: 1)
+                )
+                .overlay(
                     Image(systemName: "camera.circle.fill")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -166,13 +205,41 @@ struct UserInfoEditingView: View {
                         .foregroundStyle(Color.gray800, Color.gray300)
                         .frame(width: 35)
                         .offset(x: 40.0, y: 40.0)
-                }
+                )
+            } else {
+                Image(uiImage: UIImage(data: myPageViewModel.tempUserProfileImage ?? Data()) ?? UIImage(named: "EmptyImage")!)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 120, height: 120)
+                    .clipShape(.circle)
+                    .overlay(
+                        Circle()
+                            .stroke(.gray100, lineWidth: 1)
+                    )
+                    .overlay {
+                        Image(systemName: "camera.circle.fill")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(Color.gray800, Color.gray300)
+                            .frame(width: 35)
+                            .offset(x: 40.0, y: 40.0)
+                    }
+            }
         })
         .padding(.top, 25)
+        .id(refreshView)
         
         .confirmationDialog("프로필 이미지 수정하기", isPresented: $isShowingProfileImageEditingDialog) {
             Button(action: {
-                myPageViewModel.userProfileImage = UIImage(named: "DefaultUserProfileImage.001.png")!
+                Task {
+                    let image = await UIImage(named: "DefaultUserProfileImage")?.byPreparingThumbnail(ofSize: .init(width: 512, height: 512))
+                    
+                    myPageViewModel.tempUserProfileImage = image!.jpegData(compressionQuality: 0.5)!
+                    
+                    isChangedProfileImage = true
+                    refreshView.toggle()
+                }
             }, label: {
                 Text("기본 이미지 사용하기")
             })
@@ -189,7 +256,7 @@ struct UserInfoEditingView: View {
     
     private var nicknameTextField: some View {
         textFieldUIKit(placeholder: "닉네임을 입력해주세요.",
-                       text: $myPageViewModel.editedUserNickname)
+                       text: $myPageViewModel.tempUserNickname)
         .focused($focus, equals: .nickname)
         .textInputAutocapitalization(.never)
         .autocorrectionDisabled(true)

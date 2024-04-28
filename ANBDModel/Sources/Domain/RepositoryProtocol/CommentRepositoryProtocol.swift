@@ -13,6 +13,7 @@ public protocol CommentRepository {
     func readComment(commentID: String) async throws -> Comment
     func readCommentList(articleID: String) async throws -> [Comment]
     func readCommentList(writerID: String, limit: Int) async throws -> [Comment]
+    func readAllCommentList(writerID: String) async throws -> [Comment]
     func updateComment(comment: Comment) async throws
     func deleteComment(articleID: String, commentID: String) async throws
     func deleteCommentList(articleID: String) async throws

@@ -10,15 +10,21 @@ import Foundation
 @available(iOS 15, *)
 public protocol UserUsecase {
     func getUserInfo(userID: String) async throws -> User
-    func getUserInfoList() async throws -> [User]
+    func getUserInfoList(limit: Int) async throws -> [User]
+    func refreshAllUserInfoList(limit: Int) async throws -> [User]
     func checkDuplicatedNickname(nickname: String) async -> Bool
     func updateUserInfo(user: User) async throws
+    func updateUserFCMToken(userID: String, fcmToken: String) async throws
+    func updateUserPostCount(user: User,
+                             before: ANBDCategory,
+                             after: ANBDCategory) async throws
+    func updateUserProfile(user: User, profileImage: Data?) async throws
 }
 
 @available(iOS 15, *)
 public struct DefaultUserUsecase: UserUsecase {
 
-    private let userRepository = DefaultUserRepository()
+    private let userRepository: UserRepository = DefaultUserRepository()
     
     public init() { }
     
@@ -33,13 +39,52 @@ public struct DefaultUserUsecase: UserUsecase {
     }
     
     /// [관리자용] 가입된 User의 목록을 반환한다.
-    public func getUserInfoList() async throws -> [User] {
-        try await userRepository.readUserInfoList()
+    public func getUserInfoList(limit: Int) async throws -> [User] {
+        try await userRepository.readUserInfoList(limit: limit)
+    }
+    
+    public func refreshAllUserInfoList(limit: Int) async throws -> [User] {
+        try await userRepository.refreshAll(limit: limit)
     }
     
     /// User의 정보를 수정한다. (profile, level)
     public func updateUserInfo(user: User) async throws {
         try await userRepository.updateUserInfo(user: user)
+    }
+    
+    public func updateUserFCMToken(userID: String, fcmToken: String) async throws {
+        if userID.isEmpty { throw UserError.invalidUserID }
+        if fcmToken.isEmpty { throw NSError(domain: "invalid fcmToken", code: 4444) }
+        
+        try await userRepository.updateUserFCMToken(userID: userID, fcmToken: fcmToken)
+    }
+    
+    public func updateUserProfile(user: User, profileImage: Data?) async throws {
+        var userInfo = user
+        
+        if let profileImage {
+            userInfo.profileImage = try await StorageManager.shared.uploadProfileImage(
+                userID: user.id, 
+                imageData: profileImage
+            )
+        }
+        
+        try await userRepository.updateUserInfo(user: userInfo)
+    }
+    
+    public func updateUserPostCount(
+        user: User,
+        before: ANBDCategory,
+        after: ANBDCategory
+    ) async throws {
+        if user.id.isEmpty { throw UserError.invalidUserID }
+        if before == after { return }
+        
+        try await userRepository.updateUserPostCount(
+            user: user,
+            before: before,
+            after: after
+        )
     }
     
     /// 닉네임 중복체크 API

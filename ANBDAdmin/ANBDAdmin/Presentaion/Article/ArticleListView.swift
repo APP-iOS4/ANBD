@@ -63,6 +63,7 @@ struct ArticleListView: View {
                                 Spacer()
                                 VStack(alignment: .leading) {
                                     Text("\(article.title)")
+                                        .lineLimit(1)
                                         .font(.title3)
                                         .foregroundColor(.black)
                                 }
@@ -71,24 +72,33 @@ struct ArticleListView: View {
                                 Spacer()
                                 VStack(alignment: .leading) {
                                     Text("\(article.writerNickname)")
+                                        .lineLimit(2)
                                         .foregroundColor(.black)
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
-                                    Text("\(dateFormatter(article.createdAt))")
+                                    Text("\(DateFormatterSingleton.shared.dateFormatter(article.createdAt))")
                                         .foregroundColor(.black)
                                 }
-                                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                                .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Spacer()
                             }
                             .frame(maxWidth: .infinity, minHeight: 50)
                             .background(Color.white)
                             .cornerRadius(10)
                             .padding(.horizontal)
+                            
                         }
                     }
+                    if !articleListViewModel.articleList.isEmpty {
+                        Text("List End")
+                            .foregroundColor(.gray)
+                          .onAppear {
+                              articleListViewModel.loadMoreArticles()
+                          }
+                      }
                 }
                 .onAppear {
                     articleListViewModel.firstLoadArticles()
@@ -96,7 +106,9 @@ struct ArticleListView: View {
                 .navigationBarTitle("게시글 목록")
                 .toolbar {
                     Button(action: {
-                        //새로고침 함수 뷰모델에 작성예정
+                        self.searchArticleText = ""
+                        articleListViewModel.articleList = []
+                        articleListViewModel.firstLoadArticles()
                     }) {
                         Image(systemName: "arrow.clockwise")
                     }

@@ -11,26 +11,23 @@ import ANBDModel
 
 @MainActor
 struct ArticleCreateView: View {
-    
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     @Binding var isShowingCreateView: Bool
     
     @State var category: ANBDCategory = .accua
     @State private var title: String = ""
-    @State private var content : String = ""
-    @State var placeHolder : String = "ANBD 이용자들을 위해 여러분들의 아껴쓰기/다시쓰기 Tip을 전수해주세요!"
+    @State private var content: String = ""
+    @State var commentCount: Int = 0
     
+    @State private var isShowingCustomEditAlert: Bool = false
+    @State private var isShowingCustomCreateAlert: Bool = false
     @State private var isShowingImageAlert: Bool = false
+    
     @State private var selectedItems: [PhotosPickerItem] = []
     @State private var selectedImageData: [Data] = []
-    
     @State private var selectedMenuText: String = "아껴쓰기"
     
-    @State private var isShowingCustomAlert: Bool = false
-    
-    @State var isAnimation = false
-    
-    @Environment(\.dismiss) private var dismiss
+    private let placeHolder: String = "ANBD 이용자들을 위해 여러분들의 아껴쓰기/다시쓰기 Tip을 전수해주세요!"
     
     var isNewArticle: Bool
     var article: Article?
@@ -46,12 +43,18 @@ struct ArticleCreateView: View {
                                     if let data = try? await newItem.loadTransferable(type: Data.self) {
                                         selectedImageData.append(data)
                                     }
+                                    
                                     if selectedImageData.count > 5 {
                                         selectedImageData.removeLast()
                                     }
                                 }
                             }
                             selectedItems = []
+                        }
+                        .onChange(of: title) {
+                            if title.count > 50 {
+                                title = String(title.prefix(50))
+                            }
                         }
                 } else {
                     articleCreateView
@@ -61,6 +64,7 @@ struct ArticleCreateView: View {
                                     if let data = try? await newItem.loadTransferable(type: Data.self) {
                                         selectedImageData.append(data)
                                     }
+                                    
                                     if selectedImageData.count > 5 {
                                         selectedImageData.removeLast()
                                     }
@@ -68,25 +72,37 @@ struct ArticleCreateView: View {
                             }
                             selectedItems = []
                         })
+                        .onChange(of: title) { _ in
+                            if title.count > 50 {
+                                title = String(title.prefix(50))
+                            }
+                        }
                 }
             }
-            if isShowingCustomAlert {
-                CustomAlertView(isShowingCustomAlert: $isShowingCustomAlert, viewType: .articleEdit) {
-                    dismiss()
+            .onTapGesture {
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            }
+            
+            if isShowingCustomEditAlert {
+                CustomAlertView(isShowingCustomAlert: $isShowingCustomEditAlert, viewType: .articleEdit) {
+                    isShowingCreateView = false
                 }
-                .zIndex(1)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if isShowingImageAlert {
+                CustomAlertView(isShowingCustomAlert: $isShowingImageAlert, viewType: .imageSelelct) { }
+                
+            } else if isShowingCustomCreateAlert {
+                CustomAlertView(isShowingCustomAlert: $isShowingCustomCreateAlert, viewType: .articleCreate) {
+                    isShowingCreateView = false
+                }
             }
         }
     }
     
-    //MARK: - articleCreate 서브뷰
     private var articleCreateView: some View {
         VStack {
             InstructionsView()
             VStack {
-                TextField("제목을 입력하세요", text: $title)
-                
+                TextField("제목을 입력하세요.", text: $title, axis: .vertical)
                     .onAppear {
                         UITextField.appearance().clearButtonMode = .never
                         if !isNewArticle {
@@ -97,6 +113,7 @@ struct ArticleCreateView: View {
                     }
                     .font(ANBDFont.pretendardBold(24))
                     .padding(.leading, 20)
+                
                 Divider()
                     .padding(.horizontal, 20)
                 
@@ -108,6 +125,7 @@ struct ArticleCreateView: View {
                             .padding(.horizontal, 20)
                             .padding(.top , 8)
                     }
+                    
                     TextEditor(text: $content)
                         .scrollContentBackground(.hidden)
                         .font(ANBDFont.body1)
@@ -123,8 +141,7 @@ struct ArticleCreateView: View {
                 
                 ScrollView(.horizontal) {
                     HStack {
-                        ForEach(selectedImageData, id: \.self) {
-                            photoData in
+                        ForEach(selectedImageData, id: \.self) { photoData in
                             ZStack(alignment:.topTrailing) {
                                 if let image = UIImage(data: photoData) {
                                     Image(uiImage: image)
@@ -167,7 +184,8 @@ struct ArticleCreateView: View {
                     .foregroundStyle(.accent)
                 } else {
                     PhotosPicker(
-                        selection: $selectedItems, maxSelectionCount: 5-selectedImageData.count,
+                        selection: $selectedItems,
+                        maxSelectionCount: 5-selectedImageData.count,
                         matching: .images
                     ) {
                         Image(systemName: "photo")
@@ -195,41 +213,49 @@ struct ArticleCreateView: View {
                     Task {
                         if isNewArticle {
                             await articleViewModel.writeArticle(category: category, title: title, content: content, imageDatas: selectedImageData)
-                            await articleViewModel.reloadAllArticles()
+                            await articleViewModel.refreshSortedArticleList(category: category)
                         } else {
                             if var article = article {
+                                
                                 article.title = self.title
                                 article.content = self.content
                                 article.category = self.category
+                                article.commentCount = self.commentCount
                                 
-                                await articleViewModel.updateArticle(article: article, imageDatas: selectedImageData)
-                                await articleViewModel.reloadAllArticles()
+                                await articleViewModel.updateArticle(category: category, title: title, content: content, commentCount: commentCount,imageDatas: selectedImageData)
+                                await articleViewModel.refreshSortedArticleList(category: category)
                                 await articleViewModel.loadArticle(article: article)
                             }
                         }
-                        await articleViewModel.refreshSortedArticleList(category: category, by: .latest, limit: 10)
+                        await articleViewModel.refreshSortedArticleList(category: category)
                         isShowingCreateView = false
                     }
                     self.isShowingCreateView.toggle()
                 } label: {
                     Text("완료")
                 }
-                .disabled(title.isEmpty || content.isEmpty || selectedImageData.isEmpty)
+                .disabled(title.isEmpty || content.isEmpty || selectedImageData.isEmpty || title == article?.title && content == article?.content && category == article?.category)
             }
+            
             ToolbarItem(placement: .cancellationAction) {
                 Button {
                     if !isNewArticle {
                         if let article = article {
                             let isTitleChanged = title != article.title
                             let isContentChanged = content != article.content
+                            
                             if isTitleChanged || isContentChanged {
-                                isShowingCustomAlert.toggle()
+                                isShowingCustomEditAlert.toggle()
                             } else {
                                 isShowingCreateView.toggle()
                             }
                         }
                     } else {
-                        isShowingCreateView.toggle()
+                        if !title.isEmpty || !content.isEmpty {
+                            isShowingCustomCreateAlert.toggle()
+                        } else {
+                            isShowingCreateView.toggle()
+                        }
                     }
                 } label: {
                     Text("취소")
@@ -251,15 +277,7 @@ struct ArticleCreateView: View {
                 Text("다시쓰기")
             }
         }
-        .alert("이미지는 최대 5장만 가능합니다", isPresented: $isShowingImageAlert) {
-            Button("확인", role: .cancel) { }
-        }
         .navigationTitle(category == .accua ? "아껴쓰기" : "다시쓰기")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
-
-#Preview {
-    ArticleCreateView(isShowingCreateView: .constant(true), category: .accua, isNewArticle: false)
-}
-

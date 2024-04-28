@@ -16,11 +16,15 @@ public protocol ArticleRepository {
     func readArticleList(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [Article]
     func readArticleList(category: ANBDCategory, by order: ArticleOrder, limit: Int) async throws -> [Article]
     func readArticleList(keyword: String, limit: Int) async throws -> [Article]
+    func readAllArticleList(writerID: String) async throws -> [Article]
     func refreshAll(limit: Int) async throws -> [Article]
     func refreshWriterID(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [Article]
     func refreshOrder(category: ANBDCategory, by order: ArticleOrder, limit: Int) async throws -> [Article]
     func refreshSearch(keyword: String, limit: Int) async throws -> [Article]
-    func updateArticle(article: Article, imageDatas: [Data]) async throws
+    func updateArticle(article: Article, 
+                       add images: [Data],
+                       delete paths: [String]) async throws
+    func updateArticle(articleID: String, nickname: String) async throws
     func likeArticle(articleID: String) async throws
     func deleteArticle(article: Article) async throws
     func resetQuery()

@@ -11,16 +11,14 @@ import ANBDModel
 @MainActor
 final class ArticleViewModel: ObservableObject {
     
-    let articleUseCase: ArticleUsecase = DefaultArticleUsecase()
-    let commentUseCase: CommentUsecase = DefaultCommentUsecase()
-    
+    private let articleUseCase: ArticleUsecase = DefaultArticleUsecase()
+    private let commentUseCase: CommentUsecase = DefaultCommentUsecase()
+    private let userUsecase: UserUsecase = DefaultUserUsecase()
     private let storageManager = StorageManager.shared
     
-    @Published var articlePath: NavigationPath = NavigationPath()
-    
+    @Published var sortOption: ArticleOrder = .latest
     @Published private(set) var articles: [Article] = []
-    @Published private(set) var filteredArticles: [Article] = []
-    
+    @Published var filteredArticles: [Article] = []
     @Published var article: Article = Article(id: "",
                                               writerID: "",
                                               writerNickname: "",
@@ -34,7 +32,6 @@ final class ArticleViewModel: ObservableObject {
                                               commentCount: 0)
     
     @Published private(set) var comments: [Comment] = []
-    
     @Published var comment: Comment = Comment(id: "",
                                               articleID: "",
                                               writerID: "",
@@ -42,47 +39,41 @@ final class ArticleViewModel: ObservableObject {
                                               writerProfileImageURL: "",
                                               createdAt: Date(),
                                               content: "")
-
+    
     @Published var commentText: String = ""
     
-    @Published var sortOption: ArticleOrder = .latest
-    
-    @Published private var isLiked: Bool = false
-    
-    init() {
-        
+    func getOneArticle(article: Article) {
+        self.article = article
     }
     
     func filteringArticles(category: ANBDCategory) {
         filteredArticles = articles.filter({ $0.category == category })
     }
     
-    @MainActor
-    func loadAllArticles() async {
-        do {
-            try await self.articles.append(contentsOf: articleUseCase.loadArticleList(limit: 10))
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
+    //MARK: - ARTICLE
     
-    func reloadAllArticles() async {
+    @MainActor
+    func refreshSortedArticleList(category: ANBDCategory) async {
         do {
-            self.articles = try await articleUseCase.refreshAllArticleList(limit: 10)
+            self.filteredArticles = try await articleUseCase.refreshSortedArticleList(category: category, by: self.sortOption, limit: 10)
         } catch {
             print(error.localizedDescription)
         }
     }
     
     @MainActor
-    func refreshSortedArticleList(category: ANBDCategory, by order: ArticleOrder, limit: Int) async {
+    func loadMoreArticles(category: ANBDCategory) async {
         do {
-            filteredArticles.removeAll()
+            var newArticles: [Article] = []
+            newArticles = try await articleUseCase.loadArticleList(category: category, by: self.sortOption, limit: 10)
             
-            let newArticles = try await articleUseCase.refreshSortedArticleList(category: category, by: order, limit: limit)
-            filteredArticles.append(contentsOf: newArticles)
-            
-            print(filteredArticles)
+            for item in newArticles {
+                if filteredArticles.contains(item) {
+                    print("end")
+                } else {
+                    filteredArticles.append(contentsOf: newArticles)
+                }
+            }
         } catch {
             print(error.localizedDescription)
         }
@@ -110,13 +101,9 @@ final class ArticleViewModel: ObservableObject {
     }
     
     func writeArticle(category: ANBDCategory, title: String, content: String, imageDatas: [Data]) async {
+        
         let user = UserStore.shared.user
         
-//        guard let user = UserDefaultsClient.shared.userInfo else {
-//            return
-//        }
-        // dump(article)
-        // dump(user)
         let newArticle = Article(writerID: user.id,
                                  writerNickname: user.nickname,
                                  category: category,
@@ -134,16 +121,22 @@ final class ArticleViewModel: ObservableObject {
         
         do {
             try await articleUseCase.writeArticle(article: newArticle, imageDatas: newImages)
+            await UserStore.shared.updateLocalUserInfo()
         } catch {
             print(error.localizedDescription)
         }
     }
     
-    func updateArticle(/*category: ANBDCategory, title: String, content: String*/article: Article, imageDatas: [Data]) async {
+    @MainActor
+    func updateArticle(category: ANBDCategory, title: String, content: String, commentCount: Int, imageDatas: [Data]) async {
         
-        //        self.article.category = category
-        //        self.article.title = title
-        //        self.article.content = content
+        let user = UserStore.shared.user
+        let originCategory = self.article.category
+        
+        self.article.category = category
+        self.article.title = title
+        self.article.content = content
+        self.article.commentCount = commentCount
         
         //이미지 리사이징
         var newImages: [Data] = []
@@ -153,8 +146,10 @@ final class ArticleViewModel: ObservableObject {
         }
         
         do {
-            try await articleUseCase.updateArticle(article: article, imageDatas: newImages)
-            //            article = try await articleUseCase.loadArticle(articleID: article.id)
+            // try await articleUseCase.updateArticle(article: self.article, imageDatas: newImages)
+            try await userUsecase.updateUserPostCount(user: user, before: originCategory, after: category)
+            article = try await articleUseCase.loadArticle(articleID: article.id)
+            await UserStore.shared.updateLocalUserInfo()
         } catch {
             print(error.localizedDescription)
         }
@@ -170,49 +165,25 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
+    func loadOneArticle(articleID: String) async {
+        do {
+            let loadedArticle = try await articleUseCase.loadArticle(articleID: articleID)
+            self.article = loadedArticle
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    
+    
+    
     func deleteArticle(article: Article) async {
         do {
             try await articleUseCase.deleteArticle(article: article)
+            await UserStore.shared.updateLocalUserInfo()
         } catch {
             print(error.localizedDescription)
             print("삭제실패")
-        }
-    }
-    
-    func likeArticle(articleID: String) async {
-        do {
-            try await articleUseCase.likeArticle(articleID: articleID)
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
-    
-    func resetQuery() {
-        articleUseCase.resetQuery()
-    }
-    
-    func toggleLikeArticle(articleID: String) async {
-        do {
-            if isLiked {
-                try await articleUseCase.likeArticle(articleID: articleID)
-                isLiked = false
-            } else {
-                try await articleUseCase.likeArticle(articleID: articleID)
-                isLiked = true
-            }
-            isLiked.toggle()
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
-    
-    func updateLikeCount(articleID: String, increment: Bool) async {
-        if let index = filteredArticles.firstIndex(where: { $0.id == articleID }) {
-            if increment {
-                filteredArticles[index].likeCount += 1
-            } else {
-                filteredArticles[index].likeCount -= 1
-            }
         }
     }
     
@@ -227,24 +198,32 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
+    //MARK: - LIKE
+    
+    func likeArticle(article: Article) async {
+        do {
+            try await articleUseCase.likeArticle(articleID: article.id)
+            await UserStore.shared.updateLocalUserInfo()
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
     // MARK: - Comment
-    func writeComment(articleID: String, content: String) async {
+    
+    func writeComment(articleID: String, commentText: String) async {
+        
         let user = UserStore.shared.user
-//        guard let user = UserDefaultsClient.shared.userInfo else {
-//            return
-//        }
         
         let newComment = Comment(articleID: articleID,
                                  writerID: user.id,
                                  writerNickname: user.nickname,
                                  writerProfileImageURL: user.profileImage,
-                                 content: content)
-        
-        comments.append(newComment)
-        print("\(newComment.content)")
+                                 content: commentText)
         
         do {
             try await commentUseCase.writeComment(articleID: articleID, comment: newComment)
+            await loadCommentList(articleID: articleID)
         } catch {
             print(error.localizedDescription)
         }
@@ -270,14 +249,21 @@ final class ArticleViewModel: ObservableObject {
     func deleteComment(articleID: String, commentID: String) async {
         do {
             try await commentUseCase.deleteComment(articleID: articleID, commentID: commentID)
-            print("articleID: \(article.id), \(articleID)")
-            print("commentID: \(comment.id), \(commentID)")
         } catch {
-            print(error.localizedDescription)
-            print("댓글 삭제 실패")
-            print("articleID: \(article.id), \(articleID)")
-            print("commentID: \(comment.id), \(commentID)")
+            print("댓글 삭제 실패 - \(error.localizedDescription)")
         }
     }
     
+    //MARK: - SEARCH
+    
+    func searchArticle(keyword: String, category: ANBDCategory?) async {
+        do {
+            articles = try await articleUseCase.refreshSearchArticleList(keyword: keyword, limit: 100)
+            if let category {
+                filteringArticles(category: category)
+            }
+        } catch {
+            print("Error: \(error)")
+        }
+    }
 }

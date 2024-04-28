@@ -103,7 +103,7 @@ extension CustomAlertView {
         case duplicatedEmail
         case duplicatedNickname
         case signInFail
-        //trade
+        // trade
         case changeState
         case tradeDelete
         case articleEdit
@@ -113,7 +113,7 @@ extension CustomAlertView {
         case report
         case commentEdit
         case imageSelelct
-        
+        // setting
         case editingCancel
     }
     

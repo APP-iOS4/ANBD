@@ -13,7 +13,7 @@ struct SettingsView: View {
     
     @State private var isShowingPolicyView = false
     
-    private var spacingValue: CGFloat = 25
+    private let spacingValue: CGFloat = 25
     
     var body: some View {
         VStack(spacing: spacingValue) {
@@ -66,7 +66,6 @@ struct SettingsView: View {
         
         .toolbarRole(.editor)
         .toolbar(.hidden, for: .tabBar)
-        
         
         .fullScreenCover(isPresented: $isShowingPolicyView) {
             SafariWebView(url: URL(string: "https://maru-study-note.tistory.com/")!)

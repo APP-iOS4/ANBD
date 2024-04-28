@@ -85,11 +85,11 @@ struct LocationPickerMenu: View {
         .background {
             if #available(iOS 17.0, *) {
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.white)
+                    .fill(Color(uiColor: .systemBackground))
                     .stroke(Color.gray100, lineWidth: 1)
             } else {
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.white)
+                    .fill(Color(uiColor: .systemBackground))
                     .overlay {
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(Color.gray100, lineWidth: 1)

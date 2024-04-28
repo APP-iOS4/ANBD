@@ -13,10 +13,8 @@ struct SearchView: View {
     var category: ANBDCategory = .accua
     @State private var searchText: String = ""
     
-    @EnvironmentObject private var homeViewModel: HomeViewModel
+    @EnvironmentObject private var coordinator: Coordinator
     @EnvironmentObject private var searchViewModel: SearchViewModel
-    @EnvironmentObject private var tradeViewModel: TradeViewModel
-    @EnvironmentObject private var articleViewModel: ArticleViewModel
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -27,25 +25,36 @@ struct SearchView: View {
                 
                 Spacer()
                 
-                Button(action: {
-                    searchViewModel.recentSearch = []
-                }, label: {
-                    Text("전체 삭제")
-                        .font(ANBDFont.body1)
-                        .foregroundStyle(Color.accentColor)
-                })
+                if !searchViewModel.recentSearch.isEmpty {
+                    Button(action: {
+                        searchViewModel.resetRecentSearch()
+                        searchViewModel.loadRecentSearch()
+                    }, label: {
+                        Text("전체 삭제")
+                            .font(ANBDFont.body1)
+                            .foregroundStyle(Color.accentColor)
+                    })
+                }
             }
             .padding()
             .padding(.top, 10)
             
             ForEach(searchViewModel.recentSearch, id: \.self) { recent in
-                NavigationLink(value: recent) {
+                Button(action: {
+                    coordinator.searchText = recent
+                    coordinator.appendPath(.searchResultView)
+                    
+                    searchViewModel.removeRecentSearch(recent)
+                    searchViewModel.saveRecentSearch(recent)
+                    searchViewModel.loadRecentSearch()
+                }, label: {
                     HStack {
                         Image(systemName: "clock.arrow.circlepath")
                             .foregroundStyle(.gray400)
                             .padding(.trailing, 5)
                         
                         Text(recent)
+                            .lineLimit(1)
                         
                         Spacer()
                         
@@ -53,16 +62,15 @@ struct SearchView: View {
                             .foregroundStyle(.gray400)
                             .font(.system(size: 13))
                             .onTapGesture {
-                                if let idx = searchViewModel.recentSearch.firstIndex(of: recent) {
-                                    searchViewModel.recentSearch.remove(at: idx)
-                                }
+                                searchViewModel.removeRecentSearch(recent)
+                                searchViewModel.loadRecentSearch()
                             }
                     }
                     .font(ANBDFont.body1)
                     .foregroundStyle(.gray900)
                     .padding(.horizontal)
                     .padding(.vertical, 3)
-                }
+                })
             }
             
             Spacer()
@@ -74,9 +82,14 @@ struct SearchView: View {
         .searchable(text: $searchText)
         .onSubmit(of: .search) {
             if !searchText.isEmpty {
-                homeViewModel.homePath.append(searchText)
-                tradeViewModel.tradePath.append(searchText)
-                articleViewModel.articlePath.append(searchText)
+                searchViewModel.saveRecentSearch(searchText)
+                searchViewModel.loadRecentSearch()
+                
+                coordinator.searchText = searchText
+                coordinator.category = category
+                coordinator.appendPath(.searchResultView)
+                
+                searchText = ""
             }
         }
     }
@@ -85,9 +98,7 @@ struct SearchView: View {
 #Preview {
     NavigationStack {
         SearchView(category: .accua)
-            .environmentObject(HomeViewModel())
+            .environmentObject(Coordinator())
             .environmentObject(SearchViewModel())
-            .environmentObject(TradeViewModel())
-            .environmentObject(ArticleViewModel())
     }
 }

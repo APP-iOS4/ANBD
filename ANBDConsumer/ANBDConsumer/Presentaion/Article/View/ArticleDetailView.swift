@@ -50,8 +50,6 @@ struct ArticleDetailView: View {
                             HStack {
                                 if let writerUser {
                                     if writerUser.id == "abcd1234" {
-                                        // MARK: - User.id의 기본값이 abcd1234로 되어있어서 탈퇴한 이용자는 이걸로 뜨게 함....!
-                                        //                                        Image("DefaultUserProfileImage")
                                         Image("ANBDWarning")
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
@@ -96,15 +94,9 @@ struct ArticleDetailView: View {
                                     .font(ANBDFont.SubTitle3)
                                     .foregroundStyle(.gray900)
                                 
-                                //                                Text("・")
-                                //                                    .foregroundStyle(.gray400)
-                                //                                    .padding(.leading, -5)
-                                
                                 Text("\(articleViewModel.article.createdAt.relativeTimeNamed)")
                                     .font(ANBDFont.Caption1)
                                     .foregroundStyle(.gray400)
-                                //                                    .padding(.leading, -5)
-                                
                             }
                             .padding(.vertical ,-5)
                             

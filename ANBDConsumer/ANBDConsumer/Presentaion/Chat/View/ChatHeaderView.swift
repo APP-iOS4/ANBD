@@ -29,10 +29,13 @@ struct ChatHeaderView: View {
                 case .home, .article, .trade, .mypage:
                     coordinator.pop()
                 case .chat:
-                    guard let trade else { return }
-                    tradeViewModel.getOneTrade(trade: trade)
-                    coordinator.trade = trade
-                    coordinator.chatPath.append(Page.tradeDetailView)
+                    Task {
+                        guard let trade else { return }
+                        let tmpTrade = await chatViewModel.loadTrade(tradeID: trade.id)
+                        tradeViewModel.getOneTrade(trade: tmpTrade)
+                        coordinator.trade = tmpTrade
+                        coordinator.chatPath.append(Page.tradeDetailView)
+                    }
                 }
             }
         }, label: {

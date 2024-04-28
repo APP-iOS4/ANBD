@@ -107,12 +107,12 @@ struct ChatDetailView: View {
                 CustomAlertView(isShowingCustomAlert: $isShowingStateChangeCustomAlert, viewType: .changeState) {
                     Task {
                         guard let trade else { return }
-                        await tradeViewModel.updateState(trade: trade)
                         if tradeState == .trading {
                             tradeState = .finish
                         } else {
                             tradeState = .trading
                         }
+                        await chatViewModel.updateTradeState(tradeID: trade.id, tradeState: tradeState)
                     }
                 }
             }

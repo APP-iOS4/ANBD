@@ -135,9 +135,6 @@ public struct DefaultAuthUsecase: AuthUsecase {
 //        var credential = EmailAuthProvider.credential(withEmail: <#T##String#>, password: <#T##String#>)
 //        try await user?.reauthenticate(with: credential)
         
-        try await user?.delete()
-        try await userRepository.deleteUserInfo(userID: userID)
-        
         let articleList = try await articleRepository.readAllArticleList(writerID: userID)
         
         for article in articleList {
@@ -158,6 +155,9 @@ public struct DefaultAuthUsecase: AuthUsecase {
         for trade in tradeList {
             try await tradeRepository.deleteTrade(trade: trade)
         }
+        
+        try await userRepository.deleteUserInfo(userID: userID)
+        try await user?.delete()
     }
     
     /// 이메일 중복체크 API

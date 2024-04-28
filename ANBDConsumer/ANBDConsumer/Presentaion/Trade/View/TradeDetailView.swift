@@ -99,7 +99,7 @@ struct TradeDetailView: View {
                             Spacer()
                             
                             if user.id == tradeViewModel.trade.writerID {
-                                TradeStateChangeView(tradeState: $tradeViewModel.trade.tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert, fontSize: 17)
+                                TradeStateChangeView(tradeState: tradeViewModel.trade.tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert, fontSize: 17)
                             }
                             
                         }//HStack

@@ -18,7 +18,7 @@ struct MessageCell: View {
     var message: Message
     var isLast: Bool = false
     @State var imageUrl: URL?
-    @State private var isMine: Bool = false
+    @State private var isMine: Bool = true
     @State private var isLoading: Bool = true
     @State private var otherUser: User?
     

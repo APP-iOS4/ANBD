@@ -49,44 +49,54 @@ struct ArticleDetailView: View {
                         VStack(alignment: .leading) {
                             HStack {
                                 if let writerUser {
-                                    KFImage(URL(string: writerUser.profileImage))
-                                        .placeholder({ _ in
-                                            ProgressView()
-                                        })
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 33, height: 33)
-                                        .clipShape(.circle)
-                                        .overlay(
-                                            Circle()
-                                                .stroke(.gray100, lineWidth: 1)
-                                        )
-                                        .onTapGesture {
-                                            coordinator.user = writerUser
-                                            switch coordinator.selectedTab {
-                                            case .home, .article, .trade, .chat:
-                                                if coordinator.isFromUserPage {
-                                                    coordinator.pop(2)
-                                                } else {
-                                                    coordinator.appendPath(.userPageView)
+                                    if writerUser.id == "abcd1234" {
+                                        Image("ANBDWarning")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 33, height: 33)
+                                            .clipShape(Circle())
+                                            .overlay(
+                                                Circle()
+                                                    .stroke(Color.gray100, lineWidth: 1)
+                                            )
+                                    } else {
+                                        KFImage(URL(string: writerUser.profileImage))
+                                            .placeholder({ _ in
+                                                ProgressView()
+                                            })
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 33, height: 33)
+                                            .clipShape(.circle)
+                                            .overlay(
+                                                Circle()
+                                                    .stroke(.gray100, lineWidth: 1)
+                                            )
+                                            .onTapGesture {
+                                                print("1️⃣\(writerUser)")
+                                                coordinator.user = writerUser
+                                                switch coordinator.selectedTab {
+                                                case .home, .article, .trade, .chat:
+                                                    if coordinator.isFromUserPage {
+                                                        coordinator.pop(2)
+                                                    } else {
+                                                        coordinator.appendPath(.userPageView)
+                                                    }
+                                                    coordinator.isFromUserPage.toggle()
+                                                case .mypage:
+                                                    coordinator.pop(coordinator.mypagePath.count)
                                                 }
-                                                coordinator.isFromUserPage.toggle()
-                                            case .mypage:
-                                                coordinator.pop(coordinator.mypagePath.count)
                                             }
-                                        }
+                                    }
                                 }
-                                Text("\(articleViewModel.article.writerNickname)")
-                                    .font(ANBDFont.pretendardMedium(13))
                                 
-                                Text("・")
-                                    .padding(.leading, -5)
+                                Text("\(articleViewModel.article.writerNickname)")
+                                    .font(ANBDFont.SubTitle3)
+                                    .foregroundStyle(.gray900)
                                 
                                 Text("\(articleViewModel.article.createdAt.relativeTimeNamed)")
                                     .font(ANBDFont.Caption1)
                                     .foregroundStyle(.gray400)
-                                    .padding(.leading, -5)
-                                
                             }
                             .padding(.vertical ,-5)
                             
@@ -228,9 +238,10 @@ struct ArticleDetailView: View {
                                         }
                                     } label: {
                                         Image(systemName: "ellipsis")
-                                            .font(ANBDFont.pretendardRegular(12))
+                                            .font(ANBDFont.pretendardRegular(13))
                                             .rotationEffect(.degrees(90))
                                             .foregroundStyle(.gray900)
+                                            .padding(5)
                                     }
                                 }
                                 .padding(.horizontal, 10)
@@ -249,7 +260,7 @@ struct ArticleDetailView: View {
             if coordinator.isShowingToastView {
                 VStack {
                     CustomToastView()
-
+                    
                     Spacer()
                 }
             }
@@ -317,6 +328,7 @@ struct ArticleDetailView: View {
                             Label("신고하기", systemImage: "exclamationmark.bubble")
                         }
                     }
+                    
                 } label: {
                     Image(systemName: "ellipsis")
                         .font(ANBDFont.pretendardRegular(13))

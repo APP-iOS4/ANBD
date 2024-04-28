@@ -315,31 +315,28 @@ struct ArticleDetailView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
-                    if let writerUser = writerUser, writerUser.id == "abcd1234" {
-                        EmptyView()
+                    if article.writerID == UserStore.shared.user.id {
+                        Button {
+                            isShowingCreateView.toggle()
+                        } label: {
+                            Label("수정하기", systemImage: "square.and.pencil")
+                        }
+                        
+                        Button(role: .destructive) {
+                            isShowingCustomAlertArticle.toggle()
+                        } label: {
+                            Label("삭제하기", systemImage: "trash")
+                        }
                     } else {
-                        if article.writerID == UserStore.shared.user.id {
-                            Button {
-                                isShowingCreateView.toggle()
-                            } label: {
-                                Label("수정하기", systemImage: "square.and.pencil")
-                            }
-                            
-                            Button(role: .destructive) {
-                                isShowingCustomAlertArticle.toggle()
-                            } label: {
-                                Label("삭제하기", systemImage: "trash")
-                            }
-                        } else {
-                            Button(role: .destructive) {
-                                coordinator.reportType = .article
-                                coordinator.reportedObjectID = article.id
-                                coordinator.appendPath(.reportView)
-                            } label: {
-                                Label("신고하기", systemImage: "exclamationmark.bubble")
-                            }
+                        Button(role: .destructive) {
+                            coordinator.reportType = .article
+                            coordinator.reportedObjectID = article.id
+                            coordinator.appendPath(.reportView)
+                        } label: {
+                            Label("신고하기", systemImage: "exclamationmark.bubble")
                         }
                     }
+                    
                 } label: {
                     Image(systemName: "ellipsis")
                         .font(ANBDFont.pretendardRegular(13))

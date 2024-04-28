@@ -83,7 +83,7 @@ struct ReportView: View {
                 }, label: {
                     ZStack {
                         RoundedRectangle(cornerRadius: 10)
-                            .fill(reportReason.isEmpty ? .gray200 : Color.accentColor)
+                            .fill(reportReason.isEmpty ? .gray300 : Color.accentColor)
                         
                         Text("신고하기")
                             .foregroundStyle(.white)

@@ -59,7 +59,7 @@ struct CustomAlertView: View {
                             }, label: {
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 10)
-                                        .fill(.gray100)
+                                        .fill(.gray300)
                                         .frame(height: 45)
                                     
                                     Text("취소")

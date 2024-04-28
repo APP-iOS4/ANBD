@@ -19,7 +19,6 @@ struct UserPageView: View {
     
     @State private var isSignedInUser: Bool = false
     
-    @State private var isShowingPolicyView = false
     @State private var isShowingReportView = false
     @State private var refreshView = false
     
@@ -67,12 +66,6 @@ struct UserPageView: View {
                                     .foregroundStyle(Color.gray400)
                                 
                                 Spacer()
-                                
-                                Button(action: {
-                                    coordinator.mypagePath.append(Page.accountManagementView)
-                                }, label: {
-                                    Text("계정관리")
-                                })
                             }
                             .font(ANBDFont.Caption3)
                         }
@@ -118,31 +111,15 @@ struct UserPageView: View {
                             coordinator.mypagePath.append(Page.userLikedContentView)
                         }, label: {
                             listButtonView(title: "내가 찜한 나눔・거래 보기")
+                                .padding(.bottom, -10)
                         })
-                        
-                        Divider()
-                        
-                        Button(action: {
-                            isShowingPolicyView.toggle()
-                        }, label: {
-                            listButtonView(title: "약관 및 정책")
-                        })
-                        
-                        Divider()
-                    }
-                    .fullScreenCover(isPresented: $isShowingPolicyView) {
-                        SafariWebView(url: URL(string: "https://maru-study-note.tistory.com/")!)
-                            .ignoresSafeArea(edges: .bottom)
                     }
                 }
                 
-                if isSignedInUser {
-                    Spacer()
-                } else {
-                    Rectangle()
-                        .fill(Color.gray50)
-                        .ignoresSafeArea()
-                }
+                Rectangle()
+                    .fill(Color.gray50)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .ignoresSafeArea()
             }
             
             if coordinator.isShowingToastView {
@@ -151,7 +128,16 @@ struct UserPageView: View {
         }
         .toolbarRole(.editor)
         .toolbar {
-            if !isSignedInUser {
+            if isSignedInUser {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        coordinator.mypagePath.append(Page.settingsView)
+                    }, label: {
+                        Image(systemName: "gearshape")
+                            .font(.system(size: 14))
+                    })
+                }
+            } else {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button(role: .destructive) {
@@ -254,5 +240,7 @@ extension UserPageView {
     NavigationStack {
         UserPageView(writerUser: MyPageViewModel.mockUser)
             .environmentObject(MyPageViewModel())
+            .environmentObject(TradeViewModel())
+            .environmentObject(Coordinator())
     }
 }

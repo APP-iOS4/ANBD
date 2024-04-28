@@ -51,7 +51,7 @@ struct AccountManagementView: View {
                     Button(action: {
                         isShowingWithdrawalAlertView.toggle()
                     }, label: {
-                        Text("회원탈퇴")
+                        Text("회원 탈퇴")
                             .modifier(warningTextModifier())
                     })
                     

@@ -28,6 +28,7 @@ enum Page {
     case userInfoEditingView
     case userActivityView
     case userLikedContentView
+    case settingsView
 }
 
 final class Coordinator: ObservableObject {
@@ -98,6 +99,9 @@ final class Coordinator: ObservableObject {
             
         case .userLikedContentView:
             UserLikedContentsView(category: category)
+            
+        case .settingsView:
+            SettingsView()
         }
     }
     

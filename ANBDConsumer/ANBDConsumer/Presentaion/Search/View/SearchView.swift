@@ -43,6 +43,10 @@ struct SearchView: View {
                 Button(action: {
                     coordinator.searchText = recent
                     coordinator.appendPath(.searchResultView)
+                    
+                    searchViewModel.removeRecentSearch(recent)
+                    searchViewModel.saveRecentSearch(recent)
+                    searchViewModel.loadRecentSearch()
                 }, label: {
                     HStack {
                         Image(systemName: "clock.arrow.circlepath")

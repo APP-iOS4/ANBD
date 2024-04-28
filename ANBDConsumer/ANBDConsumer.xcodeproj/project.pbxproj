@@ -17,6 +17,7 @@
 		424CA0132BC3C0E200F83F8D /* TermsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0122BC3C0E200F83F8D /* TermsView.swift */; };
 		426EE0312BD37CCD00006C2C /* UserStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426EE0302BD37CCD00006C2C /* UserStore.swift */; };
 		427C923B2BCE4CFA0083B4A9 /* UserDefaultsClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 427C923A2BCE4CFA0083B4A9 /* UserDefaultsClient.swift */; };
+		427E28D22BDE2EB7001172C1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 427E28D12BDE2EB7001172C1 /* SettingsView.swift */; };
 		428E613F2BC8BDE400808340 /* UserLikedContentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 428E613E2BC8BDE400808340 /* UserLikedContentsView.swift */; };
 		42C151712BD1014400917F30 /* ListEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C151702BD1014400917F30 /* ListEmptyView.swift */; };
 		42C7BBD82BC2518000F0805A /* AccountManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C7BBD72BC2518000F0805A /* AccountManagementView.swift */; };
@@ -97,6 +98,7 @@
 		424CA0142BC3C45E00F83F8D /* SignUpCompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpCompleteView.swift; sourceTree = "<group>"; };
 		426EE0302BD37CCD00006C2C /* UserStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStore.swift; sourceTree = "<group>"; };
 		427C923A2BCE4CFA0083B4A9 /* UserDefaultsClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsClient.swift; sourceTree = "<group>"; };
+		427E28D12BDE2EB7001172C1 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		428E613E2BC8BDE400808340 /* UserLikedContentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLikedContentsView.swift; sourceTree = "<group>"; };
 		42C151702BD1014400917F30 /* ListEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListEmptyView.swift; sourceTree = "<group>"; };
 		42C7BBD72BC2518000F0805A /* AccountManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountManagementView.swift; sourceTree = "<group>"; };
@@ -484,6 +486,7 @@
 				42C7BBD92BC2793B00F0805A /* UserInfoEditingView.swift */,
 				4204F32E2BC7C60700C56DB8 /* UserActivityListView.swift */,
 				428E613E2BC8BDE400808340 /* UserLikedContentsView.swift */,
+				427E28D12BDE2EB7001172C1 /* SettingsView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -680,6 +683,7 @@
 				A83F2F9B2BBFCD7D00E3EB13 /* SafariWebView.swift in Sources */,
 				A87E89F32BC4370500F5331B /* SearchView.swift in Sources */,
 				CB198D142BC38BA0000C2709 /* CheckboxView.swift in Sources */,
+				427E28D22BDE2EB7001172C1 /* SettingsView.swift in Sources */,
 				424CA00B2BC3AB7800F83F8D /* SignUpPasswordView.swift in Sources */,
 				A816E6022BC1706600138CFC /* CustomAlertView.swift in Sources */,
 				A816E6002BC162DC00138CFC /* ImageDetailView.swift in Sources */,

@@ -243,4 +243,14 @@ final class MyPageViewModel: ObservableObject {
             print("\(error.localizedDescription)")
         }
     }
+    
+    // MARK: - 설정
+    func getCurrentAppVersion() -> String {
+        if let info: [String: Any] = Bundle.main.infoDictionary,
+           let currentVersion: String = info["CFBundleShortVersionString"] as? String {
+            return currentVersion
+        }
+        
+        return "nil"
+    }
 }

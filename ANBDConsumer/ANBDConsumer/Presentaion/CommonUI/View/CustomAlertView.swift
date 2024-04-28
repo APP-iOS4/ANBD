@@ -10,7 +10,7 @@ import SwiftUI
 struct CustomAlertView: View {
     
     @Binding var isShowingCustomAlert: Bool
-    var viewType: AlertViewType = .leaveChatRoom
+    var viewType: AlertViewType = .editingCancel
     var completionHandler: () -> Void
     
     var body: some View {
@@ -62,7 +62,7 @@ struct CustomAlertView: View {
                                         .fill(.gray100)
                                         .frame(height: 45)
                                     
-                                    Text("취소")
+                                    Text("취소하기")
                                 }
                             })
                             .padding(.leading, 15)
@@ -103,7 +103,7 @@ extension CustomAlertView {
         case duplicatedEmail
         case duplicatedNickname
         case signInFail
-        //trade
+        // trade
         case changeState
         case tradeDelete
         case articleEdit
@@ -113,6 +113,8 @@ extension CustomAlertView {
         case report
         case commentEdit
         case imageSelelct
+        // setting
+        case editingCancel
     }
     
     private var title: String {
@@ -147,6 +149,8 @@ extension CustomAlertView {
             return "수정 취소"
         case .imageSelelct:
             return "이미지 개수 제한"
+        case .editingCancel:
+            return "정보 수정 그만두기"
         }
     }
     
@@ -182,6 +186,8 @@ extension CustomAlertView {
             return "댓글 수정을 취소하시겠습니까?\n취소한 수정사항은 복구되지 않습니다."
         case .imageSelelct:
             return "이미지는 최대 5장만 가능합니다."
+        case .editingCancel:
+            return "변경된 내용은 저장되지 않습니다."
         }
     }
     
@@ -203,21 +209,23 @@ extension CustomAlertView {
             return "취소하기"
         case .report:
             return "신고하기"
+        case .editingCancel:
+            return "그만두기"
         }
     }
     
     private var confirmButtonColor: Color {
         switch viewType {
-        case .leaveChatRoom, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .imageSelelct:
+        case .leaveChatRoom, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .imageSelelct, .signOut, .editingCancel:
             return .accent
-        case .signOut, .withdrawal, .tradeDelete, .writingCancel, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit:
+        case .withdrawal, .tradeDelete, .writingCancel, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit:
             return .heartRed
         }
     }
     
     private var textWeight: Font.Weight {
         switch viewType {
-        case .leaveChatRoom, .signOut, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .tradeDelete, .writingCancel, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .imageSelelct:
+        case .leaveChatRoom, .signOut, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .tradeDelete, .writingCancel, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .imageSelelct, .editingCancel:
             return .medium
         case .withdrawal:
             return .heavy

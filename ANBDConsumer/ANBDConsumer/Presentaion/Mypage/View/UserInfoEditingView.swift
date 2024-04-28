@@ -19,6 +19,7 @@ struct UserInfoEditingView: View {
     @State private var isShowingPhotosPicker = false
     @State private var isShowingMenuList = false
     @State private var isShwoingDuplicatedNicknameAlert = false
+    @State private var isShowingEditingCancelAlert = false
     @State private var isChangedProfileImage = false
     
     @State private var photosPickerItem: PhotosPickerItem?
@@ -113,6 +114,12 @@ struct UserInfoEditingView: View {
                         focus = .nickname
                     }
                 }
+                
+                if isShowingEditingCancelAlert {
+                    CustomAlertView(isShowingCustomAlert: $isShowingEditingCancelAlert, viewType: .editingCancel) {
+                        dismiss()
+                    }
+                }
             }
             .toolbar {
                 ToolbarItemGroup(placement: .keyboard) {
@@ -127,7 +134,12 @@ struct UserInfoEditingView: View {
                 
                 ToolbarItem(placement: .topBarLeading) {
                     Button(action: {
-                        dismiss()
+                        if myPageViewModel.validateUpdatingComplete() {
+                            downKeyboard()
+                            isShowingEditingCancelAlert.toggle()
+                        } else {
+                            dismiss()
+                        }
                     }, label: {
                         Image(systemName: "xmark")
                     })

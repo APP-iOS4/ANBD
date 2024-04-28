@@ -208,9 +208,9 @@ extension CustomAlertView {
     
     private var confirmButtonColor: Color {
         switch viewType {
-        case .leaveChatRoom, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .imageSelelct:
+        case .leaveChatRoom, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .imageSelelct, .signOut:
             return .accent
-        case .signOut, .withdrawal, .tradeDelete, .writingCancel, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit:
+        case .withdrawal, .tradeDelete, .writingCancel, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit:
             return .heartRed
         }
     }

@@ -61,10 +61,12 @@ struct CommentEditView: View {
                                     }
                                 }
                                 self.isShowingCommentEditView.toggle()
+                                
                             } label: {
                                 Text("완료")
                             }
                             .disabled(content.isEmpty)
+                            .disabled(content == comment?.content)
                         }
                         ToolbarItem(placement: .cancellationAction) {
                             Button {
@@ -87,6 +89,9 @@ struct CommentEditView: View {
                 }
                 .navigationTitle("댓글 수정")
                 .navigationBarTitleDisplayMode(.inline)
+            }
+            .onTapGesture {
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             }
             
             if isShowingCustomAlert {

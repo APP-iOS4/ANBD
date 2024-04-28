@@ -38,7 +38,7 @@ struct BlueSquareButton: View {
             buttonAction()
         } label: {
             RoundedRectangle(cornerRadius: cornerRadius)
-                .foregroundStyle(!isDisabled ? .accent : .gray200)
+                .foregroundStyle(!isDisabled ? .accent : .gray300)
                 .overlay {
                     Text(title)
                         .font(ANBDFont.pretendardMedium(16))

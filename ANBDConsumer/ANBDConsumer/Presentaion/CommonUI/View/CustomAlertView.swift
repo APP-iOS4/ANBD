@@ -63,6 +63,7 @@ struct CustomAlertView: View {
                                         .frame(height: 45)
                                     
                                     Text("취소하기")
+                                        .foregroundStyle(.white)
                                 }
                             })
                             .padding(.leading, 15)
@@ -217,9 +218,9 @@ extension CustomAlertView {
     
     private var confirmButtonColor: Color {
         switch viewType {
-        case .leaveChatRoom, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .imageSelelct, .signOut, .editingCancel:
+        case .leaveChatRoom, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .imageSelelct, .signOut, .editingCancel, .writingCancel:
             return .accent
-        case .withdrawal, .tradeDelete, .writingCancel, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .articleCreate:
+        case .withdrawal, .tradeDelete, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .articleCreate:
             return .heartRed
         }
     }

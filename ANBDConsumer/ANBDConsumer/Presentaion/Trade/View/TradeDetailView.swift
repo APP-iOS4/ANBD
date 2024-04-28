@@ -203,7 +203,7 @@ struct TradeDetailView: View {
                     }
                 } label: {
                     Image(systemName: "ellipsis")
-                        .font(.system(size: 13))
+                        .font(ANBDFont.pretendardRegular(12))
                         .rotationEffect(.degrees(90))
                         .foregroundStyle(.gray900)
                 }

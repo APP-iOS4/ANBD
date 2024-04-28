@@ -32,7 +32,9 @@ public protocol TradeRepository {
     func refreshSearch(keyword: String, limit: Int) async throws -> [Trade]
     
     // MARK: Update
-    func updateTrade(trade: Trade, imageDatas: [Data]) async throws
+    func updateTrade(trade: Trade, 
+                     add images: [Data],
+                     delete paths: [String]) async throws
     func updateTrade(tradeID: String, tradeState: TradeState) async throws
     func likeTrade(tradeID: String) async throws
     

@@ -88,6 +88,7 @@ public struct StorageManager {
     @discardableResult
     public func uploadImageList(
         path storagePath: StoragePath,
+        isUpdate: Bool = false,
         containerID: String,
         imageDatas: [Data]
     ) async throws -> [String] {
@@ -106,7 +107,8 @@ public struct StorageManager {
             imagePaths.append(imagePath)
         }
         
-        if let thumbnailImageData = imageDatas.first,
+        if !isUpdate,
+           let thumbnailImageData = imageDatas.first,
            let resizedImageData = await UIImage(data: thumbnailImageData)?
             .byPreparingThumbnail(ofSize: .init(width: 256, height: 256))?
             .jpegData(compressionQuality: 1) {
@@ -165,53 +167,55 @@ public struct StorageManager {
     public func updateImageList(
         path storagePath: StoragePath,
         containerID: String,
-        imagePaths: [String],
-        imageDatas: [Data]
+        thumbnailPath: String,
+        addImageList: [Data],
+        deleteList: [String]
     ) async throws -> [String] {
-        if containerID.isEmpty {
-            throw StorageError.invalidContainerID
-        }
-        
-        if imagePaths.isEmpty {
-            throw StorageError.invalidImagePath
-        }
-        
-        if imageDatas.isEmpty {
-            throw StorageError.invalidImageData
-        }
-        
-        var updatedImagePaths: [String] = imagePaths
-        let storageImagePathList = try await storageRef
+        var storagePathList = try await storageRef
             .child(storagePath.rawValue)
             .child(containerID)
             .listAll()
             .items
             .map { $0.name }
-        let firstStorageImagePath = storageImagePathList.first ?? ""
         
-        for imagePath in storageImagePathList where !imagePaths.contains(imagePath) {
-            try await deleteImage(path: storagePath, containerID: containerID, imagePath: imagePath)
-            
-            if imagePath == firstStorageImagePath {
-                try await deleteImage(path: storagePath, containerID: "\(containerID)/thumbnail", imagePath: imagePath)
-            }
-        }
+        try await deleteImageList(
+            path: storagePath,
+            containerID: containerID,
+            imagePaths: deleteList
+        )
         
-        for (imagePath, imageData) in zip(imagePaths, imageDatas) where !storageImagePathList.contains(imagePath)  {
-            try await uploadImage(path: storagePath, containerID: containerID, imageData: imageData)
-        }
+        storagePathList = storagePathList.filter { !deleteList.contains($0) }
         
-        if let thumbnailImageData = imageDatas.first {
-            let thumbnailImagePath = try await uploadImage(
+        if !addImageList.isEmpty {
+            let newImagePath = try await uploadImageList(
                 path: storagePath,
-                containerID: "\(containerID)/thumbnail",
-                imageData: thumbnailImageData
+                isUpdate: true,
+                containerID: containerID,
+                imageDatas: addImageList
             )
             
-            updatedImagePaths.insert(thumbnailImagePath, at: 0)
+            storagePathList += newImagePath
         }
         
-        return updatedImagePaths
+        let thumbnailImage = try await downloadImage(
+            path: storagePath,
+            containerID: containerID,
+            imagePath: storagePathList[0]
+        )
+        
+        if let resizedImage = await UIImage(data: thumbnailImage)?
+            .byPreparingThumbnail(ofSize: .init(width: 256, height: 256))?
+            .jpegData(compressionQuality: 1) {
+            
+            try await updateImage(
+                path: storagePath,
+                containerID: "\(containerID)/thumbnail",
+                imagePath: thumbnailPath,
+                imageData: resizedImage
+            )
+        }
+        
+        return storagePathList
     }
     
     
@@ -360,11 +364,7 @@ public struct StorageManager {
         if containerID.isEmpty {
             throw StorageError.invalidContainerID
         }
-        
-        if imagePaths.isEmpty {
-            throw StorageError.invalidImagePath
-        }
-        
+
         for imagePath in imagePaths {
             try await deleteImage(path: storagePath, containerID: containerID, imagePath: imagePath)
         }

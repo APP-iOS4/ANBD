@@ -123,21 +123,24 @@ struct ArticleRepositoryImpl: ArticleRepository {
     
     
     // MARK: Update
-    func updateArticle(article: Article, imageDatas: [Data]) async throws {
-        let imagePaths = try await storage.updateImageList(
-            path: .article,
-            containerID: article.id,
-            imagePaths: article.imagePaths,
-            imageDatas: imageDatas
-        )
+    func updateArticle(
+        article: Article,
+        add images: [Data],
+        delete paths: [String]
+    ) async throws {
+        let storagePathList = try await storage
+            .updateImageList(
+                path: .article,
+                containerID: article.id,
+                thumbnailPath: article.thumbnailImagePath,
+                addImageList: images,
+                deleteList: paths
+            )
+        
         var updatedArticle = article
-        updatedArticle.thumbnailImagePath = imagePaths.first ?? ""
+        updatedArticle.imagePaths = storagePathList
         
-        if !imagePaths.isEmpty {
-            updatedArticle.imagePaths = Array(imagePaths[1...])
-        }
-        
-        try await articleDataSource.updateItem(item: updatedArticle)
+        try await articleDataSource.updateItem(item: article)
     }
     
     func updateArticle(articleID: String, nickname: String) async throws {
@@ -175,20 +178,20 @@ struct ArticleRepositoryImpl: ArticleRepository {
         
         try await commentDataSource.deleteItemList(articleID: article.id)
         
-        if !article.thumbnailImagePath.isEmpty {
-            try await storage.deleteImage(
-                path: .article,
-                containerID: "\(article.id)/thumbnail",
-                imagePath: article.thumbnailImagePath
-            )
-        }
+        try await storage.deleteImage(
+            path: .article,
+            containerID: "\(article.id)/thumbnail",
+            imagePath: article.thumbnailImagePath
+        )
         
         try await storage.deleteImageList(
             path: .article,
             containerID: article.id,
             imagePaths: article.imagePaths
         )
+        
         try await articleDataSource.deleteItem(itemID: article.id)
+        try await userDataSource.updateUserInfoList(articleID: article.id)
         
         switch article.category {
         case .accua:
@@ -202,7 +205,6 @@ struct ArticleRepositoryImpl: ArticleRepository {
         }
         
         try await userDataSource.updateUserPostCount(user: userInfo)
-        try await userDataSource.updateUserInfoList(articleID: article.id)
     }
     
     func resetQuery() {

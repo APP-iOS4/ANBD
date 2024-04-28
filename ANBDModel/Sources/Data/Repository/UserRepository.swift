@@ -55,6 +55,10 @@ struct DefaultUserRepository: UserRepository {
         try await userDataSource.updateUserInfo(user: user)
     }
     
+    func updateUserFCMToken(userID: String, fcmToken: String) async throws {
+        try await userDataSource.updateUserFCMToken(userID: userID, fcmToken: fcmToken)
+    }
+    
     func updateUserPostCount(
         user: User,
         before: ANBDCategory,

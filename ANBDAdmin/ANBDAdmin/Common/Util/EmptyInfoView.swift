@@ -1,18 +1,18 @@
 //
-//  SwiftUIView.swift
+//  EmptyInfoView.swift
 //  ANBDAdmin
 //
-//  Created by sswv on 4/16/24.
+//  Created by sswv on 4/26/24.
 //
 
 import SwiftUI
 
-struct InquiryView: View {
+struct EmptyInfoView: View {
     var body: some View {
         Text("")
     }
 }
 
 #Preview {
-    InquiryView()
+    EmptyInfoView()
 }

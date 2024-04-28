@@ -78,11 +78,13 @@ struct MessageCell: View {
                     .clipShape(RoundedRectangle(cornerRadius: 15))
                     .contextMenu {
                         if !isMine {
-                            Button("메시지 신고하기", role: .destructive) {
+                            Button(role: .destructive) {
                                 coordinator.reportType = .messages
                                 coordinator.reportedObjectID = message.id
                                 coordinator.reportedChannelID = channel.id
                                 coordinator.appendPath(.reportView)
+                            } label: {
+                                Label("메시지 신고하기", systemImage: "exclamationmark.bubble")
                             }
                         }
                     }

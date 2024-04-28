@@ -153,7 +153,7 @@ struct ChatDetailView: View {
                         }
                         coordinator.appendPath(.reportView)
                     } label: {
-                        Label("채팅 신고하기", systemImage: "exclamationmark.bubble")
+                        Label("채팅방 신고하기", systemImage: "exclamationmark.bubble")
                     }
                     
                     Button(role: .destructive) {

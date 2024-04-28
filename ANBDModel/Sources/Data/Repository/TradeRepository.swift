@@ -144,19 +144,22 @@ struct TradeRepositoryImpl: TradeRepository {
     
     
     // MARK: Update
-    func updateTrade(trade: Trade, imageDatas: [Data]) async throws {
-        let imagePaths = try await storage.updateImageList(
-            path: .trade,
-            containerID: trade.id,
-            imagePaths: trade.imagePaths,
-            imageDatas: imageDatas
-        )
-        var updatedTrade = trade
-        updatedTrade.thumbnailImagePath = imagePaths.first ?? ""
+    func updateTrade(
+        trade: Trade,
+        add images: [Data],
+        delete paths: [String]
+    ) async throws {
+        let storagePathList = try await storage
+            .updateImageList(
+                path: .trade,
+                containerID: trade.id,
+                thumbnailPath: trade.thumbnailImagePath,
+                addImageList: images,
+                deleteList: paths
+            )
         
-        if !imagePaths.isEmpty {
-            updatedTrade.imagePaths = Array(imagePaths[1...])
-        }
+        var updatedTrade = trade
+        updatedTrade.imagePaths = storagePathList
         
         try await tradeDataSource.updateItem(item: updatedTrade)
     }
@@ -187,19 +190,18 @@ struct TradeRepositoryImpl: TradeRepository {
         
         var userInfo = try await userDataSource.readUserInfo(userID: userID)
         
-        if !trade.thumbnailImagePath.isEmpty {
-            try await storage.deleteImage(
-                path: .trade,
-                containerID: "\(trade.id)/thumbnail",
-                imagePath: trade.thumbnailImagePath
-            )
-        }
+        try await storage.deleteImage(
+            path: .trade,
+            containerID: "\(trade.id)/thumbnail",
+            imagePath: trade.thumbnailImagePath
+        )
         
         try await storage.deleteImageList(
             path: .trade,
             containerID: trade.id,
             imagePaths: trade.imagePaths
         )
+        
         try await tradeDataSource.deleteItem(itemID: trade.id)
         try await userDataSource.updateUserInfoList(tradeID: trade.id)
         

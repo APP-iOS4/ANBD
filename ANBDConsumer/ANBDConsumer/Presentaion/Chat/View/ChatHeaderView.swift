@@ -29,9 +29,11 @@ struct ChatHeaderView: View {
                 case .home, .article, .trade, .mypage:
                     coordinator.pop()
                 case .chat:
-                    if let trade {
-                        coordinator.trade = trade
-                        tradeViewModel.getOneTrade(trade: trade)
+                    Task {
+                        guard let trade else { return }
+                        let tmpTrade = await chatViewModel.loadTrade(tradeID: trade.id)
+                        tradeViewModel.getOneTrade(trade: tmpTrade)
+                        coordinator.trade = tmpTrade
                         coordinator.chatPath.append(Page.tradeDetailView)
                     }
                 }

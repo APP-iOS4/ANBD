@@ -19,6 +19,7 @@ final class ChatViewModel: ObservableObject {
     
     private let chatUsecase: ChatUsecase = ChatUsecase()
     private let userUsecase: UserUsecase = DefaultUserUsecase()
+    private let tradeUsecase: TradeUsecase = DefaultTradeUsecase()
     private let storageManager = StorageManager.shared
     
     @Published var user: User = UserStore.shared.user
@@ -224,6 +225,24 @@ final class ChatViewModel: ObservableObject {
         } catch {
             print("getTrade Error: \(error)")
             return nil
+        }
+    }
+    
+    /// 거래 상품 상태 변경
+    func updateTradeState(tradeID: String, tradeState: TradeState) async {
+        do {
+            try await tradeUsecase.updateTradeState(tradeID: tradeID, tradeState: tradeState)
+        } catch {
+            print("updateTradeState Error: \(error.localizedDescription)")
+        }
+    }
+    
+    func loadTrade(tradeID: String) async -> Trade {
+        do {
+            return try await tradeUsecase.loadTrade(tradeID: tradeID)
+        } catch {
+            print("loadTrade \(error.localizedDescription)")
+            return .init(writerID: "", writerNickname: "", category: .nanua, itemCategory: .beautyCosmetics, location: .seoul, title: "", content: "", myProduct: "", thumbnailImagePath: "", imagePaths: [])
         }
     }
     

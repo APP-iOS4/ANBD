@@ -11,6 +11,7 @@ import ANBDModel
 
 struct ChatDetailView: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
+    @EnvironmentObject private var tradeViewModel: TradeViewModel
     @EnvironmentObject private var coordinator: Coordinator
     
     /// 채팅방 구분 변수
@@ -103,11 +104,14 @@ struct ChatDetailView: View {
             
             if isShowingStateChangeCustomAlert {
                 CustomAlertView(isShowingCustomAlert: $isShowingStateChangeCustomAlert, viewType: .changeState) {
-                    //task로 변경해주기~
-                    if tradeState == .trading {
-                        tradeState = .finish
-                    } else {
-                        tradeState = .trading
+                    Task {
+                        guard let trade else { return }
+                        if tradeState == .trading {
+                            tradeState = .finish
+                        } else {
+                            tradeState = .trading
+                        }
+                        await chatViewModel.updateTradeState(tradeID: trade.id, tradeState: tradeState)
                     }
                 }
             }
@@ -141,7 +145,6 @@ struct ChatDetailView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
-                    
                     Button {
                         coordinator.reportType = .chatRoom
                         if let channel = channel {
@@ -149,7 +152,7 @@ struct ChatDetailView: View {
                         }
                         coordinator.appendPath(.reportView)
                     } label: {
-                        Label("채팅 신고하기", systemImage: "exclamationmark.bubble")
+                        Label("채팅방 신고하기", systemImage: "exclamationmark.bubble")
                     }
                     
                     Button(role: .destructive) {

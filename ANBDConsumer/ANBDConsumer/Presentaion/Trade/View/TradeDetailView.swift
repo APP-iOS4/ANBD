@@ -10,7 +10,6 @@ import ANBDModel
 import Kingfisher
 
 struct TradeDetailView: View {
-    @EnvironmentObject private var homeViewModel: HomeViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @EnvironmentObject private var chatViewModel: ChatViewModel
     @EnvironmentObject private var myPageViewModel: MyPageViewModel

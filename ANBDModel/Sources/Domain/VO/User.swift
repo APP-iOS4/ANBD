@@ -23,6 +23,8 @@ public struct User: Codable, Identifiable, Hashable {
     /// 유저의 상태
     public var userLevel: UserLevel
     
+    public var fcmToken: String
+    
     /// 만 14세 이상
     public var isOlderThanFourteen: Bool
     
@@ -61,6 +63,7 @@ public struct User: Codable, Identifiable, Hashable {
         email: String,
         favoriteLocation: Location,
         userLevel: UserLevel = .consumer,
+        fcmToken: String,
         isOlderThanFourteen: Bool,
         isAgreeService: Bool,
         isAgreeCollectInfo: Bool,
@@ -78,6 +81,7 @@ public struct User: Codable, Identifiable, Hashable {
         self.email = email
         self.favoriteLocation = favoriteLocation
         self.userLevel = userLevel
+        self.fcmToken = fcmToken
         self.isOlderThanFourteen = isOlderThanFourteen
         self.isAgreeService = isAgreeService
         self.isAgreeCollectInfo = isAgreeCollectInfo

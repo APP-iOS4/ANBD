@@ -29,7 +29,7 @@ struct SignUpPolicyAgreeView: View {
                     Image(systemName: authenticationViewModel.isAllAgree() ? "checkmark.circle.fill" :"checkmark.circle")
                         .resizable()
                         .frame(width: 24, height: 24)
-                        .foregroundStyle(.accent)
+                        .foregroundStyle(authenticationViewModel.isAllAgree() ? .accent : .gray200)
                     
                     Text("모두 동의 (선택 정보 포함)")
                         .font(ANBDFont.SubTitle2)
@@ -39,31 +39,34 @@ struct SignUpPolicyAgreeView: View {
             
             Divider()
             
-            PolicyDetailView(
-                isAgree: $authenticationViewModel.isOlderThanFourteen,
-                explainString: "만 14세 이상입니다. (필수)"
-            )
-            
-            PolicyDetailView(
-                isAgree: $authenticationViewModel.isAgreeService,
-                explainString: "서비스 이용약관에 동의 (필수)"
-            ) {
-                authenticationViewModel.showTermsView(type: .agreeService)
+            Group {
+                PolicyDetailView(
+                    isAgree: $authenticationViewModel.isOlderThanFourteen,
+                    explainString: "만 14세 이상입니다. (필수)"
+                )
+                
+                PolicyDetailView(
+                    isAgree: $authenticationViewModel.isAgreeService,
+                    explainString: "서비스 이용약관에 동의 (필수)"
+                ) {
+                    authenticationViewModel.showTermsView(type: .agreeService)
+                }
+                
+                PolicyDetailView(
+                    isAgree: $authenticationViewModel.isAgreeCollectInfo,
+                    explainString: "개인정보 수집 및 이용에 동의 (필수)"
+                ) {
+                    authenticationViewModel.showTermsView(type: .agreeCollectionInfo)
+                }
+                
+                PolicyDetailView(
+                    isAgree: $authenticationViewModel.isAgreeMarketing,
+                    explainString: "광고 및 마케팅 수신에 동의 (선택)"
+                ) {
+                    authenticationViewModel.showTermsView(type: .agreeMarketing)
+                }
             }
-            
-            PolicyDetailView(
-                isAgree: $authenticationViewModel.isAgreeCollectInfo,
-                explainString: "개인정보 수집 및 이용에 동의 (필수)"
-            ) {
-                authenticationViewModel.showTermsView(type: .agreeCollectionInfo)
-            }
-            
-            PolicyDetailView(
-                isAgree: $authenticationViewModel.isAgreeMarketing,
-                explainString: "광고 및 마케팅 수신에 동의 (선택)"
-            ) {
-                authenticationViewModel.showTermsView(type: .agreeMarketing)
-            }
+            .padding(.horizontal, 6)
             
             Spacer()
             
@@ -71,7 +74,7 @@ struct SignUpPolicyAgreeView: View {
                 authenticationViewModel.isValidSignUp = true
                 
                 Task {
-                    try await authenticationViewModel.signUp()
+                    await authenticationViewModel.signUp()
                 }
             }
         }

@@ -20,7 +20,9 @@ public protocol ArticleUsecase {
     func refreshWriterIDArticleList(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [Article]
     func refreshSortedArticleList(category: ANBDCategory, by order: ArticleOrder, limit: Int) async throws -> [Article]
     func refreshSearchArticleList(keyword: String, limit: Int) async throws -> [Article]
-    func updateArticle(article: Article, imageDatas: [Data]) async throws
+    func updateArticle(article: Article, 
+                       add images: [Data],
+                       delete paths: [String]) async throws
     func likeArticle(articleID: String) async throws
     func deleteArticle(article: Article) async throws
     func resetQuery()
@@ -196,7 +198,11 @@ public struct DefaultArticleUsecase: ArticleUsecase {
     /// - Parameters:
     ///   - article: 수정할 Article의 정보
     ///   - imageDatas: 수정할 이미지 Data 배열
-    public func updateArticle(article: Article, imageDatas: [Data]) async throws {
+    public func updateArticle(
+        article: Article,
+        add images: [Data],
+        delete paths: [String]
+    ) async throws {
         guard article.category == .accua || article.category == .dasi else {
             throw ArticleError.invalidCategory
         }
@@ -205,11 +211,11 @@ public struct DefaultArticleUsecase: ArticleUsecase {
             throw ArticleError.invalidArticleIDField
         }
         
-        if imageDatas.isEmpty {
-            throw ArticleError.invalidImageField
-        }
-        
-        try await articleRepository.updateArticle(article: article, imageDatas: imageDatas)
+        try await articleRepository.updateArticle(
+            article: article,
+            add: images,
+            delete: paths
+        )
     }
     
     /// Article을 좋아요하는 메서드

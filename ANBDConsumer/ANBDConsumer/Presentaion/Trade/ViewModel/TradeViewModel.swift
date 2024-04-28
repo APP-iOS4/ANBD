@@ -7,40 +7,28 @@
 
 import ANBDModel
 import SwiftUI
+import PhotosUI
 
-//임시로..
-@MainActor
 final class TradeViewModel: ObservableObject {
     private let storageManager = StorageManager.shared
     private let tradeUseCase: TradeUsecase = DefaultTradeUsecase()
-    @Published var tradePath: NavigationPath = NavigationPath()
+    private let userUseCase: UserUsecase = DefaultUserUsecase()
     
     /// 필터링 옵션 : Location · ItemCateogry
     @Published var selectedLocations: [Location] = []
     @Published var selectedItemCategories: [ItemCategory] = []
     
     @Published private(set) var trades: [Trade] = []
-    @Published private(set) var filteredTrades: [Trade] = []
+    @Published var filteredTrades: [Trade] = []
     @Published var trade: Trade = Trade(id: "", writerID: "", writerNickname: "", createdAt: Date(), category: .nanua, itemCategory: .beautyCosmetics, location: .busan, tradeState: .trading, title: "", content: "", myProduct: "", wantProduct: nil, thumbnailImagePath: "", imagePaths: [])
     
     @Published var selectedItemCategory: ItemCategory = .digital
     @Published var selectedLocation: Location = .seoul
     
-    
-    init() {
-        
-    }
+    //MARK: - 로컬 함수 (네트워크 호출 X)
     
     func filteringTrades(category: ANBDCategory) {
-        filteredTrades = trades.filter({ $0.category == category })
-        
-        if selectedLocations.isEmpty && selectedItemCategories.isEmpty {
-            filteredTrades = filteredTrades
-        } else if !selectedLocations.isEmpty && !selectedItemCategories.isEmpty {
-            filteredTrades = filteredTrades.filter({ selectedItemCategories.contains($0.itemCategory) &&  selectedLocations.contains($0.location) })
-        } else {
-            filteredTrades = filteredTrades.filter({ selectedItemCategories.contains($0.itemCategory) ||  selectedLocations.contains($0.location) })
-        }
+        self.filteredTrades = trades.filter({ $0.category == category })
     }
     
     func pickerItemCategory(itemCategory: ItemCategory) {
@@ -55,58 +43,69 @@ final class TradeViewModel: ObservableObject {
         self.trade = trade
     }
     
-    
-    
     //MARK: - READ
-    @MainActor
-    func loadAllTrades() async {
-        do {
-            try await self.trades.append(contentsOf: tradeUseCase.loadTradeList(limit: 20))
-
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
     
+    /// 위로 당겨서 새로고침 + 지역, 카테고리가 바뀌었을 경우 호출
     @MainActor
-    func reloadAllTrades() async {
-        do {
-            self.trades = try await tradeUseCase.refreshAllTradeList(limit: 20)
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
-    
-    func loadFilteredTrades(category: ANBDCategory) async {
+    func reloadFilteredTrades(category: ANBDCategory) async {
         do {
             if self.selectedLocations.isEmpty && self.selectedItemCategories.isEmpty {
                 //print("둘다 엠티여요")
-                self.filteredTrades = try await tradeUseCase.loadFilteredTradeList(category: category, location: nil, itemCategory: nil, limit: 10)
+                
+                self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: nil, itemCategory: nil, limit: 8)
+                
+                //print("🥹\(filteredTrades)")
+                
             } else if self.selectedLocations.isEmpty {
                 //print("지역 엠티여요")
-                self.filteredTrades = try await tradeUseCase.loadFilteredTradeList(category: category, location: nil, itemCategory: self.selectedItemCategories, limit: 10)
+                self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: nil, itemCategory: self.selectedItemCategories, limit: 8)
+                
             } else if self.selectedItemCategories.isEmpty {
                 //print("카테고리 엠티여요")
-                self.filteredTrades = try await tradeUseCase.loadFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: nil, limit: 10)
+                self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: nil, limit: 8)
+                
             } else {
                 //print("둘다 풀")
-                self.filteredTrades = try await tradeUseCase.loadFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: self.selectedItemCategories, limit: 10)
+                self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: self.selectedItemCategories, limit: 8)
             }
         } catch {
             print(error.localizedDescription)
         }
     }
     
-    //페이지네이션 한다면 -> 개선 필요
-    func loadMoreFilteredTrades(category: ANBDCategory, location: [Location]?, itemCategory: [ItemCategory]?) async {
+    /// 페이지네이션시 호출
+    @MainActor
+    func loadMoreFilteredTrades(category: ANBDCategory) async {
         do {
-            self.filteredTrades.append(contentsOf: try await tradeUseCase.loadFilteredTradeList(category: category, location: location, itemCategory: itemCategory, limit: 10)
-                                       )
+            var newTrades: [Trade] = []
+            if self.selectedLocations.isEmpty && self.selectedItemCategories.isEmpty {
+                //print("둘다 엠티여요")
+                newTrades = try await tradeUseCase.loadFilteredTradeList(category: category, location: nil, itemCategory: nil, limit: 5)
+            } else if self.selectedLocations.isEmpty {
+                //print("지역 엠티여요")
+                newTrades = try await tradeUseCase.loadFilteredTradeList(category: category, location: nil, itemCategory: self.selectedItemCategories, limit: 5)
+            } else if self.selectedItemCategories.isEmpty {
+                //print("카테고리 엠티여요")
+                newTrades = try await tradeUseCase.loadFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: nil, limit: 5)
+            } else {
+                //print("둘다 풀")
+                newTrades = try await tradeUseCase.loadFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: self.selectedItemCategories, limit: 5)
+            }
+            
+            for item in newTrades {
+                if filteredTrades.contains(item) {
+                    print("end")
+                } else {
+                    self.filteredTrades.append(contentsOf: newTrades)
+                }
+            }
+                
         } catch {
             print(error.localizedDescription)
         }
     }
     
+    /// 뷰모델에 하나의 trade 값 저장
     @MainActor
     func loadOneTrade(trade: Trade) async {
         do {
@@ -137,9 +136,11 @@ final class TradeViewModel: ObservableObject {
         return detailImages
     }
     
+    //MARK: - CREATE
+    
     func createTrade(category: ANBDCategory, itemCategory: ItemCategory, location: Location, title: String, content: String, myProduct: String, wantProduct: String, images: [Data]) async {
         
-        let user = UserDefaultsClient.shared.userInfo
+        let user = UserStore.shared.user
         var want: String = ""
         
         if wantProduct == "" {
@@ -148,7 +149,7 @@ final class TradeViewModel: ObservableObject {
             want = wantProduct
         }
         
-        let newTrade = Trade(writerID: user!.id, writerNickname: user!.nickname, category: category, itemCategory: itemCategory, location: location, title: title, content: content, myProduct: myProduct, wantProduct: want, thumbnailImagePath: "", imagePaths: [])
+        let newTrade = Trade(writerID: user.id, writerNickname: user.nickname, category: category, itemCategory: itemCategory, location: location, title: title, content: content, myProduct: myProduct, wantProduct: want, thumbnailImagePath: "", imagePaths: [])
         
         //이미지 리사이징
         var newImages: [Data] = []
@@ -160,21 +161,30 @@ final class TradeViewModel: ObservableObject {
         //저장
         do {
             try await tradeUseCase.writeTrade(trade: newTrade, imageDatas: newImages)
+            await UserStore.shared.updateLocalUserInfo()
         } catch {
             print(error.localizedDescription)
         }
     }
     
+    //MARK: - DELETE
+    
     func deleteTrade(trade: Trade) async {
         do {
             try await tradeUseCase.deleteTrade(trade: trade)
+            await UserStore.shared.updateLocalUserInfo()
         } catch {
             print("삭제 실패: \(error.localizedDescription)")
         }
     }
     
+    //MARK: - UPDATE
+    
     @MainActor
-    func updateTrade(category: ANBDCategory, title: String, content: String, myProduct: String, wantProduct: String, images: [Data]) async {
+    func updateTrade(category: ANBDCategory, title: String, content: String, myProduct: String, wantProduct: String, addImages: [Data], deletedImagesIndex: [Int]) async {
+        
+        let user = UserStore.shared.user
+        let originCategory = self.trade.category
         
         self.trade.category = category
         self.trade.itemCategory = self.selectedItemCategory
@@ -188,16 +198,25 @@ final class TradeViewModel: ObservableObject {
             self.trade.wantProduct = "제시"
         }
         
+        //삭제된 이미지
+        var deletedImages: [String] = []
+        for i in deletedImagesIndex {
+            deletedImages.append(self.trade.imagePaths[i])
+            self.trade.imagePaths.remove(at: i)
+        }
+        
         //이미지 리사이징
         var newImages: [Data] = []
-        for image in images {
+        for image in addImages {
             let imageData = await UIImage(data: image)?.byPreparingThumbnail(ofSize: .init(width: 1024, height: 1024))?.jpegData(compressionQuality: 0.5)
             newImages.append(imageData ?? Data())
         }
         
         do {
-            try await tradeUseCase.updateTrade(trade: self.trade, imageDatas: newImages)
+            try await tradeUseCase.updateTrade(trade: self.trade, add: newImages, delete: deletedImages)
+            try await userUseCase.updateUserPostCount(user: user, before: originCategory, after: trade.category)
             trade = try await tradeUseCase.loadTrade(tradeID: trade.id)
+            await UserStore.shared.updateLocalUserInfo()
         } catch {
             print("수정 실패: \(error.localizedDescription)")
         }
@@ -217,6 +236,30 @@ final class TradeViewModel: ObservableObject {
             }
         } catch {
             print("상태수정 실패: \(error.localizedDescription)")
+        }
+    }
+    
+    @MainActor
+    func updateLikeTrade(trade: Trade) async {
+        do {
+            try await tradeUseCase.likeTrade(tradeID: trade.id)
+            await UserStore.shared.updateLocalUserInfo()
+        } catch {
+            print("좋아요 실패: \(error.localizedDescription)")
+        }
+    }
+    
+    //MARK: - SEARCH
+    
+    @MainActor
+    func searchTrade(keyword: String, category: ANBDCategory?) async {
+        do {
+            trades = try await tradeUseCase.refreshSearchTradeList(keyword: keyword, limit: 100)
+            if let category {
+                filteringTrades(category: category)
+            }
+        } catch {
+            print("Error: \(error)")
         }
     }
 }

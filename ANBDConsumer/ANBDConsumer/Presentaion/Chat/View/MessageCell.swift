@@ -18,7 +18,7 @@ struct MessageCell: View {
     var message: Message
     var isLast: Bool = false
     @State var imageUrl: URL?
-    @State private var isMine: Bool = false
+    @State private var isMine: Bool = true
     @State private var isLoading: Bool = true
     @State private var otherUser: User?
     
@@ -45,24 +45,22 @@ struct MessageCell: View {
             }
             
             if !isMine && chatViewModel.otherUserLastMessages.contains(message){
-                ZStack {
-                    Button(action: {
-                        guard let otherUser else { return }
-                        coordinator.user = otherUser
-                        coordinator.appendPath(.userPageView)
-                    }, label: {
-                        KFImage(URL(string: chatViewModel.otherUserProfileImageUrl))
-                            .placeholder { _ in
-                                ProgressView()
-                            }
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(Color.gray, lineWidth: 0.5))
-                            .frame(width: 30)
-                    })
-                }
-            }else if !isMine {
+                Button(action: {
+                    guard let otherUser else { return }
+                    coordinator.user = otherUser
+                    coordinator.appendPath(.userPageView)
+                }, label: {
+                    KFImage(URL(string: chatViewModel.selectedUser.profileImage))
+                        .placeholder { _ in
+                            ProgressView()
+                        }
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .clipShape(Circle())
+                        .overlay(Circle().stroke(Color.gray, lineWidth: 0.5))
+                        .frame(width: 30)
+                })
+            } else if !isMine {
                 Circle()
                     .fill(Color.clear)
                     .frame(width: 30)
@@ -86,6 +84,7 @@ struct MessageCell: View {
                             } label: {
                                 Label("메시지 신고하기", systemImage: "exclamationmark.bubble")
                             }
+
                         }
                     }
             }
@@ -133,7 +132,7 @@ struct MessageCell: View {
         .onAppear {
             Task {
                 isMine = message.userID == chatViewModel.user.id
-                otherUser = await chatViewModel.getOtherUserImage(channel: channel)
+                otherUser = await chatViewModel.getOtherUser(channel: channel)
                 if let imagePath = message.imagePath {
                     /// 이미지 로드
                     imageUrl = try await chatViewModel.downloadImageUrl(messageID: message.id, imagePath: imagePath)

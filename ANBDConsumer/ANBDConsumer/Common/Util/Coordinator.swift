@@ -78,7 +78,7 @@ final class Coordinator: ObservableObject {
             SearchResultView(category: category, searchText: searchText)
             
         case .chatDetailView:
-            ChatDetailView(channel: channel, trade: trade)
+            ChatDetailView()
             
         case .reportView:
             ReportView(reportViewType: reportType, reportedObjectID: reportedObjectID, reportedChannelID: reportedChannelID)

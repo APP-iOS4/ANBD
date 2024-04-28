@@ -15,11 +15,11 @@ struct ChatHeaderView: View {
     @EnvironmentObject private var coordinator: Coordinator
     
     var trade: Trade?
-    var imageData: Data?
+    @State var imageData: Data?
     
     @State private var isLoading: Bool = true
     
-    @Binding var tradeState: TradeState
+//    @Binding var tradeState: TradeState
     @Binding var isShowingStateChangeCustomAlert: Bool
     
     var body: some View {
@@ -30,10 +30,9 @@ struct ChatHeaderView: View {
                     coordinator.pop()
                 case .chat:
                     Task {
-                        guard let trade else { return }
-                        let tmpTrade = await chatViewModel.loadTrade(tradeID: trade.id)
-                        tradeViewModel.getOneTrade(trade: tmpTrade)
-                        coordinator.trade = tmpTrade
+                        guard let trade = chatViewModel.selectedTrade else { return }
+                        tradeViewModel.getOneTrade(trade: trade)
+                        coordinator.trade = trade
                         coordinator.chatPath.append(Page.tradeDetailView)
                     }
                 }
@@ -87,7 +86,7 @@ struct ChatHeaderView: View {
                         
                         if let trade {
                             if trade.writerID == chatViewModel.user.id {
-                                TradeStateChangeView(tradeState: $tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert)
+                                TradeStateChangeView(tradeState: trade.tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert)
                                     .padding(.trailing, 10)
                                     .skeleton(with: isLoading,size: CGSize(width: 50, height: 20))
                             }
@@ -104,8 +103,16 @@ struct ChatHeaderView: View {
             }
             .foregroundStyle(.gray900)
         })
+        .onAppear {
+            if let trade {
+                Task {
+                    imageData = try await chatViewModel.loadThumnailImage(containerID: trade.id, imagePath: trade.thumbnailImagePath)
+                }
+            }
+        }
         .disabled(trade == nil)
     }
+
     
     /// Trade 상품 String
     private var tradeProductString: String {

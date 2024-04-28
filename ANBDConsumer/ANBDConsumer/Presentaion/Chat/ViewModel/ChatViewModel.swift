@@ -18,6 +18,7 @@ final class ChatViewModel: ObservableObject {
     @Published var reportedChannelID: String?
     
     private let chatUsecase: ChatUsecase = ChatUsecase()
+    private let userUsecase: UserUsecase = DefaultUserUsecase()
     private let tradeUsecase: TradeUsecase = DefaultTradeUsecase()
     private let storageManager = StorageManager.shared
     
@@ -27,6 +28,12 @@ final class ChatViewModel: ObservableObject {
     @Published var otherUserLastMessages: [Message] = []
     @Published var otherUserProfileImageUrl: String = ""
     @Published var totalUnreadCount: Int = 0
+    
+    //채팅방 내부에 필요한 변수
+    var selectedUser: User = User(id: "", nickname: "(알수없음)", email: "", favoriteLocation: .seoul, isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
+    
+    var selectedTrade: Trade?
+    var selectedChannel: Channel?
     
     @Published var groupedMessages: [(day:String , messages:[Message])] = []
     
@@ -104,41 +111,54 @@ final class ChatViewModel: ObservableObject {
     
     
     /// 채널 생성 (처음 채팅을 남길 때) : ChannelID 반환
-    func makeChannel(channel: Channel) async throws -> Channel {
+    func makeChannel(channel: Channel) async throws {
         do {
-            return try await chatUsecase.createChannel(channel: channel)
+            self.selectedChannel = try await chatUsecase.createChannel(channel: channel)
         } catch {
             print("Error: \(error)")
-            return Channel(participants: [], participantNicknames: [], lastMessage: "", lastSendDate: .now, lastSendId: "", unreadCount: 0, tradeId: "")
+            self.selectedChannel = nil
         }
     }
     
+    
     /// 채널 가져오기
-    func getChannel(tradeID: String) async throws -> Channel? {
+    private func getChannel(tradeID: String) async throws -> Channel? {
         do {
             return try await chatUsecase.getChannel(tradeID: tradeID, userID: user.id)
         } catch {
-            print("getChannel Error: \(error)")
             return nil
         }
     }
     
-    func setOtherUserImage(channel: Channel) async {
+    //채팅방 리스트에서 접근시
+    func setSelectedUser(channel: Channel) async throws{
+        self.selectedChannel = channel
+        
         do {
-            let otherUser = try await chatUsecase.getOtherUser(channel: channel, userID: user.id)
-            self.otherUserProfileImageUrl = otherUser.profileImage
-        } catch {
-            print("error: \(error)")
+            self.selectedUser = try await chatUsecase.getOtherUser(channel: channel, userID: user.id)
+            self.selectedTrade = try await chatUsecase.getTradeInChannel(channelID: channel.id)
+        } catch DBError.getTradeDocumentError {
+            self.selectedTrade = nil
+        }
+        catch {
+            self.selectedUser = User(id: "", nickname: "(알수없음)", email: "", favoriteLocation: .seoul, isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
         }
     }
     
-    func getOtherUserImage(channel: Channel) async -> User? {
+    //Trade 디테일에서 접근시
+    func setSelectedUser(trade: Trade) async throws {
+        self.selectedUser = try await userUsecase.getUserInfo(userID: trade.writerID)
+        self.selectedTrade = trade
+        self.selectedChannel = try await getChannel(tradeID: trade.id)
+    }
+    
+    func getOtherUser(channel: Channel) async -> User {
         do {
             let otherUser = try await chatUsecase.getOtherUser(channel: channel, userID: user.id)
             return otherUser
         } catch {
-            print("error: \(error)")
-            return nil
+            print("getOtherUser error: \(error)")
+            return User(id: "", nickname: "알수없음", email: "", favoriteLocation: .seoul, isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
         }
     }
     
@@ -190,26 +210,27 @@ final class ChatViewModel: ObservableObject {
         do {
             return try await chatUsecase.getTradeInChannel(channelID: channelID)
         } catch {
-            print("Error: \(error)")
+            print("getTrade Error: \(error)")
             return nil
         }
     }
     
+    
     /// 거래 상품 상태 변경
     func updateTradeState(tradeID: String, tradeState: TradeState) async {
         do {
+            self.selectedTrade?.tradeState = tradeState
             try await tradeUsecase.updateTradeState(tradeID: tradeID, tradeState: tradeState)
         } catch {
             print("updateTradeState Error: \(error.localizedDescription)")
         }
     }
     
-    func loadTrade(tradeID: String) async -> Trade {
+    func loadTrade(tradeID: String) async {
         do {
-            return try await tradeUsecase.loadTrade(tradeID: tradeID)
+            self.selectedTrade = try await tradeUsecase.loadTrade(tradeID: tradeID)
         } catch {
             print("loadTrade \(error.localizedDescription)")
-            return .init(writerID: "", writerNickname: "", category: .nanua, itemCategory: .beautyCosmetics, location: .seoul, title: "", content: "", myProduct: "", thumbnailImagePath: "", imagePaths: [])
         }
     }
     
@@ -232,7 +253,7 @@ final class ChatViewModel: ObservableObject {
         do {
             return try await chatUsecase.downloadImage(messageID: messageID, imagePath: imagePath)
         } catch {
-            print("Error: \(error)")
+            print("downloadImagePath Error: \(error)")
             return Data()
         }
     }
@@ -242,7 +263,7 @@ final class ChatViewModel: ObservableObject {
         do {
             return try await storageManager.downloadImageToUrl(path: .chat, containerID: messageID, imagePath: imagePath)
         } catch {
-            print("Error: \(error)")
+            print("downloadImageUrl Error: \(error)")
             return nil
         }
     }
@@ -252,7 +273,7 @@ final class ChatViewModel: ObservableObject {
         do {
             try await chatUsecase.sendMessage(message: message, channelID: channelID)
         } catch {
-            print("Error: \(error)")
+            print("sendMessage Error: \(error)")
         }
     }
     
@@ -298,10 +319,6 @@ final class ChatViewModel: ObservableObject {
         }
     }
     
-    /// 상대방 닉네임 불러오기
-    func getOtherUserNickname(channel: Channel) -> String {
-        return chatUsecase.getOtherUserNickname(userNicknames: channel.userNicknames, userNickname: user.nickname)
-    }
     
     /// 채팅방 쌓인 메시지 개수 불러오기
     func getUnreadCount(channel: Channel) -> Int {

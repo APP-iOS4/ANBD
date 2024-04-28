@@ -11,6 +11,7 @@ import Kingfisher
 
 struct TradeDetailView: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
+    @EnvironmentObject private var chatViewModel: ChatViewModel
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     @EnvironmentObject private var coordinator: Coordinator
 
@@ -98,7 +99,7 @@ struct TradeDetailView: View {
                             Spacer()
                             
                             if user.id == tradeViewModel.trade.writerID {
-                                TradeStateChangeView(tradeState: $tradeViewModel.trade.tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert, fontSize: 17)
+                                TradeStateChangeView(tradeState: tradeViewModel.trade.tradeState, isShowingCustomAlert: $isShowingStateChangeCustomAlert, fontSize: 17)
                             }
                             
                         }//HStack
@@ -276,15 +277,18 @@ extension TradeDetailView {
                     .frame(width: 100, height: 45)
                     .padding()
                     .onTapGesture {
-                        coordinator.channel = nil
-                        coordinator.trade = trade
-                        tradeViewModel.getOneTrade(trade: trade)
-                        
-                        switch coordinator.selectedTab {
-                        case .home, .article, .trade, .mypage:
-                            coordinator.appendPath(Page.chatDetailView)
-                        case .chat:
-                            coordinator.pop()
+                        Task {
+                            try await chatViewModel.setSelectedUser(trade: trade)
+                            coordinator.channel = nil
+                            coordinator.trade = trade
+                            tradeViewModel.getOneTrade(trade: trade)
+                            
+                            switch coordinator.selectedTab {
+                            case .home, .article, .trade, .mypage:
+                                coordinator.appendPath(Page.chatDetailView)
+                            case .chat:
+                                coordinator.pop()
+                            }
                         }
                     }
             }

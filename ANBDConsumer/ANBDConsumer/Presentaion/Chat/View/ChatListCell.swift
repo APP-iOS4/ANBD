@@ -65,7 +65,7 @@ struct ChatListCell: View {
         }
         .onAppear {
             Task {
-                otherUser = await chatViewModel.getOtherUserImage(channel:channel)
+                otherUser = await chatViewModel.getOtherUser(channel:channel)
             }
             
         }

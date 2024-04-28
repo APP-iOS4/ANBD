@@ -15,7 +15,7 @@ struct ChatHeaderView: View {
     @EnvironmentObject private var coordinator: Coordinator
     
     var trade: Trade?
-    var imageData: Data?
+    @State var imageData: Data?
     
     @State private var isLoading: Bool = true
     
@@ -102,8 +102,16 @@ struct ChatHeaderView: View {
             }
             .foregroundStyle(.gray900)
         })
+        .onAppear {
+            if let trade {
+                Task {
+                    imageData = try await chatViewModel.loadThumnailImage(containerID: trade.id, imagePath: trade.thumbnailImagePath)
+                }
+            }
+        }
         .disabled(trade == nil)
     }
+
     
     /// Trade 상품 String
     private var tradeProductString: String {

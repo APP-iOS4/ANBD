@@ -278,15 +278,18 @@ extension TradeDetailView {
                     .frame(width: 100, height: 45)
                     .padding()
                     .onTapGesture {
-                        coordinator.channel = nil
-                        coordinator.trade = trade
-                        tradeViewModel.getOneTrade(trade: trade)
-                        
-                        switch coordinator.selectedTab {
-                        case .home, .article, .trade, .mypage:
-                            coordinator.appendPath(Page.chatDetailView)
-                        case .chat:
-                            coordinator.pop()
+                        Task {
+                            try await chatViewModel.setSelectedUser(trade: trade)
+                            coordinator.channel = nil
+                            coordinator.trade = trade
+                            tradeViewModel.getOneTrade(trade: trade)
+                            
+                            switch coordinator.selectedTab {
+                            case .home, .article, .trade, .mypage:
+                                coordinator.appendPath(Page.chatDetailView)
+                            case .chat:
+                                coordinator.pop()
+                            }
                         }
                     }
             }

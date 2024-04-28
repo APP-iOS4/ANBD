@@ -26,8 +26,11 @@ struct ChatView: View {
                         LazyVStack {
                             ForEach(chatViewModel.chatRooms) { channel in
                                 Button(action: {
-                                    coordinator.channel = channel
-                                    coordinator.chatPath.append(Page.chatDetailView)
+                                    Task {
+                                        try await chatViewModel.setSelectedUser(channel: channel)
+                                        coordinator.channel = channel
+                                        coordinator.chatPath.append(Page.chatDetailView)
+                                    }
                                 }, label: {
                                     ChatListCell(channel: channel)
                                         .padding(.horizontal, 20)

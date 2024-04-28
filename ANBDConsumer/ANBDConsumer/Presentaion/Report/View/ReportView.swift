@@ -125,11 +125,11 @@ extension ReportView {
             return "게시물"
         case .comment:
             return "댓글"
-        case .messages:
+        case .message:
             return "메시지"
         case .chatRoom:
             return "채팅"
-        case .users:
+        case .user:
             return "사용자"
         }
     }

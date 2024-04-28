@@ -1,5 +1,5 @@
 {
-  "originHash" : "d756aeb74145fbbebe0766dd94505ae53725851188e4ff0d4eecff9b05f3a2ea",
+  "originHash" : "7c3d5947acfcee804bb3b12eab38ef11de959e908e376b6e304ca5068f4cf009",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -152,15 +152,6 @@
       "state" : {
         "revision" : "fa8f95c2d536d6620cc2f504ebe8a6167c9fc2dd",
         "version" : "510.0.1"
-      }
-    },
-    {
-      "identity" : "swiftui-cached-async-image",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/lorenzofiamingo/swiftui-cached-async-image.git",
-      "state" : {
-        "revision" : "467a3d17479887943ab917a379e62bbaff60ac8a",
-        "version" : "2.1.1"
       }
     }
   ],

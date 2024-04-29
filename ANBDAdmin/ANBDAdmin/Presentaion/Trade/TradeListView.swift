@@ -7,7 +7,6 @@
 
 import SwiftUI
 import ANBDModel
-import CachedAsyncImage
 
 struct TradeListView: View {
     @StateObject private var tradeListViewModel = TradeListViewModel()

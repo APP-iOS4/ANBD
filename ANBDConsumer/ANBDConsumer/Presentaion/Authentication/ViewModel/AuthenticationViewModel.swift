@@ -318,7 +318,7 @@ extension AuthenticationViewModel {
     
     func withdrawal(_ completion: @escaping () -> Void) async {
         do {
-            try await authUsecase.withdrawal(userID: UserStore.shared.user.id)
+            try await authUsecase.withdrawal()
             
             completion()
         } catch {

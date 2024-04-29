@@ -230,7 +230,7 @@ struct ChatDetailView: View {
             
             /// 메시지 전송
             Button(action: {
-                if !message.isEmpty {
+                if !message.isEmpty && !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                     sendMessage()
                     message = ""
                 }
@@ -239,10 +239,10 @@ struct ChatDetailView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 28)
-                    .foregroundStyle(message == "" ? .gray400 : .accentColor)
+                    .foregroundStyle((message.isEmpty || message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty) ? .gray400 : .accentColor)
                     .rotationEffect(.degrees(43))
             })
-            .disabled(message.isEmpty)
+            .disabled(message.isEmpty || message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
     }
 }

@@ -24,7 +24,6 @@ enum Page {
     case reportView
     
     case userPageView
-    case accountManagementView
     case userInfoEditingView
     case userActivityView
     case userLikedContentView
@@ -87,9 +86,6 @@ final class Coordinator: ObservableObject {
             if let user = user {
                 UserPageView(writerUser: user)
             }
-            
-        case .accountManagementView:
-            AccountManagementView()
         
         case .userInfoEditingView:
             UserInfoEditingView()

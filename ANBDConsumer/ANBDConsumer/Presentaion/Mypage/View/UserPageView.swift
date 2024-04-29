@@ -13,6 +13,8 @@ struct UserPageView: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @EnvironmentObject private var coordinator: Coordinator
     
+    @Environment(\.colorScheme) private var colorScheme
+    
     private var writerUser: User
     
     @State private var category: ANBDCategory = .accua
@@ -185,7 +187,7 @@ struct UserPageView: View {
         .padding(.horizontal, 10)
         .overlay(
             Circle()
-                .stroke(.gray100, lineWidth: 1)
+                .stroke(colorScheme == .dark ? Color.gray600 : Color.gray100, lineWidth: 1)
         )
         .id(refreshView)
     }

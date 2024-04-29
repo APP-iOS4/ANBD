@@ -40,7 +40,7 @@ struct UserActivityListView: View {
         .toolbar(.hidden, for: .tabBar)
         .toolbarRole(.editor)
         
-        .navigationTitle("\(myPageViewModel.user.nickname)님의 ANBD")
+        .navigationTitle("\(navigationTitle)님의 ANBD")
         .navigationBarTitleDisplayMode(.inline)
         
         .onAppear {
@@ -128,11 +128,23 @@ struct UserActivityListView: View {
     }
 }
 
+extension UserActivityListView {
+    private var navigationTitle: String {
+        if myPageViewModel.user.nickname.count > 12 {
+            let title = myPageViewModel.user.nickname.prefix(12)
+            
+            return "\(title)..."
+        } else {
+            return myPageViewModel.user.nickname
+        }
+    }
+}
+
 #Preview {
     NavigationStack {
         UserActivityListView(category: .accua)
             .environmentObject(MyPageViewModel())
-            .environmentObject(ArticleViewModel())
             .environmentObject(TradeViewModel())
+            .environmentObject(Coordinator())
     }
 }

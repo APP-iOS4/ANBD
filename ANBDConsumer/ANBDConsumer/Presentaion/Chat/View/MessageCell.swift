@@ -70,9 +70,9 @@ struct MessageCell: View {
             if let content = message.content {
                 Text(content)
                     .padding(15)
-                    .foregroundStyle(isMine ? .white : (colorScheme == .dark ? Color(red: 13/255, green: 15/255, blue: 20/255) : .gray900))
+                    .foregroundStyle(isMine ? .white : .gray900)
                     .font(ANBDFont.Caption3)
-                    .background(isMine ? Color.accentColor : .gray50)
+                    .background(isMine ? Color.accentColor : (colorScheme == .light ? .gray50 : .gray400))
                     .clipShape(RoundedRectangle(cornerRadius: 15))
                     .contextMenu {
                         if !isMine {

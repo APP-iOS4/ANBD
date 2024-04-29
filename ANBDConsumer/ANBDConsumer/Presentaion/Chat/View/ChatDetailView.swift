@@ -188,10 +188,6 @@ struct ChatDetailView: View {
     private func MessageDateDividerView(dateString: String) -> some View {
         GeometryReader { geometry in
             HStack {
-                Rectangle()
-                    .fill(.gray400)
-                    .frame(width: geometry.size.width / 3.5, height: 0.3)
-                
                 Spacer()
                 
                 Text(dateString)
@@ -199,10 +195,6 @@ struct ChatDetailView: View {
                     .font(ANBDFont.Caption1)
                 
                 Spacer()
-                
-                Rectangle()
-                    .fill(.gray400)
-                    .frame(width: geometry.size.width / 3.5, height: 0.3)
             }
         }
     }

@@ -106,6 +106,7 @@ struct ArticleView: View {
                 }, label: {
                     Image(systemName: "magnifyingglass")
                         .resizable()
+                        .aspectRatio(contentMode: .fit)
                         .frame(width: 20)
                         .foregroundStyle(.gray900)
                 })

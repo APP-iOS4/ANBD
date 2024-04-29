@@ -63,6 +63,7 @@ struct HomeView: View {
                 }, label: {
                     Image(systemName: "magnifyingglass")
                         .resizable()
+                        .aspectRatio(contentMode: .fit)
                         .frame(width: 20)
                         .foregroundStyle(.gray900)
                 })
@@ -92,7 +93,7 @@ struct HomeView: View {
                             AsyncImage(url: URL(string: banner.thumbnailImageURLString)) { img in
                                 img
                                     .resizable()
-                                    .scaledToFill()
+                                    .aspectRatio(contentMode: .fill)
                                     .onAppear {
                                         isLoading = false
                                     }
@@ -176,10 +177,10 @@ struct HomeView: View {
                                 NanuaCellView(trade: trade)
                                     .frame(width: 140, height: 140)
                                     .padding(.horizontal, 1)
-                                
                             })
                         }
                     }
+                    
                     LazyHStack {
                         ForEach(1..<4) { _ in
                             Color.clear
@@ -321,7 +322,7 @@ struct HomeView: View {
                         if let uiImage = UIImage(data: imageData) {
                             Image(uiImage: uiImage)
                                 .resizable()
-                                .scaledToFill()
+                                .aspectRatio(contentMode: .fill)
                                 .frame(height: 130)
                         }
                     } else {
@@ -371,8 +372,8 @@ struct HomeView: View {
                         if let uiImage = UIImage(data: imageData) {
                             Image(uiImage: uiImage)
                                 .resizable()
+                                .aspectRatio(contentMode: .fill)
                                 .frame(height: 140)
-                                .scaledToFit()
                         }
                     } else {
                         ProgressView()

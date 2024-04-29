@@ -68,8 +68,6 @@ struct CategoryDividerView: View {
     }
 }
 
-
-
 #Preview {
     CategoryDividerView(category: .constant(.accua))
 }

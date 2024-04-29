@@ -9,13 +9,6 @@ import Foundation
 import Combine
 import ANBDModel
 
-enum AgreeType {
-    case olderThanFourTeen
-    case agreeService
-    case agreeCollectionInfo
-    case agreeMarketing
-}
-
 @MainActor
 final class AuthenticationViewModel: ObservableObject {
     private let authUsecase: AuthUsecase = DefaultAuthUsecase()
@@ -59,8 +52,12 @@ final class AuthenticationViewModel: ObservableObject {
     @Published var isAgreeCollectInfo: Bool = false
     @Published var isAgreeMarketing: Bool = false
     
-    @Published private(set) var termsString: String = ""
-    @Published var showingTermsView: Bool = false
+    @Published var agreeType: AgreeType = .agreeCollectionInfo
+    
+    @Published var isShowingTermsView: Bool = false
+    @Published var isShowingService: Bool = false
+    @Published var isShowingCollectInfo: Bool = false
+    @Published var isShowingMarketing: Bool = false
     
     @Published private(set) var errorMessage: String = ""
     
@@ -242,17 +239,16 @@ extension AuthenticationViewModel {
     func showTermsView(type: AgreeType) {
         switch type {
         case .agreeService:
-            termsString = "서비스 이용 약관에 동의하십니까?"
+            agreeType = .agreeService
         case .agreeCollectionInfo:
-            termsString = "개인정보 수집 및 이용에 동의하십니까?"
+            agreeType = .agreeCollectionInfo
         case .agreeMarketing:
-            termsString = "광고 및 마케팅 수신에 동의하십니까?"
+            agreeType = .agreeMarketing
         default:
-            termsString = ""
             return
         }
         
-        showingTermsView.toggle()
+        isShowingTermsView.toggle()
     }
     
     func signIn() async -> Bool {
@@ -271,7 +267,7 @@ extension AuthenticationViewModel {
         }
     }
     
-    func signOut(completion: @escaping () -> Void) async {
+    func signOut(_ completion: @escaping () -> Void) async {
         do {
             try await authUsecase.signOut()
             
@@ -313,50 +309,22 @@ extension AuthenticationViewModel {
     }
     
     func checkNicknameLength(_ nickname: String) -> String {
-        if nickname.count > 20 {
-            return String(nickname.prefix(20))
+        if nickname.count > 18 {
+            return String(nickname.prefix(18))
         } else {
             return nickname
         }
     }
     
-    func withdrawal(completion: @escaping () -> Void) async {
+    func withdrawal(_ completion: @escaping () -> Void) async {
         do {
-            await signOut(completion: { })
-            try await authUsecase.withdrawal(userID: UserStore.shared.user.id)
+            try await authUsecase.withdrawal()
             
             completion()
         } catch {
             print("Error withdrawal: \(error.localizedDescription)")
         }
     }
-    
-    /*
-     func signUpWithGoogle() async {
-     do {
-     guard let user = Auth.auth().currentUser
-     else {
-     throw AuthError.tokenError(message: "잘못된 액세스 토큰입니다.")
-     }
-     
-     let serviceUser = User(
-     userNickname: signUpNicknameString,
-     email: user.email ?? "",
-     accessToken: user.uid,
-     isOlderThanFourteen: isOlderThanFourteen,
-     isAgreeService: isAgreeService,
-     isAgreeCollectInfo: isAgreeCollectInfo,
-     isAgreeMarketing: isAgreeMarketing
-     )
-     
-     try await userStore.saveUserInfo(userInfo: serviceUser)
-     isValidSignUp = true
-     UserDefaultsManager.shared.userInfo = serviceUser
-     } catch {
-     errorMessage = error.localizedDescription
-     }
-     }
-     */
     
     func clearSignUpDatas() {
         loginEmailString = ""
@@ -375,4 +343,28 @@ extension AuthenticationViewModel {
         
         isValidSignUp = false
     }
+}
+
+enum AgreeType {
+    case olderThanFourTeen
+    case agreeService
+    case agreeCollectionInfo
+    case agreeMarketing
+    
+    var url: String {
+        switch self {
+        case .olderThanFourTeen:
+            return ""
+        case .agreeService:
+            return "https://oval-second-abc.notion.site/ANBD-0cde8fed32014e19830309431bfcdebb"
+        case .agreeCollectionInfo:
+            return "https://oval-second-abc.notion.site/ANBD-4b59058a70ba46ef9753fe40502f94e3"
+        case .agreeMarketing:
+            return "https://oval-second-abc.notion.site/ANBD-f265775da8fe4fe3957048f4c2028f5a"
+        }
+    }
+}
+
+extension AuthenticationViewModel {
+    
 }

@@ -133,10 +133,11 @@ struct ArticleListCell: View {
                         if trade.tradeState == .finish {
                             RoundedRectangle(cornerRadius: 5)
                                 .foregroundColor(.gray800)
-                                .frame(width: 60, height: 25)
+                                .frame(width: 65, height: 38)
                                 .overlay {
                                     Text("\(trade.tradeState.description)")
                                         .font(ANBDFont.body2)
+                                        .frame(maxWidth: 65, maxHeight: 38)
                                         .foregroundStyle(.gray50)
                                 }
                         }

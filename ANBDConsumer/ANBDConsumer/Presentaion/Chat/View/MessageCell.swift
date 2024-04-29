@@ -25,7 +25,7 @@ struct MessageCell: View {
     var channel: Channel
     
     @Binding var isShowingImageDetailView: Bool
-    @Binding var detailImage: Image
+    @Binding var imageData: [Data]
     
     var body: some View {
         HStack(alignment: .bottom) {
@@ -94,7 +94,7 @@ struct MessageCell: View {
                 Button {
                     Task {
                         let (data, _) = try await URLSession.shared.data(from: imageUrl)
-                        detailImage = Image(uiImage: UIImage(data: data))
+                        imageData = [data]
                         isShowingImageDetailView.toggle()
                     }
                 } label: {

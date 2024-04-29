@@ -313,8 +313,8 @@ extension AuthenticationViewModel {
     }
     
     func checkNicknameLength(_ nickname: String) -> String {
-        if nickname.count > 20 {
-            return String(nickname.prefix(20))
+        if nickname.count > 18 {
+            return String(nickname.prefix(18))
         } else {
             return nickname
         }

@@ -87,7 +87,7 @@ struct UserInfoEditingView: View {
                             
                             Spacer()
                             
-                            Text("\(myPageViewModel.tempUserNickname.count) / 20")
+                            Text("\(myPageViewModel.tempUserNickname.count)/18")
                                 .padding(.horizontal, 5)
                                 .font(ANBDFont.body2)
                                 .foregroundStyle(.gray400)

@@ -271,7 +271,7 @@ extension AuthenticationViewModel {
         }
     }
     
-    func signOut(completion: @escaping () -> Void) async {
+    func signOut(_ completion: @escaping () -> Void) async {
         do {
             try await authUsecase.signOut()
             
@@ -320,9 +320,8 @@ extension AuthenticationViewModel {
         }
     }
     
-    func withdrawal(completion: @escaping () -> Void) async {
+    func withdrawal(_ completion: @escaping () -> Void) async {
         do {
-            await signOut(completion: { })
             try await authUsecase.withdrawal(userID: UserStore.shared.user.id)
             
             completion()
@@ -330,33 +329,6 @@ extension AuthenticationViewModel {
             print("Error withdrawal: \(error.localizedDescription)")
         }
     }
-    
-    /*
-     func signUpWithGoogle() async {
-     do {
-     guard let user = Auth.auth().currentUser
-     else {
-     throw AuthError.tokenError(message: "잘못된 액세스 토큰입니다.")
-     }
-     
-     let serviceUser = User(
-     userNickname: signUpNicknameString,
-     email: user.email ?? "",
-     accessToken: user.uid,
-     isOlderThanFourteen: isOlderThanFourteen,
-     isAgreeService: isAgreeService,
-     isAgreeCollectInfo: isAgreeCollectInfo,
-     isAgreeMarketing: isAgreeMarketing
-     )
-     
-     try await userStore.saveUserInfo(userInfo: serviceUser)
-     isValidSignUp = true
-     UserDefaultsManager.shared.userInfo = serviceUser
-     } catch {
-     errorMessage = error.localizedDescription
-     }
-     }
-     */
     
     func clearSignUpDatas() {
         loginEmailString = ""

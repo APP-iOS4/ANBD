@@ -26,7 +26,3 @@ struct InstructionsView: View {
         .padding(.horizontal)
     }
 }
-
-#Preview {
-    InstructionsView()
-}

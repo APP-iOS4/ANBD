@@ -22,7 +22,7 @@ struct PolicyDetailView: View {
                     Image(systemName: "checkmark")
                         .resizable()
                         .frame(width: 15, height: 15)
-                        .foregroundStyle(isAgree ? .accent : .primary)
+                        .foregroundStyle(isAgree ? .accent : .gray200)
                     
                     Text(explainString)
                         .font(ANBDFont.body1)

@@ -23,7 +23,6 @@ struct ArticleView: View {
     
     var body: some View {
         
-        // TODO: combine으로 고치기
         if #available(iOS 17.0, *) {
             listView
                 .onChange(of: category) {

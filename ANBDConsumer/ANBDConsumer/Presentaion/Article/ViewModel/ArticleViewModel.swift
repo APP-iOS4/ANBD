@@ -55,7 +55,7 @@ final class ArticleViewModel: ObservableObject {
     @MainActor
     func refreshSortedArticleList(category: ANBDCategory) async {
         do {
-            self.filteredArticles = try await articleUseCase.refreshSortedArticleList(category: category, by: self.sortOption, limit: 10)
+            self.filteredArticles = try await articleUseCase.refreshSortedArticleList(category: category, by: self.sortOption, limit: 8)
         } catch {
             print(error.localizedDescription)
         }
@@ -65,11 +65,9 @@ final class ArticleViewModel: ObservableObject {
     func loadMoreArticles(category: ANBDCategory) async {
         do {
             var newArticles: [Article] = []
-            newArticles = try await articleUseCase.loadArticleList(category: category, by: self.sortOption, limit: 10)
-            
+            newArticles = try await articleUseCase.loadArticleList(category: category, by: self.sortOption, limit: 5)
             for item in newArticles {
                 if filteredArticles.contains(item) {
-                    print("end")
                 } else {
                     filteredArticles.append(contentsOf: newArticles)
                 }

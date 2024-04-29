@@ -50,24 +50,18 @@ final class TradeViewModel: ObservableObject {
     func reloadFilteredTrades(category: ANBDCategory) async {
         do {
             if self.selectedLocations.isEmpty && self.selectedItemCategories.isEmpty {
-                //print("둘다 엠티여요")
-                
                 self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: nil, itemCategory: nil, limit: 8)
                 
-                //print("🥹\(filteredTrades)")
-                
             } else if self.selectedLocations.isEmpty {
-                //print("지역 엠티여요")
                 self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: nil, itemCategory: self.selectedItemCategories, limit: 8)
                 
             } else if self.selectedItemCategories.isEmpty {
-                //print("카테고리 엠티여요")
                 self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: nil, limit: 8)
                 
             } else {
-                //print("둘다 풀")
                 self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: self.selectedItemCategories, limit: 8)
             }
+            self.filteredTrades = self.filteredTrades.filter { $0.tradeState == .trading }
         } catch {
             print(error.localizedDescription)
         }
@@ -79,7 +73,7 @@ final class TradeViewModel: ObservableObject {
         do {
             var newTrades: [Trade] = []
             if self.selectedLocations.isEmpty && self.selectedItemCategories.isEmpty {
-                //print("둘다 엠티여요")
+                //print("페이지네이션!! 둘다 엠티여요")
                 newTrades = try await tradeUseCase.loadFilteredTradeList(category: category, location: nil, itemCategory: nil, limit: 5)
             } else if self.selectedLocations.isEmpty {
                 //print("지역 엠티여요")
@@ -91,6 +85,8 @@ final class TradeViewModel: ObservableObject {
                 //print("둘다 풀")
                 newTrades = try await tradeUseCase.loadFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: self.selectedItemCategories, limit: 5)
             }
+            
+            newTrades = newTrades.filter { $0.tradeState == .trading }
             
             for item in newTrades {
                 if filteredTrades.contains(item) {

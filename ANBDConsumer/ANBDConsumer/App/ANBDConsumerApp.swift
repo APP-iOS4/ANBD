@@ -46,7 +46,6 @@ struct ANBDConsumerApp: App {
     
     var body: some Scene {
         WindowGroup {
-            // ANBDTabView()
             AuthenticationView()
                 .environmentObject(homeViewModel)
                 .environmentObject(tradeViewModel)

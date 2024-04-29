@@ -19,6 +19,7 @@ enum AgreeType {
 @MainActor
 final class AuthenticationViewModel: ObservableObject {
     private let authUsecase: AuthUsecase = DefaultAuthUsecase()
+    private let userUsecase: UserUsecase = DefaultUserUsecase()
     
     @Published var authState: Bool = false
     
@@ -255,6 +256,14 @@ extension AuthenticationViewModel {
         showingTermsView.toggle()
     }
     
+    func updateUserToken() async {
+        do {
+            try await userUsecase.updateUserFCMToken(userID: UserStore.shared.user.id, fcmToken: UserStore.shared.deviceToken)
+        } catch {
+            print("updateUserToken:\(error)")
+        }
+    }
+    
     func signIn() async -> Bool {
         do {
             let signedInUser = try await authUsecase.signIn(email: loginEmailString,
@@ -273,8 +282,7 @@ extension AuthenticationViewModel {
     
     func signOut(completion: @escaping () -> Void) async {
         do {
-            try await authUsecase.signOut()
-            
+            try await userUsecase.updateUserFCMToken(userID: UserStore.shared.user.id, fcmToken: "")
             completion()
         } catch {
             print("Error sign out: \(error.localizedDescription)")

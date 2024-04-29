@@ -13,6 +13,8 @@ final class UserStore: ObservableObject {
     
     private let userUsecase: UserUsecase = DefaultUserUsecase()
     
+    var deviceToken: String = ""
+    
     @Published var user = User(id: "",
                                nickname: "",
                                profileImage: "",

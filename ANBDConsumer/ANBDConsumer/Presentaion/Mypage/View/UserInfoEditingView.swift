@@ -12,6 +12,7 @@ import PhotosUI
 struct UserInfoEditingView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     
     @FocusState private var focus: FocusableField?
     
@@ -87,7 +88,7 @@ struct UserInfoEditingView: View {
                             
                             Spacer()
                             
-                            Text("\(myPageViewModel.tempUserNickname.count) / 20")
+                            Text("\(myPageViewModel.tempUserNickname.count)/18")
                                 .padding(.horizontal, 5)
                                 .font(ANBDFont.body2)
                                 .foregroundStyle(.gray400)
@@ -141,7 +142,7 @@ struct UserInfoEditingView: View {
                             dismiss()
                         }
                     }, label: {
-                        Image(systemName: "xmark")
+                        Text("취소")
                     })
                 }
                 
@@ -195,7 +196,7 @@ struct UserInfoEditingView: View {
                 .padding(.horizontal, 10)
                 .overlay(
                     Circle()
-                        .stroke(.gray100, lineWidth: 1)
+                        .stroke(colorScheme == .dark ? Color.gray600 : Color.gray100, lineWidth: 1)
                 )
                 .overlay(
                     Image(systemName: "camera.circle.fill")

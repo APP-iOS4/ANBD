@@ -94,7 +94,7 @@ struct ANBDTabView: View {
         .environmentObject(coordinator)
     }
     
-    func tabBarColorScheme() -> Color {
+    private func tabBarColorScheme() -> Color {
         if colorScheme == .dark {
             return Color.gray50
         } else {

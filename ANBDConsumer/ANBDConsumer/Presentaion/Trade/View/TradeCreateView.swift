@@ -51,6 +51,12 @@ struct TradeCreateView: View {
                         } else {
                             self.isFinished = true
                         }
+                        // 공백입력 시 저장 x
+                        for item in mustTextFields {
+                            if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
+                                isFinished = true
+                            }
+                        }
                     })
                 
                     .onChange(of: selectedPhotosData, {
@@ -58,6 +64,13 @@ struct TradeCreateView: View {
                             self.isFinished = false
                         } else {
                             self.isFinished = true
+                        }
+                        
+                        // 공백입력 시 저장 x
+                        for item in mustTextFields {
+                            if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
+                                isFinished = true
+                            }
                         }
                         
                         isCancelable = false
@@ -70,6 +83,14 @@ struct TradeCreateView: View {
                             } else {
                                 self.isFinished = true
                             }
+                            
+                            // 공백입력 시 저장 x
+                            for item in mustTextFields {
+                                if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
+                                    isFinished = true
+                                }
+                            }
+                            
                             isCancelable = false
                         }
                     })
@@ -94,6 +115,13 @@ struct TradeCreateView: View {
                         } else {
                             self.isFinished = true
                         }
+                        
+//                        // 공백입력 시 저장 x
+                        for item in mustTextFields {
+                            if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
+                                isFinished = true
+                            }
+                        }
                     }
                 
                     .onChange(of: selectedPhotosData) { _ in
@@ -101,6 +129,13 @@ struct TradeCreateView: View {
                             self.isFinished = false
                         } else {
                             self.isFinished = true
+                        }
+                        
+                        // 공백입력 시 저장 x
+                        for item in mustTextFields {
+                            if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
+                                isFinished = true
+                            }
                         }
                         
                         isCancelable = false
@@ -113,6 +148,14 @@ struct TradeCreateView: View {
                             } else {
                                 self.isFinished = true
                             }
+                            
+                            // 공백입력 시 저장 x
+                            for item in mustTextFields {
+                                if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
+                                    isFinished = true
+                                }
+                            }
+                            
                             isCancelable = false
                         }
                     }

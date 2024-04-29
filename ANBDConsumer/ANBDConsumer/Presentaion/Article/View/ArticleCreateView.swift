@@ -283,7 +283,7 @@ struct ArticleCreateView: View {
                 } label: {
                     Text("완료")
                 }
-                .disabled(title.isEmpty || content.isEmpty || selectedImageData.isEmpty || title == article?.title && content == article?.content && category == article?.category || title.trimmingCharacters(in: .whitespaces).isEmpty || content.trimmingCharacters(in: .whitespaces).isEmpty)
+                .disabled(title.isEmpty || content.isEmpty/* || selectedImageData.isEmpty*/ || title == article?.title && content == article?.content && category == article?.category || title.trimmingCharacters(in: .whitespaces).isEmpty || content.trimmingCharacters(in: .whitespaces).isEmpty)
             }
             
             ToolbarItem(placement: .cancellationAction) {
@@ -292,8 +292,9 @@ struct ArticleCreateView: View {
                         if let article = article {
                             let isTitleChanged = title != article.title
                             let isContentChanged = content != article.content
+                            let isImageChanged = tmpSelectedData != selectedImageData
                             
-                            if isTitleChanged || isContentChanged {
+                            if isTitleChanged || isContentChanged || isImageChanged {
                                 isShowingCustomEditAlert.toggle()
                             } else {
                                 isShowingCreateView.toggle()

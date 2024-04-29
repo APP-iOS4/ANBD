@@ -65,8 +65,7 @@ struct CommentEditView: View {
                             } label: {
                                 Text("완료")
                             }
-                            .disabled(content.isEmpty || content == comment?.content)
-                            .disabled()
+                            .disabled(content.isEmpty || content == comment?.content || content.trimmingCharacters(in: .whitespaces).isEmpty)
                         }
                         ToolbarItem(placement: .cancellationAction) {
                             Button {

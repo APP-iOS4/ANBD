@@ -128,7 +128,7 @@ final class ArticleViewModel: ObservableObject {
     }
     
     @MainActor
-    func updateArticle(category: ANBDCategory, title: String, content: String, commentCount: Int, imageDatas: [Data]) async {
+    func updateArticle(category: ANBDCategory, title: String, content: String, commentCount: Int, addImages: [Data], deletedImagesIndex: [Int]) async {
         
         let user = UserStore.shared.user
         let originCategory = self.article.category
@@ -138,15 +138,22 @@ final class ArticleViewModel: ObservableObject {
         self.article.content = content
         self.article.commentCount = commentCount
         
+        //삭제된 이미지
+        var deletedImages: [String] = []
+        for i in deletedImagesIndex {
+            deletedImages.append(self.article.imagePaths[i])
+            self.article.imagePaths.remove(at: i)
+        }
+        
         //이미지 리사이징
         var newImages: [Data] = []
-        for image in imageDatas {
-            let imageData = await UIImage(data: image)?.byPreparingThumbnail(ofSize: .init(width: 1024, height: 1024))?.jpegData(compressionQuality: 0.5)
+        for image in addImages {
+            let imageData = await UIImage(data: image)?.byPreparingThumbnail(ofSize: .init(width: 200, height: 200))?.jpegData(compressionQuality: 0.5)
             newImages.append(imageData ?? Data())
         }
         
         do {
-            // try await articleUseCase.updateArticle(article: self.article, imageDatas: newImages)
+             try await articleUseCase.updateArticle(article: self.article, add: newImages, delete: deletedImages)
             try await userUsecase.updateUserPostCount(user: user, before: originCategory, after: category)
             article = try await articleUseCase.loadArticle(articleID: article.id)
             await UserStore.shared.updateLocalUserInfo()

@@ -11,6 +11,7 @@ import ANBDModel
 struct AccountManagementView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     @EnvironmentObject private var authenticationViewModel: AuthenticationViewModel
+    @EnvironmentObject private var coordinator: Coordinator
     
     @State private var isShowingEditorView = false
     @State private var isShowingSignOutAlertView = false
@@ -50,7 +51,7 @@ struct AccountManagementView: View {
                     Button(action: {
                         isShowingWithdrawalAlertView.toggle()
                     }, label: {
-                        Text("회원탈퇴")
+                        Text("회원 탈퇴")
                             .modifier(warningTextModifier())
                     })
                     
@@ -64,10 +65,13 @@ struct AccountManagementView: View {
             if isShowingSignOutAlertView {
                 CustomAlertView(isShowingCustomAlert: $isShowingSignOutAlertView, viewType: .signOut) {
                     Task {
-                        try await authenticationViewModel.signOut {
+                        await authenticationViewModel.signOut {
                             UserDefaultsClient.shared.removeUserID()
+                            UserStore.shared.user = MyPageViewModel.mockUser
                             authenticationViewModel.checkAuthState()
-                            myPageViewModel.myPageNaviPath.removeLast()
+                            
+                            coordinator.pop()
+                            coordinator.selectedTab = .home
                         }
                     }
                 }
@@ -76,10 +80,13 @@ struct AccountManagementView: View {
             if isShowingWithdrawalAlertView {
                 CustomAlertView(isShowingCustomAlert: $isShowingWithdrawalAlertView, viewType: .withdrawal) {
                     Task {
-                        try await authenticationViewModel.withdrawal {
+                        await authenticationViewModel.withdrawal {
                             UserDefaultsClient.shared.removeUserID()
+                            UserStore.shared.user = MyPageViewModel.mockUser
                             authenticationViewModel.checkAuthState()
-                            myPageViewModel.myPageNaviPath.removeLast()
+                            
+                            coordinator.pop()
+                            coordinator.selectedTab = .home
                         }
                     }
                 }
@@ -91,7 +98,7 @@ struct AccountManagementView: View {
                     myPageViewModel.tempUserFavoriteLocation = UserStore.shared.user.favoriteLocation
                     isShowingEditorView.toggle()
                 }, label: {
-                    Text("수정")
+                    Label("수정하기", systemImage: "square.and.pencil")
                 })
             }
         }
@@ -104,6 +111,14 @@ struct AccountManagementView: View {
         
         .fullScreenCover(isPresented: $isShowingEditorView, onDismiss: {
             refreshView.toggle()
+            
+            myPageViewModel.tempUserProfileImage = nil
+            myPageViewModel.tempUserNickname = ""
+            myPageViewModel.tempUserFavoriteLocation = .seoul
+            
+            Task {
+                myPageViewModel.user = await myPageViewModel.getUserInfo(userID: UserStore.shared.user.id)
+            }
         }) {
             UserInfoEditingView()
         }

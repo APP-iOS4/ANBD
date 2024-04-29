@@ -53,5 +53,4 @@ struct DefaultBannerRepository: BannerRepository {
             throw DBError.deleteDocumentError
         }
     }
-    
 }

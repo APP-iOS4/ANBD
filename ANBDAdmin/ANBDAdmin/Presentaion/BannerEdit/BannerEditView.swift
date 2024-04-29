@@ -7,7 +7,7 @@
 
 import SwiftUI
 import ANBDModel
-import CachedAsyncImage
+import Kingfisher
 
 struct BannerEditView: View {
     @StateObject private var bannerEditViewModel = BannerEditViewModel()
@@ -26,42 +26,48 @@ struct BannerEditView: View {
                                 Text("썸네일 이미지")
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
+                                Spacer()
                                 if let imageUrl = URL(string: banner.thumbnailImageURLString) {
-                                    CachedAsyncImage(url: imageUrl) { phase in
-                                        switch phase {
-                                        case .empty:
+                                    KFImage(imageUrl)
+                                        .placeholder {
                                             ProgressView()
-                                        case .success(let image):
-                                            image
-                                                .resizable()
-                                                .scaledToFit()
-                                                .frame(width: 250)
-                                        case .failure:
-                                            Text("Failed to load image")
-                                        @unknown default:
-                                            EmptyView()
                                         }
-                                    }
+                                        .resizable()
+                                        .setProcessor(DownsamplingImageProcessor(size: CGSize(width: 660, height: 220)))
+                                        .fade(duration: 1)
+                                        .onFailure { e in
+                                            print("Job failed: \(e.localizedDescription)")
+                                        }
+                                        .resizable()
+                                        .frame(minWidth: 220, maxHeight: 73)
+                                        
                                 }
+                                Spacer()
                             }
-                            .frame(minWidth: 0, maxWidth: 250, alignment: .leading)
-                            Spacer()
+                            .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
+                            .padding()
+                            Divider()
                             VStack(alignment: .leading) {
                                 Text("배너 ID")
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
+                                Spacer()
                                 Text("\(banner.id)")
+                                Spacer()
                             }
-                            .frame(minWidth: 0, maxWidth: 250, alignment: .leading)
+                            .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                             .padding()
-                            Spacer()
+                            Divider()
                             VStack(alignment: .leading) {
                                 Text("생성일자")
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
-                                Text("\(dateFormatter(banner.createdAt))")
+                                Spacer()
+                                Text("\(DateFormatterSingleton.shared.dateFormatter(banner.createdAt))")
+                                Spacer()
                             }
-                            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                            .padding()
+                            .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                             Spacer()
                         }
                     }
@@ -78,13 +84,21 @@ struct BannerEditView: View {
             }
             .sheet(isPresented: $showingAddBannerSheet) {
                 VStack {
-                    TextField("배너 URL", text: $newBannerURL)
+                    VStack{
+                        Image("BannerGuideImage")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 600, height: 200)
+                        
+                    }
+                    .padding(.bottom, 30)
+                    TextField("배너 썸네일 URL 입력란, 이미지 비율은 3:1 비율입니다.", text: $newBannerThumbnailURL)
                         .padding()
                         .overlay(
                             RoundedRectangle(cornerRadius: 30)
                                 .stroke(Color.blue, lineWidth: 2)
                         )
-                    TextField("배너 썸네일 URL", text: $newBannerThumbnailURL)
+                    TextField("배너 URL 입력란", text: $newBannerURL)
                         .padding()
                         .overlay(
                             RoundedRectangle(cornerRadius: 30)

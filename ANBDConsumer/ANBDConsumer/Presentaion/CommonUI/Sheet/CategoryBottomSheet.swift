@@ -25,6 +25,7 @@ struct CategoryBottomSheet: View {
                     
                 Spacer()
             }
+            .padding(.bottom, 5)
             
             ScrollView {
                 ForEach(ItemCategory.allCases, id: \.self) { item in
@@ -52,10 +53,10 @@ struct CategoryBottomSheet: View {
                 }, label: {
                     ZStack {
                         RoundedRectangle(cornerRadius: 10)
-                            .fill(.gray100)
+                            .fill(.gray300)
                         
                         Text("초기화")
-                            .foregroundStyle(.gray900)
+                            .foregroundStyle(.white)
                     }
                 })
                 .padding(.trailing, 40)
@@ -63,7 +64,7 @@ struct CategoryBottomSheet: View {
                 Button(action: {
                     tradeViewModel.selectedItemCategories = tmpSelectedItemCategories
                     Task {
-                        await tradeViewModel.loadFilteredTrades(category:category)
+                        await tradeViewModel.reloadFilteredTrades(category:category)
                         isShowingCategory.toggle()
                     }
                 }, label: {

@@ -16,6 +16,7 @@ final class DefaultReportRepository: ReportRepository {
     private var nextDoc: DocumentSnapshot?
     private var allTypeNextDoc: DocumentSnapshot?
     
+    
     func createReport(report: Report) async throws {
         guard let _ = try? reportDB.document(report.id).setData(from: report)
         else {
@@ -52,6 +53,11 @@ final class DefaultReportRepository: ReportRepository {
         return reportList
     }
     
+    func resetAndReadReport(limit: Int) async throws -> [Report] {
+        allTypeNextDoc = nil
+        return try await readReport(limit: limit)
+    }
+    
     func readReport(limit: Int) async throws -> [Report] {
         
         let commonQuery = reportDB
@@ -85,5 +91,4 @@ final class DefaultReportRepository: ReportRepository {
             throw DBError.deleteReportDocumentError
         }
     }
-    
 }

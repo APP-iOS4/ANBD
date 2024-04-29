@@ -77,7 +77,7 @@ struct ReportListView: View {
                         Text("List End")
                             .foregroundColor(.gray)
                           .onAppear {
-                              //페이지네이션 로딩 함수 추가 예정
+                              reportListViewModel.loadMoreReports()
                           }
                       }
                 }

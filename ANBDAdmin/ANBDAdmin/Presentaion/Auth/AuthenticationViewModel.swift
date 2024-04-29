@@ -332,7 +332,7 @@ extension AuthenticationViewModel {
             try await signOut(completion: { })
             
             if let user = UserDefaultsClient.shared.userInfo {
-                try await authUsecase.withdrawal(userID: user.id)
+                //try await authUsecase.withdrawal(userID: user.id)
             }
             
             completion()

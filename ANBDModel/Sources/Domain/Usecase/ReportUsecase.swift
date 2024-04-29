@@ -32,6 +32,10 @@ public struct DefaultReportUsecase: ReportUsecase {
     }
     
     //전체
+    public func resetAndLoadReport(limit: Int) async throws -> [Report] {
+            try await reportRepository.resetAndReadReport(limit: limit)
+        }
+    
     public func loadReport(limit: Int) async throws -> [Report] {
         try await reportRepository.readReport(limit: limit)
     }

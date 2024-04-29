@@ -77,7 +77,7 @@ struct MessageCell: View {
                     .contextMenu {
                         if !isMine {
                             Button(role: .destructive) {
-                                coordinator.reportType = .messages
+                                coordinator.reportType = .message
                                 coordinator.reportedObjectID = message.id
                                 coordinator.reportedChannelID = channel.id
                                 coordinator.appendPath(.reportView)
@@ -109,7 +109,7 @@ struct MessageCell: View {
                         .contextMenu {
                             if !isMine {
                                 Button(role: .destructive) {
-                                    coordinator.reportType = .messages
+                                    coordinator.reportType = .message
                                     coordinator.reportedObjectID = message.id
                                     coordinator.reportedChannelID = channel.id
                                     coordinator.appendPath(.reportView)

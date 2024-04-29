@@ -74,6 +74,18 @@ struct TradeCreateView: View {
                         }
                     })
                 
+                    .onChange(of: title) {
+                        if title.count > 50 {
+                            title = String(title.prefix(50))
+                        }
+                    }
+                
+                    .onChange(of: content) {
+                        if content.count > 5000 {
+                            content = String(content.prefix(5000))
+                        }
+                    }
+                
             } else {
                 wholeView
                     .onChange(of: mustTextFields) { _ in
@@ -104,6 +116,18 @@ struct TradeCreateView: View {
                             isCancelable = false
                         }
                     }
+                
+                    .onChange(of: title) { _ in
+                        if title.count > 50 {
+                            title = String(title.prefix(50))
+                        }
+                    }
+                
+                    .onChange(of: content) { _ in
+                        if content.count > 5000 {
+                            content = String(content.prefix(5000))
+                        }
+                    }
             }
         }
     }
@@ -120,7 +144,6 @@ fileprivate extension TradeCreateView {
                     if #available(iOS 17.0, *) {
                         photosView
                             .onChange(of: selectedItems) {
-                                
                                 Task {
                                     selectedPhotosData = []
                                     for newItem in selectedItems {
@@ -133,12 +156,10 @@ fileprivate extension TradeCreateView {
                                         }
                                     }
                                 }
-                                
                             }
                     } else {
                         photosView
                             .onChange(of: selectedItems) { _ in
-                                
                                 Task {
                                     selectedPhotosData = []
                                     for newItem in selectedItems {
@@ -150,7 +171,6 @@ fileprivate extension TradeCreateView {
                                             selectedPhotosData.removeLast()
                                         }
                                     }
-                                    
                                 }
                             }
                     }

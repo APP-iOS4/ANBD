@@ -352,7 +352,7 @@ struct ArticleDetailView: View {
             ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, commentCount: articleViewModel.comments.count, isNewArticle: false, article: article)
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
-            ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
+            ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView, images: .constant([]), idx: .constant(0))
         }
         .fullScreenCover(isPresented: $isShowingCommentEditView) {
             CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: articleViewModel.comment, isEditComment: false)

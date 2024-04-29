@@ -11,6 +11,9 @@ struct ImageDetailView: View {
     @Binding var detailImage: Image
     @Binding var isShowingImageDetailView: Bool
     
+    @Binding var images: [Data]
+    @Binding var idx: Int
+    
     var body: some View {
         VStack {
             HStack {
@@ -26,9 +29,25 @@ struct ImageDetailView: View {
             }
             Spacer()
             
-            detailImage
-                .resizable()
-                .scaledToFit()
+            if images.isEmpty {
+                detailImage
+                    .resizable()
+                    .scaledToFit()
+            } else {
+                TabView(selection: $idx) {
+                    ForEach(0..<images.count, id: \.self) { i in
+                        if let image = UIImage(data: images[i]) {
+                            Image(uiImage: image)
+                                .resizable()
+                                .scaledToFit()
+                        } else {
+                            ProgressView()
+                        }
+                    }
+                }
+                .tabViewStyle(PageTabViewStyle())
+                .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .automatic))
+            }
             
             Spacer()
         }
@@ -41,11 +60,5 @@ struct ImageDetailView: View {
             .onEnded { _ in
                 isShowingImageDetailView.toggle()
             }
-    }
-}
-
-#Preview {
-    NavigationStack {
-        ImageDetailView(detailImage: .constant(Image("DummyPuppy1")), isShowingImageDetailView: .constant(true))
     }
 }

@@ -27,6 +27,7 @@ struct TradeDetailView: View {
     
     @State private var detailImage: Image = Image("DummyPuppy1")
     @State private var imageData: [Data] = []
+    @State private var idx: Int = 0
     
     @State private var writerUser: User?
     @State private var user = UserStore.shared.user
@@ -40,15 +41,16 @@ struct TradeDetailView: View {
                 ScrollView {
                     VStack(alignment: .leading) {
                         //이미지
-                        TabView() {
-                            ForEach(imageData, id: \.self) { photoData in
-                                if let image = UIImage(data: photoData) {
+                        TabView(selection: $idx) {
+                            ForEach(0..<imageData.count, id: \.self) { i in
+                                if let image = UIImage(data: imageData[i]) {
                                     Image(uiImage: image)
                                         .resizable()
                                         .scaledToFill()
                                         .onTapGesture {
                                             detailImage = Image(uiImage: image)
                                             isShowingImageDetailView.toggle()
+                                            idx = i
                                         }
                                 } else {
                                     ProgressView()
@@ -172,7 +174,7 @@ struct TradeDetailView: View {
             TradeCreateView(isShowingCreate: $isShowingCreat, isNewProduct: false, trade: tradeViewModel.trade)
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
-            ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
+            ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView, images: $imageData, idx: $idx)
         }
         .navigationTitle("나눔 · 거래")
         .navigationBarTitleDisplayMode(.inline)

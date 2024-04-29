@@ -166,7 +166,7 @@ struct ChatDetailView: View {
             }
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
-            ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
+            ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView, images: .constant([]), idx: .constant(0))
         }
         .onAppear {
             Task {

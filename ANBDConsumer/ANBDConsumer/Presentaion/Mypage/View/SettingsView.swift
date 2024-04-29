@@ -119,7 +119,7 @@ struct SettingsView: View {
         .toolbar(.hidden, for: .tabBar)
         
         .fullScreenCover(isPresented: $isShowingPolicyView) {
-            SafariWebView(url: URL(string: "https://maru-study-note.tistory.com/")!)
+            SafariWebView(url: URL(string: "https://oval-second-abc.notion.site/ANBD-036716b1ef784b019ab0df8147bd4e65")!)
                 .ignoresSafeArea(edges: .bottom)
         }
         

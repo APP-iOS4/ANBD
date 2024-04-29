@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 import ANBDModel
+import UIKit
 
 enum AgreeType {
     case olderThanFourTeen
@@ -293,6 +294,10 @@ extension AuthenticationViewModel {
             
             completion()
             authState = false
+            UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                exit(0)
+            }
         } catch {
             print("\(error.localizedDescription)")
         }

@@ -141,7 +141,7 @@ struct UserPageView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button(role: .destructive) {
-                            coordinator.reportType = .users
+                            coordinator.reportType = .user
                             coordinator.reportedObjectID = writerUser.id
                             coordinator.appendPath(.reportView)
                         } label: {

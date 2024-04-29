@@ -10,20 +10,43 @@ import ANBDModel
 
 class ArticleListViewModel: ObservableObject {
     @Published var articleList: [Article] = []
-    var deletedArticleID: String? // 삭제 변수
+    var deletedArticleID: String?
     let articleUsecase = DefaultArticleUsecase()
+    @Published var canLoadMoreArticles: Bool = true
+
     
     func firstLoadArticles() {
         if articleList.isEmpty {
             Task {
                 do {
-                    let articles = try await articleUsecase.loadArticleList()
+                    let articles = try await articleUsecase.refreshAllArticleList()
                     DispatchQueue.main.async {
                         self.articleList = articles
+                        self.canLoadMoreArticles = true
                     }
                 } catch {
                     print("게시물 목록을 가져오는데 실패했습니다: \(error)")
                 }
+            }
+        }
+    }
+    func loadMoreArticles() {
+        guard canLoadMoreArticles else { return }
+
+        Task {
+            do {
+                let articles = try await articleUsecase.loadArticleList(limit: 11)
+                DispatchQueue.main.async {
+                    if articles.count == 11 {
+                        self.articleList.append(contentsOf: articles.dropLast())
+                        self.canLoadMoreArticles = true
+                    } else {
+                        self.articleList.append(contentsOf: articles)
+                        self.canLoadMoreArticles = false
+                    }
+                }
+            } catch {
+                print("유저 목록을 가져오는데 실패했습니다: \(error)")
             }
         }
     }
@@ -34,6 +57,7 @@ class ArticleListViewModel: ObservableObject {
         do {
             let searchedArticle = try await loadArticle(articleID: articleID)
             DispatchQueue.main.async {
+                self.canLoadMoreArticles = false
                 self.articleList = [searchedArticle]
             }
         } catch {

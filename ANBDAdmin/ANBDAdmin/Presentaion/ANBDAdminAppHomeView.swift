@@ -39,19 +39,14 @@ struct ANBDAdminAppHomeView: View {
                 } label: {
                     Text("게시판 목록").bold()
                 }
-                NavigationLink(destination: EmptyView().font(.title3)) { // 임시 뷰
-                    Text("댓글 목록").bold()
+                NavigationLink(destination: ReportListView().font(.title3)) {
+                    Text("신고함").bold()
                 }
                 NavigationLink(destination: BannerEditView().font(.title3)) {
                     Text("배너 관리").bold()
                 }
-                NavigationLink(destination: ReportedListView().font(.title3)) {
-                    Text("신고함")
-                }
-                NavigationLink(destination: InquiryView().font(.title3)) {
-                    Text("문의함").bold()
-                }
                 Spacer()
+                Text("로그인 유저: \(authenticationViewModel.user.nickname)")
                 Button(action: {
                     isShowingSignOutAlertView.toggle()
                 }, label: {
@@ -65,7 +60,7 @@ struct ANBDAdminAppHomeView: View {
             Text("항목을 선택하세요.")
         }
         if isShowingSignOutAlertView {
-            InquiryView()
+            EmptyInfoView()
                 .sheet(isPresented: $isShowingSignOutAlertView) {
                     CustomAlertView(isShowingCustomAlert: $isShowingSignOutAlertView, viewType: .signOut) {
                         Task {

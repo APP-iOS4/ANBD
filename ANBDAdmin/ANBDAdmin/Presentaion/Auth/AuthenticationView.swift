@@ -23,16 +23,8 @@ struct AuthenticationView: View {
                         .scaledToFit()
                         .padding(130)
                     
-                    VStack {
-                        
-                        VStack(spacing: 15) {
-                            
-                            Text("아껴쓰고 나눠쓰고 바꿔쓰고 다시쓰고.")
-                                .font(.largeTitle)
-                        }
-                        .padding(.vertical, 50)
-                        .padding(.top, 50)
-                        
+                    VStack(alignment:.center) {
+                        Spacer()
                         VStack(spacing: 50) {
                             TextFieldWithTitle(fieldType: .normal,
                                                title: "이메일",
@@ -151,12 +143,6 @@ struct AuthenticationView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        AuthenticationView()
-            .environmentObject(AuthenticationViewModel())
-    }
-}
 
 extension AuthenticationView {
     enum FocusableField: Int, Hashable, CaseIterable {

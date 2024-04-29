@@ -30,6 +30,7 @@ struct ArticleDetailView: View {
     
     @State private var detailImage: Image = Image("DummyPuppy1")
     @State private var imageData: [Data] = []
+    @State private var idx: Int = 0
     
     @State private var writerUser: User?
     @State private var commentUser: User?
@@ -111,14 +112,15 @@ struct ArticleDetailView: View {
                                 .font(ANBDFont.body2)
                                 .padding(.bottom, 10)
                             
-                            ForEach(imageData, id: \.self) { photoData in
-                                if let image = UIImage(data: photoData) {
+                            ForEach(0..<imageData.count, id: \.self) { i in
+                                if let image = UIImage(data: imageData[i]) {
                                     Image(uiImage: image)
                                         .resizable()
                                         .scaledToFill()
                                         .onTapGesture {
                                             detailImage = Image(uiImage: image)
                                             isShowingImageDetailView.toggle()
+                                            idx = i
                                         }
                                 } else {
                                     ProgressView()
@@ -352,7 +354,7 @@ struct ArticleDetailView: View {
             ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, commentCount: articleViewModel.comments.count, isNewArticle: false, article: article)
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
-            ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView, images: .constant([]), idx: .constant(0))
+            ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView, images: $imageData, idx: $idx)
         }
         .fullScreenCover(isPresented: $isShowingCommentEditView) {
             CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: articleViewModel.comment, isEditComment: false)

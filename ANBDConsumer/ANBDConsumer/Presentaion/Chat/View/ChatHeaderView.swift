@@ -130,9 +130,10 @@ struct ChatHeaderView: View {
                             .foregroundStyle(.gray400)
                             
                             VStack(alignment: .leading) {
-                                Text(trade.writerID == chatViewModel.user.id ? trade.myProduct : trade.wantProduct)
+                                Text(trade.writerID == chatViewModel.user.id ? trade.myProduct : trade.wantProduct ?? "제시")
                                     .padding(.bottom, 1)
-                                Text(trade.writerID == chatViewModel.user.id ? trade.wantProduct : trade.myProduct)
+                                
+                                Text(trade.writerID == chatViewModel.user.id ? trade.wantProduct ?? "제시" : trade.myProduct)
                             }
                             .foregroundStyle(.gray900)
                         }

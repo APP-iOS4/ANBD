@@ -20,7 +20,7 @@ struct ImageDetailView: View {
                     Image(systemName: "xmark")
                         .foregroundStyle(.white)
                 })
-                .padding(.horizontal)
+                .padding()
                 
                 Spacer()
             }
@@ -33,6 +33,14 @@ struct ImageDetailView: View {
             Spacer()
         }
         .background(.black.opacity(0.95))
+        .gesture(drag)
+    }
+    
+    var drag: some Gesture {
+        DragGesture()
+            .onEnded { _ in
+                isShowingImageDetailView.toggle()
+            }
     }
 }
 

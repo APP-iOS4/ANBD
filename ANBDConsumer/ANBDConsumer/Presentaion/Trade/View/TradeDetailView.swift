@@ -32,6 +32,7 @@ struct TradeDetailView: View {
     @State private var user = UserStore.shared.user
     
     @State private var isLiked: Bool = false
+    @State private var isMine: Bool = false
     
     var body: some View {
         ZStack {
@@ -232,32 +233,28 @@ extension TradeDetailView {
             case .nanua:
                 Text("\(tradeViewModel.trade.myProduct)")
                     .font(ANBDFont.SubTitle1)
-            case .baccua:
                 
+            case .baccua:
                 VStack(alignment: .leading, spacing: 5) {
                     HStack {
-                        VStack(alignment: .leading) {
-                            Text("줄 것")
-                                .foregroundStyle(.gray400)
-                                .font(ANBDFont.SubTitle3)
-                            Text("받을 것")
-                                .foregroundStyle(.gray400)
-                                .font(ANBDFont.SubTitle3)
-                        }
-                        VStack(alignment: .leading) {
-                            Text("\(tradeViewModel.trade.myProduct)")
-                                .font(ANBDFont.SubTitle2)
-                            if let want = tradeViewModel.trade.wantProduct {
-                                Text("\(want)")
-                                    .font(ANBDFont.SubTitle2)
-                            } else {
-                                Text("제시")
-                                    .font(ANBDFont.SubTitle2)
-                            }
-                        }
+                        Text("줄 것    ")
+                            .foregroundStyle(.gray400)
+                            .font(ANBDFont.SubTitle3)
+                        
+                        Text(isMine ? tradeViewModel.trade.myProduct : tradeViewModel.trade.wantProduct ?? "제시")
+                            .font(ANBDFont.SubTitle2)
+                    }
+                    
+                    HStack {
+                        Text("받을 것")
+                            .foregroundStyle(.gray400)
+                            .font(ANBDFont.SubTitle3)
+                        
+                        Text(isMine ? tradeViewModel.trade.wantProduct ?? "제시" : tradeViewModel.trade.myProduct)
+                            .font(ANBDFont.SubTitle2)
                     }
                 }
-                .padding(.leading, -10)
+                
             case .accua:
                 EmptyView()
             case .dasi:
@@ -293,6 +290,9 @@ extension TradeDetailView {
                     }
             }
             
+        }
+        .onAppear {
+            isMine = user.id == tradeViewModel.trade.writerID
         }
     }
 }

@@ -80,8 +80,8 @@ struct SignUpPolicyAgreeView: View {
         }
         .padding()
         
-        .sheet(isPresented: $authenticationViewModel.showingTermsView) {
-            TermsView()
+        .sheet(isPresented: $authenticationViewModel.isShowingTermsView) {
+            TermsView(type: authenticationViewModel.agreeType)
         }
         
         .navigationDestination(isPresented: $authenticationViewModel.isValidSignUp) {

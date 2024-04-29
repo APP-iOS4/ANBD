@@ -8,9 +8,7 @@
 import SwiftUI
 
 struct ImageDetailView: View {
-    @Binding var detailImage: Image
     @Binding var isShowingImageDetailView: Bool
-    
     @Binding var images: [Data]
     @Binding var idx: Int
     
@@ -30,49 +28,33 @@ struct ImageDetailView: View {
                 
                 Spacer()
             }
+            
             Spacer()
             
-            if images.isEmpty {
-                detailImage
-                    .resizable()
-                    .scaledToFit()
-                    .scaleEffect(currentZoom + totalZoom)
-                    .gesture(
-                        MagnificationGesture()
-                            .onChanged { value in
-                                currentZoom = value - 1
-                            }
-                            .onEnded { value in
-                                totalZoom += currentZoom
-                                currentZoom = 0
-                            }
-                    )
-            } else {
-                TabView(selection: $idx) {
-                    ForEach(0..<images.count, id: \.self) { i in
-                        if let image = UIImage(data: images[i]) {
-                            Image(uiImage: image)
-                                .resizable()
-                                .scaledToFit()
-                                .scaleEffect(currentZoom + totalZoom)
-                                .gesture(
-                                    MagnificationGesture()
-                                        .onChanged { value in
-                                            currentZoom = value - 1
-                                        }
-                                        .onEnded { value in
-                                            totalZoom += currentZoom
-                                            currentZoom = 0
-                                        }
-                                )
-                        } else {
-                            ProgressView()
-                        }
+            TabView(selection: $idx) {
+                ForEach(0..<images.count, id: \.self) { i in
+                    if let image = UIImage(data: images[i]) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFit()
+                            .scaleEffect(currentZoom + totalZoom)
+                            .gesture(
+                                MagnificationGesture()
+                                    .onChanged { value in
+                                        currentZoom = value - 1
+                                    }
+                                    .onEnded { value in
+                                        totalZoom += currentZoom
+                                        currentZoom = 0
+                                    }
+                            )
+                    } else {
+                        ProgressView()
                     }
                 }
-                .tabViewStyle(PageTabViewStyle())
-                .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .automatic))
             }
+            .tabViewStyle(PageTabViewStyle())
+            .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .automatic))
             
             Spacer()
         }

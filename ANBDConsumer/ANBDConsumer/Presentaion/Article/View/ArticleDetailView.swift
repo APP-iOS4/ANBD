@@ -28,7 +28,6 @@ struct ArticleDetailView: View {
     @State private var isShowingCustomAlertComment: Bool = false
     @State private var isShowingCommentEditView: Bool = false
     
-    @State private var detailImage: Image = Image("DummyPuppy1")
     @State private var imageData: [Data] = []
     @State private var idx: Int = 0
     
@@ -118,7 +117,6 @@ struct ArticleDetailView: View {
                                         .resizable()
                                         .scaledToFill()
                                         .onTapGesture {
-                                            detailImage = Image(uiImage: image)
                                             isShowingImageDetailView.toggle()
                                             idx = i
                                         }
@@ -354,7 +352,7 @@ struct ArticleDetailView: View {
             ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, commentCount: articleViewModel.comments.count, isNewArticle: false, article: article)
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
-            ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView, images: $imageData, idx: $idx)
+            ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $imageData, idx: $idx)
         }
         .fullScreenCover(isPresented: $isShowingCommentEditView) {
             CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: articleViewModel.comment, isEditComment: false)

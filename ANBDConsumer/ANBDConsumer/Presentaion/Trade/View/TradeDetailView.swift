@@ -25,7 +25,6 @@ struct TradeDetailView: View {
     @State private var isShowingDeleteCustomAlert: Bool = false
     @Environment(\.dismiss) private var dismiss
     
-    @State private var detailImage: Image = Image("DummyPuppy1")
     @State private var imageData: [Data] = []
     @State private var idx: Int = 0
     
@@ -48,7 +47,6 @@ struct TradeDetailView: View {
                                         .resizable()
                                         .scaledToFill()
                                         .onTapGesture {
-                                            detailImage = Image(uiImage: image)
                                             isShowingImageDetailView.toggle()
                                             idx = i
                                         }
@@ -174,7 +172,7 @@ struct TradeDetailView: View {
             TradeCreateView(isShowingCreate: $isShowingCreat, isNewProduct: false, trade: tradeViewModel.trade)
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
-            ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView, images: $imageData, idx: $idx)
+            ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $imageData, idx: $idx)
         }
         .navigationTitle("나눔 · 거래")
         .navigationBarTitleDisplayMode(.inline)

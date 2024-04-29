@@ -354,7 +354,8 @@ final class ChatViewModel: ObservableObject {
             "notification": [
                 "title": "\(user.nickname)",
                 "body": content
-            ]
+            ],
+            "content_available" : true
         ]
         let jsonData = try? JSONSerialization.data(withJSONObject: body)
         var request = URLRequest(url: url)

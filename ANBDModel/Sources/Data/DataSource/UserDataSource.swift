@@ -64,19 +64,19 @@ final class DefaultUserDataSource: UserDataSource {
             requestQuery = userDB
                 .order(by: "email", descending: true)
                 .limit(to: limit)
-            
-            guard let lastSnapshot = try await requestQuery
-                .getDocuments()
-                .documents
-                .last
-            else {
-                print("end")
-                return []
-            }
-            
-            let next = requestQuery.start(afterDocument: lastSnapshot)
-            self.allQuery = next
         }
+        
+        guard let lastSnapshot = try await requestQuery
+            .getDocuments()
+            .documents
+            .last
+        else {
+            print("end")
+            return []
+        }
+        
+        let next = requestQuery.start(afterDocument: lastSnapshot)
+        self.allQuery = next
         
         guard let snapshot = try? await requestQuery
             .getDocuments()

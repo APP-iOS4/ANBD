@@ -73,7 +73,6 @@ struct ArticleDetailView: View {
                                                     .stroke(.gray100, lineWidth: 1)
                                             )
                                             .onTapGesture {
-                                                print("1️⃣\(writerUser)")
                                                 coordinator.user = writerUser
                                                 switch coordinator.selectedTab {
                                                 case .home, .article, .trade, .chat:

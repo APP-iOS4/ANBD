@@ -220,7 +220,7 @@ extension Postable where Item == Article {
             .first?
             .data(as: Item.self)
         else {
-            throw DBError.getArticleDocumentError
+            throw DBError.getDocumentError
         }
         
         return article
@@ -265,7 +265,7 @@ extension Postable where Item == Article {
         
         guard let snapshot = try? await requestQuery.getDocuments().documents
         else {
-            throw DBError.getArticleDocumentError
+            throw DBError.getDocumentError
         }
         
         let articleList = snapshot.compactMap { try? $0.data(as: Item.self) }
@@ -309,7 +309,7 @@ extension Postable where Item == Article {
         
         guard let snapshot = try? await requestQuery.getDocuments().documents
         else {
-            throw DBError.getArticleDocumentError
+            throw DBError.getDocumentError
         }
         
         let articleList = snapshot.compactMap { try? $0.data(as: Item.self) }
@@ -343,7 +343,7 @@ extension Postable where Item == Article {
             "commentCount": item.commentCount
         ])
         else {
-            throw DBError.updateArticleDocumentError
+            throw DBError.updateDocumentError
         }
     }
     
@@ -361,7 +361,7 @@ extension Postable where Item == Comment {
             .getDocuments()
             .documents
         else {
-            throw DBError.getCommentDocumentError
+            throw DBError.getDocumentError
         }
         
         return snapshot.compactMap { try? $0.data(as: Comment.self) }
@@ -372,7 +372,7 @@ extension Postable where Item == Comment {
             .document(item.id)
             .updateData(["content": item.content])
         else {
-            throw DBError.updateCommentDocumentError
+            throw DBError.updateDocumentError
         }
     }
     
@@ -382,7 +382,7 @@ extension Postable where Item == Comment {
             .getDocuments()
             .documents
         else {
-            throw DBError.getCommentDocumentError
+            throw DBError.getDocumentError
         }
         
         let commentList = snapshot.compactMap { try? $0.data(as: Comment.self) }

@@ -20,16 +20,6 @@ public enum DBError: Int, Error {
     case updateUserDocumentError
     case deleteUserDocumentError
     
-    case setArticleDocumentError = 5009
-    case getArticleDocumentError
-    case updateArticleDocumentError
-    case deleteArticleDocumentError
-    
-    case setCommentDocumentError = 5013
-    case getCommentDocumentError
-    case updateCommentDocumentError
-    case deleteCommentDocumentError
-    
     case setTradeDocumentError = 5017
     case getTradeDocumentError
     case updateTradeDocumentError
@@ -44,11 +34,6 @@ public enum DBError: Int, Error {
     case getMessageDocumentError
     case updateMessageDocumentError
     case deleteMessageDocumentError
-    
-    case setBannerDocumentError = 5029
-    case getBannerDocumentError
-    case updateBannerDocumentError
-    case deleteBannerDocumentError
     
     case setReportDocumentError = 5033
     case getReportDocumentError
@@ -68,16 +53,6 @@ public enum DBError: Int, Error {
         case .updateUserDocumentError: "User document 수정 실패"
         case .deleteUserDocumentError: "User document 삭제 실패"
             
-        case .setArticleDocumentError: "Article document 추가 실패"
-        case .getArticleDocumentError: "Article document 읽기 실패"
-        case .updateArticleDocumentError: "Article document 수정 실패"
-        case .deleteArticleDocumentError: "Article document 삭제 실패"
-            
-        case .setCommentDocumentError: "Comment document 추가 실패"
-        case .getCommentDocumentError: "Comment document 읽기 실패"
-        case .updateCommentDocumentError: "Comment document 수정 실패"
-        case .deleteCommentDocumentError: "Comment document 삭제 실패"
-            
         case .setTradeDocumentError: "Trade document 추가 실패"
         case .getTradeDocumentError: "Trade document 읽기 실패"
         case .updateTradeDocumentError: "Trade document 수정 실패"
@@ -92,11 +67,6 @@ public enum DBError: Int, Error {
         case .getMessageDocumentError: "Message document 읽기 실패"
         case .updateMessageDocumentError: "Message document 수정 실패"
         case .deleteMessageDocumentError: "Message document 삭제 실패"
-            
-        case .setBannerDocumentError: "Banner document 추가 실패"
-        case .getBannerDocumentError: "Banner document 읽기 실패"
-        case .updateBannerDocumentError: "Banner document 수정 실패"
-        case .deleteBannerDocumentError: "Banner document 삭제 실패"
             
         case .setReportDocumentError: "Report document 추가 실패"
         case .getReportDocumentError: "Report document 읽기 실패"

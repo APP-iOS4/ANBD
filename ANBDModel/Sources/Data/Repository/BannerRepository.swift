@@ -18,7 +18,7 @@ struct DefaultBannerRepository: BannerRepository {
     func createBanner(banner: Banner) async throws {
         guard let _ = try? bannerDB.document(banner.id).setData(from: banner)
         else {
-            throw DBError.setBannerDocumentError
+            throw DBError.setDocumentError
         }
     }
     
@@ -28,7 +28,7 @@ struct DefaultBannerRepository: BannerRepository {
             .getDocuments()
             .documents
         else {
-            throw DBError.getBannerDocumentError
+            throw DBError.getDocumentError
         }
         
         let bannerList = snapshot.compactMap { try? $0.data(as: Banner.self) }
@@ -43,14 +43,14 @@ struct DefaultBannerRepository: BannerRepository {
             "thumbnailImageURLString": banner.thumbnailImageURLString
         ])
         else {
-            throw DBError.updateBannerDocumentError
+            throw DBError.updateDocumentError
         }
     }
     
     func deleteBanner(bannerID: String) async throws {
         guard let _ = try? await bannerDB.document(bannerID).delete()
         else {
-            throw DBError.deleteBannerDocumentError
+            throw DBError.deleteDocumentError
         }
     }
     

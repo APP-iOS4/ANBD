@@ -14,6 +14,9 @@ struct ImageDetailView: View {
     @Binding var images: [Data]
     @Binding var idx: Int
     
+    @State private var currentZoom = 0.0
+    @State private var totalZoom = 1.0
+    
     var body: some View {
         VStack {
             HStack {
@@ -33,6 +36,17 @@ struct ImageDetailView: View {
                 detailImage
                     .resizable()
                     .scaledToFit()
+                    .scaleEffect(currentZoom + totalZoom)
+                    .gesture(
+                        MagnificationGesture()
+                            .onChanged { value in
+                                currentZoom = value - 1
+                            }
+                            .onEnded { value in
+                                totalZoom += currentZoom
+                                currentZoom = 0
+                            }
+                    )
             } else {
                 TabView(selection: $idx) {
                     ForEach(0..<images.count, id: \.self) { i in
@@ -40,6 +54,17 @@ struct ImageDetailView: View {
                             Image(uiImage: image)
                                 .resizable()
                                 .scaledToFit()
+                                .scaleEffect(currentZoom + totalZoom)
+                                .gesture(
+                                    MagnificationGesture()
+                                        .onChanged { value in
+                                            currentZoom = value - 1
+                                        }
+                                        .onEnded { value in
+                                            totalZoom += currentZoom
+                                            currentZoom = 0
+                                        }
+                                )
                         } else {
                             ProgressView()
                         }

@@ -84,33 +84,6 @@ struct AuthenticationView: View {
                                 }
                             }
                             
-                            Button(action: {
-                                // TODO: 구글 로그인 메서드 넣기
-                                #if DEBUG
-                                print("구글 로그인 - 프로토타입")
-                                #endif
-                            }, label: {
-                                RoundedRectangle(cornerRadius: 14)
-                                    .stroke(Color.gray200)
-                                    .overlay {
-                                        HStack {
-                                            Image("Google")
-                                                .padding(.leading, 14)
-                                            
-                                            Spacer()
-                                            
-                                            Text("Google로 시작하기")
-                                                .font(ANBDFont.body1)
-                                                .foregroundStyle(Color.gray900)
-                                                .padding(.trailing, 30)
-                                            
-                                            Spacer()
-                                        }
-                                        .contentShape(RoundedRectangle(cornerRadius: 14))
-                                    }
-                            })
-                            .frame(height: 56)
-                            
                             HStack {
                                 Text("계정이 없으신가요?")
                                     .foregroundStyle(Color.gray400)
@@ -122,6 +95,7 @@ struct AuthenticationView: View {
                                 .foregroundStyle(Color.accent)
                             }
                             .font(ANBDFont.body2)
+                            .padding(.top, 30)
                         }
                         
                         Spacer()

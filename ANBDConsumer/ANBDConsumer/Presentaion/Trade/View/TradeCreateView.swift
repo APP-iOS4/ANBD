@@ -44,142 +44,137 @@ struct TradeCreateView: View {
     
     var body: some View {
         NavigationStack {
-            ZStack {
-                if #available(iOS 17.0, *) {
-                    wholeView
-                        .onChange(of: mustTextFields, {
-                            if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
-                                self.isFinished = false
-                            } else {
-                                self.isFinished = true
-                            }
-                            // 공백입력 시 저장 x
-                            for item in mustTextFields {
-                                if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
-                                    isFinished = true
-                                }
-                            }
-                        })
-                    
-                        .onChange(of: selectedPhotosData, {
-                            if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
-                                self.isFinished = false
-                            } else {
-                                self.isFinished = true
-                            }
-                            
-                            // 공백입력 시 저장 x
-                            for item in mustTextFields {
-                                if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
-                                    isFinished = true
-                                }
-                            }
-                            
-                            isCancelable = false
-                        })
-                    
-                        .onChange(of: tmpSelectedData, {
-                            if tmpSelectedData.count != tradeViewModel.trade.imagePaths.count {
-                                if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
-                                    self.isFinished = false
-                                } else {
-                                    self.isFinished = true
-                                }
-                                
-                                // 공백입력 시 저장 x
-                                for item in mustTextFields {
-                                    if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
-                                        isFinished = true
-                                    }
-                                }
-                                
-                                isCancelable = false
-                            }
-                        })
-                    
-                        .onChange(of: title) {
-                            if title.count > 50 {
-                                title = String(title.prefix(50))
+            if #available(iOS 17.0, *) {
+                wholeView
+                    .onChange(of: mustTextFields, {
+                        if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
+                            self.isFinished = false
+                        } else {
+                            self.isFinished = true
+                        }
+                        // 공백입력 시 저장 x
+                        for item in mustTextFields {
+                            if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
+                                isFinished = true
                             }
                         }
-                    
-                        .onChange(of: content) {
-                            if content.count > 5000 {
-                                content = String(content.prefix(5000))
-                            }
-                        }
-                    
-                } else {
-                    wholeView
-                        .onChange(of: mustTextFields) { _ in
-                            if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
-                                self.isFinished = false
-                            } else {
-                                self.isFinished = true
-                            }
-                            
-                            //                        // 공백입력 시 저장 x
-                            for item in mustTextFields {
-                                if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
-                                    isFinished = true
-                                }
-                            }
-                        }
-                    
-                        .onChange(of: selectedPhotosData) { _ in
-                            if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
-                                self.isFinished = false
-                            } else {
-                                self.isFinished = true
-                            }
-                            
-                            // 공백입력 시 저장 x
-                            for item in mustTextFields {
-                                if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
-                                    isFinished = true
-                                }
-                            }
-                            
-                            isCancelable = false
-                        }
-                    
-                        .onChange(of: tmpSelectedData) { _ in
-                            if tmpSelectedData.count != tradeViewModel.trade.imagePaths.count {
-                                if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
-                                    self.isFinished = false
-                                } else {
-                                    self.isFinished = true
-                                }
-                                
-                                // 공백입력 시 저장 x
-                                for item in mustTextFields {
-                                    if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
-                                        isFinished = true
-                                    }
-                                }
-                                
-                                isCancelable = false
-                            }
-                        }
-                    
-                        .onChange(of: title) { _ in
-                            if title.count > 50 {
-                                title = String(title.prefix(50))
-                            }
-                        }
-                    
-                        .onChange(of: content) { _ in
-                            if content.count > 5000 {
-                                content = String(content.prefix(5000))
-                            }
-                        }
-                }
+                    })
                 
-                if coordinator.isLoading {
-                    LoadingView()
-                }
+                    .onChange(of: selectedPhotosData, {
+                        if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
+                            self.isFinished = false
+                        } else {
+                            self.isFinished = true
+                        }
+                        
+                        // 공백입력 시 저장 x
+                        for item in mustTextFields {
+                            if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
+                                isFinished = true
+                            }
+                        }
+                        
+                        isCancelable = false
+                    })
+                
+                    .onChange(of: tmpSelectedData, {
+                        if tmpSelectedData.count != tradeViewModel.trade.imagePaths.count {
+                            if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
+                                self.isFinished = false
+                            } else {
+                                self.isFinished = true
+                            }
+                            
+                            // 공백입력 시 저장 x
+                            for item in mustTextFields {
+                                if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
+                                    isFinished = true
+                                }
+                            }
+                            
+                            isCancelable = false
+                        }
+                    })
+                
+                    .onChange(of: title) {
+                        if title.count > 50 {
+                            title = String(title.prefix(50))
+                        }
+                    }
+                
+                    .onChange(of: content) {
+                        if content.count > 5000 {
+                            content = String(content.prefix(5000))
+                        }
+                    }
+                
+            } else {
+                wholeView
+                    .onChange(of: mustTextFields) { _ in
+                        if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
+                            self.isFinished = false
+                        } else {
+                            self.isFinished = true
+                        }
+                        
+                        //                        // 공백입력 시 저장 x
+                        for item in mustTextFields {
+                            if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
+                                isFinished = true
+                            }
+                        }
+                    }
+                
+                    .onChange(of: selectedPhotosData) { _ in
+                        if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
+                            self.isFinished = false
+                        } else {
+                            self.isFinished = true
+                        }
+                        
+                        // 공백입력 시 저장 x
+                        for item in mustTextFields {
+                            if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
+                                isFinished = true
+                            }
+                        }
+                        
+                        isCancelable = false
+                    }
+                
+                    .onChange(of: tmpSelectedData) { _ in
+                        if tmpSelectedData.count != tradeViewModel.trade.imagePaths.count {
+                            if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
+                                self.isFinished = false
+                            } else {
+                                self.isFinished = true
+                            }
+                            
+                            // 공백입력 시 저장 x
+                            for item in mustTextFields {
+                                if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
+                                    isFinished = true
+                                }
+                            }
+                            
+                            isCancelable = false
+                        }
+                    }
+                
+                    .onChange(of: title) { _ in
+                        if title.count > 50 {
+                            title = String(title.prefix(50))
+                        }
+                    }
+                
+                    .onChange(of: content) { _ in
+                        if content.count > 5000 {
+                            content = String(content.prefix(5000))
+                        }
+                    }
             }
         }
+        
     }
 }
 
@@ -330,6 +325,8 @@ fileprivate extension TradeCreateView {
                 
                 BlueSquareButton(title: isNewProduct ? "작성 완료" : "수정 완료", isDisabled: isFinished) {
                     if isNewProduct {
+                        coordinator.isLoading = true
+                        
                         Task {
                             await tradeViewModel.createTrade(category: category, itemCategory: tradeViewModel.selectedItemCategory, location: tradeViewModel.selectedLocation, title: title, content: content, myProduct: myProduct, wantProduct: wantProduct, images: selectedPhotosData)
                             
@@ -337,6 +334,9 @@ fileprivate extension TradeCreateView {
                             
                             tradeViewModel.selectedLocation = .seoul
                             tradeViewModel.selectedItemCategory = .digital
+                            
+                            coordinator.isLoading = false
+                            self.isShowingCreate.toggle()
                         }
                     } else {
                         coordinator.isLoading = true
@@ -354,8 +354,6 @@ fileprivate extension TradeCreateView {
                             }
                         }
                     }
-                    
-                    
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 5)
@@ -367,6 +365,10 @@ fileprivate extension TradeCreateView {
                     tradeViewModel.selectedItemCategory = .digital
                     isShowingCreate.toggle()
                 }
+            }
+            
+            if coordinator.isLoading {
+                LoadingView()
             }
         }
         .toolbar {
@@ -400,7 +402,7 @@ fileprivate extension TradeCreateView {
                             }
                         }
                     }
-
+                    
                     if isCancelable {
                         //지역은 user 선호 지역으로 선택되게
                         tradeViewModel.selectedLocation = UserStore.shared.user.favoriteLocation

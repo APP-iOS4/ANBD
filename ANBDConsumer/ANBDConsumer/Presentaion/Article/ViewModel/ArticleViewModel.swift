@@ -209,6 +209,7 @@ final class ArticleViewModel: ObservableObject {
         do {
             try await articleUseCase.likeArticle(articleID: article.id)
             await UserStore.shared.updateLocalUserInfo()
+            await sendLikePushNotification()
         } catch {
             print(error.localizedDescription)
         }
@@ -229,6 +230,7 @@ final class ArticleViewModel: ObservableObject {
         do {
             try await commentUseCase.writeComment(articleID: articleID, comment: newComment)
             await loadCommentList(articleID: articleID)
+            await self.sendCommentPushNotification(content: commentText)
         } catch {
             print(error.localizedDescription)
         }
@@ -269,6 +271,106 @@ final class ArticleViewModel: ObservableObject {
             }
         } catch {
             print("Error: \(error)")
+        }
+    }
+    
+    //MARK: - PUSH
+    
+    @MainActor
+    func sendCommentPushNotification(content: String) async {
+        
+        let urlString = "https://fcm.googleapis.com/fcm/send"
+        guard let url = URL(string: urlString) else { return }
+        
+        
+        guard let serverKey = Bundle.main.firebaseServerKey else {return}
+        
+        // 게시글 작성자의 토큰
+        do {
+            let writer = try await userUsecase.getUserInfo(userID: self.article.writerID)
+            let user = UserStore.shared.user
+            
+            guard writer.fcmToken != "" else { return }
+            
+            let headers = [
+                "Authorization": "key=\(serverKey)",
+                "Content-Type": "application/json"
+            ]
+            let body: [String: Any] = [
+                "to": writer.fcmToken,
+                "notification": [
+                    "title": "\(article.title)",
+                    "body": "\(user.nickname)님이 댓글을 남겼습니다: \"\(content)\""
+                ],
+                "content_available" : true
+            ]
+            
+            let jsonData = try? JSONSerialization.data(withJSONObject: body)
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.allHTTPHeaderFields = headers
+            request.httpBody = jsonData
+            
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                if let error = error {
+                    print("Error sending push notification: \(error.localizedDescription)")
+                }
+                if let data = data {
+                    let responseString = String(data: data, encoding: .utf8)
+                    print("Response: \(responseString ?? "")")
+                }
+            }.resume()
+            
+        } catch {
+            print(error)
+        }
+    }
+    
+    func sendLikePushNotification() async {
+        
+        let urlString = "https://fcm.googleapis.com/fcm/send"
+        guard let url = URL(string: urlString) else { return }
+        
+        guard let serverKey = Bundle.main.firebaseServerKey else {return}
+        
+        // 게시글 작성자의 토큰
+        do {
+            let writer = try await userUsecase.getUserInfo(userID: self.article.writerID)
+            let user = UserStore.shared.user
+            
+            guard writer.fcmToken != "" else { return }
+            
+            let headers = [
+                "Authorization": "key=\(serverKey)",
+                "Content-Type": "application/json"
+            ]
+            let body: [String: Any] = [
+                "to": writer.fcmToken,
+                "notification": [
+                    "title": "\(writer.nickname)",
+                    "body": "\(user.nickname)님이 회원님의 게시글을 좋아합니다."
+                ],
+                "content_available" : true
+            ]
+            
+            let jsonData = try? JSONSerialization.data(withJSONObject: body)
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.allHTTPHeaderFields = headers
+            request.httpBody = jsonData
+            
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                if let error = error {
+                    print("Error sending push notification: \(error.localizedDescription)")
+                }
+                if let data = data {
+                    let responseString = String(data: data, encoding: .utf8)
+                    print("Response: \(responseString ?? "")")
+                }
+            }.resume()
+            
+        } catch {
+            print(error)
         }
     }
 }

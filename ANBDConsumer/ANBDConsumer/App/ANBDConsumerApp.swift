@@ -9,6 +9,7 @@ import SwiftUI
 import FirebaseCore
 import FirebaseFirestore
 //import GoogleSignIn
+import FirebaseMessaging
 import ANBDModel
 
 class AppDelegate: NSObject, UIApplicationDelegate {
@@ -19,18 +20,79 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     ) -> Bool {
         FirebaseApp.configure()
         
+        
+        UNUserNotificationCenter.current().delegate = self
+        
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound] // 필요한 알림 권한을 설정
+        UNUserNotificationCenter.current().requestAuthorization(
+            options: authOptions,
+            completionHandler: { _, _ in }
+        )
+        
+        // UNUserNotificationCenterDelegate를 구현한 메서드를 실행시킴
+        application.registerForRemoteNotifications()
+        
+        // 파이어베이스 Meesaging 설정
+        Messaging.messaging().delegate = self
+        
         return true
     }
+    func application(_ application: UIApplication,
+                     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Messaging.messaging().apnsToken = deviceToken
+    }
     
-    
-//    func application(
-//        _ app: UIApplication,
-//        open url: URL,
-//        options: [UIApplication.OpenURLOptionsKey : Any] = [:]
-//    ) -> Bool {
-//        return GIDSignIn.sharedInstance.handle(url)
-//    }
+    //    func application(
+    //        _ app: UIApplication,
+    //        open url: URL,
+    //        options: [UIApplication.OpenURLOptionsKey : Any] = [:]
+    //    ) -> Bool {
+    //        return GIDSignIn.sharedInstance.handle(url)
+    //    }
 }
+
+
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    
+    func userNotificationCenter(_: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        
+        let userInfo = response.notification.request.content.userInfo
+        
+        switch UIApplication.shared.applicationState {
+        case .active:
+            print("Received push message from APNs on Foreground")
+        case .background:
+            print("Received push message from APNs on Background")
+        case .inactive:
+            print("Received push message from APNs back to Foreground")
+        }
+        
+        // aps 딕셔너리에서 alert 딕셔너리 추출
+        guard let apsDict = userInfo["aps"] as? [String: Any],
+              let alertDict = apsDict["alert"] as? [String: String] else {
+            completionHandler()
+            return
+        }
+        print("alertDict: \(alertDict)")
+        
+        completionHandler()
+    }
+    
+}
+
+extension AppDelegate: MessagingDelegate {
+    
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        Messaging.messaging().token { token, error in
+            if let error = error {
+                print("Error fetching FCM registration token: \(error)")
+            } else if let token = token {
+                UserStore.shared.deviceToken = token
+            }
+        }
+    }
+}
+
 
 @main
 struct ANBDConsumerApp: App {

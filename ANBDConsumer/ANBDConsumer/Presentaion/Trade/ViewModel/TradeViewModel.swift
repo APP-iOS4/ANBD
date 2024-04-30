@@ -24,6 +24,7 @@ final class TradeViewModel: ObservableObject {
     
     @Published var selectedItemCategory: ItemCategory = .digital
     @Published var selectedLocation: Location = .seoul
+    @Published var detailImages: [Data] = []
     
     //MARK: - 로컬 함수 (네트워크 호출 X)
     
@@ -106,6 +107,7 @@ final class TradeViewModel: ObservableObject {
     func loadOneTrade(trade: Trade) async {
         do {
             self.trade = try await tradeUseCase.loadTrade(tradeID: trade.id)
+            self.detailImages = try await loadDetailImages(path: .trade, containerID: self.trade.id, imagePath: self.trade.imagePaths)
         } catch {
             print("trade 하나 불러오기 실패: \(error.localizedDescription)")
         }

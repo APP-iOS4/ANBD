@@ -54,7 +54,6 @@ public struct DefaultUserUsecase: UserUsecase {
     
     public func updateUserFCMToken(userID: String, fcmToken: String) async throws {
         if userID.isEmpty { throw UserError.invalidUserID }
-        if fcmToken.isEmpty { throw NSError(domain: "invalid fcmToken", code: 4444) }
         
         try await userRepository.updateUserFCMToken(userID: userID, fcmToken: fcmToken)
     }

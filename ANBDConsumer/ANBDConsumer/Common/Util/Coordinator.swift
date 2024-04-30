@@ -52,6 +52,7 @@ final class Coordinator: ObservableObject {
     @Published var isFromUserPage: Bool = false
     @Published var toastViewType: ToastViewType = .report
     @Published var isShowingToastView: Bool = false
+    @Published var isLoading: Bool = false
     
     
     @ViewBuilder

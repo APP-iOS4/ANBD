@@ -28,8 +28,8 @@ struct ArticleDetailView: View {
     @State private var isShowingCustomAlertComment: Bool = false
     @State private var isShowingCommentEditView: Bool = false
     
-    @State private var detailImage: Image = Image("DummyPuppy1")
     @State private var imageData: [Data] = []
+    @State private var idx: Int = 0
     
     @State private var writerUser: User?
     @State private var commentUser: User?
@@ -73,7 +73,6 @@ struct ArticleDetailView: View {
                                                     .stroke(.gray100, lineWidth: 1)
                                             )
                                             .onTapGesture {
-                                                print("1️⃣\(writerUser)")
                                                 coordinator.user = writerUser
                                                 switch coordinator.selectedTab {
                                                 case .home, .article, .trade, .chat:
@@ -111,19 +110,20 @@ struct ArticleDetailView: View {
                                 .font(ANBDFont.body2)
                                 .padding(.bottom, 10)
                             
-                            ForEach(imageData, id: \.self) { photoData in
-                                if let image = UIImage(data: photoData) {
+                            ForEach(0..<imageData.count, id: \.self) { i in
+                                if let image = UIImage(data: imageData[i]) {
                                     Image(uiImage: image)
                                         .resizable()
                                         .scaledToFill()
                                         .onTapGesture {
-                                            detailImage = Image(uiImage: image)
                                             isShowingImageDetailView.toggle()
+                                            idx = i
                                         }
                                 } else {
                                     ProgressView()
                                 }
                             }
+                        
                             HStack {
                                 Button {
                                     Task {
@@ -352,7 +352,7 @@ struct ArticleDetailView: View {
             ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, commentCount: articleViewModel.comments.count, isNewArticle: false, article: article)
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
-            ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
+            ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $imageData, idx: $idx)
         }
         .fullScreenCover(isPresented: $isShowingCommentEditView) {
             CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: articleViewModel.comment, isEditComment: false)
@@ -366,39 +366,34 @@ struct ArticleDetailView: View {
         VStack {
             Spacer()
             HStack {
+                let trimmedCommentText = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
                 ZStack {
                     Rectangle()
                         .clipShape(RoundedRectangle(cornerRadius: 30))
                         .frame(height: 43)
-                        .foregroundStyle(.gray50)
+                        .foregroundStyle(colorScheme == .dark ? .gray700 : .gray100)
                     TextField("댓글을 입력해주세요.", text: $commentText/*, axis: .vertical*/)
                         .font(ANBDFont.Caption3)
                         .padding(20)
                 }
                 Button {
-                    Task {
-                        await articleViewModel.writeComment(articleID: article.id, commentText: commentText)
-                        commentText = ""
+                    if !trimmedCommentText.isEmpty {
+                        Task {
+                            await articleViewModel.writeComment(articleID: article.id, commentText: trimmedCommentText)
+                            commentText = ""
+                        }
                     }
                 } label: {
                     Image(systemName: "paperplane.fill")
                         .font(ANBDFont.pretendardSemiBold(28))
                         .rotationEffect(.degrees(45))
-                        .foregroundStyle(commentText.isEmpty ? .gray300 : .accent)
+                        .foregroundStyle(commentText.isEmpty || trimmedCommentText.isEmpty ? (colorScheme == .dark ? .gray600 : .gray300) : .accent)
                 }
-                .disabled(commentText.isEmpty)
+                .disabled(commentText.isEmpty || trimmedCommentText.isEmpty)
             }
             .padding(.horizontal, 10)
             .toolbar(.hidden, for: .tabBar)
-            .background(backgroundForColorScheme())
-        }
-    }
-    
-    func backgroundForColorScheme() -> Color {
-        if colorScheme == .dark {
-            return Color.gray50
-        } else {
-            return Color.white
+            .background(colorScheme == .dark ? .gray50 : .white)
         }
     }
 }

@@ -44,7 +44,7 @@ struct ANBDTabView: View {
                 Label("정보 공유", systemImage: "leaf")
             }
             .tag(ANBDTabViewType.article)
-            .toolbarBackground(.hidden, for: .tabBar)
+            .toolbarBackground(.visible, for: .tabBar)
             .toolbarBackground(tabBarColorScheme().opacity(1), for: .tabBar)
             
             /// Trade (나눔 · 거래)

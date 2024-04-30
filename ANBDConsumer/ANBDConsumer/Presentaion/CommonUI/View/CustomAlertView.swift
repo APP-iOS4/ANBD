@@ -17,25 +17,53 @@ struct CustomAlertView: View {
         ZStack {
             Color.gray900
                 .opacity(0.3)
+                .ignoresSafeArea()
             
-            ZStack {
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(Color(UIColor.systemBackground))
-                    .frame(height: 200)
+            VStack {
+                Text(title)
+                    .font(ANBDFont.SubTitle1)
+                    .foregroundStyle(.gray900)
+                    .padding(.vertical, 10)
                 
-                VStack {
-                    Text(title)
-                        .font(ANBDFont.SubTitle1)
-                        .foregroundStyle(.gray900)
-                        .padding(.vertical, 10)
-                    
-                    Text(description)
-                        .multilineTextAlignment(.center)
-                        .font(ANBDFont.body1)
-                        .foregroundStyle(.gray900)
-                        .padding(.bottom, 15)
-                    
-                    if viewType == .duplicatedEmail || viewType == .duplicatedNickname || viewType == .signInFail || viewType == .imageSelelct {
+                Text(description)
+                    .multilineTextAlignment(.center)
+                    .font(ANBDFont.body1)
+                    .foregroundStyle(.gray900)
+                    .padding(.bottom, 15)
+                
+                if viewType == .duplicatedEmail || viewType == .duplicatedNickname || viewType == .signInFail || viewType == .imageSelelct {
+                    Button(action: {
+                        completionHandler()
+                        isShowingCustomAlert.toggle()
+                    }, label: {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(confirmButtonColor)
+                                .frame(height: 45)
+                            
+                            Text(confirmMessage)
+                                .foregroundStyle(.white)
+                                .fontWeight(textWeight)
+                        }
+                    })
+                    .font(ANBDFont.body1)
+                    .padding(.horizontal, 15)
+                } else {
+                    HStack {
+                        Button(action: {
+                            isShowingCustomAlert.toggle()
+                        }, label: {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(.gray300)
+                                    .frame(height: 45)
+                                
+                                Text("취소하기")
+                                    .foregroundStyle(.white)
+                            }
+                        })
+                        .padding(.leading, 15)
+                        
                         Button(action: {
                             completionHandler()
                             isShowingCustomAlert.toggle()
@@ -50,48 +78,19 @@ struct CustomAlertView: View {
                                     .fontWeight(textWeight)
                             }
                         })
-                        .font(ANBDFont.body1)
-                        .padding(.horizontal, 15)
-                    } else {
-                        HStack {
-                            Button(action: {
-                                isShowingCustomAlert.toggle()
-                            }, label: {
-                                ZStack {
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(.gray300)
-                                        .frame(height: 45)
-                                    
-                                    Text("취소하기")
-                                        .foregroundStyle(.white)
-                                }
-                            })
-                            .padding(.leading, 15)
-                            
-                            Button(action: {
-                                completionHandler()
-                                isShowingCustomAlert.toggle()
-                            }, label: {
-                                ZStack {
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(confirmButtonColor)
-                                        .frame(height: 45)
-                                    
-                                    Text(confirmMessage)
-                                        .foregroundStyle(.white)
-                                        .fontWeight(textWeight)
-                                }
-                            })
-                            .padding(.trailing, 15)
-                        }
-                        .font(ANBDFont.body1)
+                        .padding(.trailing, 15)
                     }
+                    .font(ANBDFont.body1)
                 }
             }
-            .padding(.horizontal, 50)
             .foregroundStyle(.gray900)
+            .padding(.vertical, 35)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                .fill(Color(UIColor.systemBackground))
+            )
+            .padding(.horizontal, 45)
         }
-        .ignoresSafeArea()
     }
 }
 

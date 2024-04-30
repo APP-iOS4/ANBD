@@ -139,7 +139,7 @@ struct UserPageView: View {
                             .font(.system(size: 14))
                     })
                 }
-            } else {
+            } else if isSignedInUser == false && writerUser.id != "abcd1234" {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button(role: .destructive) {

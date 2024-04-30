@@ -13,7 +13,7 @@ struct ChatDetailView: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @EnvironmentObject private var coordinator: Coordinator
-    
+    @Environment(\.colorScheme) var colorScheme
     
     /// 보낼 메시지 관련 변수
     @State private var message: String = ""
@@ -174,6 +174,7 @@ struct ChatDetailView: View {
                 if chatViewModel.selectedUser.id == "" {
                     isWithdrawlUser = true
                 }
+                
                 if let channel = chatViewModel.selectedChannel {
                     /// 안읽음 메시지 개수 갱신
                     try await chatViewModel.resetUnreadCount(channelID: channel.id)
@@ -217,7 +218,7 @@ struct ChatDetailView: View {
             /// 메시지 입력
             ZStack {
                 Rectangle()
-                    .fill(.gray50)
+                    .fill(colorScheme == .light ? .gray50 : .gray700)
                     .clipShape(RoundedRectangle(cornerRadius: 30))
                 
                 TextField(isWithdrawlUser ? "탈퇴한 회원이므로 메시지를 보낼 수 없습니다" : "메시지 보내기", text: $message)

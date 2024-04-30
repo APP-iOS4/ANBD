@@ -19,6 +19,7 @@ struct MessageCell: View {
     var isLast: Bool = false
     @State var imageUrl: URL?
     @State private var isMine: Bool = true
+    @State private var isWithdrawlUser: Bool = false
     @State private var isLoading: Bool = true
     @State private var otherUser: User?
     
@@ -60,6 +61,7 @@ struct MessageCell: View {
                         .overlay(Circle().stroke(Color.gray, lineWidth: 0.5))
                         .frame(width: 30)
                 })
+                .disabled(isWithdrawlUser)
             } else if !isMine {
                 Circle()
                     .fill(Color.clear)
@@ -132,6 +134,7 @@ struct MessageCell: View {
         .onAppear {
             Task {
                 isMine = message.userID == chatViewModel.user.id
+                isWithdrawlUser = chatViewModel.selectedUser.id == ""
                 otherUser = await chatViewModel.getOtherUser(channel: channel)
                 if let imagePath = message.imagePath {
                     /// 이미지 로드

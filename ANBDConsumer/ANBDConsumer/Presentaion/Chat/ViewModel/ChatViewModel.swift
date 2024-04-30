@@ -32,7 +32,7 @@ final class ChatViewModel: ObservableObject {
     //채팅방 내부에 필요한 변수
     var selectedUser: User = User(id: "", nickname: "(알수없음)", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
     
-    var selectedTrade: Trade?
+    @Published var selectedTrade: Trade?
     var selectedChannel: Channel?
     
     @Published var groupedMessages: [(day:String , messages:[Message])] = []
@@ -133,7 +133,6 @@ final class ChatViewModel: ObservableObject {
     //채팅방 리스트에서 접근시
     func setSelectedUser(channel: Channel) async throws{
         self.selectedChannel = channel
-        
         do {
             self.selectedUser = try await chatUsecase.getOtherUser(channel: channel, userID: user.id)
             self.selectedTrade = try await chatUsecase.getTradeInChannel(channelID: channel.id)
@@ -293,6 +292,7 @@ final class ChatViewModel: ObservableObject {
     func resetMessageData() {
         isListener = false
         isLeaveChatRoom = false
+        selectedTrade = nil
         chatUsecase.initializeListener()
         messages = []
         groupedMessages = []

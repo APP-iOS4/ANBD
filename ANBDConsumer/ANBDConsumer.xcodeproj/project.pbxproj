@@ -58,6 +58,7 @@
 		CB198D1C2BC3A4FA000C2709 /* TradeCreateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198D1B2BC3A4FA000C2709 /* TradeCreateView.swift */; };
 		CB198D1E2BC3A7BC000C2709 /* TextFieldModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198D1D2BC3A7BC000C2709 /* TextFieldModifier.swift */; };
 		CB198D282BC3D069000C2709 /* ItemCategoryPickerMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198D272BC3D069000C2709 /* ItemCategoryPickerMenu.swift */; };
+		CB6AA2122BDFDD4D005CA6E4 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6AA2112BDFDD4D005CA6E4 /* LoadingView.swift */; };
 		CB7BEDB92BBD4E9D00C0F298 /* ANBDConsumerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7BEDB82BBD4E9D00C0F298 /* ANBDConsumerApp.swift */; };
 		CB7BEDBB2BBD4E9D00C0F298 /* ANBDTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7BEDBA2BBD4E9D00C0F298 /* ANBDTabView.swift */; };
 		CB7BEDBD2BBD4E9F00C0F298 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB7BEDBC2BBD4E9F00C0F298 /* Assets.xcassets */; };
@@ -130,6 +131,7 @@
 		CB198D1B2BC3A4FA000C2709 /* TradeCreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeCreateView.swift; sourceTree = "<group>"; };
 		CB198D1D2BC3A7BC000C2709 /* TextFieldModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldModifier.swift; sourceTree = "<group>"; };
 		CB198D272BC3D069000C2709 /* ItemCategoryPickerMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCategoryPickerMenu.swift; sourceTree = "<group>"; };
+		CB6AA2112BDFDD4D005CA6E4 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		CB7BEDB52BBD4E9D00C0F298 /* ANBDConsumer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ANBDConsumer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB7BEDB82BBD4E9D00C0F298 /* ANBDConsumerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ANBDConsumerApp.swift; sourceTree = "<group>"; };
 		CB7BEDBA2BBD4E9D00C0F298 /* ANBDTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ANBDTabView.swift; sourceTree = "<group>"; };
@@ -250,6 +252,7 @@
 				CB198D0F2BC38BA0000C2709 /* CheckboxView.swift */,
 				42C151702BD1014400917F30 /* ListEmptyView.swift */,
 				A8BD759F2BDA3F730089799D /* CustomToastView.swift */,
+				CB6AA2112BDFDD4D005CA6E4 /* LoadingView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -706,6 +709,7 @@
 				CB7BEE2F2BBD57A000C0F298 /* ChatViewModel.swift in Sources */,
 				424CA00D2BC3B4CE00F83F8D /* SignUpUserInfoView.swift in Sources */,
 				A816E5FA2BC1056F00138CFC /* ChatListCell.swift in Sources */,
+				CB6AA2122BDFDD4D005CA6E4 /* LoadingView.swift in Sources */,
 				CB198CF62BBFD0A3000C2709 /* WriteButtonView.swift in Sources */,
 				428E613F2BC8BDE400808340 /* UserLikedContentsView.swift in Sources */,
 				A8A269C12BD630BD0099C3A3 /* Coordinator.swift in Sources */,

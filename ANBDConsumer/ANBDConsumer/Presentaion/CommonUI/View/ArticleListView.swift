@@ -116,6 +116,7 @@ struct ArticleListView: View {
                                         ArticleListCell(value: .trade(item))
                                             .padding(.vertical, 5)
                                             .onAppear {
+                                                tradeViewModel.detailImages = []
                                                 Task {
                                                     if !isSearchView {
                                                         await tradeViewModel.loadMoreFilteredTrades(category: category)

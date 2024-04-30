@@ -292,9 +292,6 @@ final class ArticleViewModel: ObservableObject {
             
             guard writer.fcmToken != "" else { return }
             
-            print("serverKey:\(serverKey)")
-            print("to:\(writer.fcmToken)")
-            
             let headers = [
                 "Authorization": "key=\(serverKey)",
                 "Content-Type": "application/json"
@@ -334,7 +331,6 @@ final class ArticleViewModel: ObservableObject {
         let urlString = "https://fcm.googleapis.com/fcm/send"
         guard let url = URL(string: urlString) else { return }
         
-        
         guard let serverKey = Bundle.main.firebaseServerKey else {return}
         
         // 게시글 작성자의 토큰
@@ -343,9 +339,6 @@ final class ArticleViewModel: ObservableObject {
             let user = UserStore.shared.user
             
             guard writer.fcmToken != "" else { return }
-            
-            print("serverKey:\(serverKey)")
-            print("to:\(writer.fcmToken)")
             
             let headers = [
                 "Authorization": "key=\(serverKey)",

@@ -120,10 +120,16 @@ struct ArticleDetailView: View {
                                             isShowingImageDetailView.toggle()
                                             idx = i
                                         }
+                                        .onAppear {
+                                            coordinator.isLoading = false
+                                        }
                                         .padding(.top, 10)
-                                } else {
-                                    ProgressView()
                                 }
+                            }
+                            
+                            if coordinator.isLoading {
+                                LoadingView()
+                                    .padding(.top, 220)
                             }
                             
                             HStack {
@@ -340,6 +346,7 @@ struct ArticleDetailView: View {
             }
         }
         .onAppear {
+            coordinator.isLoading = true
             articleViewModel.getOneArticle(article: article)
             isLiked = user.likeArticles.contains(articleViewModel.article.id)
             

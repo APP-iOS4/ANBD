@@ -23,7 +23,7 @@ struct ChatDetailView: View {
     /// Sheet 관련 변수
     @State private var isShowingCustomAlertView: Bool = false
     @State private var isShowingImageDetailView: Bool = false
-    @State private var detailImage: Image = Image("DummyPuppy3")
+    @State private var imageData: [Data] = []
     @State private var isShowingStateChangeCustomAlert: Bool = false
     @State private var isWithdrawlUser: Bool = false
     
@@ -49,7 +49,7 @@ struct ChatDetailView: View {
                         LazyVStack {
                             ForEach(chatViewModel.groupedMessages, id: \.day) { day, messages in
                                 ForEach(messages) { message in
-                                    MessageCell(message: message, isLast: message == chatViewModel.messages.last, channel: channel, isShowingImageDetailView: $isShowingImageDetailView, detailImage: $detailImage)
+                                    MessageCell(message: message, isLast: message == chatViewModel.messages.last, channel: channel, isShowingImageDetailView: $isShowingImageDetailView, imageData: $imageData)
                                         .padding(.vertical, 1)
                                         .padding(.horizontal, 20)
                                 }
@@ -166,7 +166,7 @@ struct ChatDetailView: View {
             }
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
-            ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
+            ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $imageData, idx: .constant(0))
         }
         .onAppear {
             Task {
@@ -230,7 +230,7 @@ struct ChatDetailView: View {
             
             /// 메시지 전송
             Button(action: {
-                if !message.isEmpty {
+                if !message.isEmpty && !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                     sendMessage()
                     message = ""
                 }
@@ -239,10 +239,10 @@ struct ChatDetailView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 28)
-                    .foregroundStyle(message == "" ? .gray400 : .accentColor)
+                    .foregroundStyle((message.isEmpty || message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty) ? .gray400 : .accentColor)
                     .rotationEffect(.degrees(43))
             })
-            .disabled(message.isEmpty)
+            .disabled(message.isEmpty || message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
     }
 }

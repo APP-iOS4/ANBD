@@ -64,7 +64,7 @@ struct ArticleListView: View {
                                     Text("\(article.title)")
                                         .lineLimit(1)
                                         .font(.title3)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Color("DefaultTextColor"))
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
@@ -72,20 +72,20 @@ struct ArticleListView: View {
                                 VStack(alignment: .leading) {
                                     Text("\(article.writerNickname)")
                                         .lineLimit(2)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Color("DefaultTextColor"))
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
                                     Text("\(DateFormatterSingleton.shared.dateFormatter(article.createdAt))")
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Color("DefaultTextColor"))
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Spacer()
                             }
                             .frame(maxWidth: .infinity, minHeight: 50)
-                            .background(Color.white)
+                            .background(Color("DefaultCellColor"))
                             .cornerRadius(10)
                             .padding(.horizontal)
                             

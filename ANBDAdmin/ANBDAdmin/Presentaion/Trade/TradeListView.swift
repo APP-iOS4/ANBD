@@ -64,7 +64,7 @@ struct TradeListView: View {
                                     Text("\(trade.title)")
                                         .font(.title3)
                                         .lineLimit(1)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Color("DefaultTextColor"))
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
@@ -72,20 +72,20 @@ struct TradeListView: View {
                                 VStack(alignment: .leading) {
                                     Text("\(trade.writerNickname)")
                                         .lineLimit(2)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Color("DefaultTextColor"))
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
                                     Text("\(DateFormatterSingleton.shared.dateFormatter(trade.createdAt))")
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Color("DefaultTextColor"))
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Spacer()
                             }
+                            .background(Color("DefaultCellColor"))
                             .frame(maxWidth: .infinity, minHeight: 50)
-                            .background(Color.white)
                             .cornerRadius(10)
                             .padding(.horizontal)
                         }

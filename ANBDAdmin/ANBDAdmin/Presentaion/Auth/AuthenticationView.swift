@@ -90,7 +90,7 @@ struct AuthenticationView: View {
                                             
                                             Text("Google로 시작하기")
                                                 .font(ANBDFont.SubTitle1)
-                                                .foregroundStyle(Color.gray900)
+                                                .foregroundStyle(Color("DefaultTextColor"))
                                                 .padding(.trailing, 30)
                                             
                                             Spacer()
@@ -99,7 +99,7 @@ struct AuthenticationView: View {
                                     }
                             })
                             .frame(height: 56)
-                            
+                            .background(Color("DefaultCellColor"))
                             
                         }
                         

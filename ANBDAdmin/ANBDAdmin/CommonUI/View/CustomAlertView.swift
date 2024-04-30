@@ -17,19 +17,20 @@ struct CustomAlertView: View {
         
             ZStack {
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(.white)
+                    .fill(Color("DefaultCellColor"))
                     .frame(height: 200)
                 
                 VStack {
                     Text(title)
                         .font(ANBDFont.Heading2)
                         .padding(.vertical, 20)
+                        .foregroundColor(Color("DefaultTextColor"))
                     
                     Text(description)
                         .multilineTextAlignment(.center)
                         .font(ANBDFont.Heading3)
                         .padding(.bottom, 30)
-                    
+                        .foregroundColor(Color("DefaultTextColor"))
                     
                     HStack {
                         Button(action: {

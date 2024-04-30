@@ -47,7 +47,7 @@ struct ReportListView: View {
                                 VStack(alignment: .leading) {
                                     Text("\(report.type)")
                                         .font(.title3)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Color("DefaultTextColor"))
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
@@ -55,20 +55,20 @@ struct ReportListView: View {
                                 VStack(alignment: .leading) {
                                     Text("\(report.reportReason)")
                                         .lineLimit(1)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Color("DefaultTextColor"))
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
                                     Text("\(report.reportedDate)")
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Color("DefaultTextColor"))
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Spacer()
                             }
                             .frame(maxWidth: .infinity, minHeight: 50)
-                            .background(Color.white)
+                            .background(Color("DefaultCellColor"))
                             .cornerRadius(10)
                             .padding(.horizontal)
                         }

@@ -67,14 +67,14 @@ struct UserListView: View {
                                     Text("\(user.nickname)")
                                         .font(.title3)
                                         .lineLimit(2)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Color("DefaultTextColor"))
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
                                     Text("\(user.email)")
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Color("DefaultTextColor"))
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
@@ -101,7 +101,7 @@ struct UserListView: View {
                                 Spacer()
                             }
                             .frame(maxWidth: .infinity, minHeight: 50)
-                            .background(Color.white)
+                            .background(Color("DefaultCellColor"))
                             .cornerRadius(10)
                             .padding(.horizontal)
                         }

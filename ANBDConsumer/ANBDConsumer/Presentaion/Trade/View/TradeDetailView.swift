@@ -23,9 +23,9 @@ struct TradeDetailView: View {
     @State private var isShowingImageDetailView: Bool = false
     @State private var isShowingStateChangeCustomAlert: Bool = false
     @State private var isShowingDeleteCustomAlert: Bool = false
+    @State private var isLoading: Bool = false
     @Environment(\.dismiss) private var dismiss
     
-    @State private var imageData: [Data] = []
     @State private var idx: Int = 0
     
     @State private var writerUser: User?
@@ -41,8 +41,8 @@ struct TradeDetailView: View {
                     VStack(alignment: .leading) {
                         //이미지
                         TabView(selection: $idx) {
-                            ForEach(0..<imageData.count, id: \.self) { i in
-                                if let image = UIImage(data: imageData[i]) {
+                            ForEach(0..<tradeViewModel.detailImages.count, id: \.self) { i in
+                                if let image = UIImage(data: tradeViewModel.detailImages[i]) {
                                     Image(uiImage: image)
                                         .resizable()
                                         .scaledToFill()
@@ -164,15 +164,17 @@ struct TradeDetailView: View {
             isLiked = user.likeTrades.contains(tradeViewModel.trade.id)
             Task {
                 writerUser = await myPageViewModel.getUserInfo(userID: tradeViewModel.trade.writerID)
-                imageData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: tradeViewModel.trade.id, imagePath: tradeViewModel.trade.imagePaths)
+                tradeViewModel.detailImages = try await tradeViewModel.loadDetailImages(path: .trade, containerID: tradeViewModel.trade.id, imagePath: tradeViewModel.trade.imagePaths)
             }
         }
         .toolbar(.hidden, for: .tabBar)
-        .fullScreenCover(isPresented: $isShowingCreat) {
+        .fullScreenCover(isPresented: $isShowingCreat, onDismiss: {
+            
+        }) {
             TradeCreateView(isShowingCreate: $isShowingCreat, isNewProduct: false, trade: tradeViewModel.trade)
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
-            ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $imageData, idx: $idx)
+            ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $tradeViewModel.detailImages, idx: $idx)
         }
         .navigationTitle("나눔 · 거래")
         .navigationBarTitleDisplayMode(.inline)

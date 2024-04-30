@@ -104,6 +104,9 @@ struct UserActivityListView: View {
                                     tradeViewModel.getOneTrade(trade: trade)
                                     coordinator.appendPath(.tradeDetailView)
                                 }
+                                .onAppear {
+                                    tradeViewModel.detailImages = []
+                                }
                             
                             Divider()
                         }

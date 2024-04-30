@@ -42,7 +42,7 @@ struct TradeDetailView: View {
                         //이미지
                         TabView(selection: $idx) {
                             ForEach(0..<tradeViewModel.detailImages.count, id: \.self) { i in
-                                if let image = UIImage(data: imageData[i]) {
+                                if let image = UIImage(data: tradeViewModel.detailImages[i]) {
                                     Image(uiImage: image)
                                         .resizable()
                                         .scaledToFill()
@@ -174,7 +174,7 @@ struct TradeDetailView: View {
             TradeCreateView(isShowingCreate: $isShowingCreat, isNewProduct: false, trade: tradeViewModel.trade)
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
-            ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $imageData, idx: $idx)
+            ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $tradeViewModel.detailImages, idx: $idx)
         }
         .navigationTitle("나눔 · 거래")
         .navigationBarTitleDisplayMode(.inline)

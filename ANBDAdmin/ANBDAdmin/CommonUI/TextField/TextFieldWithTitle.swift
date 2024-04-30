@@ -26,7 +26,6 @@ struct TextFieldWithTitle: View {
         VStack(alignment: .leading) {
             Text("\(title)")
                 .font(ANBDFont.SubTitle1)
-                .foregroundStyle(Color("DefaultTextColor"))
                 .frame(height: 50)
             
             if fieldType == .normal {

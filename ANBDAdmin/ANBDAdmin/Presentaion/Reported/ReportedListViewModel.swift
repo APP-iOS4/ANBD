@@ -13,6 +13,7 @@ class ReportListViewModel: ObservableObject {
     var deletedReportID: String? // 삭제 변수
     let reportUsecase = DefaultReportUsecase()
     @Published var canLoadMoreReports: Bool = true
+    @Published var reportCount: Int = 0
     
     func firstLoadReports() {
         if reportList.isEmpty {
@@ -48,5 +49,14 @@ class ReportListViewModel: ObservableObject {
                 }
             }
         }
-    
+    func fetchReportCount() async {
+            do {
+                let count = try await reportUsecase.countReports()
+                DispatchQueue.main.async {
+                    self.reportCount = count
+                }
+            } catch {
+                print("Error counting reports: \(error)")
+            }
+        }
 }

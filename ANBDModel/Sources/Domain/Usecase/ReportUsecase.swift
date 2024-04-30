@@ -13,6 +13,7 @@ public protocol ReportUsecase {
     func loadReport(reportType: ReportType , limit: Int) async throws -> [Report]
     func loadReport(limit: Int) async throws -> [Report]
     func removeReport(reportID : String) async throws
+    func countReports() async throws -> Int
 }
 
 @available(iOS 15, *)
@@ -43,5 +44,8 @@ public struct DefaultReportUsecase: ReportUsecase {
     public func removeReport(reportID: String) async throws {
         try await reportRepository.deleteReport(reportID: reportID)
     }
-    
+    //Count
+    public func countReports() async throws -> Int {
+            try await reportRepository.countReports()
+        }
 }

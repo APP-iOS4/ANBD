@@ -14,4 +14,5 @@ public protocol ReportRepository {
     func readReport(limit: Int) async throws -> [Report]
     func deleteReport(reportID : String) async throws
     func resetAndReadReport(limit: Int) async throws -> [Report]
+    func countReports() async throws -> Int
 }

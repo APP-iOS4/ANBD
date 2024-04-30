@@ -85,6 +85,13 @@ final class DefaultReportRepository: ReportRepository {
         let reportList = try snapshot.documents.compactMap { try $0.data(as: Report.self) }
         return reportList
     }
+    func countReports() async throws -> Int {
+            let countQuery = reportDB.count
+            guard let snapshot = try? await countQuery.getAggregation(source: .server) else {
+                throw DBError.getDocumentError
+            }
+        return Int(truncating: snapshot.count)
+        }
     
     func deleteReport(reportID : String) async throws {
         guard let _ = try? await reportDB.document(reportID).delete() else {

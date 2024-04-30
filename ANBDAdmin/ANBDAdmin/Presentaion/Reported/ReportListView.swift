@@ -12,6 +12,11 @@ struct ReportListView: View {
     
     var body: some View {
         VStack {
+            Text("미응답 된 신고 메세지 : \(reportListViewModel.reportCount)")
+                .font(ANBDFont.Heading3)
+                .task {
+                                await reportListViewModel.fetchReportCount()
+                            }
             HStack{
                 Spacer()
                 VStack(alignment: .leading) {

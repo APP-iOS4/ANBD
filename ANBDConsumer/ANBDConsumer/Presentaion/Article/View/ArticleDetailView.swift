@@ -36,6 +36,7 @@ struct ArticleDetailView: View {
     
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) private var dismiss
+    
     init(article: Article) {
         self.article = article
     }
@@ -298,7 +299,7 @@ struct ArticleDetailView: View {
                 CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertComment, viewType: .commentDelete) {
                     Task {
                         await articleViewModel.deleteComment(articleID: article.id, commentID: articleViewModel.comment.id)
-                        await articleViewModel.loadOneArticle(articleID: article.id)
+                        await articleViewModel.loadCommentList(articleID: article.id)
                     }
                 }
                 .zIndex(2)

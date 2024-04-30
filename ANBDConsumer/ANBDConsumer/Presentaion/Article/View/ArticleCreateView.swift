@@ -178,7 +178,7 @@ struct ArticleCreateView: View {
                                             .foregroundStyle(.gray900)
                                     )
                                     .foregroundStyle(.gray50)
-                                    .frame(width: 20, height:20)
+                                    .frame(width: 20, height: 30)
                                     .onTapGesture {
                                         if let idx = tmpSelectedData.firstIndex(of: photoData) {
                                             deletedPhotosData.append(idx)
@@ -207,7 +207,7 @@ struct ArticleCreateView: View {
                                             .foregroundStyle(.gray900)
                                     )
                                     .foregroundStyle(.gray50)
-                                    .frame(width: 20, height:20)
+                                    .frame(width: 20, height: 30)
                                     .onTapGesture {
                                         if let idx = selectedImageData.firstIndex(of: photoData) {
                                             selectedImageData.remove(at: idx)

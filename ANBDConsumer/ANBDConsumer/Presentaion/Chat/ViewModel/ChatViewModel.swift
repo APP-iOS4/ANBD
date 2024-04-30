@@ -133,7 +133,6 @@ final class ChatViewModel: ObservableObject {
     //채팅방 리스트에서 접근시
     func setSelectedUser(channel: Channel) async throws{
         self.selectedChannel = channel
-        
         do {
             self.selectedUser = try await chatUsecase.getOtherUser(channel: channel, userID: user.id)
             self.selectedTrade = try await chatUsecase.getTradeInChannel(channelID: channel.id)
@@ -293,6 +292,7 @@ final class ChatViewModel: ObservableObject {
     func resetMessageData() {
         isListener = false
         isLeaveChatRoom = false
+        selectedTrade = nil
         chatUsecase.initializeListener()
         messages = []
         groupedMessages = []

@@ -22,7 +22,6 @@
 		42C151712BD1014400917F30 /* ListEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C151702BD1014400917F30 /* ListEmptyView.swift */; };
 		42EE634E2BC2BCA100100FF4 /* LocationPickerMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42EE634D2BC2BCA100100FF4 /* LocationPickerMenu.swift */; };
 		46652CF32BDF603F000F7376 /* Bundle+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46652CF22BDF603F000F7376 /* Bundle+Extension.swift */; };
-		46652CF52BDF7CF9000F7376 /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 46652CF42BDF7CF9000F7376 /* Secrets.xcconfig */; };
 		469FA5D12BDA3DE800D2222B /* SkeletonUI in Frameworks */ = {isa = PBXBuildFile; productRef = 469FA5D02BDA3DE800D2222B /* SkeletonUI */; };
 		469FA5D42BDB405800D2222B /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 469FA5D32BDB405800D2222B /* Kingfisher */; };
 		A816E5FA2BC1056F00138CFC /* ChatListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A816E5F92BC1056F00138CFC /* ChatListCell.swift */; };
@@ -49,6 +48,7 @@
 		A8A269932BD5EFBF0099C3A3 /* UserPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7BEE142BBD564800C0F298 /* UserPageView.swift */; };
 		A8A269C12BD630BD0099C3A3 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A269C02BD630BD0099C3A3 /* Coordinator.swift */; };
 		A8BD75A02BDA3F730089799D /* CustomToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8BD759F2BDA3F730089799D /* CustomToastView.swift */; };
+		A8BD75A42BE08BB80089799D /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = A8BD75A32BE08BB80089799D /* Secrets.xcconfig */; };
 		CB198CF02BBF8E84000C2709 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198CEF2BBF8E84000C2709 /* Category.swift */; };
 		CB198CF22BBF8FC8000C2709 /* CategoryDividerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198CF12BBF8FC8000C2709 /* CategoryDividerView.swift */; };
 		CB198CF62BBFD0A3000C2709 /* WriteButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198CF52BBFD0A3000C2709 /* WriteButtonView.swift */; };
@@ -107,7 +107,6 @@
 		42EE634D2BC2BCA100100FF4 /* LocationPickerMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPickerMenu.swift; sourceTree = "<group>"; };
 		46652CF02BDF2D19000F7376 /* ANBDConsumer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ANBDConsumer.entitlements; sourceTree = "<group>"; };
 		46652CF22BDF603F000F7376 /* Bundle+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extension.swift"; sourceTree = "<group>"; };
-		46652CF42BDF7CF9000F7376 /* Secrets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		A816E5F92BC1056F00138CFC /* ChatListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListCell.swift; sourceTree = "<group>"; };
 		A816E5FB2BC11B7800138CFC /* ChatDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatDetailView.swift; sourceTree = "<group>"; };
 		A816E5FD2BC1254B00138CFC /* TradeStateChangeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeStateChangeView.swift; sourceTree = "<group>"; };
@@ -125,6 +124,7 @@
 		A87E89F42BC43B5500F5331B /* SearchResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultView.swift; sourceTree = "<group>"; };
 		A8A269C02BD630BD0099C3A3 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		A8BD759F2BDA3F730089799D /* CustomToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomToastView.swift; sourceTree = "<group>"; };
+		A8BD75A32BE08BB80089799D /* Secrets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		CB198CEF2BBF8E84000C2709 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		CB198CF12BBF8FC8000C2709 /* CategoryDividerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryDividerView.swift; sourceTree = "<group>"; };
 		CB198CF52BBFD0A3000C2709 /* WriteButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteButtonView.swift; sourceTree = "<group>"; };
@@ -359,7 +359,7 @@
 			isa = PBXGroup;
 			children = (
 				CB7BEE422BBD5BEC00C0F298 /* GoogleService-Info.plist */,
-				46652CF42BDF7CF9000F7376 /* Secrets.xcconfig */,
+				A8BD75A32BE08BB80089799D /* Secrets.xcconfig */,
 				CB7BEDF72BBD539F00C0F298 /* Font */,
 				CB7BEDBC2BBD4E9F00C0F298 /* Assets.xcassets */,
 				CB7BEDFC2BBD53AF00C0F298 /* Colors.xcassets */,
@@ -653,7 +653,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				46652CF52BDF7CF9000F7376 /* Secrets.xcconfig in Resources */,
+				A8BD75A42BE08BB80089799D /* Secrets.xcconfig in Resources */,
 				CB7BEDBD2BBD4E9F00C0F298 /* Assets.xcassets in Resources */,
 				CB7BEE432BBD5BEC00C0F298 /* GoogleService-Info.plist in Resources */,
 				CB7BEDFA2BBD53A000C0F298 /* Pretendard-Regular.otf in Resources */,
@@ -865,7 +865,6 @@
 		};
 		CB7BEDC42BBD4E9F00C0F298 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 46652CF42BDF7CF9000F7376 /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -902,7 +901,6 @@
 		};
 		CB7BEDC52BBD4E9F00C0F298 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 46652CF42BDF7CF9000F7376 /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

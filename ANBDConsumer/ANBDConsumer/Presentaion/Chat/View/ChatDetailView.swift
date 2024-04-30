@@ -174,6 +174,7 @@ struct ChatDetailView: View {
                 if chatViewModel.selectedUser.id == "" {
                     isWithdrawlUser = true
                 }
+                
                 if let channel = chatViewModel.selectedChannel {
                     /// 안읽음 메시지 개수 갱신
                     try await chatViewModel.resetUnreadCount(channelID: channel.id)

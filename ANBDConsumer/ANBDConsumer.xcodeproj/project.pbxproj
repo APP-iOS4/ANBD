@@ -21,6 +21,8 @@
 		428E613F2BC8BDE400808340 /* UserLikedContentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 428E613E2BC8BDE400808340 /* UserLikedContentsView.swift */; };
 		42C151712BD1014400917F30 /* ListEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C151702BD1014400917F30 /* ListEmptyView.swift */; };
 		42EE634E2BC2BCA100100FF4 /* LocationPickerMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42EE634D2BC2BCA100100FF4 /* LocationPickerMenu.swift */; };
+		46652CF32BDF603F000F7376 /* Bundle+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46652CF22BDF603F000F7376 /* Bundle+Extension.swift */; };
+		46652CF52BDF7CF9000F7376 /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 46652CF42BDF7CF9000F7376 /* Secrets.xcconfig */; };
 		469FA5D12BDA3DE800D2222B /* SkeletonUI in Frameworks */ = {isa = PBXBuildFile; productRef = 469FA5D02BDA3DE800D2222B /* SkeletonUI */; };
 		469FA5D42BDB405800D2222B /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 469FA5D32BDB405800D2222B /* Kingfisher */; };
 		A816E5FA2BC1056F00138CFC /* ChatListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A816E5F92BC1056F00138CFC /* ChatListCell.swift */; };
@@ -103,6 +105,9 @@
 		42C151702BD1014400917F30 /* ListEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListEmptyView.swift; sourceTree = "<group>"; };
 		42C7BBD92BC2793B00F0805A /* UserInfoEditingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoEditingView.swift; sourceTree = "<group>"; };
 		42EE634D2BC2BCA100100FF4 /* LocationPickerMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPickerMenu.swift; sourceTree = "<group>"; };
+		46652CF02BDF2D19000F7376 /* ANBDConsumer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ANBDConsumer.entitlements; sourceTree = "<group>"; };
+		46652CF22BDF603F000F7376 /* Bundle+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extension.swift"; sourceTree = "<group>"; };
+		46652CF42BDF7CF9000F7376 /* Secrets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		A816E5F92BC1056F00138CFC /* ChatListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListCell.swift; sourceTree = "<group>"; };
 		A816E5FB2BC11B7800138CFC /* ChatDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatDetailView.swift; sourceTree = "<group>"; };
 		A816E5FD2BC1254B00138CFC /* TradeStateChangeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeStateChangeView.swift; sourceTree = "<group>"; };
@@ -304,6 +309,7 @@
 		CB7BEDB72BBD4E9D00C0F298 /* ANBDConsumer */ = {
 			isa = PBXGroup;
 			children = (
+				46652CF02BDF2D19000F7376 /* ANBDConsumer.entitlements */,
 				A83F2F962BBF951E00E3EB13 /* Info.plist */,
 				CB7BEE042BBD550700C0F298 /* App */,
 				CB7BEE052BBD551000C0F298 /* Presentaion */,
@@ -353,6 +359,7 @@
 			isa = PBXGroup;
 			children = (
 				CB7BEE422BBD5BEC00C0F298 /* GoogleService-Info.plist */,
+				46652CF42BDF7CF9000F7376 /* Secrets.xcconfig */,
 				CB7BEDF72BBD539F00C0F298 /* Font */,
 				CB7BEDBC2BBD4E9F00C0F298 /* Assets.xcassets */,
 				CB7BEDFC2BBD53AF00C0F298 /* Colors.xcassets */,
@@ -440,6 +447,7 @@
 			children = (
 				CB7BEE222BBD56B900C0F298 /* View+Extension.swift */,
 				CB198D192BC38CB9000C2709 /* Date+Extension.swift */,
+				46652CF22BDF603F000F7376 /* Bundle+Extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -645,6 +653,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				46652CF52BDF7CF9000F7376 /* Secrets.xcconfig in Resources */,
 				CB7BEDBD2BBD4E9F00C0F298 /* Assets.xcassets in Resources */,
 				CB7BEE432BBD5BEC00C0F298 /* GoogleService-Info.plist in Resources */,
 				CB7BEDFA2BBD53A000C0F298 /* Pretendard-Regular.otf in Resources */,
@@ -690,6 +699,7 @@
 				CB7BEE272BBD575700C0F298 /* AuthenticationViewModel.swift in Sources */,
 				CB7BEE1D2BBD566700C0F298 /* HomeView.swift in Sources */,
 				CB198D172BC38BFC000C2709 /* TradeDetailView.swift in Sources */,
+				46652CF32BDF603F000F7376 /* Bundle+Extension.swift in Sources */,
 				A82860222BD2356200BCA57A /* ChatHeaderView.swift in Sources */,
 				A828602B2BD3C34300BCA57A /* ReportViewModel.swift in Sources */,
 				CB7BEE332BBD57B500C0F298 /* TradeViewModel.swift in Sources */,
@@ -855,9 +865,11 @@
 		};
 		CB7BEDC42BBD4E9F00C0F298 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 46652CF42BDF7CF9000F7376 /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ANBDConsumer/ANBDConsumer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
@@ -890,9 +902,11 @@
 		};
 		CB7BEDC52BBD4E9F00C0F298 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 46652CF42BDF7CF9000F7376 /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ANBDConsumer/ANBDConsumer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";

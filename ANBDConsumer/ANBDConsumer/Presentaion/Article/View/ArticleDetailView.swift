@@ -73,7 +73,6 @@ struct ArticleDetailView: View {
                                                     .stroke(.gray100, lineWidth: 1)
                                             )
                                             .onTapGesture {
-                                                print("1️⃣\(writerUser)")
                                                 coordinator.user = writerUser
                                                 switch coordinator.selectedTab {
                                                 case .home, .article, .trade, .chat:
@@ -124,6 +123,7 @@ struct ArticleDetailView: View {
                                     ProgressView()
                                 }
                             }
+                        
                             HStack {
                                 Button {
                                     Task {
@@ -366,39 +366,34 @@ struct ArticleDetailView: View {
         VStack {
             Spacer()
             HStack {
+                let trimmedCommentText = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
                 ZStack {
                     Rectangle()
                         .clipShape(RoundedRectangle(cornerRadius: 30))
                         .frame(height: 43)
-                        .foregroundStyle(.gray50)
+                        .foregroundStyle(colorScheme == .dark ? .gray700 : .gray100)
                     TextField("댓글을 입력해주세요.", text: $commentText/*, axis: .vertical*/)
                         .font(ANBDFont.Caption3)
                         .padding(20)
                 }
                 Button {
-                    Task {
-                        await articleViewModel.writeComment(articleID: article.id, commentText: commentText)
-                        commentText = ""
+                    if !trimmedCommentText.isEmpty {
+                        Task {
+                            await articleViewModel.writeComment(articleID: article.id, commentText: trimmedCommentText)
+                            commentText = ""
+                        }
                     }
                 } label: {
                     Image(systemName: "paperplane.fill")
                         .font(ANBDFont.pretendardSemiBold(28))
                         .rotationEffect(.degrees(45))
-                        .foregroundStyle(commentText.isEmpty ? .gray300 : .accent)
+                        .foregroundStyle(commentText.isEmpty || trimmedCommentText.isEmpty ? (colorScheme == .dark ? .gray600 : .gray300) : .accent)
                 }
-                .disabled(commentText.isEmpty)
+                .disabled(commentText.isEmpty || trimmedCommentText.isEmpty)
             }
             .padding(.horizontal, 10)
             .toolbar(.hidden, for: .tabBar)
-            .background(backgroundForColorScheme())
-        }
-    }
-    
-    func backgroundForColorScheme() -> Color {
-        if colorScheme == .dark {
-            return Color.gray50
-        } else {
-            return Color.white
+            .background(colorScheme == .dark ? .gray50 : .white)
         }
     }
 }

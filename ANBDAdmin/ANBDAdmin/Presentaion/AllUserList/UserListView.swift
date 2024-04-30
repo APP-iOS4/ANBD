@@ -12,6 +12,7 @@ import Kingfisher
 struct UserListView: View {
     @StateObject private var userListViewModel = UserListViewModel()
     @State private var searchUserText = "" // 검색 텍스트 추적하는 변수
+    @State private var showOnlySearchedUser:Bool = false
     let userLevel: UserLevel
     
     var body: some View {
@@ -23,8 +24,10 @@ struct UserListView: View {
                 .cornerRadius(8)
                 .padding(.horizontal, 10)
                 .onSubmit {
+                    showOnlySearchedUser = true
                     if !searchUserText.isEmpty {
                         Task {
+                            userListViewModel.userList = []
                             await userListViewModel.searchUser(userID:searchUserText)
                         }
                     }
@@ -110,7 +113,9 @@ struct UserListView: View {
                         Text("List End")
                             .foregroundColor(.gray)
                             .onAppear {
-                                userListViewModel.loadMoreUsers()
+                                if showOnlySearchedUser == false {
+                                    userListViewModel.loadMoreUsers()
+                                }
                             }
                     }
                 }
@@ -120,6 +125,7 @@ struct UserListView: View {
                 .navigationBarTitle("유저 목록")
                 .toolbar {
                     Button(action: {
+                        showOnlySearchedUser = false
                         self.searchUserText = ""
                         userListViewModel.userList = []
                         userListViewModel.firstLoadUsers()

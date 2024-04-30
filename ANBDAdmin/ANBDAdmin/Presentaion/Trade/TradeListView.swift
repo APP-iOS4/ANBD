@@ -96,14 +96,13 @@ struct TradeListView: View {
                     if !tradeListViewModel.tradeList.isEmpty {
                         Text("List End")
                             .foregroundColor(.gray)
-                          .onAppear {
-                              if showOnlySearchedTrade == false {
-                                  tradeListViewModel.loadMoreTrades()
-                              }
-                          }
-                      }
+                            .onAppear {
+                                if showOnlySearchedTrade == false {
+                                    tradeListViewModel.loadMoreTrades()
+                                }
+                            }
+                    }
                 }
-                
                 .onAppear {
                     tradeListViewModel.firstLoadTrades()
                 }

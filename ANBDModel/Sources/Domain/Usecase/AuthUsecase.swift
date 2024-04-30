@@ -22,6 +22,8 @@ public protocol AuthUsecase {
                 isAgreeMarketing: Bool) async throws -> User
     func signOut() async throws
     func withdrawal() async throws
+    func verifyEmail(email: String) async throws
+    func checkEmailVerified() -> Bool
     func checkDuplicatedEmail(email: String) async -> Bool
     func checkDuplicatedNickname(nickname: String) async -> Bool
 }
@@ -189,11 +191,6 @@ public struct DefaultAuthUsecase: AuthUsecase {
         }
         
         tempUser.reload()
-        
-        if tempUser.isEmailVerified {
-            tempUser.delete()
-        }
-        
         return tempUser.isEmailVerified
     }
     

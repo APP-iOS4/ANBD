@@ -85,7 +85,9 @@ struct ArticleDetailView: View {
                                                 case .mypage:
                                                     coordinator.pop(coordinator.mypagePath.count)
                                                 }
+//                                                print("\(article.writerID)")
                                             }
+                                    
                                     }
                                 }
                                 
@@ -114,7 +116,8 @@ struct ArticleDetailView: View {
                                 if let image = UIImage(data: imageData[i]) {
                                     Image(uiImage: image)
                                         .resizable()
-                                        .scaledToFill()
+                                        .aspectRatio(contentMode: .fit)
+                                        .scaledToFit()
                                         .onTapGesture {
                                             isShowingImageDetailView.toggle()
                                             idx = i
@@ -123,7 +126,7 @@ struct ArticleDetailView: View {
                                     ProgressView()
                                 }
                             }
-                        
+                            
                             HStack {
                                 Button {
                                     Task {
@@ -150,7 +153,7 @@ struct ArticleDetailView: View {
                         .padding(10)
                         Spacer()
                     }
-                    .padding(.leading, 9)
+                    .padding(.leading, 10)
                     
                     Divider()
                         .padding(.horizontal, 20)
@@ -167,33 +170,48 @@ struct ArticleDetailView: View {
                                 .font(ANBDFont.SubTitle3)
                                 .padding(.bottom)
                                 .padding(.leading, 5)
-                            
+
                             ForEach(articleViewModel.comments) { comment in
                                 HStack(alignment: .top) {
-                                    KFImage(URL(string: comment.writerProfileImageURL))
-                                        .placeholder({ _ in
-                                            ProgressView()
-                                        })
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 40, height: 40)
-                                        .clipShape(.circle)
-                                        .overlay(
-                                            Circle()
-                                                .stroke(.gray100, lineWidth: 1)
-                                        )
-                                        .onTapGesture {
-                                            Task {
-                                                commentUser = await myPageViewModel.getUserInfo(userID: comment.writerID)
-                                                coordinator.user = commentUser
-                                                switch coordinator.selectedTab {
-                                                case .home, .article, .trade, .chat:
-                                                    coordinator.appendPath(.userPageView)
-                                                case .mypage:
-                                                    coordinator.pop()
+//                                    if let commentUser {
+//                                        if commentUser.id == "abcd1234" {
+//                                            Image("ANBDWarning")
+//                                                .resizable()
+//                                                .aspectRatio(contentMode: .fill)
+//                                                .frame(width: 33, height: 33)
+//                                                .clipShape(Circle())
+//                                                .overlay(
+//                                                    Circle()
+//                                                        .stroke(Color.gray100, lineWidth: 1)
+//                                                )
+//                                        } else {
+                                            KFImage(URL(string: comment.writerProfileImageURL))
+                                                .placeholder({ _ in
+                                                    ProgressView()
+                                                })
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: 40, height: 40)
+                                                .clipShape(.circle)
+                                                .overlay(
+                                                    Circle()
+                                                        .stroke(.gray100, lineWidth: 1)
+                                                )
+                                                .onTapGesture {
+                                                    Task {
+                                                        commentUser = await myPageViewModel.getUserInfo(userID: comment.writerID)
+                                                        coordinator.user = commentUser
+                                                        switch coordinator.selectedTab {
+                                                        case .home, .article, .trade, .chat:
+                                                            coordinator.appendPath(.userPageView)
+                                                        case .mypage:
+                                                            coordinator.pop()
+                                                        }
+                                                    }
+//                                                    print("\(comment.writerID)")
                                                 }
-                                            }
-                                        }
+//                                        }
+//                                    }
                                     
                                     VStack(alignment: .leading) {
                                         HStack {

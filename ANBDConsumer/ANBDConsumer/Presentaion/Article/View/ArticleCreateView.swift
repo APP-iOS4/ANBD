@@ -60,8 +60,8 @@ struct ArticleCreateView: View {
                             }
                         }
                         .onChange(of: content) {
-                            if content.count > 2000 {
-                                content = String(content.prefix(2000))
+                            if content.count > 5000 {
+                                content = String(content.prefix(5000))
                             }
                         }
                 } else {
@@ -88,8 +88,8 @@ struct ArticleCreateView: View {
                             }
                         }
                         .onChange(of: content) { _ in
-                            if content.count > 2000 {
-                                content = String(content.prefix(2000))
+                            if content.count > 5000 {
+                                content = String(content.prefix(5000))
                             }
                         }
                 }

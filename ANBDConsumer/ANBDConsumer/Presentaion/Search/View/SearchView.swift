@@ -9,8 +9,6 @@ import SwiftUI
 import ANBDModel
 
 struct SearchView: View {
-    
-    var category: ANBDCategory = .accua
     @State private var searchText: String = ""
     
     @EnvironmentObject private var coordinator: Coordinator
@@ -86,7 +84,6 @@ struct SearchView: View {
                 searchViewModel.loadRecentSearch()
                 
                 coordinator.searchText = searchText
-                coordinator.category = category
                 coordinator.appendPath(.searchResultView)
                 
                 searchText = ""
@@ -97,7 +94,7 @@ struct SearchView: View {
 
 #Preview {
     NavigationStack {
-        SearchView(category: .accua)
+        SearchView()
             .environmentObject(Coordinator())
             .environmentObject(SearchViewModel())
     }

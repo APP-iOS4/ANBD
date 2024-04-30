@@ -20,7 +20,6 @@
 		427E28D22BDE2EB7001172C1 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 427E28D12BDE2EB7001172C1 /* SettingsView.swift */; };
 		428E613F2BC8BDE400808340 /* UserLikedContentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 428E613E2BC8BDE400808340 /* UserLikedContentsView.swift */; };
 		42C151712BD1014400917F30 /* ListEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C151702BD1014400917F30 /* ListEmptyView.swift */; };
-		42C7BBD82BC2518000F0805A /* AccountManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C7BBD72BC2518000F0805A /* AccountManagementView.swift */; };
 		42EE634E2BC2BCA100100FF4 /* LocationPickerMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42EE634D2BC2BCA100100FF4 /* LocationPickerMenu.swift */; };
 		46652CF32BDF603F000F7376 /* Bundle+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46652CF22BDF603F000F7376 /* Bundle+Extension.swift */; };
 		46652CF52BDF7CF9000F7376 /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 46652CF42BDF7CF9000F7376 /* Secrets.xcconfig */; };
@@ -61,6 +60,7 @@
 		CB198D1C2BC3A4FA000C2709 /* TradeCreateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198D1B2BC3A4FA000C2709 /* TradeCreateView.swift */; };
 		CB198D1E2BC3A7BC000C2709 /* TextFieldModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198D1D2BC3A7BC000C2709 /* TextFieldModifier.swift */; };
 		CB198D282BC3D069000C2709 /* ItemCategoryPickerMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198D272BC3D069000C2709 /* ItemCategoryPickerMenu.swift */; };
+		CB6AA2122BDFDD4D005CA6E4 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6AA2112BDFDD4D005CA6E4 /* LoadingView.swift */; };
 		CB7BEDB92BBD4E9D00C0F298 /* ANBDConsumerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7BEDB82BBD4E9D00C0F298 /* ANBDConsumerApp.swift */; };
 		CB7BEDBB2BBD4E9D00C0F298 /* ANBDTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7BEDBA2BBD4E9D00C0F298 /* ANBDTabView.swift */; };
 		CB7BEDBD2BBD4E9F00C0F298 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB7BEDBC2BBD4E9F00C0F298 /* Assets.xcassets */; };
@@ -103,7 +103,6 @@
 		427E28D12BDE2EB7001172C1 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		428E613E2BC8BDE400808340 /* UserLikedContentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLikedContentsView.swift; sourceTree = "<group>"; };
 		42C151702BD1014400917F30 /* ListEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListEmptyView.swift; sourceTree = "<group>"; };
-		42C7BBD72BC2518000F0805A /* AccountManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountManagementView.swift; sourceTree = "<group>"; };
 		42C7BBD92BC2793B00F0805A /* UserInfoEditingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoEditingView.swift; sourceTree = "<group>"; };
 		42EE634D2BC2BCA100100FF4 /* LocationPickerMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPickerMenu.swift; sourceTree = "<group>"; };
 		46652CF02BDF2D19000F7376 /* ANBDConsumer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ANBDConsumer.entitlements; sourceTree = "<group>"; };
@@ -137,6 +136,7 @@
 		CB198D1B2BC3A4FA000C2709 /* TradeCreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeCreateView.swift; sourceTree = "<group>"; };
 		CB198D1D2BC3A7BC000C2709 /* TextFieldModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldModifier.swift; sourceTree = "<group>"; };
 		CB198D272BC3D069000C2709 /* ItemCategoryPickerMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCategoryPickerMenu.swift; sourceTree = "<group>"; };
+		CB6AA2112BDFDD4D005CA6E4 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		CB7BEDB52BBD4E9D00C0F298 /* ANBDConsumer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ANBDConsumer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB7BEDB82BBD4E9D00C0F298 /* ANBDConsumerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ANBDConsumerApp.swift; sourceTree = "<group>"; };
 		CB7BEDBA2BBD4E9D00C0F298 /* ANBDTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ANBDTabView.swift; sourceTree = "<group>"; };
@@ -257,6 +257,7 @@
 				CB198D0F2BC38BA0000C2709 /* CheckboxView.swift */,
 				42C151702BD1014400917F30 /* ListEmptyView.swift */,
 				A8BD759F2BDA3F730089799D /* CustomToastView.swift */,
+				CB6AA2112BDFDD4D005CA6E4 /* LoadingView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -490,7 +491,6 @@
 			isa = PBXGroup;
 			children = (
 				CB7BEE142BBD564800C0F298 /* UserPageView.swift */,
-				42C7BBD72BC2518000F0805A /* AccountManagementView.swift */,
 				42C7BBD92BC2793B00F0805A /* UserInfoEditingView.swift */,
 				4204F32E2BC7C60700C56DB8 /* UserActivityListView.swift */,
 				428E613E2BC8BDE400808340 /* UserLikedContentsView.swift */,
@@ -679,7 +679,6 @@
 				A8A2698E2BD5EF7B0099C3A3 /* ArticleViewModel.swift in Sources */,
 				A8A2698D2BD5EF540099C3A3 /* SignUpEmailView.swift in Sources */,
 				A8A2698C2BD5EF440099C3A3 /* MyPageViewModel.swift in Sources */,
-				42C7BBD82BC2518000F0805A /* AccountManagementView.swift in Sources */,
 				CB198D282BC3D069000C2709 /* ItemCategoryPickerMenu.swift in Sources */,
 				D7E56D722BC425AE000AA1BE /* ArticleListView.swift in Sources */,
 				A8BD75A02BDA3F730089799D /* CustomToastView.swift in Sources */,
@@ -720,6 +719,7 @@
 				CB7BEE2F2BBD57A000C0F298 /* ChatViewModel.swift in Sources */,
 				424CA00D2BC3B4CE00F83F8D /* SignUpUserInfoView.swift in Sources */,
 				A816E5FA2BC1056F00138CFC /* ChatListCell.swift in Sources */,
+				CB6AA2122BDFDD4D005CA6E4 /* LoadingView.swift in Sources */,
 				CB198CF62BBFD0A3000C2709 /* WriteButtonView.swift in Sources */,
 				428E613F2BC8BDE400808340 /* UserLikedContentsView.swift in Sources */,
 				A8A269C12BD630BD0099C3A3 /* Coordinator.swift in Sources */,

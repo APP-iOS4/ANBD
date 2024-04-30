@@ -41,7 +41,7 @@ struct SignUpUserInfoView: View {
                 HStack {
                     Spacer()
                     
-                    Text("\(authenticationViewModel.signUpNicknameString.count) / 20")
+                    Text("\(authenticationViewModel.signUpNicknameString.count)/18")
                         .padding(.horizontal, 5)
                         .font(ANBDFont.body2)
                         .foregroundStyle(.gray400)

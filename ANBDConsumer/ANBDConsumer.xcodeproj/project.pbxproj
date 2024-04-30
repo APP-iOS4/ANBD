@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4204F32F2BC7C60700C56DB8 /* UserActivityListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4204F32E2BC7C60700C56DB8 /* UserActivityListView.swift */; };
+		4221DE452BE08ACD00429C56 /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 4221DE442BE08ACD00429C56 /* Secrets.xcconfig */; };
 		424CA0052BC397A600F83F8D /* TextFieldWithTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0042BC397A600F83F8D /* TextFieldWithTitle.swift */; };
 		424CA0072BC39C7C00F83F8D /* BlueSquareButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0062BC39C7C00F83F8D /* BlueSquareButton.swift */; };
 		424CA00B2BC3AB7800F83F8D /* SignUpPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA00A2BC3AB7800F83F8D /* SignUpPasswordView.swift */; };
@@ -89,6 +90,7 @@
 
 /* Begin PBXFileReference section */
 		4204F32E2BC7C60700C56DB8 /* UserActivityListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActivityListView.swift; sourceTree = "<group>"; };
+		4221DE442BE08ACD00429C56 /* Secrets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		424CA0042BC397A600F83F8D /* TextFieldWithTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldWithTitle.swift; sourceTree = "<group>"; };
 		424CA0062BC39C7C00F83F8D /* BlueSquareButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueSquareButton.swift; sourceTree = "<group>"; };
 		424CA0082BC3A79900F83F8D /* SignUpEmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpEmailView.swift; sourceTree = "<group>"; };
@@ -358,6 +360,7 @@
 		CB7BEE062BBD551800C0F298 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				4221DE442BE08ACD00429C56 /* Secrets.xcconfig */,
 				CB7BEE422BBD5BEC00C0F298 /* GoogleService-Info.plist */,
 				A8BD75A32BE08BB80089799D /* Secrets.xcconfig */,
 				CB7BEDF72BBD539F00C0F298 /* Font */,

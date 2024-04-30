@@ -32,7 +32,7 @@ final class ChatViewModel: ObservableObject {
     //채팅방 내부에 필요한 변수
     var selectedUser: User = User(id: "", nickname: "(알수없음)", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
     
-    var selectedTrade: Trade?
+    @Published var selectedTrade: Trade?
     var selectedChannel: Channel?
     
     @Published var groupedMessages: [(day:String , messages:[Message])] = []

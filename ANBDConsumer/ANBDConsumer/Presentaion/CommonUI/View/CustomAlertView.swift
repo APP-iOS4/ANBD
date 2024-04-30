@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CustomAlertView: View {
+    @EnvironmentObject private var authenticationViewModel: AuthenticationViewModel
     
     @Binding var isShowingCustomAlert: Bool
     var viewType: AlertViewType = .editingCancel
@@ -31,7 +32,7 @@ struct CustomAlertView: View {
                     .foregroundStyle(.gray900)
                     .padding(.bottom, 15)
                 
-                if viewType == .duplicatedEmail || viewType == .duplicatedNickname || viewType == .signInFail || viewType == .imageSelelct {
+                if viewType == .duplicatedEmail || viewType == .duplicatedNickname || viewType == .signInFail || viewType == .imageSelelct || viewType == .validEmail {
                     Button(action: {
                         completionHandler()
                         isShowingCustomAlert.toggle()
@@ -103,6 +104,7 @@ extension CustomAlertView {
         case duplicatedEmail
         case duplicatedNickname
         case signInFail
+        case validEmail
         // trade
         case changeState
         case tradeDelete
@@ -148,6 +150,8 @@ extension CustomAlertView {
             return "이미지 개수 제한"
         case .editingCancel:
             return "정보 수정 그만두기"
+        case .validEmail:
+            return "이메일 인증하기"
         }
     }
     
@@ -187,6 +191,8 @@ extension CustomAlertView {
             return "게시글 작성을 취소하시겠습니까?\n취소한 작성사항은 복구되지 않습니다."
         case .editingCancel:
             return "변경된 내용은 저장되지 않습니다."
+        case .validEmail:
+            return "\(authenticationViewModel.signUpEmailString) 에서\n이메일 인증 링크를 확인해주세요."
         }
     }
     
@@ -212,12 +218,14 @@ extension CustomAlertView {
             return "그만두기"
         case .writingCancel:
             return "돌아가기"
+        case .validEmail:
+            return "확인"
         }
     }
     
     private var confirmButtonColor: Color {
         switch viewType {
-        case .leaveChatRoom, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .imageSelelct, .signOut, .editingCancel, .writingCancel:
+        case .leaveChatRoom, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .imageSelelct, .signOut, .editingCancel, .writingCancel, .validEmail:
             return .accent
         case .withdrawal, .tradeDelete, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .articleCreate:
             return .heartRed
@@ -226,7 +234,7 @@ extension CustomAlertView {
     
     private var textWeight: Font.Weight {
         switch viewType {
-        case .leaveChatRoom, .signOut, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .tradeDelete, .writingCancel, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .imageSelelct, .editingCancel, .articleCreate:
+        case .leaveChatRoom, .signOut, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .tradeDelete, .writingCancel, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .imageSelelct, .editingCancel, .articleCreate, .validEmail:
             return .medium
         case .withdrawal:
             return .heavy
@@ -238,4 +246,5 @@ extension CustomAlertView {
     CustomAlertView(isShowingCustomAlert: .constant(true)) {
         print("Tap Confirm Button")
     }
+    .environmentObject(AuthenticationViewModel())
 }

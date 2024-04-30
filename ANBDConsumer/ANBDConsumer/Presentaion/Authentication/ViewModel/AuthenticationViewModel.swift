@@ -16,6 +16,9 @@ final class AuthenticationViewModel: ObservableObject {
     
     @Published var authState: Bool = false
     
+    @Published var validEmailRemainingTime = 10
+    @Published var isValidEmailButtonDisabled = false
+    
     // MARK: Login Field
     @Published var loginEmailString: String = ""
     @Published private(set) var loginEmailStringDebounced: String = ""

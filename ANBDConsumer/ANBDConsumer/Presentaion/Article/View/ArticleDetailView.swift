@@ -22,7 +22,7 @@ struct ArticleDetailView: View {
     @State private var commentText: String = ""
     
     @State private var isShowingImageDetailView: Bool = false
-    @State private var isShowingCreateView: Bool = false
+    @State private var isShowingArticleCreateView: Bool = false
     @State private var isShowingArticleConfirmSheet: Bool = false
     @State private var isShowingCustomAlertArticle: Bool = false
     @State private var isShowingCustomAlertComment: Bool = false
@@ -86,9 +86,7 @@ struct ArticleDetailView: View {
                                                 case .mypage:
                                                     coordinator.pop(coordinator.mypagePath.count)
                                                 }
-//                                                print("\(article.writerID)")
                                             }
-                                    
                                     }
                                 }
                                 
@@ -110,8 +108,7 @@ struct ArticleDetailView: View {
                                 .padding(.bottom, 13)
                             
                             Text("\(articleViewModel.article.content)")
-                                .font(ANBDFont.body2)
-                                .padding(.bottom, 10)
+                                .font(ANBDFont.body1)
                             
                             ForEach(0..<imageData.count, id: \.self) { i in
                                 if let image = UIImage(data: imageData[i]) {
@@ -123,6 +120,7 @@ struct ArticleDetailView: View {
                                             isShowingImageDetailView.toggle()
                                             idx = i
                                         }
+                                        .padding(.top, 10)
                                 } else {
                                     ProgressView()
                                 }
@@ -171,48 +169,33 @@ struct ArticleDetailView: View {
                                 .font(ANBDFont.SubTitle3)
                                 .padding(.bottom)
                                 .padding(.leading, 5)
-
+                            
                             ForEach(articleViewModel.comments) { comment in
                                 HStack(alignment: .top) {
-//                                    if let commentUser {
-//                                        if commentUser.id == "abcd1234" {
-//                                            Image("ANBDWarning")
-//                                                .resizable()
-//                                                .aspectRatio(contentMode: .fill)
-//                                                .frame(width: 33, height: 33)
-//                                                .clipShape(Circle())
-//                                                .overlay(
-//                                                    Circle()
-//                                                        .stroke(Color.gray100, lineWidth: 1)
-//                                                )
-//                                        } else {
-                                            KFImage(URL(string: comment.writerProfileImageURL))
-                                                .placeholder({ _ in
-                                                    ProgressView()
-                                                })
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .frame(width: 40, height: 40)
-                                                .clipShape(.circle)
-                                                .overlay(
-                                                    Circle()
-                                                        .stroke(.gray100, lineWidth: 1)
-                                                )
-                                                .onTapGesture {
-                                                    Task {
-                                                        commentUser = await myPageViewModel.getUserInfo(userID: comment.writerID)
-                                                        coordinator.user = commentUser
-                                                        switch coordinator.selectedTab {
-                                                        case .home, .article, .trade, .chat:
-                                                            coordinator.appendPath(.userPageView)
-                                                        case .mypage:
-                                                            coordinator.pop()
-                                                        }
-                                                    }
-//                                                    print("\(comment.writerID)")
+                                    KFImage(URL(string: comment.writerProfileImageURL))
+                                        .placeholder({ _ in
+                                            ProgressView()
+                                        })
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 40, height: 40)
+                                        .clipShape(.circle)
+                                        .overlay(
+                                            Circle()
+                                                .stroke(.gray100, lineWidth: 1)
+                                        )
+                                        .onTapGesture {
+                                            Task {
+                                                commentUser = await myPageViewModel.getUserInfo(userID: comment.writerID)
+                                                coordinator.user = commentUser
+                                                switch coordinator.selectedTab {
+                                                case .home, .article, .trade, .chat:
+                                                    coordinator.appendPath(.userPageView)
+                                                case .mypage:
+                                                    coordinator.pop()
                                                 }
-//                                        }
-//                                    }
+                                            }
+                                        }
                                     
                                     VStack(alignment: .leading) {
                                         HStack {
@@ -223,6 +206,7 @@ struct ArticleDetailView: View {
                                                 .font(ANBDFont.Caption1)
                                                 .foregroundStyle(.gray400)
                                         }
+                                        
                                         Text("\(comment.content)")
                                             .font(ANBDFont.Caption3)
                                             .frame(maxHeight: .infinity)
@@ -234,8 +218,8 @@ struct ArticleDetailView: View {
                                     Menu {
                                         if comment.writerID == UserStore.shared.user.id {
                                             Button {
-                                                isShowingCommentEditView.toggle()
                                                 articleViewModel.comment = comment
+                                                isShowingCommentEditView.toggle()
                                             } label: {
                                                 Label("수정하기", systemImage: "square.and.pencil")
                                             }
@@ -328,7 +312,7 @@ struct ArticleDetailView: View {
                 Menu {
                     if article.writerID == UserStore.shared.user.id {
                         Button {
-                            isShowingCreateView.toggle()
+                            isShowingArticleCreateView.toggle()
                         } label: {
                             Label("수정하기", systemImage: "square.and.pencil")
                         }
@@ -347,7 +331,6 @@ struct ArticleDetailView: View {
                             Label("신고하기", systemImage: "exclamationmark.bubble")
                         }
                     }
-                    
                 } label: {
                     Image(systemName: "ellipsis")
                         .font(ANBDFont.pretendardRegular(13))
@@ -359,16 +342,15 @@ struct ArticleDetailView: View {
         .onAppear {
             articleViewModel.getOneArticle(article: article)
             isLiked = user.likeArticles.contains(articleViewModel.article.id)
+            
             Task {
                 await articleViewModel.loadCommentList(articleID: article.id)
-                
                 writerUser = await myPageViewModel.getUserInfo(userID: article.writerID)
-                
                 imageData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
             }
         }
-        .fullScreenCover(isPresented: $isShowingCreateView) {
-            ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, commentCount: articleViewModel.comments.count, isNewArticle: false, article: article)
+        .fullScreenCover(isPresented: $isShowingArticleCreateView) {
+            ArticleCreateView(isShowingCreateView: $isShowingArticleCreateView, category: article.category, commentCount: articleViewModel.comments.count, isNewArticle: false, article: article)
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
             ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $imageData, idx: $idx)

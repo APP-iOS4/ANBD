@@ -165,6 +165,7 @@ struct ArticleCreateView: View {
                                     
                                     Image(uiImage: image)
                                         .resizable()
+                                        .aspectRatio(contentMode: .fill)
                                         .frame(width : 70 , height: 70)
                                         .cornerRadius(10)
                                         .clipped()
@@ -194,6 +195,7 @@ struct ArticleCreateView: View {
                                     
                                     Image(uiImage: image)
                                         .resizable()
+                                        .aspectRatio(contentMode: .fill)
                                         .frame(width : 70 , height: 70)
                                         .cornerRadius(10)
                                         .clipped()
@@ -231,7 +233,7 @@ struct ArticleCreateView: View {
                     }
                     .foregroundStyle(.accent)
                 } else {
-                    PhotosPicker(selection: $selectedItems, maxSelectionCount: 5-(tmpSelectedData.count + selectedImageData.count), matching: .images) {
+                    PhotosPicker(selection: $selectedItems, maxSelectionCount: 5-tmpSelectedData.count, matching: .images) {
                         Image(systemName: "photo")
                         Text("사진")
                     }
@@ -270,7 +272,7 @@ struct ArticleCreateView: View {
                                 article.content = self.content
                                 article.category = self.category
                                 article.commentCount = self.commentCount
-
+                                
                                 await articleViewModel.updateArticle(category: category, title: title, content: content, commentCount: commentCount, addImages: selectedImageData, deletedImagesIndex: deletedPhotosData)
                                 await articleViewModel.refreshSortedArticleList(category: category)
                                 await articleViewModel.loadArticle(article: article)
@@ -283,7 +285,8 @@ struct ArticleCreateView: View {
                 } label: {
                     Text("완료")
                 }
-                .disabled(title.isEmpty || content.isEmpty/* || selectedImageData.isEmpty*/ || title == article?.title && content == article?.content && category == article?.category || title.trimmingCharacters(in: .whitespaces).isEmpty || content.trimmingCharacters(in: .whitespaces).isEmpty)
+                .disabled(title.isEmpty || content.isEmpty || (tmpSelectedData.isEmpty && selectedImageData.isEmpty) || title == article?.title && content == article?.content && category == article?.category && (deletedPhotosData.isEmpty && selectedImageData.isEmpty) || title.trimmingCharacters(in: .whitespaces).isEmpty || content.trimmingCharacters(in: .whitespaces).isEmpty)
+
             }
             
             ToolbarItem(placement: .cancellationAction) {

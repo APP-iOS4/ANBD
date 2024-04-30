@@ -272,6 +272,8 @@ final class ChatViewModel: ObservableObject {
     func sendMessage(message: Message, channelID: String) async throws {
         do {
             try await chatUsecase.sendMessage(message: message, channelID: channelID)
+            guard let content = message.content else { return}
+            sendPushNotification(content: content)
         } catch {
             print("sendMessage Error: \(error)")
         }
@@ -281,6 +283,7 @@ final class ChatViewModel: ObservableObject {
     func sendImageMessage(message: Message, imageData: Data, channelID: String) async throws {
         do {
             try await chatUsecase.sendImageMessage(message: message, imageData: imageData, channelID: channelID)
+            sendPushNotification(content: "사진을 보냈습니다")
         } catch {
             print("Error: \(error)")
         }
@@ -327,6 +330,48 @@ final class ChatViewModel: ObservableObject {
             cnt = channel.unreadCount
         }
         return cnt
+    }
+    
+    func sendPushNotification(content: String) {
+        
+        let urlString = "https://fcm.googleapis.com/fcm/send"
+        guard let url = URL(string: urlString) else { return }
+        
+        
+        guard let serverKey = Bundle.main.firebaseServerKey else {return}
+        
+        guard selectedUser.fcmToken != "" else {return}
+        
+        print("serverKey:\(serverKey)")
+        print("to:\(selectedUser.fcmToken)")
+        
+        let headers = [
+            "Authorization": "key=\(serverKey)",
+            "Content-Type": "application/json"
+        ]
+        let body: [String: Any] = [
+            "to": selectedUser.fcmToken,
+            "notification": [
+                "title": "\(user.nickname)",
+                "body": content
+            ],
+            "content_available" : true
+        ]
+        let jsonData = try? JSONSerialization.data(withJSONObject: body)
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.allHTTPHeaderFields = headers
+        request.httpBody = jsonData
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("Error sending push notification: \(error.localizedDescription)")
+            }
+            if let data = data {
+                let responseString = String(data: data, encoding: .utf8)
+                print("Response: \(responseString ?? "")")
+            }
+        }.resume()
     }
 }
 

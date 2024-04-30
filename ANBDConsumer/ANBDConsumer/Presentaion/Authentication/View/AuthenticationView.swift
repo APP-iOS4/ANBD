@@ -76,6 +76,7 @@ struct AuthenticationView: View {
                                              isDisabled: !authenticationViewModel.isValidLogin) {
                                 Task {
                                     if await authenticationViewModel.signIn() {
+                                        await authenticationViewModel.updateUserToken()
                                         authenticationViewModel.checkAuthState()
                                     } else {
                                         downKeyboard()

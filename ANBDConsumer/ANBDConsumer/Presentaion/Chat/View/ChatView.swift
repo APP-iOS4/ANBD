@@ -27,7 +27,7 @@ struct ChatView: View {
                             ForEach(chatViewModel.chatRooms) { channel in
                                 Button(action: {
                                     Task {
-                                        try await chatViewModel.setSelectedUser(channel: channel)
+                                        try await chatViewModel.setSelectedInfo(channel: channel)
                                         coordinator.channel = channel
                                         coordinator.chatPath.append(Page.chatDetailView)
                                     }

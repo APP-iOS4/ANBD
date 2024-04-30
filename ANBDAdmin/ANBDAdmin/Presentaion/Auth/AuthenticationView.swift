@@ -72,37 +72,7 @@ struct AuthenticationView: View {
                                     authenticationViewModel.checkAuthState()
                                 }
                             }
-                            
-                            Button(action: {
-                                // 구글 로그인
-#if DEBUG
-                                print("구글 로그인 - 프로토타입")
-#endif
-                            }, label: {
-                                RoundedRectangle(cornerRadius: 14)
-                                    .stroke(Color.gray200)
-                                    .overlay {
-                                        HStack {
-                                            Image("Google")
-                                                .padding(.leading, 14)
-                                            
-                                            Spacer()
-                                            
-                                            Text("Google로 시작하기")
-                                                .font(ANBDFont.SubTitle1)
-                                                .foregroundStyle(Color("DefaultTextColor"))
-                                                .padding(.trailing, 30)
-                                            
-                                            Spacer()
-                                        }
-                                        .contentShape(RoundedRectangle(cornerRadius: 14))
-                                    }
-                            })
-                            .frame(height: 56)
-                            .background(Color("DefaultCellColor"))
-                            
                         }
-                        
                         Spacer()
                     }
                     .padding(.horizontal, 50)

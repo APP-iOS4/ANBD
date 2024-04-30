@@ -11,6 +11,7 @@ import ANBDModel
 struct TradeListView: View {
     @StateObject private var tradeListViewModel = TradeListViewModel()
     @State private var searchTradeText = ""
+    @State private var showOnlySearchedTrade:Bool = false
     
     var body: some View {
         VStack {
@@ -21,8 +22,10 @@ struct TradeListView: View {
                 .cornerRadius(8)
                 .padding(.horizontal, 10)
                 .onSubmit {
+                    showOnlySearchedTrade = true
                     if !searchTradeText.isEmpty {
                         Task {
+                            tradeListViewModel.tradeList = []
                             await tradeListViewModel.searchTrade(tradeID: searchTradeText)
                         }
                     }
@@ -94,7 +97,9 @@ struct TradeListView: View {
                         Text("List End")
                             .foregroundColor(.gray)
                           .onAppear {
-                              tradeListViewModel.loadMoreTrades()
+                              if showOnlySearchedTrade == false {
+                                  tradeListViewModel.loadMoreTrades()
+                              }
                           }
                       }
                 }
@@ -105,6 +110,7 @@ struct TradeListView: View {
                 .navigationBarTitle("거래글 목록")
                 .toolbar {
                     Button(action: {
+                        showOnlySearchedTrade = false
                         self.searchTradeText = ""
                         tradeListViewModel.tradeList = []
                         tradeListViewModel.firstLoadTrades()

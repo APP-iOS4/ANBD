@@ -11,7 +11,7 @@ import ANBDModel
 class ReportListViewModel: ObservableObject {
     @Published var reportList: [Report] = []
     var deletedReportID: String? // 삭제 변수
-    let reportUsecase = DefaultReportUsecase()
+    private let reportUsecase = DefaultReportUsecase()
     @Published var canLoadMoreReports: Bool = true
     @Published var reportCount: Int = 0
     
@@ -57,6 +57,13 @@ class ReportListViewModel: ObservableObject {
                 }
             } catch {
                 print("Error counting reports: \(error)")
+            }
+        }
+    func loadReports(of category: ReportType) async {
+            do {
+                reportList = try await reportUsecase.loadReport(reportType: category, limit: 10)
+            } catch {
+                print("Error loading reports: \(error)")
             }
         }
 }

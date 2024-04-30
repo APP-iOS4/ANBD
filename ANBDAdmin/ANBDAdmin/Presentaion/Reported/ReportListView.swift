@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import ANBDModel
 
 struct ReportListView: View {
     @StateObject private var reportListViewModel = ReportListViewModel()
-    
+    @State private var selectedCategory: ReportType = .article // Default
+
     var body: some View {
         VStack {
             Text("미응답 된 신고 메세지 : \(reportListViewModel.reportCount)")
@@ -17,6 +19,7 @@ struct ReportListView: View {
                 .task {
                                 await reportListViewModel.fetchReportCount()
                             }
+            
             HStack{
                 Spacer()
                 VStack(alignment: .leading) {
@@ -104,4 +107,3 @@ struct ReportListView: View {
         }
     }
 }
-

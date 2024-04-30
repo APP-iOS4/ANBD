@@ -11,6 +11,7 @@ import ANBDModel
 struct ArticleListView: View {
     @StateObject private var articleListViewModel = ArticleListViewModel()
     @State private var searchArticleText = ""
+    @State private var showOnlySearchedArticle:Bool = false
     
     var body: some View {
         VStack {
@@ -21,8 +22,10 @@ struct ArticleListView: View {
                 .cornerRadius(8)
                 .padding(.horizontal, 10)
                 .onSubmit {
+                    showOnlySearchedArticle = true
                     if !searchArticleText.isEmpty {
                         Task {
+                            articleListViewModel.articleList = []
                             await articleListViewModel.searchArticle(articleID: searchArticleText)
                         }
                     }
@@ -84,8 +87,8 @@ struct ArticleListView: View {
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Spacer()
                             }
-                            .frame(maxWidth: .infinity, minHeight: 50)
                             .background(Color("DefaultCellColor"))
+                            .frame(maxWidth: .infinity, minHeight: 50)
                             .cornerRadius(10)
                             .padding(.horizontal)
                             
@@ -95,7 +98,9 @@ struct ArticleListView: View {
                         Text("List End")
                             .foregroundColor(.gray)
                           .onAppear {
-                              articleListViewModel.loadMoreArticles()
+                              if showOnlySearchedArticle == false {
+                                  articleListViewModel.loadMoreArticles()
+                              }
                           }
                       }
                 }
@@ -105,6 +110,7 @@ struct ArticleListView: View {
                 .navigationBarTitle("게시글 목록")
                 .toolbar {
                     Button(action: {
+                        showOnlySearchedArticle = false
                         self.searchArticleText = ""
                         articleListViewModel.articleList = []
                         articleListViewModel.firstLoadArticles()

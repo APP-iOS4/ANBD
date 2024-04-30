@@ -16,9 +16,6 @@ struct ANBDAdminAppHomeView: View {
     var body: some View {
         NavigationView {
             List {
-                NavigationLink(destination: DashboardView().font(.title3)) {
-                    Text("Dashboard").bold()
-                }
                 DisclosureGroup(isExpanded: $isUserListExpanded) {
                     NavigationLink(destination: UserListView(userLevel: .consumer).font(.title3)) {
                         Text("일반 유저")
@@ -59,7 +56,7 @@ struct ANBDAdminAppHomeView: View {
                 .buttonStyle(.bordered)
             }
             .listStyle(SidebarListStyle())
-            DashboardView()
+            Text("항목을 선택하세요.")
         }
         if isShowingSignOutAlertView {
             EmptyInfoView()

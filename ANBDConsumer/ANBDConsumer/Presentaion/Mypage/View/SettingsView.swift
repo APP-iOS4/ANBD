@@ -16,6 +16,7 @@ struct SettingsView: View {
     @State private var isShowingPolicyView = false
     @State private var isShowingSignOutAlertView = false
     @State private var isShowingWithdrawalAlertView = false
+    @State private var isShowingOpenSourceLicense = false
     
     private let spacingValue: CGFloat = 30
     
@@ -51,6 +52,13 @@ struct SettingsView: View {
                         Text("\(myPageViewModel.getCurrentAppVersion())")
                             .foregroundStyle(Color.gray500)
                     }
+                    
+                    Button(action: {
+                        isShowingOpenSourceLicense.toggle()
+                    }, label: {
+                        Text("오픈소스 라이선스")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    })
                     
                     HStack {
                         Text("문의 메일")
@@ -118,11 +126,6 @@ struct SettingsView: View {
         .toolbarRole(.editor)
         .toolbar(.hidden, for: .tabBar)
         
-        .fullScreenCover(isPresented: $isShowingPolicyView) {
-            SafariWebView(url: URL(string: "https://oval-second-abc.notion.site/ANBD-036716b1ef784b019ab0df8147bd4e65")!)
-                .ignoresSafeArea(edges: .bottom)
-        }
-        
         .fullScreenCover(isPresented: $isShowingEditorView, onDismiss: {
             myPageViewModel.tempUserProfileImage = nil
             myPageViewModel.tempUserNickname = ""
@@ -133,6 +136,16 @@ struct SettingsView: View {
             }
         }) {
             UserInfoEditingView()
+        }
+        
+        .fullScreenCover(isPresented: $isShowingPolicyView) {
+            SafariWebView(url: URL(string: "https://oval-second-abc.notion.site/ANBD-036716b1ef784b019ab0df8147bd4e65")!)
+                .ignoresSafeArea(edges: .bottom)
+        }
+        
+        .fullScreenCover(isPresented: $isShowingOpenSourceLicense) {
+            SafariWebView(url: URL(string: "https://oval-second-abc.notion.site/97ddaf4813f7481a84c36ff4f3c3faef")!)
+                .ignoresSafeArea(edges: .bottom)
         }
     }
 }

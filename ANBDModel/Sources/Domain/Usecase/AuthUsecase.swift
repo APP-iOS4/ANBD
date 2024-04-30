@@ -22,6 +22,8 @@ public protocol AuthUsecase {
                 isAgreeMarketing: Bool) async throws -> User
     func signOut() async throws
     func withdrawal() async throws
+    func verifyEmail(email: String) async throws
+    func checkEmailVerified() -> Bool
     func checkDuplicatedEmail(email: String) async -> Bool
     func checkDuplicatedNickname(nickname: String) async -> Bool
 }
@@ -96,7 +98,11 @@ public struct DefaultAuthUsecase: AuthUsecase {
             throw AuthError.invalidNicknameRegularExpression
         }
         
-        let signUpResult = try await Auth.auth().createUser(withEmail: email, password: password)
+        let signUpResult = try await Auth.auth().createUser(
+            withEmail: email,
+            password: password
+        )
+        
         let userID = signUpResult.user.uid
         
         let newUser = User(
@@ -163,6 +169,29 @@ public struct DefaultAuthUsecase: AuthUsecase {
 //            let credential = AuthCredential(email: <#T##String#>, password: <#T##String#>)
 //            try await user.reauthenticate(with: <#T##AuthCredential#>)
         }
+    }
+    
+    public func verifyEmail(email: String) async throws {
+        if email.isEmpty { throw AuthError.invalidEmailField }
+        
+        let tempResult = try await Auth.auth().createUser(
+            withEmail: email,
+            password: UUID().uuidString
+        )
+        
+        let tempUser = tempResult.user
+        
+        try await tempUser.sendEmailVerification()
+    }
+    
+    public func checkEmailVerified() -> Bool {
+        guard let tempUser = Auth.auth().currentUser else {
+            print("invalid temp user")
+            return false
+        }
+        
+        tempUser.reload()
+        return tempUser.isEmailVerified
     }
     
     /// 이메일 중복체크 API

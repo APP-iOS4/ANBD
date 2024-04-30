@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ChatView: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
-    @EnvironmentObject private var coordinator: Coordinator
+    @StateObject private var coordinator = Coordinator.shared
     
     @State private var isShowingConfirmSheet: Bool = false
     @State private var isShowingCustomAlertView: Bool = false

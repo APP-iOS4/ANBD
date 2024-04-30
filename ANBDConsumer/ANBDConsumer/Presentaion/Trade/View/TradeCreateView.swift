@@ -4,7 +4,7 @@ import PhotosUI
 
 struct TradeCreateView: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
-    @EnvironmentObject private var coordinator: Coordinator
+    @StateObject private var coordinator = Coordinator.shared
     @Binding var isShowingCreate: Bool
     @State private var placeHolder: String = ""
     @State private var isFinished: Bool = true

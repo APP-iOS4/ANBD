@@ -11,10 +11,11 @@ import ANBDModel
 struct ANBDTabView: View {
     @Environment(\.colorScheme) var colorScheme
     @StateObject private var chatViewModel = ChatViewModel()
-    @StateObject private var coordinator = Coordinator()
+    @StateObject private var coordinator = Coordinator.shared
     
     @State private var articleCategory: ANBDCategory = .accua
     @State private var tradeCategory: ANBDCategory = .nanua
+    
     
     var body: some View {
         TabView(selection: $coordinator.selectedTab) {

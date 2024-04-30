@@ -30,8 +30,14 @@ enum Page {
     case settingsView
 }
 
+
 final class Coordinator: ObservableObject {
-    @Published var selectedTab: ANBDTabViewType = .home
+    
+    static let shared = Coordinator()
+    
+    init() { }
+    
+    var selectedTab: ANBDTabViewType = .home
     
     /// path
     @Published var homePath: NavigationPath = NavigationPath()
@@ -40,19 +46,19 @@ final class Coordinator: ObservableObject {
     @Published var chatPath: NavigationPath = NavigationPath()
     @Published var mypagePath: NavigationPath = NavigationPath()
     
-    @Published var category: ANBDCategory = .accua
-    @Published var article: Article?
-    @Published var trade: Trade?
-    @Published var reportType: ReportType = .trade
-    @Published var reportedObjectID: String = ""
-    @Published var reportedChannelID: String?
-    @Published var user: User?
-    @Published var searchText: String = ""
-    @Published var channel: Channel?
-    @Published var isFromUserPage: Bool = false
-    @Published var toastViewType: ToastViewType = .report
-    @Published var isShowingToastView: Bool = false
-    @Published var isLoading: Bool = false
+    var category: ANBDCategory = .accua
+    var article: Article?
+    var trade: Trade?
+    var reportType: ReportType = .trade
+    var reportedObjectID: String = ""
+    var reportedChannelID: String?
+    var user: User?
+    var searchText: String = ""
+    var channel: Channel?
+    var isFromUserPage: Bool = false
+    var toastViewType: ToastViewType = .report
+    var isShowingToastView: Bool = false
+    var isLoading: Bool = false
     
     
     @ViewBuilder
@@ -117,7 +123,6 @@ final class Coordinator: ObservableObject {
             mypagePath.append(page)
         }
     }
-    
     
     /// dismiss
     func pop(_ depth: Int = 1) {

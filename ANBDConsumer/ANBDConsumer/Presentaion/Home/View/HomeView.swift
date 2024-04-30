@@ -10,7 +10,7 @@ import ANBDModel
 import SkeletonUI
 
 struct HomeView: View {
-    @EnvironmentObject private var coordinator: Coordinator
+    @StateObject private var coordinator = Coordinator.shared
     @EnvironmentObject private var homeViewModel: HomeViewModel
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
@@ -408,7 +408,6 @@ struct HomeView: View {
 #Preview {
     NavigationStack {
         HomeView()
-            .environmentObject(Coordinator())
             .environmentObject(HomeViewModel())
             .environmentObject(TradeViewModel())
     }

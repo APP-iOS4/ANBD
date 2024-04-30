@@ -478,6 +478,7 @@ fileprivate extension TradeCreateView {
                                 
                                 Image(uiImage: image)
                                     .resizable()
+                                    .scaledToFill()
                                     .frame(width : 80 , height: 80)
                                     .cornerRadius(10)
                                     .clipped()
@@ -508,6 +509,7 @@ fileprivate extension TradeCreateView {
                                 
                                 Image(uiImage: image)
                                     .resizable()
+                                    .scaledToFill()
                                     .frame(width : 80 , height: 80)
                                     .cornerRadius(10)
                                     .clipped()

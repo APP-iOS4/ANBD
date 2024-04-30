@@ -140,7 +140,7 @@ struct ArticleRepositoryImpl: ArticleRepository {
         var updatedArticle = article
         updatedArticle.imagePaths = storagePathList
         
-        try await articleDataSource.updateItem(item: article)
+        try await articleDataSource.updateItem(item: updatedArticle)
     }
     
     func updateArticle(articleID: String, nickname: String) async throws {

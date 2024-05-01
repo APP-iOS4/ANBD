@@ -91,7 +91,6 @@ struct ArticleListView: View {
                                         ArticleListCell(value: .article(item))
                                             .padding(.vertical, 5)
                                             .onAppear {
-                                                articleViewModel.detailImages = []
                                                 Task {
                                                     if !isSearchView {
                                                         await articleViewModel.loadMoreArticles(category: category)
@@ -101,9 +100,6 @@ struct ArticleListView: View {
                                     } else {
                                         ArticleListCell(value: .article(item))
                                             .padding(.vertical, 5)
-                                            .onAppear {
-                                                articleViewModel.detailImages = []
-                                            }
                                     }
                                 })
                                 Divider()
@@ -120,7 +116,6 @@ struct ArticleListView: View {
                                         ArticleListCell(value: .trade(item))
                                             .padding(.vertical, 5)
                                             .onAppear {
-                                                tradeViewModel.detailImages = []
                                                 Task {
                                                     if !isSearchView {
                                                         await tradeViewModel.loadMoreFilteredTrades(category: category)
@@ -130,9 +125,6 @@ struct ArticleListView: View {
                                     } else {
                                         ArticleListCell(value: .trade(item))
                                             .padding(.vertical, 5)
-                                            .onAppear {
-                                                tradeViewModel.detailImages = []
-                                            }
                                     }
                                 })
                                 Divider()

@@ -49,8 +49,16 @@ struct SettingsView: View {
                         
                         Spacer()
                         
-                        Text("\(myPageViewModel.getCurrentAppVersion())")
-                            .foregroundStyle(Color.gray500)
+                        if #available(iOS 16.1, *) {
+                            Text("\(myPageViewModel.getCurrentAppVersion())")
+                                .fontDesign(.monospaced)
+                                .font(.system(size: 15))
+                                .foregroundStyle(Color.gray500)
+                        } else {
+                            Text("\(myPageViewModel.getCurrentAppVersion())")
+                                .font(.system(size: 15))
+                                .foregroundStyle(Color.gray500)
+                        }
                     }
                     
                     Button(action: {
@@ -65,8 +73,16 @@ struct SettingsView: View {
                         
                         Spacer()
                         
-                        Text("jrjr4426@gmail.com")
-                            .foregroundStyle(Color.gray500)
+                        if #available(iOS 16.1, *) {
+                            Text("jrjr4426@gmail.com")
+                                .fontDesign(.monospaced)
+                                .font(.system(size: 15))
+                                .foregroundStyle(Color.gray500)
+                        } else {
+                            Text("jrjr4426@gmail.com")
+                                .font(.system(size: 15))
+                                .foregroundStyle(Color.gray500)
+                        }
                     }
                     
                     Button(action: {
@@ -88,6 +104,13 @@ struct SettingsView: View {
                     .fill(Color.gray50)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .ignoresSafeArea()
+                    .overlay {
+                        Text("Copyright iOS 앱 스쿨 4기 TeamGG\n\nAll rights reserved\nLicensed under the MIT license")
+                            .multilineTextAlignment(.center)
+                            .font(ANBDFont.Caption1)
+                            .foregroundStyle(Color.gray400)
+                            .offset(y: -50)
+                    }
             }
             
             if isShowingSignOutAlertView {

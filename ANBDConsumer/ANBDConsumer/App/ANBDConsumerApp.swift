@@ -113,7 +113,7 @@ struct ANBDConsumerApp: App {
                 if !networkMonitor.isConnected {
                     Rectangle()
                         .frame(width: UIScreen.main.bounds.width, height: 50)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.gray50)
                         .shadow(radius: 10)
                         .overlay(
                             HStack {
@@ -122,6 +122,7 @@ struct ANBDConsumerApp: App {
                                     .padding(.trailing, 10)
                                 Text("인터넷이 연결되지 않았습니다.")
                                     .font(ANBDFont.body2)
+                                    .foregroundStyle(.gray900)
                             }
                         )
                 }

@@ -26,7 +26,6 @@ struct ANBDTabView: View {
                     .navigationDestination(for: Page.self) { page in
                         coordinator.build(page)
                     }
-                    .toolbarColorScheme(.light, for: .navigationBar)
             }
             .tabItem {
                 Label("홈", systemImage: "house")

@@ -12,7 +12,7 @@ import ANBDModel
 struct ChatDetailView: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
-    @EnvironmentObject private var coordinator: Coordinator
+    @StateObject private var coordinator = Coordinator.shared
     @Environment(\.colorScheme) var colorScheme
     
     /// 보낼 메시지 관련 변수

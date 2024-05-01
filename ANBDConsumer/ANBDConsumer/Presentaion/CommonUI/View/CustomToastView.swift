@@ -12,7 +12,7 @@ enum ToastViewType {
 }
 
 struct CustomToastView: View {
-    @EnvironmentObject private var coordinator: Coordinator
+    @StateObject private var coordinator = Coordinator.shared
     var toastViewType: ToastViewType = .report
     
     var body: some View {

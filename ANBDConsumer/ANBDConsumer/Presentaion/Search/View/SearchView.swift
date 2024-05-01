@@ -11,7 +11,7 @@ import ANBDModel
 struct SearchView: View {
     @State private var searchText: String = ""
     
-    @EnvironmentObject private var coordinator: Coordinator
+    @StateObject private var coordinator = Coordinator.shared
     @EnvironmentObject private var searchViewModel: SearchViewModel
     
     var body: some View {
@@ -95,7 +95,6 @@ struct SearchView: View {
 #Preview {
     NavigationStack {
         SearchView()
-            .environmentObject(Coordinator())
             .environmentObject(SearchViewModel())
     }
 }

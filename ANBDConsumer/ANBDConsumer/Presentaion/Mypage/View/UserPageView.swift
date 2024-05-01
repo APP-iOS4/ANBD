@@ -11,7 +11,7 @@ import ANBDModel
 struct UserPageView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
-    @EnvironmentObject private var coordinator: Coordinator
+    @StateObject private var coordinator = Coordinator.shared
     
     @Environment(\.colorScheme) private var colorScheme
     
@@ -243,6 +243,5 @@ extension UserPageView {
         UserPageView(writerUser: MyPageViewModel.mockUser)
             .environmentObject(MyPageViewModel())
             .environmentObject(TradeViewModel())
-            .environmentObject(Coordinator())
     }
 }

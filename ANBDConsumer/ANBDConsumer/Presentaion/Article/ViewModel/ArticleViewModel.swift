@@ -146,7 +146,7 @@ final class ArticleViewModel: ObservableObject {
         //이미지 리사이징
         var newImages: [Data] = []
         for image in addImages {
-            let imageData = await UIImage(data: image)?.byPreparingThumbnail(ofSize: .init(width: 200, height: 200))?.jpegData(compressionQuality: 0.5)
+            let imageData = await UIImage(data: image)?.byPreparingThumbnail(ofSize: .init(width: 1024, height: 1024))?.jpegData(compressionQuality: 0.5)
             newImages.append(imageData ?? Data())
         }
         

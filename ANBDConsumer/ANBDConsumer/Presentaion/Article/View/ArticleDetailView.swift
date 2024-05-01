@@ -171,13 +171,11 @@ struct ArticleDetailView: View {
                                     .font(ANBDFont.SubTitle2)
                                     .foregroundStyle(.gray300)
                                     .multilineTextAlignment(.center)
-//                                    .id("댓글 목록")
                             } else {
                                 Text("댓글 \(articleViewModel.comments.count)")
                                     .font(ANBDFont.SubTitle3)
                                     .padding(.bottom)
                                     .padding(.leading, 5)
-//                                    .id("댓글 목록")
                                 
                                 ForEach(articleViewModel.comments) { comment in
                                     HStack(alignment: .top) {
@@ -276,28 +274,6 @@ struct ArticleDetailView: View {
                     }
                 }
                 
-                if isShowingCustomAlertArticle {
-                    CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertArticle, viewType: .articleDelete) {
-                        Task {
-                            await articleViewModel.deleteArticle(article: article)
-                            await articleViewModel.refreshSortedArticleList(category: article.category)
-                            dismiss()
-                        }
-                    }
-                    .zIndex(2)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    
-                } else if isShowingCustomAlertComment {
-                    CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertComment, viewType: .commentDelete) {
-                        Task {
-                            await articleViewModel.deleteComment(articleID: article.id, commentID: articleViewModel.comment.id)
-                            await articleViewModel.loadCommentList(articleID: article.id)
-                        }
-                    }
-                    .zIndex(2)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                }
-                
                 // MARK: - 댓글 입력 부분
                 if #available(iOS 17.0, *) {
                     commentTextView
@@ -387,6 +363,24 @@ struct ArticleDetailView: View {
             .navigationTitle("정보 공유")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarRole(.editor)
+            
+            if isShowingCustomAlertArticle {
+                CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertArticle, viewType: .articleDelete) {
+                    Task {
+                        await articleViewModel.deleteArticle(article: article)
+                        await articleViewModel.refreshSortedArticleList(category: article.category)
+                        dismiss()
+                    }
+                }
+                
+            } else if isShowingCustomAlertComment {
+                CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertComment, viewType: .commentDelete) {
+                    Task {
+                        await articleViewModel.deleteComment(articleID: article.id, commentID: articleViewModel.comment.id)
+                        await articleViewModel.loadCommentList(articleID: article.id)
+                    }
+                }
+            }
         }
         
     }

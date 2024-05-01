@@ -62,14 +62,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         
         let userInfo = response.notification.request.content.userInfo
         
-        
-        // aps 딕셔너리에서 alert 딕셔너리 추출
-        guard let apsDict = userInfo["aps"] as? [String: Any],
-              let alertDict = apsDict["alert"] as? [String: String] else {
-                  completionHandler()
-                  return
-              }
-        
         if let channelID = userInfo["channelID"] as? String  {
             DispatchQueue.main.async {
                 self.presentChatDeatailView(channelID: channelID)

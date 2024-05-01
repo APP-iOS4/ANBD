@@ -109,7 +109,9 @@ extension ChatViewModel {
                 setOtherUserProfileImageMessage()
             }
             
+            //채팅방에 들어왔을때 한번만 실행되야 하는 것들
             if !isListener {
+                try await chatUsecase.updateActiveUser(channelID: channelID, userID: user.id , into: true)
                 if let lastMessage = messages.last {
                     try await chatUsecase.updateMessageReadStatus(channelID: channelID, lastMessage: lastMessage, userID: user.id)
                 }
@@ -186,7 +188,9 @@ extension ChatViewModel {
         do {
             try await chatUsecase.sendMessage(message: message, channelID: channelID)
             guard let content = message.content else { return}
-            sendPushNotification(content: content)
+            if await checkOtherUserInChatRoom(channelID: channelID) {
+                sendPushNotification(content: content)
+            }
         } catch {
             print("sendMessage Error: \(error)")
         }
@@ -196,20 +200,42 @@ extension ChatViewModel {
     func sendImageMessage(message: Message, imageData: Data, channelID: String) async throws {
         do {
             try await chatUsecase.sendImageMessage(message: message, imageData: imageData, channelID: channelID)
-            sendPushNotification(content: "사진을 보냈습니다")
+            if await checkOtherUserInChatRoom(channelID: channelID) {
+                sendPushNotification(content: "사진을 보냈습니다")
+            }
         } catch {
             print("Error: \(error)")
         }
     }
     
     /// 채팅방 onDisappear시, 메시지 데이터 초기화
-    func resetMessageData() {
+    func resetMessageData(channelID: String) async {
         isListener = false
         isLeaveChatRoom = false
         chatUsecase.initializeListener()
         messages = []
         groupedMessages = []
         otherUserLastMessages = []
+        do {
+            try await chatUsecase.updateActiveUser(channelID: channelID, userID: user.id , into: false)
+        }
+        catch {
+            print("updateActiveUser:\(error)")
+        }
+    }
+    
+    //현재 채팅방에 상대방이 들어와있는지 확인
+    func checkOtherUserInChatRoom(channelID: String) async -> Bool {
+        do {
+            let activeUser = try await chatUsecase.loadActiveUser(channelID: channelID)
+            if activeUser.contains(user.id) && activeUser.count == 2 {
+                return false
+            }
+            return true
+        } catch {
+            print("checkOtherUserInChatRoom error:\(error)")
+            return false
+        }
     }
 }
 
@@ -312,6 +338,7 @@ extension ChatViewModel {
             return nil
         }
     }
+    
 }
 
 

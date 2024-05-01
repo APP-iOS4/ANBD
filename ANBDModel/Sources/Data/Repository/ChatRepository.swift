@@ -11,7 +11,7 @@ import FirebaseStorage
 
 @available(iOS 15, *)
 final class DefaultChatRepository: ChatRepository {
-    
+
     private var db = Firestore.firestore()
     private let chatDB = Firestore.firestore().collection("ChatRoom")
     
@@ -35,7 +35,6 @@ final class DefaultChatRepository: ChatRepository {
                     return
                 }
                 let channels =  document.documents.compactMap { try? $0.data(as: Channel.self) }.filter{!$0.leaveUsers.contains(userID)}
-//                channels = sortedChannel(channels: channels)
                 completion(channels)
         }
     }
@@ -117,6 +116,14 @@ final class DefaultChatRepository: ChatRepository {
         return true
     }
     
+    func readActiveUsers(channelID: String) async throws -> [String] {
+        let document = try await chatDB.document(channelID).getDocument()
+        guard let data = document.data(), let activeUsers = data["activeUsers"] as? [String] else {
+            throw DBError.getChannelDocumentError
+        }
+        return activeUsers
+    }
+    
     func updateChannel(message: Message, channelID: String) async throws {
         var lastMessage : String
         
@@ -153,9 +160,20 @@ final class DefaultChatRepository: ChatRepository {
         guard let _ = try? await chatDB.document(channelID).updateData(["unreadCount" : 0]) else {
             throw DBError.updateChannelDocumentError
         }
-        
     }
     
+    //현재 채팅방에 유저가 실시간으로 보고있음을 업데이트
+    func updateActiveUser(channelID: String,userID: String) async throws {
+        
+        guard channelID != "" else {return}
+        
+        guard let _ = try? await chatDB.document(channelID).updateData([
+            "activeUsers": FieldValue.arrayUnion([userID])
+        ]) else {
+            throw DBError.updateChannelDocumentError        }
+    }
+    
+    //
     func updateLeftChatUser(channelID: String, lastMessageID: String, userID: String) async throws {
         guard let _ = try? await chatDB.document(channelID).updateData([
             "leaveUsers": FieldValue.arrayUnion([userID])
@@ -167,6 +185,15 @@ final class DefaultChatRepository: ChatRepository {
         }
     }
     
+    //현재 채팅방에 유저가 실시간으로 안보고 있음을 업데이트
+    func deleteActiveUser(channelID: String, userID: String) async throws {
+        guard channelID != "" else {return}
+        
+        guard let _ = try? await chatDB.document(channelID).updateData([
+            "activeUsers": FieldValue.arrayRemove([userID])
+        ]) else {
+            throw DBError.updateChannelDocumentError        }
+    }
     
     func deleteChannel(channelID : String) async throws {
         guard let _ = try? await chatDB.document(channelID).delete() else {

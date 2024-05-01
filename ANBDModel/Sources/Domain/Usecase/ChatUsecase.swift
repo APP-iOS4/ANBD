@@ -25,6 +25,8 @@ public protocol ChatUsecaseProtocol {
     func sendMessage(message: Message , channelID: String) async throws
     func sendImageMessage(message: Message, imageData: Data ,channelID:String) async throws
     func updateUnreadCount(channelID: String , userID: String) async throws
+    func updateActiveUser(channelID: String,userID: String , into: Bool) async throws
+    func loadActiveUser(channelID: String) async throws -> [String]
     func leaveChatRoom(channelID: String , lastMessageID: String, userID: String) async throws
     func downloadImage(messageID : String , imagePath : String) async throws -> Data
     func initializeListener()
@@ -33,7 +35,7 @@ public protocol ChatUsecaseProtocol {
 
 @available(iOS 15, *)
 public struct ChatUsecase : ChatUsecaseProtocol {
-    
+
     private let chatRepository: ChatRepository = DefaultChatRepository()
     private let messageRepository : MessageRepository = DefaultMessageRepository()
     private let userRepository : UserRepository = DefaultUserRepository()
@@ -156,6 +158,26 @@ public struct ChatUsecase : ChatUsecaseProtocol {
         }
         
         try await chatRepository.updateUnreadCount(channelID: channelID, userID: userID)
+    }
+    
+    public func updateActiveUser(channelID: String, userID: String , into: Bool) async throws {
+        if channelID.isEmpty {
+            throw ChannelError.invalidChannelID
+        } else if userID.isEmpty {
+            throw ChannelError.invalidUserInfo
+        }
+        if into {
+            try await chatRepository.updateActiveUser(channelID: channelID, userID: userID)
+        } else {
+            try await chatRepository.deleteActiveUser(channelID: channelID, userID: userID)
+        }
+    }
+    
+    public func loadActiveUser(channelID: String) async throws -> [String] {
+        if channelID.isEmpty {
+            throw ChannelError.invalidChannelID
+        }
+        return try await chatRepository.readActiveUsers(channelID: channelID)
     }
     
     //채팅방 나가기

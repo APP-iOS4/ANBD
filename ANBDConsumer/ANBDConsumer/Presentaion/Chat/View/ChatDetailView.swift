@@ -189,7 +189,11 @@ struct ChatDetailView: View {
             }
         }
         .onDisappear {
-            chatViewModel.resetMessageData()
+            Task {
+                if let channel = chatViewModel.selectedChannel {
+                    await chatViewModel.resetMessageData(channelID: channel.id)
+                }
+            }
         }
     }
     

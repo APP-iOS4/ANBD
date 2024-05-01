@@ -15,6 +15,9 @@ struct ChatDetailView: View {
     @StateObject private var coordinator = Coordinator.shared
     @Environment(\.colorScheme) var colorScheme
     
+    @State var channelID: String?
+//    @State var channel: Channel?
+    
     /// 보낼 메시지 관련 변수
     @State private var message: String = ""
     @State private var selectedImage: PhotosPickerItem?
@@ -30,16 +33,9 @@ struct ChatDetailView: View {
     var body: some View {
         ZStack {
             VStack {
-                ChatHeaderView(trade: chatViewModel.selectedTrade, isShowingStateChangeCustomAlert: $isShowingStateChangeCustomAlert)
+                ChatHeaderView(trade: chatViewModel.selectedTrade, channelID: channelID, isShowingStateChangeCustomAlert: $isShowingStateChangeCustomAlert)
                     .padding(.vertical, 5)
                     .padding(.horizontal, 15)
-                    .onAppear {
-                        Task {
-                            if let trade = chatViewModel.selectedTrade {
-                                await chatViewModel.loadTrade(tradeID: trade.id)
-                            }
-                        }
-                    }
                 
                 Divider()
                 
@@ -170,6 +166,12 @@ struct ChatDetailView: View {
         }
         .onAppear {
             Task {
+                if let channelID {
+                    if let channel = try await chatViewModel.getChannel(channelID: channelID) {
+                        await chatViewModel.setSelectedUser(channel: channel)
+                    }
+                }
+                
                 ///탈퇴한 회원일 경우
                 if chatViewModel.selectedUser.id == "" {
                     isWithdrawlUser = true

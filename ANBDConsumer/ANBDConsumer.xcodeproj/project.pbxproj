@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		4204F32F2BC7C60700C56DB8 /* UserActivityListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4204F32E2BC7C60700C56DB8 /* UserActivityListView.swift */; };
-		4221DE452BE08ACD00429C56 /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 4221DE442BE08ACD00429C56 /* Secrets.xcconfig */; };
 		424CA0052BC397A600F83F8D /* TextFieldWithTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0042BC397A600F83F8D /* TextFieldWithTitle.swift */; };
 		424CA0072BC39C7C00F83F8D /* BlueSquareButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0062BC39C7C00F83F8D /* BlueSquareButton.swift */; };
 		424CA00B2BC3AB7800F83F8D /* SignUpPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA00A2BC3AB7800F83F8D /* SignUpPasswordView.swift */; };
@@ -49,7 +48,6 @@
 		A8A269932BD5EFBF0099C3A3 /* UserPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7BEE142BBD564800C0F298 /* UserPageView.swift */; };
 		A8A269C12BD630BD0099C3A3 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A269C02BD630BD0099C3A3 /* Coordinator.swift */; };
 		A8BD75A02BDA3F730089799D /* CustomToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8BD759F2BDA3F730089799D /* CustomToastView.swift */; };
-		A8BD75A42BE08BB80089799D /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = A8BD75A32BE08BB80089799D /* Secrets.xcconfig */; };
 		CB198CF02BBF8E84000C2709 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198CEF2BBF8E84000C2709 /* Category.swift */; };
 		CB198CF22BBF8FC8000C2709 /* CategoryDividerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198CF12BBF8FC8000C2709 /* CategoryDividerView.swift */; };
 		CB198CF62BBFD0A3000C2709 /* WriteButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198CF52BBFD0A3000C2709 /* WriteButtonView.swift */; };
@@ -126,7 +124,6 @@
 		A87E89F42BC43B5500F5331B /* SearchResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultView.swift; sourceTree = "<group>"; };
 		A8A269C02BD630BD0099C3A3 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		A8BD759F2BDA3F730089799D /* CustomToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomToastView.swift; sourceTree = "<group>"; };
-		A8BD75A32BE08BB80089799D /* Secrets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		CB198CEF2BBF8E84000C2709 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		CB198CF12BBF8FC8000C2709 /* CategoryDividerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryDividerView.swift; sourceTree = "<group>"; };
 		CB198CF52BBFD0A3000C2709 /* WriteButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteButtonView.swift; sourceTree = "<group>"; };
@@ -362,7 +359,6 @@
 			children = (
 				4221DE442BE08ACD00429C56 /* Secrets.xcconfig */,
 				CB7BEE422BBD5BEC00C0F298 /* GoogleService-Info.plist */,
-				A8BD75A32BE08BB80089799D /* Secrets.xcconfig */,
 				CB7BEDF72BBD539F00C0F298 /* Font */,
 				CB7BEDBC2BBD4E9F00C0F298 /* Assets.xcassets */,
 				CB7BEDFC2BBD53AF00C0F298 /* Colors.xcassets */,
@@ -656,7 +652,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A8BD75A42BE08BB80089799D /* Secrets.xcconfig in Resources */,
 				CB7BEDBD2BBD4E9F00C0F298 /* Assets.xcassets in Resources */,
 				CB7BEE432BBD5BEC00C0F298 /* GoogleService-Info.plist in Resources */,
 				CB7BEDFA2BBD53A000C0F298 /* Pretendard-Regular.otf in Resources */,
@@ -868,6 +863,7 @@
 		};
 		CB7BEDC42BBD4E9F00C0F298 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4221DE442BE08ACD00429C56 /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -904,6 +900,7 @@
 		};
 		CB7BEDC52BBD4E9F00C0F298 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4221DE442BE08ACD00429C56 /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

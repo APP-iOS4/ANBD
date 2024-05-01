@@ -12,8 +12,6 @@ import FirebaseStorage
 @available(iOS 15, *)
 final class DefaultChatRepository: ChatRepository {
     
-    
-
     private var db = Firestore.firestore()
     private let chatDB = Firestore.firestore().collection("ChatRoom")
     
@@ -78,10 +76,22 @@ final class DefaultChatRepository: ChatRepository {
         
         let channel = try? document.data(as: Channel.self)
         return channel
-//        for document in querySnapshot.documents {
-//            let channel = try? document.data(as: Channel.self)
-//            return channel
-//        }
+    }
+    
+    func readChannel(channelID: String) async throws -> Channel? {
+        guard let querySnapshot = try? await chatDB
+            .whereField("id", isEqualTo: channelID)
+            .getDocuments()
+        else {
+            throw DBError.getChannelDocumentError
+        }
+        
+        guard let document = querySnapshot.documents.first else {
+            return nil
+        }
+        
+        let channel = try? document.data(as: Channel.self)
+        return channel
     }
     
     func readTradeInChannel(channelID: String) async throws -> Trade? {

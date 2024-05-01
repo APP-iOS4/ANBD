@@ -15,6 +15,7 @@ public protocol ChatUsecaseProtocol {
     func loadChannelList(userID: String, completion : @escaping (_ channels: [Channel]) -> Void)
     func loadMessageList(channelID: String, userID: String ) async throws -> [Message]
     func getChannel(tradeID : String , userID: String) async throws -> Channel?
+    func getChannel(channelID: String) async throws -> Channel?
     func getMessage(channelID: String, messageID: String ) async throws -> Message
     func getTradeInChannel(channelID: String)  async throws -> Trade?
     func getOtherUserNickname(userNicknames: [String], userNickname : String) -> String
@@ -80,6 +81,10 @@ public struct ChatUsecase : ChatUsecaseProtocol {
         }
         
         return try await chatRepository.readChannel(tradeID: tradeID, userID: userID)
+    }
+    
+    public func getChannel(channelID: String) async throws -> Channel? {
+        return try await chatRepository.readChannel(channelID: channelID)
     }
     
     

@@ -15,6 +15,9 @@ struct ChatDetailView: View {
     @StateObject private var coordinator = Coordinator.shared
     @Environment(\.colorScheme) var colorScheme
     
+    @State var channelID: String?
+    //    @State var channel: Channel?
+    
     /// 보낼 메시지 관련 변수
     @State private var message: String = ""
     @State private var selectedImage: PhotosPickerItem?
@@ -30,50 +33,58 @@ struct ChatDetailView: View {
     var body: some View {
         ZStack {
             VStack {
-                ChatHeaderView(trade: chatViewModel.selectedTrade, isShowingStateChangeCustomAlert: $isShowingStateChangeCustomAlert)
+                ChatHeaderView(trade: chatViewModel.selectedTrade, channelID: channelID, isShowingStateChangeCustomAlert: $isShowingStateChangeCustomAlert)
                     .padding(.vertical, 5)
                     .padding(.horizontal, 15)
-                    .onAppear {
-                        Task {
-                            if let trade = chatViewModel.selectedTrade {
-                                await chatViewModel.loadTrade(tradeID: trade.id)
-                            }
-                        }
-                    }
                 
                 Divider()
                 
                 /// message 내역
                 ScrollView {
-                    if let channel = chatViewModel.selectedChannel {
-                        LazyVStack {
-                            ForEach(chatViewModel.groupedMessages, id: \.day) { day, messages in
-                                ForEach(messages) { message in
+                    LazyVStack {
+                        ForEach(chatViewModel.groupedMessages, id: \.day) { day, messages in
+                            ForEach(messages) { message in
+                                if let channel = chatViewModel.selectedChannel {
+                                    
                                     MessageCell(message: message, isLast: message == chatViewModel.messages.last, channel: channel, isShowingImageDetailView: $isShowingImageDetailView, imageData: $imageData)
                                         .padding(.vertical, 1)
                                         .padding(.horizontal, 20)
                                 }
-                                if let last = chatViewModel.groupedMessages.last , last.day == day{
-                                    MessageDateDividerView(dateString: day)
-                                        .padding(.horizontal, 20)
-                                        .padding(.bottom, 20)
-                                } else {
-                                    MessageDateDividerView(dateString: day)
-                                        .padding(20)
-                                }
                             }
-                            .rotationEffect(Angle(degrees: 180))
-                            .scaleEffect(x: -1.0, y: 1.0, anchor: .center)
                             
-                            Color.clear
-                                .onAppear {
-                                    Task {
+                            if let last = chatViewModel.groupedMessages.last , last.day == day{
+                                MessageDateDividerView(dateString: day)
+                                    .padding(.horizontal, 20)
+                                    .padding(.bottom, 20)
+                            } else {
+                                MessageDateDividerView(dateString: day)
+                                    .padding(20)
+                            }
+                        }
+                        .rotationEffect(Angle(degrees: 180))
+                        .scaleEffect(x: -1.0, y: 1.0, anchor: .center)
+                        
+                        Color.clear
+                            .onAppear {
+                                Task {
+                                    if let channelID , chatViewModel.messages.isEmpty {
+                                        let channel = try await chatViewModel.getChannel(channelID: channelID)
+                                        if let channel {
+                                            try await chatViewModel.setSelectedInfo(channel: channel)
+                                        }
+                                        if chatViewModel.selectedUser.id == "" {
+                                            isWithdrawlUser = true
+                                        }
+                                    }
+                                    if let channel = chatViewModel.selectedChannel {
                                         try await chatViewModel.addListener(channelID: channel.id)
                                     }
                                 }
-                        }
-                        .onChange(of: chatViewModel.messages) { message in
-                            Task {
+                            }
+                    }
+                    .onChange(of: chatViewModel.messages) { message in
+                        Task {
+                            if let channel = chatViewModel.selectedChannel {
                                 try await chatViewModel.resetUnreadCount(channelID: channel.id)
                             }
                         }
@@ -170,10 +181,6 @@ struct ChatDetailView: View {
         }
         .onAppear {
             Task {
-                ///탈퇴한 회원일 경우
-                if chatViewModel.selectedUser.id == "" {
-                    isWithdrawlUser = true
-                }
                 
                 if let channel = chatViewModel.selectedChannel {
                     /// 안읽음 메시지 개수 갱신
@@ -182,7 +189,11 @@ struct ChatDetailView: View {
             }
         }
         .onDisappear {
-            chatViewModel.resetMessageData()
+            Task {
+                if let channel = chatViewModel.selectedChannel {
+                    await chatViewModel.resetMessageData(channelID: channel.id)
+                }
+            }
         }
     }
     
@@ -215,19 +226,17 @@ struct ChatDetailView: View {
             }
             .disabled(isWithdrawlUser)
             
-            /// 메시지 입력
-            ZStack {
-                Rectangle()
-                    .fill(colorScheme == .light ? .gray50 : .gray700)
-                    .clipShape(RoundedRectangle(cornerRadius: 30))
-                
-                TextField(isWithdrawlUser ? "탈퇴한 회원이므로 메시지를 보낼 수 없습니다" : "메시지 보내기", text: $message)
-                    .foregroundStyle(.gray900)
-                    .font(ANBDFont.Caption3)
-                    .padding(15)
-                    .disabled(isWithdrawlUser)
-            }
-            .frame(height: 40)
+            TextField(isWithdrawlUser ? "탈퇴한 회원이므로 메시지를 보낼 수 없습니다" : "메시지 보내기", text: $message, axis: .vertical)
+                .lineLimit(3, reservesSpace: false)
+                .foregroundStyle(.gray900)
+                .font(ANBDFont.Caption3)
+                .padding(13)
+                .disabled(isWithdrawlUser)
+                .background {
+                    Rectangle()
+                        .fill(colorScheme == .light ? .gray50 : .gray700)
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                }
             
             /// 메시지 전송
             Button(action: {

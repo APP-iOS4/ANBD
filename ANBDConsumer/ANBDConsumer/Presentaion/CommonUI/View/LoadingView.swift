@@ -13,11 +13,12 @@ struct LoadingView: View {
             ProgressView()
             Text("Loading")
                 .font(ANBDFont.body1)
+                .foregroundStyle(.gray900)
                 .fontWeight(.semibold)
                 .padding()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(.white.opacity(0.5))
+        .background(.gray50.opacity(0.5))
     }
 }
 

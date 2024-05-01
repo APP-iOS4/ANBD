@@ -80,6 +80,7 @@ struct ArticleDetailView: View {
                                                     case .home, .article, .trade, .chat:
                                                         if coordinator.isFromUserPage {
                                                             coordinator.pop(2)
+                                                            coordinator.isFromUserPage = false
                                                         } else {
                                                             coordinator.appendPath(.userPageView)
                                                         }

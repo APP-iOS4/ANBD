@@ -33,7 +33,7 @@ struct ANBDTabView: View {
             .tag(ANBDTabViewType.home)
             .toolbarBackground(tabBarColorScheme().opacity(1), for: .tabBar)
             .toolbarBackground(.visible, for: .tabBar)
-            
+    
             
             /// Article (정보 공유)
             NavigationStack(path: $coordinator.articlePath) {
@@ -41,7 +41,6 @@ struct ANBDTabView: View {
                     .navigationDestination(for: Page.self) { page in
                         coordinator.build(page)
                     }
-                
             }
             .tabItem {
                 Label("정보 공유", systemImage: "leaf")

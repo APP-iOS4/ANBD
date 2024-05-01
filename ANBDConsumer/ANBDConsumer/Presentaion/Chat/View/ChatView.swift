@@ -56,6 +56,9 @@ struct ChatView: View {
                 }
             }
         }
+        .navigationDestination(for: Page.self) { page in
+            coordinator.build(page)
+        }
         .navigationTitle("채팅")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {

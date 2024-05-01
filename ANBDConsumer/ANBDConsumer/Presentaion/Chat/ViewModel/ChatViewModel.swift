@@ -34,7 +34,7 @@ final class ChatViewModel: ObservableObject {
     var selectedUser: User = User(id: "", nickname: "(알수없음)", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
     
     @Published var selectedTrade: Trade?
-    var selectedChannel: Channel?
+    @Published var selectedChannel: Channel?
     
     @Published var groupedMessages: [(day:String , messages:[Message])] = []
     
@@ -99,7 +99,7 @@ extension ChatViewModel {
     func addListener(channelID: String) async throws {
         do {
             if !isLeaveChatRoom {
-                var preMessages = try await chatUsecase.loadMessageList(channelID: channelID, userID: user.id)
+                    var preMessages = try await chatUsecase.loadMessageList(channelID: channelID, userID: user.id)
                 if let leaveMessageIndex = preMessages.lastIndex(where: { $0.leaveUsers.contains(user.id) }) {
                     isLeaveChatRoom = true
                     preMessages.removeSubrange(0...leaveMessageIndex)
@@ -209,6 +209,7 @@ extension ChatViewModel {
         chatUsecase.initializeListener()
         messages = []
         groupedMessages = []
+        otherUserLastMessages = []
     }
 }
 

@@ -65,9 +65,9 @@ struct ANBDTabView: View {
             /// Chat
             NavigationStack(path: $coordinator.chatPath) {
                 ChatView()
-                    .navigationDestination(for: Page.self) { page in
-                        coordinator.build(page)
-                    }
+//                    .navigationDestination(for: Page.self) { page in
+//                        coordinator.build(page)
+//                    }
             }
             .tabItem {
                 Label("채팅", systemImage: "bubble.right")

@@ -53,6 +53,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
     
+    // Foreground(앱 켜진 상태)에서도 알림 오는 설정
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+            completionHandler([.list, .banner])
+    }
+    
     func userNotificationCenter(_: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         
         let userInfo = response.notification.request.content.userInfo
@@ -60,27 +65,16 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         
         // aps 딕셔너리에서 alert 딕셔너리 추출
         guard let apsDict = userInfo["aps"] as? [String: Any],
-              let alertDict = apsDict["alert"] as? [String: String], let channelID = userInfo["channelID"] as? String else {
+              let alertDict = apsDict["alert"] as? [String: String] else {
                   completionHandler()
                   return
               }
         
-        DispatchQueue.main.async {
-            Coordinator.shared.selectedTab = .chat
-            
-            if !Coordinator.shared.chatPath.isEmpty {
-                Coordinator.shared.pop()
+        if let channelID = userInfo["channelID"] as? String  {
+            DispatchQueue.main.async {
+                self.presentChatDeatailView(channelID: channelID)
             }
-            
-            Coordinator.shared.channelID = channelID
-            Coordinator.shared.appendPath(.chatDetailView)
-            
-            print("channelID: \(channelID)")
-            print("alertDict: \(alertDict)")
         }
-        
-        print("channelID:\(channelID)")
-        print("alertDict: \(alertDict)")
         
         completionHandler()
     }
@@ -97,6 +91,24 @@ extension AppDelegate: MessagingDelegate {
                 UserStore.shared.deviceToken = token
             }
         }
+    }
+}
+
+extension AppDelegate {
+    func presentChatDeatailView(channelID: String) {
+        let coorinator = Coordinator.shared
+        if !coorinator.chatPath.isEmpty {
+            coorinator.pop(coorinator.chatPath.count)
+            coorinator.channelID = channelID
+            coorinator.selectedTab = .home
+        }
+        coorinator.selectedTab = .chat
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                coorinator.channelID = channelID
+                coorinator.appendPath(.chatDetailView)
+        }
+
     }
 }
 

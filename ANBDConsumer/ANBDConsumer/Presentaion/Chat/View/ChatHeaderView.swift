@@ -102,12 +102,14 @@ struct ChatHeaderView: View {
         })
         .onAppear {
             Task {
+                print("HeaderOnApper")
                 if let channelID {
                     let channel = try await chatViewModel.getChannel(channelID: channelID)
                     if let channel {
                         try await chatViewModel.setSelectedInfo(channel: channel)
                     }
                 }
+                
                 if let trade = chatViewModel.selectedTrade {
                         await chatViewModel.loadTrade(tradeID: trade.id)
                         imageData = try await chatViewModel.loadThumnailImage(containerID: trade.id, imagePath: trade.thumbnailImagePath)

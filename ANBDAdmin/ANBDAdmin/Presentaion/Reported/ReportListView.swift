@@ -11,7 +11,8 @@ import ANBDModel
 struct ReportListView: View {
     @StateObject private var reportListViewModel = ReportListViewModel()
     @State private var selectedReportType: ReportType = .article // 기본 선택값은 '게시물'
-
+    
+    
     var body: some View {
         VStack {
             Text("신고 메세지 개수: \(reportListViewModel.reportCount)")
@@ -20,13 +21,18 @@ struct ReportListView: View {
                     await reportListViewModel.fetchReportCount()
                 }
             Picker("신고 유형 선택", selection: $selectedReportType) {
-                            ForEach(ReportType.allCases, id: \.self) { type in
-                                Text(type.rawValue).tag(type)
-                            }
-                        }
-                        .pickerStyle(SegmentedPickerStyle())
-                        .padding()
-
+                ForEach(ReportType.allCases, id: \.self) { type in
+                    Text(type.rawValue).tag(type)
+                }
+            }
+            .pickerStyle(SegmentedPickerStyle())
+            .padding()
+            .onChange(of: selectedReportType){ newType in
+                Task {
+                    reportListViewModel.reportList = []
+                    await reportListViewModel.firstLoadReports(of: newType)
+                }
+            }
             HStack{
                 Spacer()
                 VStack(alignment: .leading) {
@@ -92,18 +98,22 @@ struct ReportListView: View {
                         Text("List End")
                             .foregroundColor(.gray)
                             .onAppear {
-                                reportListViewModel.loadMoreReports()
+                                reportListViewModel.loadMoreReports(of: selectedReportType)
                             }
                     }
                 }
                 .onAppear {
-                    reportListViewModel.firstLoadReports()
+                    Task{
+                        await reportListViewModel.firstLoadReports(of: selectedReportType)
+                    }
                 }
                 .navigationBarTitle("신고함 목록")
                 .toolbar {
                     Button(action: {
                         reportListViewModel.reportList = []
-                        reportListViewModel.firstLoadReports()
+                        Task{
+                            await reportListViewModel.firstLoadReports(of: selectedReportType)
+                        }
                     }) {
                         Image(systemName: "arrow.clockwise")
                     }

@@ -30,6 +30,17 @@ class ReportListViewModel: ObservableObject {
             }
         }
     }
+    func firstLoadReports(of category: ReportType) async {
+        do {
+            let reports = try await reportUsecase.resetAndLoadReport(reportType: category, limit: 10)
+            DispatchQueue.main.async {
+                self.reportList = reports
+                self.canLoadMoreReports = true
+            }
+        } catch {
+            print("Error loading reports of type \(category.rawValue): \(error)")
+        }
+    }
         
         func loadMoreReports() {
             Task {
@@ -49,6 +60,25 @@ class ReportListViewModel: ObservableObject {
                 }
             }
         }
+    func loadMoreReports(of category: ReportType) {
+        Task {
+            do {
+                let reports = try await reportUsecase.loadReport(reportType: category, limit: 11)
+                DispatchQueue.main.async {
+                    if reports.count == 11 {
+                        self.reportList.append(contentsOf: reports.dropLast())
+                        self.canLoadMoreReports = true
+                    } else {
+                        self.reportList.append(contentsOf: reports)
+                        self.canLoadMoreReports = false
+                    }
+                }
+            } catch {
+                print("신고 목록을 가져오는데 실패했습니다: \(error)")
+            }
+        }
+    }
+    
     func fetchReportCount() async {
             do {
                 let count = try await reportUsecase.countReports()
@@ -57,13 +87,6 @@ class ReportListViewModel: ObservableObject {
                 }
             } catch {
                 print("Error counting reports: \(error)")
-            }
-        }
-    func loadReports(of category: ReportType) async {
-            do {
-                reportList = try await reportUsecase.loadReport(reportType: category, limit: 10)
-            } catch {
-                print("Error loading reports: \(error)")
             }
         }
 }

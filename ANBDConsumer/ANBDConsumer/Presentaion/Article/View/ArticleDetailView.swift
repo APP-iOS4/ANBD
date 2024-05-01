@@ -129,7 +129,7 @@ struct ArticleDetailView: View {
                             
                             if coordinator.isLoading {
                                 LoadingView()
-                                    .padding(.top, 220)
+                                    .padding(.vertical, 250)
                             }
                             
                             HStack {

@@ -10,7 +10,7 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     @EnvironmentObject private var authenticationViewModel: AuthenticationViewModel
-    @EnvironmentObject private var coordinator: Coordinator
+    @StateObject private var coordinator = Coordinator.shared
     
     @State private var isShowingEditorView = false
     @State private var isShowingPolicyView = false
@@ -204,6 +204,5 @@ fileprivate struct SettingSectionView<Content: View>: View {
         SettingsView()
             .environmentObject(MyPageViewModel())
             .environmentObject(AuthenticationViewModel())
-            .environmentObject(Coordinator())
     }
 }

@@ -12,7 +12,7 @@ import Kingfisher
 
 struct MessageCell: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
-    @EnvironmentObject private var coordinator: Coordinator
+    @StateObject private var coordinator = Coordinator.shared
     @Environment(\.colorScheme) private var colorScheme: ColorScheme
     
     var message: Message

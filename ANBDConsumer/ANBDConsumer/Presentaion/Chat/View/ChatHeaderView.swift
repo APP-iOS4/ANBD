@@ -12,7 +12,7 @@ import SkeletonUI
 struct ChatHeaderView: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
-    @EnvironmentObject private var coordinator: Coordinator
+    @StateObject private var coordinator = Coordinator.shared
     
     var trade: Trade?
     @State var imageData: Data?

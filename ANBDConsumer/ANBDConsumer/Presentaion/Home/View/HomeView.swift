@@ -10,16 +10,57 @@ import ANBDModel
 import SkeletonUI
 
 struct HomeView: View {
-    @EnvironmentObject private var coordinator: Coordinator
+    @StateObject private var coordinator = Coordinator.shared
     @EnvironmentObject private var homeViewModel: HomeViewModel
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
+    @EnvironmentObject private var networkMonitor: NetworkMonitor
     
     @State private var isShowingWebView: Bool = false
     @State private var isLoading: Bool = true
     @State private var blogURL: String = "https://www.naver.com"
     
     var body: some View {
+        if #available(iOS 17.0, *) {
+            mainView
+                .onChange(of: networkMonitor.isConnected) {
+                    if networkMonitor.isConnected {
+                        Task {
+                            //광고
+                            await homeViewModel.loadBanners()
+                            blogURL = homeViewModel.bannerItemList.first?.urlString ?? "https://www.naver.com"
+                            //아껴
+                            await homeViewModel.loadArticle(category: .accua)
+                            //나눠
+                            await homeViewModel.loadArticle(category: .nanua)
+                            //다시
+                            await homeViewModel.loadArticle(category: .dasi)
+                            //isLoading = false
+                        }
+                    }
+                }
+        } else {
+            mainView
+                .onChange(of: networkMonitor.isConnected) { _ in
+                    if networkMonitor.isConnected {
+                        Task {
+                            //광고
+                            await homeViewModel.loadBanners()
+                            blogURL = homeViewModel.bannerItemList.first?.urlString ?? "https://www.naver.com"
+                            //아껴
+                            await homeViewModel.loadArticle(category: .accua)
+                            //나눠
+                            await homeViewModel.loadArticle(category: .nanua)
+                            //다시
+                            await homeViewModel.loadArticle(category: .dasi)
+                            //isLoading = false
+                        }
+                    }
+                }
+        }
+    }
+    
+    private var mainView: some View {
         GeometryReader { geometry in
             ScrollView {
                 LazyVStack {
@@ -78,7 +119,6 @@ struct HomeView: View {
             coordinator.isFromUserPage = false
         }
     }
-    
     
     // MARK: - 광고 배너
     private var adView: some View {
@@ -314,8 +354,31 @@ struct HomeView: View {
         var article: Article
         @State private var imageData: Data?
         @EnvironmentObject private var homeViewModel: HomeViewModel
+        @EnvironmentObject private var networkMonitor: NetworkMonitor
         
         var body: some View {
+            if #available(iOS 17.0, *) {
+                cellView
+                    .onChange(of: networkMonitor.isConnected) {
+                        if networkMonitor.isConnected {
+                            Task {
+                                imageData = try await homeViewModel.loadThumnailImage(path: .article, containerID: article.id, imagePath: article.thumbnailImagePath)
+                            }
+                        }
+                    }
+            } else {
+                cellView
+                    .onChange(of: networkMonitor.isConnected) { _ in
+                        if networkMonitor.isConnected {
+                            Task {
+                                imageData = try await homeViewModel.loadThumnailImage(path: .article, containerID: article.id, imagePath: article.thumbnailImagePath)
+                            }
+                        }
+                    }
+            }
+        }
+        
+        fileprivate var cellView: some View {
             ZStack(alignment: .bottomLeading) {
                 VStack {
                     if let imageData {
@@ -364,8 +427,31 @@ struct HomeView: View {
         var trade: Trade
         @State private var imageData: Data?
         @EnvironmentObject private var homeViewModel: HomeViewModel
+        @EnvironmentObject private var networkMonitor: NetworkMonitor
         
         var body: some View {
+            if #available(iOS 17.0, *) {
+                cellView
+                    .onChange(of: networkMonitor.isConnected) {
+                        if networkMonitor.isConnected {
+                            Task {
+                                imageData = try await homeViewModel.loadThumnailImage(path: .trade, containerID: trade.id, imagePath: trade.thumbnailImagePath)
+                            }
+                        }
+                    }
+            } else {
+                cellView
+                    .onChange(of: networkMonitor.isConnected) { _ in
+                        if networkMonitor.isConnected {
+                            Task {
+                                imageData = try await homeViewModel.loadThumnailImage(path: .trade, containerID: trade.id, imagePath: trade.thumbnailImagePath)
+                            }
+                        }
+                    }
+            }
+        }
+        
+        fileprivate var cellView: some View {
             ZStack(alignment: .bottomLeading) {
                 VStack {
                     if let imageData {
@@ -408,7 +494,6 @@ struct HomeView: View {
 #Preview {
     NavigationStack {
         HomeView()
-            .environmentObject(Coordinator())
             .environmentObject(HomeViewModel())
             .environmentObject(TradeViewModel())
     }

@@ -11,10 +11,12 @@ import ANBDModel
 struct ANBDTabView: View {
     @Environment(\.colorScheme) var colorScheme
     @StateObject private var chatViewModel = ChatViewModel()
-    @StateObject private var coordinator = Coordinator()
+    @StateObject private var coordinator = Coordinator.shared
     
     @State private var articleCategory: ANBDCategory = .accua
     @State private var tradeCategory: ANBDCategory = .nanua
+    
+    @EnvironmentObject private var networkMonitor: NetworkMonitor
     
     var body: some View {
         TabView(selection: $coordinator.selectedTab) {
@@ -29,8 +31,9 @@ struct ANBDTabView: View {
                 Label("홈", systemImage: "house")
             }
             .tag(ANBDTabViewType.home)
-            .toolbarBackground(.visible, for: .tabBar)
             .toolbarBackground(tabBarColorScheme().opacity(1), for: .tabBar)
+            .toolbarBackground(.visible, for: .tabBar)
+    
             
             /// Article (정보 공유)
             NavigationStack(path: $coordinator.articlePath) {
@@ -38,7 +41,6 @@ struct ANBDTabView: View {
                     .navigationDestination(for: Page.self) { page in
                         coordinator.build(page)
                     }
-                    
             }
             .tabItem {
                 Label("정보 공유", systemImage: "leaf")

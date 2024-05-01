@@ -136,9 +136,20 @@ struct ArticleDetailView: View {
                                     }
                                 }
                                 
+                                //이거 꼭 있어야 할까 고민!!!해봐주세요 기표님
                                 if coordinator.isLoading {
-                                    LoadingView()
-                                        .padding(.vertical, 250)
+                                    HStack {
+                                        Spacer()
+                                        VStack(alignment: .center) {
+                                            ProgressView()
+                                            Text("Loading")
+                                                .font(ANBDFont.body1)
+                                                .foregroundStyle(.gray900)
+                                                .fontWeight(.semibold)
+                                                .padding()
+                                        }
+                                        Spacer()
+                                    }
                                 }
                                 
                                 HStack {

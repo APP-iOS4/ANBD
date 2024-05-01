@@ -20,6 +20,7 @@ final class NetworkMonitor: ObservableObject {
         monitor.pathUpdateHandler = { path in
             DispatchQueue.main.async {
                 self.isConnected = path.status == .satisfied
+
             }
         }
         

@@ -81,6 +81,8 @@ struct SignUpPolicyAgreeView: View {
         }
         .padding()
         
+        .toolbarRole(.editor)
+        
         .sheet(isPresented: $authenticationViewModel.isShowingTermsView) {
             TermsView(type: authenticationViewModel.agreeType)
         }

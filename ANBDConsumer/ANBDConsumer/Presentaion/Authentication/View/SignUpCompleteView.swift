@@ -44,6 +44,7 @@ struct SignUpCompleteView: View {
         .padding(.horizontal, 20)
         
         .toolbar(.hidden, for: .navigationBar)
+        .toolbarRole(.editor)
         
         .onAppear {
             if #available(iOS 17.0, *) {

@@ -16,7 +16,7 @@ final class AuthenticationViewModel: ObservableObject {
     
     @Published var authState: Bool = false
     
-    @Published var validEmailRemainingTime = 60
+    @Published var validEmailRemainingTime = 30
     @Published var isValidEmailButtonDisabled = false
     
     // MARK: Login Field
@@ -282,6 +282,7 @@ extension AuthenticationViewModel {
     func signOut(_ completion: @escaping () -> Void) async {
         do {
             try await userUsecase.updateUserFCMToken(userID: UserStore.shared.user.id, fcmToken: "")
+            try await authUsecase.signOut()
             completion()
         } catch {
             print("Error sign out: \(error.localizedDescription)")

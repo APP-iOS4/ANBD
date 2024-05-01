@@ -8,14 +8,17 @@
 import SwiftUI
 
 struct SignUpEmailView: View {
-    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var authenticationViewModel: AuthenticationViewModel
+    @Environment(\.dismiss) private var dismiss
     
     @FocusState private var focus: FocusableField?
     
     @State private var isNavigate = false
     @State private var isShowingDuplicatedEmailAlert = false
+    @State private var isShowingSignUpCancelAlert = false
     @State private var isShwoingEmailValidationCheckView = false
+    
+    @State private var isWaitingForEmailValidation = false
     @State private var isCompletedEmailValidation = false
     
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -30,24 +33,29 @@ struct SignUpEmailView: View {
                     .padding(.bottom, 70)
                 
                 HStack {
-                    TextFieldWithTitle(fieldType: .normal,
-                                       title: "이메일 주소",
-                                       placeholder: "예) anbd@anbd.co.kr",
-                                       inputText: $authenticationViewModel.signUpEmailString)
-                    .focused($focus, equals: .email)
-                    .keyboardType(.emailAddress)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled(true)
-                    .submitLabel(.go)
-                    .onSubmit {
-                        guard authenticationViewModel.isValidSignUpEmail else { return }
-                        
-                        Task {
-                            if await authenticationViewModel.checkDuplicatedEmail() {
-                                isShowingDuplicatedEmailAlert.toggle()
-                            } else {
-                                nextButtonAction()
-                            }
+                    if isWaitingForEmailValidation == false {
+                        TextFieldWithTitle(fieldType: .normal,
+                                           title: "이메일 주소",
+                                           placeholder: "예) anbd@anbd.co.kr",
+                                           inputText: $authenticationViewModel.signUpEmailString)
+                        .focused($focus, equals: .email)
+                        .keyboardType(.emailAddress)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled(true)
+                        .submitLabel(.go)
+                    } else {
+                        VStack(alignment: .leading) {
+                            Text("이메일 주소")
+                                .font(ANBDFont.SubTitle3)
+                                .foregroundStyle(Color.gray900)
+                            
+                            Text("\(authenticationViewModel.signUpEmailString)")
+                                .font(ANBDFont.body2)
+                                .padding(.horizontal, 4)
+                                .padding(.top, 1)
+                            
+                            Divider()
+                                .foregroundStyle(.gray200)
                         }
                     }
                     
@@ -64,19 +72,20 @@ struct SignUpEmailView: View {
                     } else {
                         Button(action: {
                             Task {
-                                if await !authenticationViewModel.checkDuplicatedEmail() {
+                                if await authenticationViewModel.checkDuplicatedEmail() {
                                     downKeyboard()
                                     isShowingDuplicatedEmailAlert.toggle()
                                 } else {
-                                    isShwoingEmailValidationCheckView.toggle()
                                     downKeyboard()
+                                    isShwoingEmailValidationCheckView.toggle()
+                                    isWaitingForEmailValidation.toggle()
+                                    
                                     authenticationViewModel.isValidEmailButtonDisabled = true
-                                    authenticationViewModel.validEmailRemainingTime = 60
-                                    // TODO: - 이메일 검증
+                                    authenticationViewModel.validEmailRemainingTime = 30
+                                    
                                     await authenticationViewModel.verifyEmail()
                                 }
                             }
-                            
                         }, label: {
                             Text("인증하기")
                                 .padding(.all, 9)
@@ -109,25 +118,57 @@ struct SignUpEmailView: View {
                 .font(ANBDFont.Caption1)
                 .padding(.top, 8)
                 
-                HStack {
-                    Text("이미 계정이 있으신가요?")
-                        .foregroundStyle(.gray)
-                    
-                    Button("로그인") {
-                        dismiss()
+                if !isWaitingForEmailValidation {
+                    HStack {
+                        Text("이미 계정이 있으신가요?")
+                            .foregroundStyle(.gray)
+                        
+                        Button("로그인") {
+                            if isCompletedEmailValidation {
+                                isShowingSignUpCancelAlert.toggle()
+                            } else {
+                                dismiss()
+                            }
+                        }
+                        .foregroundStyle(.accent)
                     }
-                    .foregroundStyle(.accent)
+                    .font(ANBDFont.body2)
+                    .padding(.top, 22)
+                } else {
+                    Button {
+                        isCompletedEmailValidation = false
+                        isWaitingForEmailValidation.toggle()
+                        authenticationViewModel.signUpEmailString = ""
+                        focus = .email
+                        
+                        Task {
+                            await authenticationViewModel.withdrawal() { }
+                        }
+                    } label: {
+                        Text("다른 이메일로 가입하기")
+                    }
+                    .font(ANBDFont.body2)
+                    .padding(.top, 22)
                 }
-                .font(ANBDFont.body2)
-                .padding(.top, 22)
                 
                 Spacer()
                 
-                BlueSquareButton(title: "다음", isDisabled: !isCompletedEmailValidation) {
+                BlueSquareButton(title: "다음",
+                                 isDisabled: !isCompletedEmailValidation || authenticationViewModel.signUpEmailString.isEmpty) {
+                    isWaitingForEmailValidation = false
                     nextButtonAction()
                 }
             }
             .padding()
+            
+            if isShowingSignUpCancelAlert {
+                CustomAlertView(isShowingCustomAlert: $isShowingSignUpCancelAlert, viewType: .signUpCancel) {
+                    Task {
+                        await authenticationViewModel.withdrawal() { }
+                        dismiss()
+                    }
+                }
+            }
             
             if isShowingDuplicatedEmailAlert {
                 CustomAlertView(isShowingCustomAlert: $isShowingDuplicatedEmailAlert, viewType: .duplicatedEmail) {
@@ -142,6 +183,17 @@ struct SignUpEmailView: View {
             }
         }
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button(action: {
+                    if isCompletedEmailValidation {
+                        isShowingSignUpCancelAlert.toggle()
+                    } else {
+                        dismiss()
+                    }
+                }, label: {
+                    Label("뒤로 가기", systemImage: "chevron.backward")
+                })
+            }
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
                 
@@ -153,12 +205,16 @@ struct SignUpEmailView: View {
             }
         }
         
+        .navigationBarBackButtonHidden()
         .navigationDestination(isPresented: $isNavigate) {
             SignUpPasswordView()
         }
         
         .onAppear {
             focus = .email
+            Task {
+                await authenticationViewModel.withdrawal() { }
+            }
         }
         
         .onReceive(timer) { _ in
@@ -179,8 +235,10 @@ struct SignUpEmailView: View {
 }
 
 #Preview {
-    SignUpEmailView()
-        .environmentObject(AuthenticationViewModel())
+    NavigationStack {
+        SignUpEmailView()
+    }
+    .environmentObject(AuthenticationViewModel())
 }
 
 extension SignUpEmailView {

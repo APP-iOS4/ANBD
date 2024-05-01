@@ -105,6 +105,8 @@ extension CustomAlertView {
         case duplicatedNickname
         case signInFail
         case validEmail
+        case signUpCancel
+        case emailRerequest
         // trade
         case changeState
         case tradeDelete
@@ -152,6 +154,10 @@ extension CustomAlertView {
             return "정보 수정 그만두기"
         case .validEmail:
             return "이메일 인증하기"
+        case .signUpCancel:
+            return "로그인으로 돌아가기"
+        case .emailRerequest:
+            return "뒤로가기"
         }
     }
     
@@ -193,6 +199,10 @@ extension CustomAlertView {
             return "변경된 내용은 저장되지 않습니다."
         case .validEmail:
             return "\(authenticationViewModel.signUpEmailString) 에서\n이메일 인증 링크를 확인해주세요."
+        case .signUpCancel:
+            return "로그인 화면으로 돌아가시겠습니까?\n진행하신 회원가입은 취소됩니다."
+        case .emailRerequest:
+            return "이메일 인증을 다시 진행해야합니다.\n돌아가시겠습니까?"
         }
     }
     
@@ -216,7 +226,7 @@ extension CustomAlertView {
             return "신고하기"
         case .editingCancel:
             return "그만두기"
-        case .writingCancel:
+        case .writingCancel, .signUpCancel, .emailRerequest:
             return "돌아가기"
         case .validEmail:
             return "확인"
@@ -225,7 +235,7 @@ extension CustomAlertView {
     
     private var confirmButtonColor: Color {
         switch viewType {
-        case .leaveChatRoom, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .imageSelelct, .signOut, .editingCancel, .writingCancel, .validEmail:
+        case .leaveChatRoom, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .imageSelelct, .signOut, .editingCancel, .writingCancel, .validEmail, .signUpCancel, .emailRerequest:
             return .accent
         case .withdrawal, .tradeDelete, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .articleCreate:
             return .heartRed
@@ -234,7 +244,7 @@ extension CustomAlertView {
     
     private var textWeight: Font.Weight {
         switch viewType {
-        case .leaveChatRoom, .signOut, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .tradeDelete, .writingCancel, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .imageSelelct, .editingCancel, .articleCreate, .validEmail:
+        case .leaveChatRoom, .signOut, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .tradeDelete, .writingCancel, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .imageSelelct, .editingCancel, .articleCreate, .validEmail, .signUpCancel, .emailRerequest:
             return .medium
         case .withdrawal:
             return .heavy

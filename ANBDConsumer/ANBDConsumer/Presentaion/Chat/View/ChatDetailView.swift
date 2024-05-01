@@ -226,19 +226,17 @@ struct ChatDetailView: View {
             }
             .disabled(isWithdrawlUser)
             
-            /// 메시지 입력
-            ZStack {
-                Rectangle()
-                    .fill(colorScheme == .light ? .gray50 : .gray700)
-                    .clipShape(RoundedRectangle(cornerRadius: 30))
-                
-                TextField(isWithdrawlUser ? "탈퇴한 회원이므로 메시지를 보낼 수 없습니다" : "메시지 보내기", text: $message)
-                    .foregroundStyle(.gray900)
-                    .font(ANBDFont.Caption3)
-                    .padding(15)
-                    .disabled(isWithdrawlUser)
-            }
-            .frame(height: 40)
+            TextField(isWithdrawlUser ? "탈퇴한 회원이므로 메시지를 보낼 수 없습니다" : "메시지 보내기", text: $message, axis: .vertical)
+                .lineLimit(3, reservesSpace: false)
+                .foregroundStyle(.gray900)
+                .font(ANBDFont.Caption3)
+                .padding(13)
+                .disabled(isWithdrawlUser)
+                .background {
+                    Rectangle()
+                        .fill(colorScheme == .light ? .gray50 : .gray700)
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                }
             
             /// 메시지 전송
             Button(action: {

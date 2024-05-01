@@ -242,10 +242,22 @@ extension ChatViewModel {
 //MARK: - 정보를 get OR Set
 extension ChatViewModel {
     
+    /// 채팅방 onDisappear시, 메시지 데이터 초기화
+    func resetMessageData() {
+        isListener = false
+        isLeaveChatRoom = false
+        chatUsecase.initializeListener()
+        messages = []
+        groupedMessages = []
+    }
+}
+
+//MARK: - 정보를 get OR Set
+extension ChatViewModel {
+    
     //채팅방 리스트에서 접근시
     func setSelectedInfo(channel: Channel) async throws{
         self.selectedChannel = channel
-        
         do {
             self.selectedTrade = try await chatUsecase.getTradeInChannel(channelID: channel.id)
         } catch {
@@ -338,7 +350,6 @@ extension ChatViewModel {
             return nil
         }
     }
-    
 }
 
 

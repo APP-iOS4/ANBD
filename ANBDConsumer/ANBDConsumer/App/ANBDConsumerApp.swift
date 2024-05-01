@@ -114,19 +114,40 @@ struct ANBDConsumerApp: App {
     @StateObject private var authenticationViewModel = AuthenticationViewModel()
     @StateObject private var searchViewModel = SearchViewModel()
     @StateObject private var reportViewModel = ReportViewModel()
+    @StateObject private var networkMonitor = NetworkMonitor()
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
     var body: some Scene {
         WindowGroup {
-            AuthenticationView()
-                .environmentObject(homeViewModel)
-                .environmentObject(tradeViewModel)
-                .environmentObject(myPageViewModel)
-                .environmentObject(articleViewModel)
-                .environmentObject(authenticationViewModel)
-                .environmentObject(searchViewModel)
-                .environmentObject(reportViewModel)
+            ZStack(alignment: .top) {
+                AuthenticationView()
+                    .environmentObject(homeViewModel)
+                    .environmentObject(tradeViewModel)
+                    .environmentObject(myPageViewModel)
+                    .environmentObject(articleViewModel)
+                    .environmentObject(authenticationViewModel)
+                    .environmentObject(searchViewModel)
+                    .environmentObject(reportViewModel)
+                    .environmentObject(networkMonitor)
+                
+                if !networkMonitor.isConnected {
+                    Rectangle()
+                        .frame(width: UIScreen.main.bounds.width, height: 50)
+                        .foregroundStyle(.gray50)
+                        .shadow(radius: 10)
+                        .overlay(
+                            HStack {
+                                Image(systemName: "exclamationmark.triangle")
+                                    .foregroundStyle(.heartRed)
+                                    .padding(.trailing, 10)
+                                Text("인터넷이 연결되지 않았습니다.")
+                                    .font(ANBDFont.body2)
+                                    .foregroundStyle(.gray900)
+                            }
+                        )
+                }
+            }
         }
     }
 }

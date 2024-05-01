@@ -126,6 +126,9 @@ struct ArticleListView: View {
                                     } else {
                                         ArticleListCell(value: .trade(item))
                                             .padding(.vertical, 5)
+                                            .onAppear {
+                                                tradeViewModel.detailImages = []
+                                            }
                                     }
                                 })
                                 Divider()

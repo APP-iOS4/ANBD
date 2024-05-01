@@ -16,7 +16,7 @@ final class AuthenticationViewModel: ObservableObject {
     
     @Published var authState: Bool = false
     
-    @Published var validEmailRemainingTime = 10
+    @Published var validEmailRemainingTime = 60
     @Published var isValidEmailButtonDisabled = false
     
     // MARK: Login Field
@@ -311,6 +311,18 @@ extension AuthenticationViewModel {
         let isDuplicate = await authUsecase.checkDuplicatedEmail(email: signUpEmailString)
         
         return isDuplicate
+    }
+    
+    func verifyEmail() async {
+        do {
+            try await authUsecase.verifyEmail(email: signUpEmailStringDebounced)
+        } catch {
+            print("Error verify email: \(error.localizedDescription)")
+        }
+    }
+    
+    func checkEmailVerified() -> Bool {
+        return authUsecase.checkEmailVerified()
     }
     
     func checkDuplicatedNickname() async -> Bool {

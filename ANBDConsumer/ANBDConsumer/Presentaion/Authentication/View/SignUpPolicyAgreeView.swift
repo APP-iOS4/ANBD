@@ -74,6 +74,7 @@ struct SignUpPolicyAgreeView: View {
                 authenticationViewModel.isValidSignUp = true
                 
                 Task {
+                    await authenticationViewModel.withdrawal { }
                     await authenticationViewModel.signUp()
                 }
             }

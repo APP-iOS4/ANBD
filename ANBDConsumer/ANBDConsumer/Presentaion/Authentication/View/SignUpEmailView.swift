@@ -15,7 +15,8 @@ struct SignUpEmailView: View {
     
     @State private var isNavigate = false
     @State private var isShowingDuplicatedEmailAlert = false
-    @State private var isShwoingEmailValidCheckView = false
+    @State private var isShwoingEmailValidationCheckView = false
+    @State private var isCompletedEmailValidation = false
     
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
@@ -50,32 +51,44 @@ struct SignUpEmailView: View {
                         }
                     }
                     
-                    Button(action: {
-                        isShwoingEmailValidCheckView.toggle()
-                        downKeyboard()
-                        authenticationViewModel.isValidEmailButtonDisabled = true
-                        authenticationViewModel.validEmailRemainingTime = 10
-                        // TODO: - 이메일 검증
-                    }, label: {
-                        Text("인증하기")
+                    if isCompletedEmailValidation {
+                        Text("인증완료")
                             .padding(.all, 9)
-                            .font(ANBDFont.body2)
-                            .foregroundStyle(Color.white)
+                            .font(ANBDFont.pretendardSemiBold(14))
+                            .foregroundStyle(Color(uiColor: .systemGreen))
                             .background {
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(authenticationViewModel.isValidSignUpEmail && !authenticationViewModel.isValidEmailButtonDisabled ? Color.accent : Color.gray300)
+                                    .stroke(Color(uiColor: .systemGreen), lineWidth: 1)
                             }
-                    })
-                    .offset(y: 9)
-                    .disabled(!authenticationViewModel.isValidSignUpEmail || authenticationViewModel.isValidEmailButtonDisabled)
-                }
-                .onReceive(timer) { _ in
-                    if authenticationViewModel.isValidEmailButtonDisabled {
-                        if authenticationViewModel.validEmailRemainingTime > 0 {
-                            authenticationViewModel.validEmailRemainingTime -= 1
-                        } else {
-                            authenticationViewModel.isValidEmailButtonDisabled = false
-                        }
+                            .offset(y: 9)
+                    } else {
+                        Button(action: {
+                            Task {
+                                if await !authenticationViewModel.checkDuplicatedEmail() {
+                                    downKeyboard()
+                                    isShowingDuplicatedEmailAlert.toggle()
+                                } else {
+                                    isShwoingEmailValidationCheckView.toggle()
+                                    downKeyboard()
+                                    authenticationViewModel.isValidEmailButtonDisabled = true
+                                    authenticationViewModel.validEmailRemainingTime = 60
+                                    // TODO: - 이메일 검증
+                                    await authenticationViewModel.verifyEmail()
+                                }
+                            }
+                            
+                        }, label: {
+                            Text("인증하기")
+                                .padding(.all, 9)
+                                .font(ANBDFont.body2)
+                                .foregroundStyle(Color.white)
+                                .background {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(authenticationViewModel.isValidSignUpEmail && !authenticationViewModel.isValidEmailButtonDisabled ? Color.accent : Color.gray300)
+                                }
+                        })
+                        .offset(y: 9)
+                        .disabled(!authenticationViewModel.isValidSignUpEmail || authenticationViewModel.isValidEmailButtonDisabled)
                     }
                 }
                 
@@ -88,15 +101,13 @@ struct SignUpEmailView: View {
                     
                     Spacer()
                     
-                    if authenticationViewModel.isValidEmailButtonDisabled == true {
+                    if authenticationViewModel.isValidEmailButtonDisabled == true && isCompletedEmailValidation == false {
                         Text("\(authenticationViewModel.validEmailRemainingTime)초 후에 다시 시도하세요.")
                             .foregroundStyle(Color.gray)
                     }
                 }
                 .font(ANBDFont.Caption1)
                 .padding(.top, 8)
-                
-                
                 
                 HStack {
                     Text("이미 계정이 있으신가요?")
@@ -112,15 +123,8 @@ struct SignUpEmailView: View {
                 
                 Spacer()
                 
-                BlueSquareButton(title: "다음", isDisabled: !authenticationViewModel.isValidSignUpEmail) {
-                    Task {
-                        if await authenticationViewModel.checkDuplicatedEmail() {
-                            downKeyboard()
-                            isShowingDuplicatedEmailAlert.toggle()
-                        } else {
-                            nextButtonAction()
-                        }
-                    }
+                BlueSquareButton(title: "다음", isDisabled: !isCompletedEmailValidation) {
+                    nextButtonAction()
                 }
             }
             .padding()
@@ -131,8 +135,8 @@ struct SignUpEmailView: View {
                 }
             }
             
-            if isShwoingEmailValidCheckView {
-                CustomAlertView(isShowingCustomAlert: $isShwoingEmailValidCheckView,
+            if isShwoingEmailValidationCheckView {
+                CustomAlertView(isShowingCustomAlert: $isShwoingEmailValidationCheckView,
                                 viewType: .validEmail) {
                 }
             }
@@ -155,6 +159,17 @@ struct SignUpEmailView: View {
         
         .onAppear {
             focus = .email
+        }
+        
+        .onReceive(timer) { _ in
+            if authenticationViewModel.isValidEmailButtonDisabled {
+                if authenticationViewModel.validEmailRemainingTime > 0 {
+                    authenticationViewModel.validEmailRemainingTime -= 1
+                } else {
+                    authenticationViewModel.isValidEmailButtonDisabled = false
+                }
+            }
+            isCompletedEmailValidation = authenticationViewModel.checkEmailVerified()
         }
     }
     

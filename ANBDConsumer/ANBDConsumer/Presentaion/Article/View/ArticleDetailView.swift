@@ -22,7 +22,7 @@ struct ArticleDetailView: View {
     @State private var commentText: String = ""
     
     @State private var isShowingImageDetailView: Bool = false
-    @State private var isShowingCreateView: Bool = false
+    @State private var isShowingArticleCreateView: Bool = false
     @State private var isShowingArticleConfirmSheet: Bool = false
     @State private var isShowingCustomAlertArticle: Bool = false
     @State private var isShowingCustomAlertComment: Bool = false
@@ -36,6 +36,7 @@ struct ArticleDetailView: View {
     
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) private var dismiss
+    
     init(article: Article) {
         self.article = article
     }
@@ -107,23 +108,30 @@ struct ArticleDetailView: View {
                                 .padding(.bottom, 13)
                             
                             Text("\(articleViewModel.article.content)")
-                                .font(ANBDFont.body2)
-                                .padding(.bottom, 10)
-                            
-                            ForEach(0..<imageData.count, id: \.self) { i in
-                                if let image = UIImage(data: imageData[i]) {
+                                .font(ANBDFont.body1)
+
+                            ForEach(0..<articleViewModel.detailImages.count, id: \.self) { i in
+                                if let image = UIImage(data: articleViewModel.detailImages[i]) {
                                     Image(uiImage: image)
                                         .resizable()
-                                        .scaledToFill()
+                                        .aspectRatio(contentMode: .fit)
+                                        .scaledToFit()
                                         .onTapGesture {
                                             isShowingImageDetailView.toggle()
                                             idx = i
                                         }
-                                } else {
-                                    ProgressView()
+                                        .onAppear {
+                                            coordinator.isLoading = false
+                                        }
+                                        .padding(.top, 10)
                                 }
                             }
-                        
+                            
+                            if coordinator.isLoading {
+                                LoadingView()
+                                    .padding(.vertical, 250)
+                            }
+                            
                             HStack {
                                 Button {
                                     Task {
@@ -150,7 +158,7 @@ struct ArticleDetailView: View {
                         .padding(10)
                         Spacer()
                     }
-                    .padding(.leading, 9)
+                    .padding(.leading, 10)
                     
                     Divider()
                         .padding(.horizontal, 20)
@@ -204,6 +212,7 @@ struct ArticleDetailView: View {
                                                 .font(ANBDFont.Caption1)
                                                 .foregroundStyle(.gray400)
                                         }
+                                        
                                         Text("\(comment.content)")
                                             .font(ANBDFont.Caption3)
                                             .frame(maxHeight: .infinity)
@@ -215,8 +224,8 @@ struct ArticleDetailView: View {
                                     Menu {
                                         if comment.writerID == UserStore.shared.user.id {
                                             Button {
-                                                isShowingCommentEditView.toggle()
                                                 articleViewModel.comment = comment
+                                                isShowingCommentEditView.toggle()
                                             } label: {
                                                 Label("수정하기", systemImage: "square.and.pencil")
                                             }
@@ -280,7 +289,7 @@ struct ArticleDetailView: View {
                 CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertComment, viewType: .commentDelete) {
                     Task {
                         await articleViewModel.deleteComment(articleID: article.id, commentID: articleViewModel.comment.id)
-                        await articleViewModel.loadOneArticle(articleID: article.id)
+                        await articleViewModel.loadCommentList(articleID: article.id)
                     }
                 }
                 .zIndex(2)
@@ -309,7 +318,10 @@ struct ArticleDetailView: View {
                 Menu {
                     if article.writerID == UserStore.shared.user.id {
                         Button {
-                            isShowingCreateView.toggle()
+                            isShowingArticleCreateView.toggle()
+                            Task {
+                                await articleViewModel.loadOneArticle(articleID: articleViewModel.article.id)
+                            }
                         } label: {
                             Label("수정하기", systemImage: "square.and.pencil")
                         }
@@ -328,7 +340,6 @@ struct ArticleDetailView: View {
                             Label("신고하기", systemImage: "exclamationmark.bubble")
                         }
                     }
-                    
                 } label: {
                     Image(systemName: "ellipsis")
                         .font(ANBDFont.pretendardRegular(13))
@@ -338,21 +349,23 @@ struct ArticleDetailView: View {
             }
         }
         .onAppear {
+            coordinator.isLoading = true
             articleViewModel.getOneArticle(article: article)
             isLiked = user.likeArticles.contains(articleViewModel.article.id)
+            
             Task {
                 await articleViewModel.loadCommentList(articleID: article.id)
-                
                 writerUser = await myPageViewModel.getUserInfo(userID: article.writerID)
+                articleViewModel.detailImages = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
                 
-                imageData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
             }
+            
         }
-        .fullScreenCover(isPresented: $isShowingCreateView) {
-            ArticleCreateView(isShowingCreateView: $isShowingCreateView, category: article.category, commentCount: articleViewModel.comments.count, isNewArticle: false, article: article)
+        .fullScreenCover(isPresented: $isShowingArticleCreateView) {
+            ArticleCreateView(isShowingCreateView: $isShowingArticleCreateView, category: article.category, commentCount: articleViewModel.comments.count, isNewArticle: false, article: articleViewModel.article)
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
-            ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $imageData, idx: $idx)
+            ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $articleViewModel.detailImages, idx: $idx)
         }
         .fullScreenCover(isPresented: $isShowingCommentEditView) {
             CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: articleViewModel.comment, isEditComment: false)

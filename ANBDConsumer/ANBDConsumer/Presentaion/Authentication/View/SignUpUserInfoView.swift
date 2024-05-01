@@ -84,6 +84,7 @@ struct SignUpUserInfoView: View {
                 }
             }
         }
+        .toolbarRole(.editor)
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()

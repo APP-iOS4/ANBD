@@ -80,6 +80,7 @@
 		CB7BEE3E2BBD587200C0F298 /* ANBDModel in Frameworks */ = {isa = PBXBuildFile; productRef = CB7BEE3D2BBD587200C0F298 /* ANBDModel */; };
 		CB7BEE432BBD5BEC00C0F298 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CB7BEE422BBD5BEC00C0F298 /* GoogleService-Info.plist */; };
 		CBD556F32BE1C88900792CBE /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD556F22BE1C88900792CBE /* NetworkMonitor.swift */; };
+		CBD556F12BE08F0900792CBE /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CBD556F02BE08F0900792CBE /* Secrets.xcconfig */; };
 		D75C3A4D2BBF8C6900ED948C /* ArticleListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75C3A4C2BBF8C6900ED948C /* ArticleListCell.swift */; };
 		D75C3A512BBFD9DB00ED948C /* ArticleCreateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75C3A502BBFD9DB00ED948C /* ArticleCreateView.swift */; };
 		D75C3A532BC1377400ED948C /* ArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75C3A522BC1377400ED948C /* ArticleView.swift */; };
@@ -162,6 +163,7 @@
 		CB7BEE3A2BBD57FD00C0F298 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		CB7BEE422BBD5BEC00C0F298 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CBD556F22BE1C88900792CBE /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		CBD556F02BE08F0900792CBE /* Secrets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		D75C3A4C2BBF8C6900ED948C /* ArticleListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleListCell.swift; sourceTree = "<group>"; };
 		D75C3A4E2BBFB40200ED948C /* ArticleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleDetailView.swift; sourceTree = "<group>"; };
 		D75C3A502BBFD9DB00ED948C /* ArticleCreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleCreateView.swift; sourceTree = "<group>"; };
@@ -364,6 +366,7 @@
 				4221DE442BE08ACD00429C56 /* Secrets.xcconfig */,
 				CB7BEE422BBD5BEC00C0F298 /* GoogleService-Info.plist */,
 				A8BD75A32BE08BB80089799D /* Secrets.xcconfig */,
+				CBD556F02BE08F0900792CBE /* Secrets.xcconfig */,
 				CB7BEDF72BBD539F00C0F298 /* Font */,
 				CB7BEDBC2BBD4E9F00C0F298 /* Assets.xcassets */,
 				CB7BEDFC2BBD53AF00C0F298 /* Colors.xcassets */,
@@ -660,6 +663,7 @@
 			files = (
 				A8BD75A42BE08BB80089799D /* Secrets.xcconfig in Resources */,
 				CB7BEDBD2BBD4E9F00C0F298 /* Assets.xcassets in Resources */,
+				CBD556F12BE08F0900792CBE /* Secrets.xcconfig in Resources */,
 				CB7BEE432BBD5BEC00C0F298 /* GoogleService-Info.plist in Resources */,
 				CB7BEDFA2BBD53A000C0F298 /* Pretendard-Regular.otf in Resources */,
 				CB7BEDFB2BBD53A000C0F298 /* Pretendard-SemiBold.otf in Resources */,
@@ -871,6 +875,7 @@
 		};
 		CB7BEDC42BBD4E9F00C0F298 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A8BD75A32BE08BB80089799D /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -907,6 +912,7 @@
 		};
 		CB7BEDC52BBD4E9F00C0F298 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A8BD75A32BE08BB80089799D /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

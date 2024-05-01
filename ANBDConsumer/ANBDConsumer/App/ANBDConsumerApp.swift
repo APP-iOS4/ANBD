@@ -13,7 +13,6 @@ import FirebaseMessaging
 import ANBDModel
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-    
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
@@ -57,15 +56,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         
         let userInfo = response.notification.request.content.userInfo
-        
-        switch UIApplication.shared.applicationState {
-        case .active:
-            print("Received push message from APNs on Foreground")
-        case .background:
-            print("Received push message from APNs on Background")
-        case .inactive:
-            print("Received push message from APNs back to Foreground")
-        }
         
         // aps 딕셔너리에서 alert 딕셔너리 추출
         guard let apsDict = userInfo["aps"] as? [String: Any],

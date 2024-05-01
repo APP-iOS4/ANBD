@@ -9,58 +9,76 @@ import SwiftUI
 
 struct SignUpPasswordView: View {
     @EnvironmentObject private var authenticationViewModel: AuthenticationViewModel
+    @Environment(\.dismiss) private var dismiss
     
     @FocusState private var focus: FocusableField?
     
     @State private var isNavigate = false
+    @State private var isShowingEmailRerequestAlert = false
     
     var body: some View {
-        VStack {
-            Text("회원가입")
-                .font(ANBDFont.Heading2)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.top, 16)
-                .padding(.bottom, 70)
-            
-            TextFieldWithTitle(fieldType: .secure,
-                               title: "비밀번호",
-                               placeholder: "8~16자 (숫자, 영문, 특수기호 중 2개 이상)",
-                               inputText: $authenticationViewModel.signUpPasswordString)
-            .focused($focus, equals: .password)
-            .submitLabel(.next)
-            .onSubmit {
-                focus = .passwordCheck
-            }
-            .padding(.bottom)
-            
-            TextFieldWithTitle(fieldType: .secure,
-                               title: "비밀번호 확인",
-                               placeholder: "비밀번호를 한 번 더 입력해주세요.",
-                               inputText: $authenticationViewModel.signUpPasswordCheckString)
-            .focused($focus, equals: .passwordCheck)
-            .submitLabel(.go)
-            .onSubmit {
-                guard authenticationViewModel.isValidSignUpPassword else { return }
-                nextButtonAction()
-            }
-            
-            if !authenticationViewModel.errorMessage.isEmpty {
-                Text(authenticationViewModel.errorMessage)
+        ZStack {
+            VStack {
+                Text("회원가입")
+                    .font(ANBDFont.Heading2)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 8)
-                    .font(ANBDFont.Caption1)
-                    .foregroundStyle(Color.heartRed)
+                    .padding(.top, 16)
+                    .padding(.bottom, 70)
+                
+                TextFieldWithTitle(fieldType: .secure,
+                                   title: "비밀번호",
+                                   placeholder: "8~16자 (숫자, 영문, 특수기호 중 2개 이상)",
+                                   inputText: $authenticationViewModel.signUpPasswordString)
+                .focused($focus, equals: .password)
+                .submitLabel(.next)
+                .onSubmit {
+                    focus = .passwordCheck
+                }
+                .padding(.bottom)
+                
+                TextFieldWithTitle(fieldType: .secure,
+                                   title: "비밀번호 확인",
+                                   placeholder: "비밀번호를 한 번 더 입력해주세요.",
+                                   inputText: $authenticationViewModel.signUpPasswordCheckString)
+                .focused($focus, equals: .passwordCheck)
+                .submitLabel(.go)
+                .onSubmit {
+                    guard authenticationViewModel.isValidSignUpPassword else { return }
+                    nextButtonAction()
+                }
+                
+                if !authenticationViewModel.errorMessage.isEmpty {
+                    Text(authenticationViewModel.errorMessage)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.top, 8)
+                        .font(ANBDFont.Caption1)
+                        .foregroundStyle(Color.heartRed)
+                }
+                
+                Spacer()
+                
+                BlueSquareButton(title: "다음", isDisabled: !authenticationViewModel.isValidSignUpPassword) {
+                    nextButtonAction()
+                }
             }
+            .padding()
             
-            Spacer()
-            
-            BlueSquareButton(title: "다음", isDisabled: !authenticationViewModel.isValidSignUpPassword) {
-                nextButtonAction()
+            if isShowingEmailRerequestAlert {
+                CustomAlertView(isShowingCustomAlert: $isShowingEmailRerequestAlert, viewType: .emailRerequest) {
+                    dismiss()
+                }
             }
         }
-        .padding()
         
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button(action: {
+                    downKeyboard()
+                    isShowingEmailRerequestAlert.toggle()
+                }, label: {
+                    Label("뒤로 가기", systemImage: "chevron.backward")
+                })
+            }
             ToolbarItemGroup(placement: .keyboard) {
                 Button(action: {
                     focusPreviousField()
@@ -86,6 +104,7 @@ struct SignUpPasswordView: View {
             }
         }
         
+        .navigationBarBackButtonHidden()
         .navigationDestination(isPresented: $isNavigate) {
             SignUpUserInfoView()
         }

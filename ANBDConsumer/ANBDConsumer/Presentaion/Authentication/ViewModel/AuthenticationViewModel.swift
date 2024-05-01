@@ -16,6 +16,9 @@ final class AuthenticationViewModel: ObservableObject {
     
     @Published var authState: Bool = false
     
+    @Published var validEmailRemainingTime = 30
+    @Published var isValidEmailButtonDisabled = false
+    
     // MARK: Login Field
     @Published var loginEmailString: String = ""
     @Published private(set) var loginEmailStringDebounced: String = ""
@@ -279,6 +282,7 @@ extension AuthenticationViewModel {
     func signOut(_ completion: @escaping () -> Void) async {
         do {
             try await userUsecase.updateUserFCMToken(userID: UserStore.shared.user.id, fcmToken: "")
+            try await authUsecase.signOut()
             completion()
         } catch {
             print("Error sign out: \(error.localizedDescription)")
@@ -308,6 +312,18 @@ extension AuthenticationViewModel {
         let isDuplicate = await authUsecase.checkDuplicatedEmail(email: signUpEmailString)
         
         return isDuplicate
+    }
+    
+    func verifyEmail() async {
+        do {
+            try await authUsecase.verifyEmail(email: signUpEmailStringDebounced)
+        } catch {
+            print("Error verify email: \(error.localizedDescription)")
+        }
+    }
+    
+    func checkEmailVerified() -> Bool {
+        return authUsecase.checkEmailVerified()
     }
     
     func checkDuplicatedNickname() async -> Bool {

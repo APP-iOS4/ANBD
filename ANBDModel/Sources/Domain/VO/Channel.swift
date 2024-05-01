@@ -18,6 +18,7 @@ public struct Channel: Identifiable , Codable , Hashable{
     public let unreadCount : Int
     public let tradeId: String
     public var leaveUsers : [String]
+    public var activeUsers : [String]
     
     private static var dateFormatter : DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -39,6 +40,7 @@ public struct Channel: Identifiable , Codable , Hashable{
         self.unreadCount = unreadCount
         self.tradeId = tradeId
         self.leaveUsers = []
+        self.activeUsers = []
     }
 }
 

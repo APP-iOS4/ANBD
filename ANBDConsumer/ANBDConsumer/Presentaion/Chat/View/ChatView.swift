@@ -29,6 +29,7 @@ struct ChatView: View {
                                     Task {
                                         try await chatViewModel.setSelectedInfo(channel: channel)
                                         coordinator.channel = channel
+                                        coordinator.channelID = nil
                                         coordinator.chatPath.append(Page.chatDetailView)
                                     }
                                 }, label: {
@@ -54,6 +55,9 @@ struct ChatView: View {
                     Text("해당 채팅방을 나가시겠습니까?")
                 }
             }
+        }
+        .navigationDestination(for: Page.self) { page in
+            coordinator.build(page)
         }
         .navigationTitle("채팅")
         .navigationBarTitleDisplayMode(.inline)

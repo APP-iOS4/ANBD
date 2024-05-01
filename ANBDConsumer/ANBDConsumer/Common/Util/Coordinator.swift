@@ -55,6 +55,7 @@ final class Coordinator: ObservableObject {
     var user: User?
     var searchText: String = ""
     var channel: Channel?
+    var channelID: String?
     var isFromUserPage: Bool = false
     var toastViewType: ToastViewType = .report
     var isShowingToastView: Bool = false
@@ -84,7 +85,7 @@ final class Coordinator: ObservableObject {
             SearchResultView(category: category, searchText: searchText)
             
         case .chatDetailView:
-            ChatDetailView()
+            ChatDetailView(channelID: channelID)
             
         case .reportView:
             ReportView(reportViewType: reportType, reportedObjectID: reportedObjectID, reportedChannelID: reportedChannelID)

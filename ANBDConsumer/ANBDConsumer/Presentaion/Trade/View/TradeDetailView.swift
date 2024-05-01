@@ -77,10 +77,10 @@ struct TradeDetailView: View {
                                         case .home, .article, .trade, .chat:
                                             if coordinator.isFromUserPage {
                                                 coordinator.pop(2)
+                                                coordinator.isFromUserPage = false
                                             } else {
                                                 coordinator.appendPath(.userPageView)
                                             }
-                                            coordinator.isFromUserPage.toggle()
                                         case .mypage:
                                             coordinator.pop(coordinator.mypagePath.count)
                                         }

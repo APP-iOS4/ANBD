@@ -103,6 +103,7 @@ struct ANBDConsumerApp: App {
     @StateObject private var authenticationViewModel = AuthenticationViewModel()
     @StateObject private var searchViewModel = SearchViewModel()
     @StateObject private var reportViewModel = ReportViewModel()
+    @StateObject private var networkMonitor = NetworkMonitor()
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
@@ -116,6 +117,7 @@ struct ANBDConsumerApp: App {
                 .environmentObject(authenticationViewModel)
                 .environmentObject(searchViewModel)
                 .environmentObject(reportViewModel)
+                .environmentObject(networkMonitor)
         }
     }
 }

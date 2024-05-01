@@ -138,7 +138,7 @@ extension CustomAlertView {
             return "로그인 실패"
         case .changeState:
             return "거래 상태 변경"
-        case .tradeDelete, .articleDelete:
+        case .tradeDelete:
             return "삭제"
         case .articleEdit, .commentEdit:
             return "수정 취소"
@@ -158,6 +158,8 @@ extension CustomAlertView {
             return "로그인으로 돌아가기"
         case .emailRerequest:
             return "뒤로가기"
+        case .articleDelete:
+            return "게시글 삭제"
         }
     }
     
@@ -220,13 +222,13 @@ extension CustomAlertView {
             return "변경하기"
         case .tradeDelete, .articleDelete, .commentDelete:
             return "삭제하기"
-        case .articleEdit, .commentEdit, .articleCreate:
+        case .articleCreate:
             return "취소하기"
         case .report:
             return "신고하기"
         case .editingCancel:
             return "그만두기"
-        case .writingCancel, .signUpCancel, .emailRerequest:
+        case .writingCancel, .signUpCancel, .emailRerequest, .articleEdit, .commentEdit:
             return "돌아가기"
         case .validEmail:
             return "확인"

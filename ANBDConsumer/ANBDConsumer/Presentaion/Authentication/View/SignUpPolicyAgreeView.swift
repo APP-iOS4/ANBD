@@ -74,11 +74,14 @@ struct SignUpPolicyAgreeView: View {
                 authenticationViewModel.isValidSignUp = true
                 
                 Task {
+                    await authenticationViewModel.withdrawal { }
                     await authenticationViewModel.signUp()
                 }
             }
         }
         .padding()
+        
+        .toolbarRole(.editor)
         
         .sheet(isPresented: $authenticationViewModel.isShowingTermsView) {
             TermsView(type: authenticationViewModel.agreeType)

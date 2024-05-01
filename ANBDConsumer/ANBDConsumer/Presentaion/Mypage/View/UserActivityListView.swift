@@ -11,7 +11,7 @@ import ANBDModel
 struct UserActivityListView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
-    @EnvironmentObject private var coordinator: Coordinator
+    @StateObject private var coordinator = Coordinator.shared
     
     @State var category: ANBDCategory
     
@@ -148,6 +148,5 @@ extension UserActivityListView {
         UserActivityListView(category: .accua)
             .environmentObject(MyPageViewModel())
             .environmentObject(TradeViewModel())
-            .environmentObject(Coordinator())
     }
 }

@@ -12,7 +12,7 @@ import Kingfisher
 struct ArticleDetailView: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
-    @EnvironmentObject private var coordinator: Coordinator
+    @StateObject private var coordinator = Coordinator.shared
     
     private var article: Article
     private let user = UserStore.shared.user

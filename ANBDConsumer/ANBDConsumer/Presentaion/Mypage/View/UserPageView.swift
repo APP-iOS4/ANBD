@@ -166,6 +166,7 @@ struct UserPageView: View {
         }
         
         .onAppear {
+            coordinator.isFromUserPage = false
             isSignedInUser = myPageViewModel.checkSignInedUser(userID: writerUser.id)
             
             Task {

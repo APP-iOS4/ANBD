@@ -109,9 +109,9 @@ struct ArticleDetailView: View {
                             
                             Text("\(articleViewModel.article.content)")
                                 .font(ANBDFont.body1)
-                            
-                            ForEach(0..<imageData.count, id: \.self) { i in
-                                if let image = UIImage(data: imageData[i]) {
+
+                            ForEach(0..<articleViewModel.detailImages.count, id: \.self) { i in
+                                if let image = UIImage(data: articleViewModel.detailImages[i]) {
                                     Image(uiImage: image)
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
@@ -319,6 +319,9 @@ struct ArticleDetailView: View {
                     if article.writerID == UserStore.shared.user.id {
                         Button {
                             isShowingArticleCreateView.toggle()
+                            Task {
+                                await articleViewModel.loadOneArticle(articleID: articleViewModel.article.id)
+                            }
                         } label: {
                             Label("수정하기", systemImage: "square.and.pencil")
                         }
@@ -353,14 +356,16 @@ struct ArticleDetailView: View {
             Task {
                 await articleViewModel.loadCommentList(articleID: article.id)
                 writerUser = await myPageViewModel.getUserInfo(userID: article.writerID)
-                imageData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
+                articleViewModel.detailImages = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
+                
             }
+            
         }
         .fullScreenCover(isPresented: $isShowingArticleCreateView) {
-            ArticleCreateView(isShowingCreateView: $isShowingArticleCreateView, category: article.category, commentCount: articleViewModel.comments.count, isNewArticle: false, article: article)
+            ArticleCreateView(isShowingCreateView: $isShowingArticleCreateView, category: article.category, commentCount: articleViewModel.comments.count, isNewArticle: false, article: articleViewModel.article)
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
-            ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $imageData, idx: $idx)
+            ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $articleViewModel.detailImages, idx: $idx)
         }
         .fullScreenCover(isPresented: $isShowingCommentEditView) {
             CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: articleViewModel.comment, isEditComment: false)

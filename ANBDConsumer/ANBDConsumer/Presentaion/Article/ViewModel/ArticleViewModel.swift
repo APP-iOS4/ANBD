@@ -41,7 +41,8 @@ final class ArticleViewModel: ObservableObject {
                                               content: "")
     
     @Published var commentText: String = ""
-    
+    @Published var detailImages: [Data] = []
+
     func getOneArticle(article: Article) {
         self.article = article
     }
@@ -173,6 +174,8 @@ final class ArticleViewModel: ObservableObject {
     func loadOneArticle(articleID: String) async {
         do {
             let loadedArticle = try await articleUseCase.loadArticle(articleID: articleID)
+            self.detailImages = try await loadDetailImages(path: .article, containerID: self.article.id, imagePath: self.article.imagePaths)
+
             self.article = loadedArticle
         } catch {
             print(error.localizedDescription)

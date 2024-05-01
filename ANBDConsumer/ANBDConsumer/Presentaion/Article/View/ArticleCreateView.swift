@@ -12,6 +12,8 @@ import ANBDModel
 @MainActor
 struct ArticleCreateView: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
+    @EnvironmentObject private var coordinator: Coordinator
+
     @Binding var isShowingCreateView: Bool
     
     @State var category: ANBDCategory = .accua
@@ -275,7 +277,7 @@ struct ArticleCreateView: View {
                                 
                                 await articleViewModel.updateArticle(category: category, title: title, content: content, commentCount: commentCount, addImages: selectedImageData, deletedImagesIndex: deletedPhotosData)
                                 await articleViewModel.refreshSortedArticleList(category: category)
-                                await articleViewModel.loadArticle(article: article)
+                                await articleViewModel.loadOneArticle(articleID: article.id)
                             }
                         }
                         await articleViewModel.refreshSortedArticleList(category: category)

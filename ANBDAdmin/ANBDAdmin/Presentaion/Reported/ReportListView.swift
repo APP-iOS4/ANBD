@@ -10,16 +10,23 @@ import ANBDModel
 
 struct ReportListView: View {
     @StateObject private var reportListViewModel = ReportListViewModel()
-    @State private var selectedCategory: ReportType = .article // Default
+    @State private var selectedReportType: ReportType = .article // 기본 선택값은 '게시물'
 
     var body: some View {
         VStack {
-            Text("미응답 된 신고 메세지 : \(reportListViewModel.reportCount)")
+            Text("신고 메세지 개수: \(reportListViewModel.reportCount)")
                 .font(ANBDFont.Heading3)
                 .task {
-                                await reportListViewModel.fetchReportCount()
+                    await reportListViewModel.fetchReportCount()
+                }
+            Picker("신고 유형 선택", selection: $selectedReportType) {
+                            ForEach(ReportType.allCases, id: \.self) { type in
+                                Text(type.rawValue).tag(type)
                             }
-            
+                        }
+                        .pickerStyle(SegmentedPickerStyle())
+                        .padding()
+
             HStack{
                 Spacer()
                 VStack(alignment: .leading) {
@@ -84,10 +91,10 @@ struct ReportListView: View {
                     if !reportListViewModel.reportList.isEmpty {
                         Text("List End")
                             .foregroundColor(.gray)
-                          .onAppear {
-                              reportListViewModel.loadMoreReports()
-                          }
-                      }
+                            .onAppear {
+                                reportListViewModel.loadMoreReports()
+                            }
+                    }
                 }
                 .onAppear {
                     reportListViewModel.firstLoadReports()

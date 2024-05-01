@@ -343,6 +343,8 @@ final class ArticleViewModel: ObservableObject {
             
             guard writer.fcmToken != "" else { return }
             
+            print("✔️myToken: \(user.fcmToken)")
+            
             let headers = [
                 "Authorization": "key=\(serverKey)",
                 "Content-Type": "application/json"

@@ -60,10 +60,11 @@ struct ArticleDetailView: View {
                                                     Circle()
                                                         .stroke(Color.gray100, lineWidth: 1)
                                                 )
-                                        } else {
+                                        } else  {
                                             KFImage(URL(string: writerUser.profileImage))
                                                 .placeholder({ _ in
                                                     ProgressView()
+                                                    
                                                 })
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fill)
@@ -88,6 +89,13 @@ struct ArticleDetailView: View {
                                                     }
                                                 }
                                         }
+                                    } else {
+                                        ProgressView()
+                                            .frame(width: 33, height: 33)
+                                            .overlay(
+                                                Circle()
+                                                    .stroke(Color.gray100, lineWidth: 1)
+                                            )
                                     }
                                     
                                     Text("\(articleViewModel.article.writerNickname)")

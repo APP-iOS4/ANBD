@@ -372,7 +372,6 @@ struct ArticleDetailView: View {
                     articleViewModel.detailImages = try await articleViewModel.loadDetailImages(path: .article, containerID: articleViewModel.article.id, imagePath: articleViewModel.article.imagePaths)
                     await articleViewModel.loadCommentList(articleID: article.id)
                     writerUser = await myPageViewModel.getUserInfo(userID: article.writerID)
-                    //await articleViewModel.loadOneArticle(articleID: articleViewModel.article.id)
                 }
             }
             .fullScreenCover(isPresented: $isShowingArticleCreateView) {

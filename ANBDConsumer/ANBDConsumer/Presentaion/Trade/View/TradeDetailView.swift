@@ -167,6 +167,9 @@ struct TradeDetailView: View {
                 tradeViewModel.detailImages = try await tradeViewModel.loadDetailImages(path: .trade, containerID: tradeViewModel.trade.id, imagePath: tradeViewModel.trade.imagePaths)
             }
         }
+        .onDisappear {
+            tradeViewModel.detailImages = []
+        }
         .toolbar(.hidden, for: .tabBar)
         .fullScreenCover(isPresented: $isShowingCreat, onDismiss: {
             

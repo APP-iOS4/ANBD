@@ -42,6 +42,8 @@ struct TradeCreateView: View {
     var isNewProduct: Bool = true
     var trade: Trade?
     
+    @State private var isLoading = false
+    
     var body: some View {
         NavigationStack {
             if #available(iOS 17.0, *) {
@@ -325,7 +327,7 @@ fileprivate extension TradeCreateView {
                 
                 BlueSquareButton(title: isNewProduct ? "작성 완료" : "수정 완료", isDisabled: isFinished) {
                     if isNewProduct {
-                        coordinator.isLoading = true
+                        isLoading = true
                         
                         Task {
                             await tradeViewModel.createTrade(category: category, itemCategory: tradeViewModel.selectedItemCategory, location: tradeViewModel.selectedLocation, title: title, content: content, myProduct: myProduct, wantProduct: wantProduct, images: selectedPhotosData)
@@ -335,11 +337,11 @@ fileprivate extension TradeCreateView {
                             tradeViewModel.selectedLocation = .seoul
                             tradeViewModel.selectedItemCategory = .digital
                             
-                            coordinator.isLoading = false
+                            isLoading = false
                             self.isShowingCreate.toggle()
                         }
                     } else {
-                        coordinator.isLoading = true
+                        isLoading = true
                         
                         if let trade {
                             Task {
@@ -349,7 +351,7 @@ fileprivate extension TradeCreateView {
                                 tradeViewModel.selectedLocation = .seoul
                                 tradeViewModel.selectedItemCategory = .digital
                                 
-                                coordinator.isLoading = false
+                                isLoading = false
                                 self.isShowingCreate.toggle()
                             }
                         }
@@ -367,7 +369,7 @@ fileprivate extension TradeCreateView {
                 }
             }
             
-            if coordinator.isLoading {
+            if isLoading {
                 LoadingView()
             }
         }

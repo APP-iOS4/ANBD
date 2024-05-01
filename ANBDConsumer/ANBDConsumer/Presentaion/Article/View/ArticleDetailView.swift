@@ -28,7 +28,6 @@ struct ArticleDetailView: View {
     @State private var isShowingCustomAlertComment: Bool = false
     @State private var isShowingCommentEditView: Bool = false
     
-    @State private var imageData: [Data] = []
     @State private var idx: Int = 0
     
     @State private var writerUser: User?
@@ -348,6 +347,9 @@ struct ArticleDetailView: View {
                 }
             }
         }
+        .onDisappear {
+            articleViewModel.detailImages = []
+        }
         .onAppear {
             coordinator.isLoading = true
             articleViewModel.getOneArticle(article: article)
@@ -356,10 +358,9 @@ struct ArticleDetailView: View {
             Task {
                 await articleViewModel.loadCommentList(articleID: article.id)
                 writerUser = await myPageViewModel.getUserInfo(userID: article.writerID)
-                articleViewModel.detailImages = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
-                
+                articleViewModel.detailImages = try await articleViewModel.loadDetailImages(path: .article, containerID: articleViewModel.article.id, imagePath: articleViewModel.article.imagePaths)
+                await articleViewModel.loadOneArticle(articleID: articleViewModel.article.id)
             }
-            
         }
         .fullScreenCover(isPresented: $isShowingArticleCreateView) {
             ArticleCreateView(isShowingCreateView: $isShowingArticleCreateView, category: article.category, commentCount: articleViewModel.comments.count, isNewArticle: false, article: articleViewModel.article)

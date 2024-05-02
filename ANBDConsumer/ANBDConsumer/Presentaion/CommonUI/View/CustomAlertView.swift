@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CustomAlertView: View {
+    @EnvironmentObject private var authenticationViewModel: AuthenticationViewModel
     
     @Binding var isShowingCustomAlert: Bool
     var viewType: AlertViewType = .editingCancel
@@ -17,25 +18,53 @@ struct CustomAlertView: View {
         ZStack {
             Color.gray900
                 .opacity(0.3)
+                .ignoresSafeArea()
             
-            ZStack {
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(Color(UIColor.systemBackground))
-                    .frame(height: 200)
+            VStack {
+                Text(title)
+                    .font(ANBDFont.SubTitle1)
+                    .foregroundStyle(.gray900)
+                    .padding(.vertical, 10)
                 
-                VStack {
-                    Text(title)
-                        .font(ANBDFont.SubTitle1)
-                        .foregroundStyle(.gray900)
-                        .padding(.vertical, 10)
-                    
-                    Text(description)
-                        .multilineTextAlignment(.center)
-                        .font(ANBDFont.body1)
-                        .foregroundStyle(.gray900)
-                        .padding(.bottom, 15)
-                    
-                    if viewType == .duplicatedEmail || viewType == .duplicatedNickname || viewType == .signInFail || viewType == .imageSelelct {
+                Text(description)
+                    .multilineTextAlignment(.center)
+                    .font(ANBDFont.body1)
+                    .foregroundStyle(.gray900)
+                    .padding(.bottom, 15)
+                
+                if viewType == .duplicatedEmail || viewType == .duplicatedNickname || viewType == .signInFail || viewType == .imageSelelct || viewType == .validEmail {
+                    Button(action: {
+                        completionHandler()
+                        isShowingCustomAlert.toggle()
+                    }, label: {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(confirmButtonColor)
+                                .frame(height: 45)
+                            
+                            Text(confirmMessage)
+                                .foregroundStyle(.white)
+                                .fontWeight(textWeight)
+                        }
+                    })
+                    .font(ANBDFont.body1)
+                    .padding(.horizontal, 15)
+                } else {
+                    HStack {
+                        Button(action: {
+                            isShowingCustomAlert.toggle()
+                        }, label: {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(.gray300)
+                                    .frame(height: 45)
+                                
+                                Text("취소하기")
+                                    .foregroundStyle(.white)
+                            }
+                        })
+                        .padding(.leading, 15)
+                        
                         Button(action: {
                             completionHandler()
                             isShowingCustomAlert.toggle()
@@ -50,48 +79,19 @@ struct CustomAlertView: View {
                                     .fontWeight(textWeight)
                             }
                         })
-                        .font(ANBDFont.body1)
-                        .padding(.horizontal, 15)
-                    } else {
-                        HStack {
-                            Button(action: {
-                                isShowingCustomAlert.toggle()
-                            }, label: {
-                                ZStack {
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(.gray300)
-                                        .frame(height: 45)
-                                    
-                                    Text("취소하기")
-                                        .foregroundStyle(.white)
-                                }
-                            })
-                            .padding(.leading, 15)
-                            
-                            Button(action: {
-                                completionHandler()
-                                isShowingCustomAlert.toggle()
-                            }, label: {
-                                ZStack {
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .fill(confirmButtonColor)
-                                        .frame(height: 45)
-                                    
-                                    Text(confirmMessage)
-                                        .foregroundStyle(.white)
-                                        .fontWeight(textWeight)
-                                }
-                            })
-                            .padding(.trailing, 15)
-                        }
-                        .font(ANBDFont.body1)
+                        .padding(.trailing, 15)
                     }
+                    .font(ANBDFont.body1)
                 }
             }
-            .padding(.horizontal, 50)
             .foregroundStyle(.gray900)
+            .padding(.vertical, 35)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                .fill(Color(UIColor.systemBackground))
+            )
+            .padding(.horizontal, 45)
         }
-        .ignoresSafeArea()
     }
 }
 
@@ -104,6 +104,10 @@ extension CustomAlertView {
         case duplicatedEmail
         case duplicatedNickname
         case signInFail
+        case validEmail
+        case signUpCancel
+        case emailRerequest
+        case userKicked
         // trade
         case changeState
         case tradeDelete
@@ -135,7 +139,7 @@ extension CustomAlertView {
             return "로그인 실패"
         case .changeState:
             return "거래 상태 변경"
-        case .tradeDelete, .articleDelete:
+        case .tradeDelete:
             return "삭제"
         case .articleEdit, .commentEdit:
             return "수정 취소"
@@ -149,6 +153,16 @@ extension CustomAlertView {
             return "이미지 개수 제한"
         case .editingCancel:
             return "정보 수정 그만두기"
+        case .validEmail:
+            return "이메일 인증하기"
+        case .signUpCancel:
+            return "로그인으로 돌아가기"
+        case .emailRerequest:
+            return "뒤로가기"
+        case .articleDelete:
+            return "게시글 삭제"
+        case .userKicked:
+            return "접근 권한이 없습니다"
         }
     }
     
@@ -188,6 +202,14 @@ extension CustomAlertView {
             return "게시글 작성을 취소하시겠습니까?\n취소한 작성사항은 복구되지 않습니다."
         case .editingCancel:
             return "변경된 내용은 저장되지 않습니다."
+        case .validEmail:
+            return "\(authenticationViewModel.signUpEmailString) 에서\n이메일 인증 링크를 확인해주세요."
+        case .signUpCancel:
+            return "로그인 화면으로 돌아가시겠습니까?\n진행하신 회원가입은 취소됩니다."
+        case .emailRerequest:
+            return "이메일 인증을 다시 진행해야합니다.\n돌아가시겠습니까?"
+        case .userKicked:
+            return "문의 사항은 이메일로 연락 바랍니다."
         }
     }
     
@@ -199,26 +221,28 @@ extension CustomAlertView {
             return "로그아웃하기"
         case .withdrawal:
             return "탈퇴하기"
-        case .duplicatedEmail, .duplicatedNickname, .signInFail, .imageSelelct:
+        case .duplicatedEmail, .duplicatedNickname, .signInFail, .imageSelelct, .userKicked:
             return "확인"
         case .changeState:
             return "변경하기"
         case .tradeDelete, .articleDelete, .commentDelete:
             return "삭제하기"
-        case .articleEdit, .commentEdit, .articleCreate:
+        case .articleCreate:
             return "취소하기"
         case .report:
             return "신고하기"
         case .editingCancel:
             return "그만두기"
-        case .writingCancel:
+        case .writingCancel, .signUpCancel, .emailRerequest, .articleEdit, .commentEdit:
             return "돌아가기"
+        case .validEmail:
+            return "확인"
         }
     }
     
     private var confirmButtonColor: Color {
         switch viewType {
-        case .leaveChatRoom, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .imageSelelct, .signOut, .editingCancel, .writingCancel:
+        case .leaveChatRoom, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .imageSelelct, .signOut, .editingCancel, .writingCancel, .validEmail, .signUpCancel, .emailRerequest, .userKicked:
             return .accent
         case .withdrawal, .tradeDelete, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .articleCreate:
             return .heartRed
@@ -227,7 +251,7 @@ extension CustomAlertView {
     
     private var textWeight: Font.Weight {
         switch viewType {
-        case .leaveChatRoom, .signOut, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .tradeDelete, .writingCancel, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .imageSelelct, .editingCancel, .articleCreate:
+        case .leaveChatRoom, .signOut, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .tradeDelete, .writingCancel, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .imageSelelct, .editingCancel, .articleCreate, .validEmail, .signUpCancel, .emailRerequest, .userKicked:
             return .medium
         case .withdrawal:
             return .heavy
@@ -239,4 +263,5 @@ extension CustomAlertView {
     CustomAlertView(isShowingCustomAlert: .constant(true)) {
         print("Tap Confirm Button")
     }
+    .environmentObject(AuthenticationViewModel())
 }

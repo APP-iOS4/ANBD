@@ -12,14 +12,13 @@ import SkeletonUI
 struct ChatHeaderView: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
-    @EnvironmentObject private var coordinator: Coordinator
+    @StateObject private var coordinator = Coordinator.shared
     
     var trade: Trade?
+    var channelID: String?
     @State var imageData: Data?
     
     @State private var isLoading: Bool = true
-    
-//    @Binding var tradeState: TradeState
     @Binding var isShowingStateChangeCustomAlert: Bool
     
     var body: some View {
@@ -79,7 +78,7 @@ struct ChatHeaderView: View {
                         Text(trade == nil ? "삭제된 게시물" : trade?.title ?? "Unknown")
                             .lineLimit(2)
                             .multilineTextAlignment(.leading)
-                            .font(ANBDFont.SubTitle3)
+                            .font(ANBDFont.SubTitle2)
                             .skeleton(with: isLoading,size: CGSize(width: 150, height: 15))
                         
                         Spacer()
@@ -94,9 +93,7 @@ struct ChatHeaderView: View {
                     }
                     .padding(.bottom, 8)
                     
-                    Text(tradeProductString)
-                        .foregroundStyle(.gray400)
-                        .font(ANBDFont.Caption3)
+                    tradeProduct
                         .skeleton(with: isLoading,size: CGSize(width: 200, height: 12))
                 }
                 .padding(.vertical)
@@ -104,9 +101,18 @@ struct ChatHeaderView: View {
             .foregroundStyle(.gray900)
         })
         .onAppear {
-            if let trade {
-                Task {
-                    imageData = try await chatViewModel.loadThumnailImage(containerID: trade.id, imagePath: trade.thumbnailImagePath)
+            Task {
+                print("HeaderOnApper")
+                if let channelID {
+                    let channel = try await chatViewModel.getChannel(channelID: channelID)
+                    if let channel {
+                        try await chatViewModel.setSelectedInfo(channel: channel)
+                    }
+                }
+                
+                if let trade = chatViewModel.selectedTrade {
+                        await chatViewModel.loadTrade(tradeID: trade.id)
+                        imageData = try await chatViewModel.loadThumnailImage(containerID: trade.id, imagePath: trade.thumbnailImagePath)
                 }
             }
         }
@@ -115,19 +121,37 @@ struct ChatHeaderView: View {
 
     
     /// Trade 상품 String
-    private var tradeProductString: String {
-        if trade == nil {
-            return "글쓴이가 삭제한 게시물이에요."
-        } else {
-            if let trade {
-                if trade.category == .nanua {
-                    return trade.myProduct
-                } else if trade.category == .baccua {
-                    return "\(trade.myProduct) ↔ \(trade.wantProduct ?? "제시")"
+    @ViewBuilder
+    private var tradeProduct: some View {
+        VStack(alignment: .leading) {
+            if trade == nil {
+                Text("글쓴이가 삭제한 게시물이에요.")
+            } else {
+                if let trade = trade {
+                    if trade.category == .nanua {
+                        Text(trade.myProduct)
+                    } else if trade.category == .baccua {
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text("줄 것")
+                                    .padding(.bottom, 1)
+                                Text("받을 것")
+                            }
+                            .foregroundStyle(.gray400)
+                            
+                            VStack(alignment: .leading) {
+                                Text(trade.writerID == chatViewModel.user.id ? trade.myProduct : trade.wantProduct ?? "제시")
+                                    .padding(.bottom, 1)
+                                
+                                Text(trade.writerID == chatViewModel.user.id ? trade.wantProduct ?? "제시" : trade.myProduct)
+                            }
+                            .foregroundStyle(.gray900)
+                        }
+                    }
                 }
             }
-            return ""
         }
+        .font(ANBDFont.SubTitle3)
     }
 }
 

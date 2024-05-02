@@ -10,7 +10,7 @@ import ANBDModel
 import Combine
 
 struct ArticleView: View {
-    @EnvironmentObject private var coordinator: Coordinator
+    @StateObject private var coordinator = Coordinator.shared
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     
@@ -23,7 +23,6 @@ struct ArticleView: View {
     
     var body: some View {
         
-        // TODO: combine으로 고치기
         if #available(iOS 17.0, *) {
             listView
                 .onChange(of: category) {
@@ -107,6 +106,7 @@ struct ArticleView: View {
                 }, label: {
                     Image(systemName: "magnifyingglass")
                         .resizable()
+                        .aspectRatio(contentMode: .fit)
                         .frame(width: 20)
                         .foregroundStyle(.gray900)
                 })

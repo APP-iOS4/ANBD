@@ -4,6 +4,7 @@ import PhotosUI
 
 struct TradeCreateView: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
+    @StateObject private var coordinator = Coordinator.shared
     @Binding var isShowingCreate: Bool
     @State private var placeHolder: String = ""
     @State private var isFinished: Bool = true
@@ -41,69 +42,141 @@ struct TradeCreateView: View {
     var isNewProduct: Bool = true
     var trade: Trade?
     
+    @State private var isLoading = false
+    
     var body: some View {
-        if #available(iOS 17.0, *) {
-            wholeView
-                .onChange(of: mustTextFields, {
-                    if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
-                        self.isFinished = false
-                    } else {
-                        self.isFinished = true
-                    }
-                })
-            
-                .onChange(of: selectedPhotosData, {
-                    if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
-                        self.isFinished = false
-                    } else {
-                        self.isFinished = true
-                    }
-                    
-                    isCancelable = false
-                })
-            
-                .onChange(of: tmpSelectedData, {
-                    if tmpSelectedData.count != tradeViewModel.trade.imagePaths.count {
+        NavigationStack {
+            if #available(iOS 17.0, *) {
+                wholeView
+                    .onChange(of: mustTextFields, {
                         if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
                             self.isFinished = false
                         } else {
                             self.isFinished = true
                         }
-                        isCancelable = false
-                    }
-                })
-            
-        } else {
-            wholeView
-                .onChange(of: mustTextFields) { _ in
-                    if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
-                        self.isFinished = false
-                    } else {
-                        self.isFinished = true
-                    }
-                }
-            
-                .onChange(of: selectedPhotosData) { _ in
-                    if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
-                        self.isFinished = false
-                    } else {
-                        self.isFinished = true
-                    }
-                    
-                    isCancelable = false
-                }
-            
-                .onChange(of: tmpSelectedData) { _ in
-                    if tmpSelectedData.count != tradeViewModel.trade.imagePaths.count {
+                        // 공백입력 시 저장 x
+                        for item in mustTextFields {
+                            if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
+                                isFinished = true
+                            }
+                        }
+                    })
+                
+                    .onChange(of: selectedPhotosData, {
                         if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
                             self.isFinished = false
                         } else {
                             self.isFinished = true
                         }
+                        
+                        // 공백입력 시 저장 x
+                        for item in mustTextFields {
+                            if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
+                                isFinished = true
+                            }
+                        }
+                        
+                        isCancelable = false
+                    })
+                
+                    .onChange(of: tmpSelectedData, {
+                        if tmpSelectedData.count != tradeViewModel.trade.imagePaths.count {
+                            if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
+                                self.isFinished = false
+                            } else {
+                                self.isFinished = true
+                            }
+                            
+                            // 공백입력 시 저장 x
+                            for item in mustTextFields {
+                                if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
+                                    isFinished = true
+                                }
+                            }
+                            
+                            isCancelable = false
+                        }
+                    })
+                
+                    .onChange(of: title) {
+                        if title.count > 50 {
+                            title = String(title.prefix(50))
+                        }
+                    }
+                
+                    .onChange(of: content) {
+                        if content.count > 5000 {
+                            content = String(content.prefix(5000))
+                        }
+                    }
+                
+            } else {
+                wholeView
+                    .onChange(of: mustTextFields) { _ in
+                        if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
+                            self.isFinished = false
+                        } else {
+                            self.isFinished = true
+                        }
+                        
+                        //                        // 공백입력 시 저장 x
+                        for item in mustTextFields {
+                            if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
+                                isFinished = true
+                            }
+                        }
+                    }
+                
+                    .onChange(of: selectedPhotosData) { _ in
+                        if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
+                            self.isFinished = false
+                        } else {
+                            self.isFinished = true
+                        }
+                        
+                        // 공백입력 시 저장 x
+                        for item in mustTextFields {
+                            if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
+                                isFinished = true
+                            }
+                        }
+                        
                         isCancelable = false
                     }
-                }
+                
+                    .onChange(of: tmpSelectedData) { _ in
+                        if tmpSelectedData.count != tradeViewModel.trade.imagePaths.count {
+                            if (self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0) && self.title != "" && self.myProduct != "" && self.content != "" {
+                                self.isFinished = false
+                            } else {
+                                self.isFinished = true
+                            }
+                            
+                            // 공백입력 시 저장 x
+                            for item in mustTextFields {
+                                if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
+                                    isFinished = true
+                                }
+                            }
+                            
+                            isCancelable = false
+                        }
+                    }
+                
+                    .onChange(of: title) { _ in
+                        if title.count > 50 {
+                            title = String(title.prefix(50))
+                        }
+                    }
+                
+                    .onChange(of: content) { _ in
+                        if content.count > 5000 {
+                            content = String(content.prefix(5000))
+                        }
+                    }
+            }
         }
+        
     }
 }
 
@@ -111,58 +184,6 @@ fileprivate extension TradeCreateView {
     var wholeView: some View {
         ZStack {
             VStack(alignment: .leading) {
-                HStack {
-                    
-                    //MARK: - 취소 버튼 & 상단 타이틀
-                    
-                    Button(action: {
-                        endTextEditing()
-                        
-                        // 수정: 바뀐 정보가 있다면 backAlert
-                        if let trade = trade {
-                            if self.title != trade.title || self.content != trade.content || self.category != trade.category || self.myProduct != trade.myProduct || tradeViewModel.selectedItemCategory != trade.itemCategory || tradeViewModel.selectedLocation != trade.location {
-                                isCancelable = false
-                            } else {
-                                isFinished = false
-                            }
-                        } else {
-                            // 새로 작성: 쓰여진 필드가 있다면 backAleart
-                            for item in mustTextFields {
-                                if item != "" {
-                                    isCancelable = false
-                                }
-                            }
-                        }
- 
-                        if isCancelable {
-                            //지역은 user 선호 지역으로 선택되게
-                            tradeViewModel.selectedLocation = UserStore.shared.user.favoriteLocation
-                            tradeViewModel.selectedItemCategory = .digital
-                            isShowingCreate.toggle()
-                        } else {
-                            isShowingBackAlert.toggle()
-                        }
-                        
-                    }, label: {
-                        Image(systemName: "xmark")
-                    })
-                    
-                    Spacer()
-                    
-                    if isNewProduct {
-                        Text("새 상품 등록")
-                            .font(.system(size: 18))
-                            .fontWeight(.bold)
-                    } else {
-                        Text("상품 수정")
-                            .font(.system(size: 18))
-                            .fontWeight(.bold)
-                    }
-                    
-                    Spacer()
-                }//HStack
-                .foregroundStyle(.gray900)
-                .padding()
                 
                 //MARK: - 사진 선택
                 
@@ -170,7 +191,6 @@ fileprivate extension TradeCreateView {
                     if #available(iOS 17.0, *) {
                         photosView
                             .onChange(of: selectedItems) {
-                                
                                 Task {
                                     selectedPhotosData = []
                                     for newItem in selectedItems {
@@ -183,12 +203,10 @@ fileprivate extension TradeCreateView {
                                         }
                                     }
                                 }
-                                
                             }
                     } else {
                         photosView
                             .onChange(of: selectedItems) { _ in
-                                
                                 Task {
                                     selectedPhotosData = []
                                     for newItem in selectedItems {
@@ -200,7 +218,6 @@ fileprivate extension TradeCreateView {
                                             selectedPhotosData.removeLast()
                                         }
                                     }
-                                    
                                 }
                             }
                     }
@@ -304,34 +321,44 @@ fileprivate extension TradeCreateView {
                     }//VStack
                     .padding(.horizontal, 20)
                     .padding(.bottom, 10)
-                    
-                    //MARK: - 작성 완료 / 수정 완료 버튼
-                    
-                    BlueSquareButton(title: isNewProduct ? "작성 완료" : "수정 완료", isDisabled: isFinished) {
-                        if isNewProduct {
+                }//ScrollView
+                
+                //MARK: - 작성 완료 / 수정 완료 버튼
+                
+                BlueSquareButton(title: isNewProduct ? "작성 완료" : "수정 완료", isDisabled: isFinished) {
+                    if isNewProduct {
+                        isLoading = true
+                        
+                        Task {
+                            await tradeViewModel.createTrade(category: category, itemCategory: tradeViewModel.selectedItemCategory, location: tradeViewModel.selectedLocation, title: title, content: content, myProduct: myProduct, wantProduct: wantProduct, images: selectedPhotosData)
+                            
+                            await tradeViewModel.reloadFilteredTrades(category: category)
+                            
+                            tradeViewModel.selectedLocation = .seoul
+                            tradeViewModel.selectedItemCategory = .digital
+                            
+                            isLoading = false
+                            self.isShowingCreate.toggle()
+                        }
+                    } else {
+                        isLoading = true
+                        
+                        if let trade {
                             Task {
-                                await tradeViewModel.createTrade(category: category, itemCategory: tradeViewModel.selectedItemCategory, location: tradeViewModel.selectedLocation, title: title, content: content, myProduct: myProduct, wantProduct: wantProduct, images: selectedPhotosData)
-                                
-                                await tradeViewModel.reloadFilteredTrades(category: category)
+                                await tradeViewModel.updateTrade(category: category, title: title, content: content, myProduct: myProduct, wantProduct: wantProduct, addImages: selectedPhotosData, deletedImagesIndex: deletedPhotosData)
+                                await tradeViewModel.loadOneTrade(trade: trade)
                                 
                                 tradeViewModel.selectedLocation = .seoul
                                 tradeViewModel.selectedItemCategory = .digital
-                            }
-                        } else {
-                            if trade != nil {
-                                Task {
-                                    await tradeViewModel.updateTrade(category: category, title: title, content: content, myProduct: myProduct, wantProduct: wantProduct, addImages: selectedPhotosData, deletedImagesIndex: deletedPhotosData)
-                                    
-                                    tradeViewModel.selectedLocation = .seoul
-                                    tradeViewModel.selectedItemCategory = .digital
-                                }
+                                
+                                isLoading = false
+                                self.isShowingCreate.toggle()
                             }
                         }
-                        
-                        self.isShowingCreate.toggle()
                     }
-                    .padding(20)
-                }//ScrollView
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 5)
             }
             
             if isShowingBackAlert {
@@ -339,6 +366,55 @@ fileprivate extension TradeCreateView {
                     tradeViewModel.selectedLocation = .seoul
                     tradeViewModel.selectedItemCategory = .digital
                     isShowingCreate.toggle()
+                }
+            }
+            
+            if isLoading {
+                LoadingView()
+            }
+        }
+        .toolbar {
+            ToolbarItem(placement: .principal, content: {
+                if isNewProduct {
+                    Text("새 상품 등록")
+                        .font(.system(size: 18))
+                        .fontWeight(.bold)
+                } else {
+                    Text("상품 수정")
+                        .font(.system(size: 18))
+                        .fontWeight(.bold)
+                }
+            })
+            ToolbarItem(placement: .cancellationAction) {
+                Button {
+                    endTextEditing()
+                    
+                    // 수정: 바뀐 정보가 있다면 backAlert
+                    if let trade = trade {
+                        if self.title != trade.title || self.content != trade.content || self.category != trade.category || self.myProduct != trade.myProduct || tradeViewModel.selectedItemCategory != trade.itemCategory || tradeViewModel.selectedLocation != trade.location {
+                            isCancelable = false
+                        } else {
+                            isFinished = false
+                        }
+                    } else {
+                        // 새로 작성: 쓰여진 필드가 있다면 backAleart
+                        for item in mustTextFields {
+                            if item != "" {
+                                isCancelable = false
+                            }
+                        }
+                    }
+                    
+                    if isCancelable {
+                        //지역은 user 선호 지역으로 선택되게
+                        tradeViewModel.selectedLocation = UserStore.shared.user.favoriteLocation
+                        tradeViewModel.selectedItemCategory = .digital
+                        isShowingCreate.toggle()
+                    } else {
+                        isShowingBackAlert.toggle()
+                    }
+                } label: {
+                    Text("취소")
                 }
             }
         }
@@ -374,7 +450,7 @@ fileprivate extension TradeCreateView {
     
     var photosView: some View {
         HStack {
-            PhotosPicker(selection: $selectedItems, maxSelectionCount: 5, matching: .images) {
+            PhotosPicker(selection: $selectedItems, maxSelectionCount: 5 - tmpSelectedData.count, matching: .images) {
                 VStack {
                     Image(systemName: "camera.fill")
                         .font(.system(size: 25))
@@ -404,6 +480,7 @@ fileprivate extension TradeCreateView {
                                 
                                 Image(uiImage: image)
                                     .resizable()
+                                    .scaledToFill()
                                     .frame(width : 80 , height: 80)
                                     .cornerRadius(10)
                                     .clipped()
@@ -434,6 +511,7 @@ fileprivate extension TradeCreateView {
                                 
                                 Image(uiImage: image)
                                     .resizable()
+                                    .scaledToFill()
                                     .frame(width : 80 , height: 80)
                                     .cornerRadius(10)
                                     .clipped()

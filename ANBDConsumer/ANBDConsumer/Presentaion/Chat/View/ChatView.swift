@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ChatView: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
-    @EnvironmentObject private var coordinator: Coordinator
+    @StateObject private var coordinator = Coordinator.shared
     
     @State private var isShowingConfirmSheet: Bool = false
     @State private var isShowingCustomAlertView: Bool = false
@@ -27,8 +27,9 @@ struct ChatView: View {
                             ForEach(chatViewModel.chatRooms) { channel in
                                 Button(action: {
                                     Task {
-                                        try await chatViewModel.setSelectedUser(channel: channel)
+                                        try await chatViewModel.setSelectedInfo(channel: channel)
                                         coordinator.channel = channel
+                                        coordinator.channelID = nil
                                         coordinator.chatPath.append(Page.chatDetailView)
                                     }
                                 }, label: {
@@ -54,6 +55,9 @@ struct ChatView: View {
                     Text("해당 채팅방을 나가시겠습니까?")
                 }
             }
+        }
+        .navigationDestination(for: Page.self) { page in
+            coordinator.build(page)
         }
         .navigationTitle("채팅")
         .navigationBarTitleDisplayMode(.inline)

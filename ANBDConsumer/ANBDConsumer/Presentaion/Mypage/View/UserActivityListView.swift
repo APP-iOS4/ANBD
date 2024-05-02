@@ -11,7 +11,7 @@ import ANBDModel
 struct UserActivityListView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
-    @EnvironmentObject private var coordinator: Coordinator
+    @StateObject private var coordinator = Coordinator.shared
     
     @State var category: ANBDCategory
     
@@ -40,7 +40,7 @@ struct UserActivityListView: View {
         .toolbar(.hidden, for: .tabBar)
         .toolbarRole(.editor)
         
-        .navigationTitle("\(myPageViewModel.user.nickname)님의 ANBD")
+        .navigationTitle("\(navigationTitle)님의 ANBD")
         .navigationBarTitleDisplayMode(.inline)
         
         .onAppear {
@@ -104,6 +104,9 @@ struct UserActivityListView: View {
                                     tradeViewModel.getOneTrade(trade: trade)
                                     coordinator.appendPath(.tradeDetailView)
                                 }
+                                .onAppear {
+                                    tradeViewModel.detailImages = []
+                                }
                             
                             Divider()
                         }
@@ -128,11 +131,22 @@ struct UserActivityListView: View {
     }
 }
 
+extension UserActivityListView {
+    private var navigationTitle: String {
+        if myPageViewModel.user.nickname.count > 12 {
+            let title = myPageViewModel.user.nickname.prefix(12)
+            
+            return "\(title)..."
+        } else {
+            return myPageViewModel.user.nickname
+        }
+    }
+}
+
 #Preview {
     NavigationStack {
         UserActivityListView(category: .accua)
             .environmentObject(MyPageViewModel())
-            .environmentObject(ArticleViewModel())
             .environmentObject(TradeViewModel())
     }
 }

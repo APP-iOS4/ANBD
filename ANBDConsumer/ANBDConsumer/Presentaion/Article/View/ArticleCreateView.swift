@@ -12,6 +12,8 @@ import ANBDModel
 @MainActor
 struct ArticleCreateView: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
+    @EnvironmentObject private var coordinator: Coordinator
+
     @Binding var isShowingCreateView: Bool
     
     @State var category: ANBDCategory = .accua
@@ -24,7 +26,10 @@ struct ArticleCreateView: View {
     @State private var isShowingImageAlert: Bool = false
     
     @State private var selectedItems: [PhotosPickerItem] = []
+    @State private var tmpSelectedData: [Data] = []
     @State private var selectedImageData: [Data] = []
+    @State private var deletedPhotosData: [Int] = []
+    
     @State private var selectedMenuText: String = "아껴쓰기"
     
     private let placeHolder: String = "ANBD 이용자들을 위해 여러분들의 아껴쓰기/다시쓰기 Tip을 전수해주세요!"
@@ -38,8 +43,9 @@ struct ArticleCreateView: View {
                 if #available(iOS 17.0, *) {
                     articleCreateView
                         .onChange(of: selectedItems) {
-                            for newItem in selectedItems {
-                                Task {
+                            Task {
+                                selectedImageData = []
+                                for newItem in selectedItems {
                                     if let data = try? await newItem.loadTransferable(type: Data.self) {
                                         selectedImageData.append(data)
                                     }
@@ -49,18 +55,25 @@ struct ArticleCreateView: View {
                                     }
                                 }
                             }
-                            selectedItems = []
                         }
                         .onChange(of: title) {
                             if title.count > 50 {
                                 title = String(title.prefix(50))
                             }
                         }
+                        .onChange(of: content) {
+                            if content.count > 5000 {
+                                content = String(content.prefix(5000))
+                            }
+                        }
                 } else {
                     articleCreateView
-                        .onChange(of: selectedItems, perform:  { _ in
-                            for newItem in selectedItems {
-                                Task {
+                        .onChange(of: selectedItems)  { _ in
+                            Task {
+                                selectedImageData = []
+                                
+                                for newItem in selectedItems {
+                                    
                                     if let data = try? await newItem.loadTransferable(type: Data.self) {
                                         selectedImageData.append(data)
                                     }
@@ -70,11 +83,15 @@ struct ArticleCreateView: View {
                                     }
                                 }
                             }
-                            selectedItems = []
-                        })
+                        }
                         .onChange(of: title) { _ in
                             if title.count > 50 {
                                 title = String(title.prefix(50))
+                            }
+                        }
+                        .onChange(of: content) { _ in
+                            if content.count > 5000 {
+                                content = String(content.prefix(5000))
                             }
                         }
                 }
@@ -113,6 +130,7 @@ struct ArticleCreateView: View {
                     }
                     .font(ANBDFont.pretendardBold(24))
                     .padding(.leading, 20)
+                    .padding(.trailing, 12)
                 
                 Divider()
                     .padding(.horizontal, 20)
@@ -129,7 +147,8 @@ struct ArticleCreateView: View {
                     TextEditor(text: $content)
                         .scrollContentBackground(.hidden)
                         .font(ANBDFont.body1)
-                        .padding(.horizontal, 15)
+                        .padding(.leading, 15)
+                        .padding(.trailing, 9)
                         .onAppear {
                             if !isNewArticle {
                                 if let article = article {
@@ -141,31 +160,64 @@ struct ArticleCreateView: View {
                 
                 ScrollView(.horizontal) {
                     HStack {
-                        ForEach(selectedImageData, id: \.self) { photoData in
+                        ForEach(tmpSelectedData, id: \.self) { photoData in
                             ZStack(alignment:.topTrailing) {
+                                
                                 if let image = UIImage(data: photoData) {
+                                    
                                     Image(uiImage: image)
                                         .resizable()
+                                        .aspectRatio(contentMode: .fill)
                                         .frame(width : 70 , height: 70)
                                         .cornerRadius(10)
                                         .clipped()
                                         .padding(10)
                                 }
                                 
-                                Button {
-                                    if let idx = selectedImageData.firstIndex(of: photoData) {
-                                        selectedImageData.remove(at: idx)
+                                Circle()
+                                    .overlay (
+                                        Image(systemName: "xmark.circle.fill")
+                                            .font(ANBDFont.pretendardSemiBold(20))
+                                            .foregroundStyle(.gray900)
+                                    )
+                                    .foregroundStyle(.gray50)
+                                    .frame(width: 20, height: 30)
+                                    .onTapGesture {
+                                        if let idx = tmpSelectedData.firstIndex(of: photoData) {
+                                            deletedPhotosData.append(idx)
+                                            tmpSelectedData.remove(at: idx)
+                                        }
                                     }
-                                } label: {
-                                    Circle()
-                                        .overlay (
-                                            Image(systemName: "xmark.circle.fill")
-                                                .font(ANBDFont.pretendardSemiBold(20))
-                                                .foregroundStyle(.gray900)
-                                        )
-                                        .foregroundStyle(.gray50)
-                                        .frame(width: 20, height:20)
+                            }
+                        }
+                        ForEach(selectedImageData, id: \.self) { photoData in
+                            ZStack(alignment:.topTrailing) {
+                                
+                                if let image = UIImage(data: photoData) {
+                                    
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width : 70 , height: 70)
+                                        .cornerRadius(10)
+                                        .clipped()
+                                        .padding(10)
                                 }
+                                
+                                Circle()
+                                    .overlay (
+                                        Image(systemName: "xmark.circle.fill")
+                                            .font(ANBDFont.pretendardSemiBold(20))
+                                            .foregroundStyle(.gray900)
+                                    )
+                                    .foregroundStyle(.gray50)
+                                    .frame(width: 20, height: 30)
+                                    .onTapGesture {
+                                        if let idx = selectedImageData.firstIndex(of: photoData) {
+                                            selectedImageData.remove(at: idx)
+                                            selectedItems.remove(at: idx)
+                                        }
+                                    }
                             }
                         }
                     }
@@ -174,20 +226,16 @@ struct ArticleCreateView: View {
             Divider()
             
             HStack {
-                if selectedImageData.count == 5 {
-                    Button(action: {
+                if tmpSelectedData.count + selectedImageData.count == 5 {
+                    Button {
                         isShowingImageAlert.toggle()
-                    }, label: {
+                    } label: {
                         Image(systemName: "photo")
                         Text("사진")
-                    })
+                    }
                     .foregroundStyle(.accent)
                 } else {
-                    PhotosPicker(
-                        selection: $selectedItems,
-                        maxSelectionCount: 5-selectedImageData.count,
-                        matching: .images
-                    ) {
+                    PhotosPicker(selection: $selectedItems, maxSelectionCount: 5-tmpSelectedData.count, matching: .images) {
                         Image(systemName: "photo")
                         Text("사진")
                     }
@@ -201,8 +249,13 @@ struct ArticleCreateView: View {
         .onAppear {
             if !isNewArticle {
                 if let article = article {
+                    
+                    self.title = article.title
+                    self.category = article.category
+                    self.content = article.content
+                    
                     Task {
-                        selectedImageData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
+                        tmpSelectedData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
                     }
                 }
             }
@@ -222,9 +275,9 @@ struct ArticleCreateView: View {
                                 article.category = self.category
                                 article.commentCount = self.commentCount
                                 
-                                await articleViewModel.updateArticle(category: category, title: title, content: content, commentCount: commentCount,imageDatas: selectedImageData)
+                                await articleViewModel.updateArticle(category: category, title: title, content: content, commentCount: commentCount, addImages: selectedImageData, deletedImagesIndex: deletedPhotosData)
                                 await articleViewModel.refreshSortedArticleList(category: category)
-                                await articleViewModel.loadArticle(article: article)
+                                await articleViewModel.loadOneArticle(articleID: article.id)
                             }
                         }
                         await articleViewModel.refreshSortedArticleList(category: category)
@@ -234,7 +287,8 @@ struct ArticleCreateView: View {
                 } label: {
                     Text("완료")
                 }
-                .disabled(title.isEmpty || content.isEmpty || selectedImageData.isEmpty || title == article?.title && content == article?.content && category == article?.category)
+                .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || title == article?.title && content == article?.content && category == article?.category && (deletedPhotosData.isEmpty && selectedImageData.isEmpty))
+
             }
             
             ToolbarItem(placement: .cancellationAction) {
@@ -243,8 +297,9 @@ struct ArticleCreateView: View {
                         if let article = article {
                             let isTitleChanged = title != article.title
                             let isContentChanged = content != article.content
+                            let isImageChanged = tmpSelectedData != selectedImageData
                             
-                            if isTitleChanged || isContentChanged {
+                            if isTitleChanged || isContentChanged || isImageChanged {
                                 isShowingCustomEditAlert.toggle()
                             } else {
                                 isShowingCreateView.toggle()

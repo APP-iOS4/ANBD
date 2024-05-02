@@ -41,7 +41,8 @@ final class ArticleViewModel: ObservableObject {
                                               content: "")
     
     @Published var commentText: String = ""
-    
+    @Published var detailImages: [Data] = []
+
     func getOneArticle(article: Article) {
         self.article = article
     }
@@ -55,7 +56,7 @@ final class ArticleViewModel: ObservableObject {
     @MainActor
     func refreshSortedArticleList(category: ANBDCategory) async {
         do {
-            self.filteredArticles = try await articleUseCase.refreshSortedArticleList(category: category, by: self.sortOption, limit: 10)
+            self.filteredArticles = try await articleUseCase.refreshSortedArticleList(category: category, by: self.sortOption, limit: 8)
         } catch {
             print(error.localizedDescription)
         }
@@ -65,11 +66,9 @@ final class ArticleViewModel: ObservableObject {
     func loadMoreArticles(category: ANBDCategory) async {
         do {
             var newArticles: [Article] = []
-            newArticles = try await articleUseCase.loadArticleList(category: category, by: self.sortOption, limit: 10)
-            
+            newArticles = try await articleUseCase.loadArticleList(category: category, by: self.sortOption, limit: 5)
             for item in newArticles {
                 if filteredArticles.contains(item) {
-                    print("end")
                 } else {
                     filteredArticles.append(contentsOf: newArticles)
                 }
@@ -128,7 +127,7 @@ final class ArticleViewModel: ObservableObject {
     }
     
     @MainActor
-    func updateArticle(category: ANBDCategory, title: String, content: String, commentCount: Int, imageDatas: [Data]) async {
+    func updateArticle(category: ANBDCategory, title: String, content: String, commentCount: Int, addImages: [Data], deletedImagesIndex: [Int]) async {
         
         let user = UserStore.shared.user
         let originCategory = self.article.category
@@ -138,15 +137,22 @@ final class ArticleViewModel: ObservableObject {
         self.article.content = content
         self.article.commentCount = commentCount
         
+        //삭제된 이미지
+        var deletedImages: [String] = []
+        for i in deletedImagesIndex {
+            deletedImages.append(self.article.imagePaths[i])
+            self.article.imagePaths.remove(at: i)
+        }
+        
         //이미지 리사이징
         var newImages: [Data] = []
-        for image in imageDatas {
+        for image in addImages {
             let imageData = await UIImage(data: image)?.byPreparingThumbnail(ofSize: .init(width: 1024, height: 1024))?.jpegData(compressionQuality: 0.5)
             newImages.append(imageData ?? Data())
         }
         
         do {
-            // try await articleUseCase.updateArticle(article: self.article, imageDatas: newImages)
+             try await articleUseCase.updateArticle(article: self.article, add: newImages, delete: deletedImages)
             try await userUsecase.updateUserPostCount(user: user, before: originCategory, after: category)
             article = try await articleUseCase.loadArticle(articleID: article.id)
             await UserStore.shared.updateLocalUserInfo()
@@ -168,6 +174,8 @@ final class ArticleViewModel: ObservableObject {
     func loadOneArticle(articleID: String) async {
         do {
             let loadedArticle = try await articleUseCase.loadArticle(articleID: articleID)
+            self.detailImages = try await loadDetailImages(path: .article, containerID: self.article.id, imagePath: self.article.imagePaths)
+
             self.article = loadedArticle
         } catch {
             print(error.localizedDescription)

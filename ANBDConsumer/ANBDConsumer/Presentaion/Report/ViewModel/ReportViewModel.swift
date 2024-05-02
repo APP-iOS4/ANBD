@@ -27,8 +27,11 @@ final class ReportViewModel: ObservableObject {
         } catch {
             print("submitReport ERROR: \(error)")
             
-            guard let error = error as? DBError else { return }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? DBError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
 }

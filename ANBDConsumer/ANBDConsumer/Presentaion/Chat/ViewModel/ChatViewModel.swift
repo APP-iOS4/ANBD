@@ -67,8 +67,11 @@ final class ChatViewModel: ObservableObject {
             print("Error: \(error)")
             self.selectedChannel = nil
             
-            guard let error = error as? ChannelError else { return }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? ChannelError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -84,8 +87,11 @@ final class ChatViewModel: ObservableObject {
         } catch {
             print("leaveChatRoom ERROR: \(error)")
             
-            guard let error = error as? ChannelError else { return }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? ChannelError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -96,8 +102,11 @@ final class ChatViewModel: ObservableObject {
         } catch {
             print("Error: \(error)")
             
-            guard let error = error as? ChannelError else { return }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? ChannelError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
 }
@@ -141,8 +150,11 @@ extension ChatViewModel {
         } catch {
             print("addListener ERROR: \(error)")
             
-            guard let error = error as? MessageError else { return }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? MessageError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -206,8 +218,11 @@ extension ChatViewModel {
         } catch {
             print("sendMessage Error: \(error)")
             
-            guard let error = error as? MessageError else { return }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? MessageError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -221,8 +236,11 @@ extension ChatViewModel {
         } catch {
             print("Error: \(error)")
             
-            guard let error = error as? MessageError else { return }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? MessageError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -240,8 +258,11 @@ extension ChatViewModel {
         catch {
             print("updateActiveUser:\(error)")
             
-            guard let error = error as? MessageError else { return }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? MessageError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -256,8 +277,11 @@ extension ChatViewModel {
         } catch {
             print("checkOtherUserInChatRoom error:\(error)")
             
-            guard let error = error as? ChannelError else { return false }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? ChannelError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return false
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
             
             return false
         }
@@ -288,8 +312,11 @@ extension ChatViewModel {
         } catch {
             self.selectedTrade = nil
             
-            guard let error = error as? ChannelError else { return }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? ChannelError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
         
         do {
@@ -297,8 +324,11 @@ extension ChatViewModel {
         } catch {
             self.selectedUser = User(id: "", nickname: "(알수없음)", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
             
-            guard let error = error as? ChannelError else { return }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? ChannelError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -308,8 +338,11 @@ extension ChatViewModel {
         } catch {
             self.selectedUser = User(id: "", nickname: "(알수없음)", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
             
-            guard let error = error as? ChannelError else { return }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? ChannelError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -325,8 +358,15 @@ extension ChatViewModel {
         } catch {
             print("error:\(error)")
             
-            guard let error = error as? UserError else { return }
-            ToastManager.shared.toast = Toast(style: .error, message: error.localizedDescription)
+            guard let error = error as? UserError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            if error.rawValue == 4009 {
+                ToastManager.shared.toast = Toast(style: .error, message: "사용자 필드 누락(ID)")
+            } else {
+                ToastManager.shared.toast = Toast(style: .error, message: "사용자 필드 누락(이미지)")
+            }
         }
     }
     
@@ -346,8 +386,11 @@ extension ChatViewModel {
             return otherUser
         } catch {
             
-            guard let error = error as? ChannelError else { return User(id: "", nickname: "알수없음", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false) }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? ChannelError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return User(id: "", nickname: "알수없음", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
             
             return User(id: "", nickname: "알수없음", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
         }
@@ -371,8 +414,11 @@ extension ChatViewModel {
         } catch {
             print("getTrade Error: \(error)")
             
-            guard let error = error as? TradeError else { return nil }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? TradeError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return nil
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
             
             return nil
         }
@@ -383,8 +429,11 @@ extension ChatViewModel {
         do {
             return try await chatUsecase.getChannel(tradeID: tradeID, userID: user.id)
         } catch {
-            guard let error = error as? ChannelError else { return nil }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? ChannelError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return nil
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
             
             return nil
         }
@@ -395,8 +444,11 @@ extension ChatViewModel {
         do {
             return try await chatUsecase.getChannel(channelID: channelID)
         } catch {
-            guard let error = error as? ChannelError else { return nil }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? ChannelError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return nil
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
             
             return nil
         }
@@ -417,8 +469,11 @@ extension ChatViewModel {
             let image = UIImage(named: "ANBDWarning")
             let imageData = image?.pngData()
             
-            guard let error = error as? StorageError else { return imageData ?? Data() }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? StorageError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return imageData ?? Data()
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
             
             return imageData ?? Data()
         }
@@ -431,8 +486,11 @@ extension ChatViewModel {
         } catch {
             print("downloadImagePath Error: \(error)")
             
-            guard let error = error as? StorageError else { return Data() }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? StorageError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return Data()
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
             
             return Data()
         }
@@ -445,8 +503,11 @@ extension ChatViewModel {
         } catch {
             print("downloadImageUrl Error: \(error)")
             
-            guard let error = error as? StorageError else { return nil }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? StorageError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return nil
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
             
             return nil
         }
@@ -463,8 +524,11 @@ extension ChatViewModel {
         } catch {
             print("updateTradeState Error: \(error.localizedDescription)")
             
-            guard let error = error as? TradeError else { return }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? TradeError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -474,8 +538,11 @@ extension ChatViewModel {
         } catch {
             print("loadTrade \(error.localizedDescription)")
             
-            guard let error = error as? TradeError else { return }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? TradeError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
 }

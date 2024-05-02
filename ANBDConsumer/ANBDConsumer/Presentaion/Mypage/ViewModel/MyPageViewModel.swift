@@ -112,8 +112,15 @@ final class MyPageViewModel: ObservableObject {
             #if DEBUG
             print("Error get user info: \(error.localizedDescription)")
             #endif
-            // ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
-            
+            guard let error = error as? UserError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return MyPageViewModel.mockUser
+            }
+            if error.rawValue == 4009 {
+                ToastManager.shared.toast = Toast(style: .error, message: "사용자 필드 누락(ID)")
+            } else {
+                ToastManager.shared.toast = Toast(style: .error, message: "사용자 필드 누락(이미지)")
+            }
             return MyPageViewModel.mockUser
         }
     }
@@ -127,8 +134,11 @@ final class MyPageViewModel: ObservableObject {
             #if DEBUG
             print("Error load articles: \(error.localizedDescription)")
             #endif
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
-            
+            guard let error = error as? ArticleError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return []
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
             return []
         }
     }
@@ -142,8 +152,11 @@ final class MyPageViewModel: ObservableObject {
             #if DEBUG
             print("Error load trades: \(error.localizedDescription)")
             #endif
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
-            
+            guard let error = error as? TradeError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return []
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
             return []
         }
     }
@@ -167,7 +180,11 @@ final class MyPageViewModel: ObservableObject {
                 #if DEBUG
                 print("Error load user liked articles: \(error.localizedDescription)")
                 #endif
-                ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
+                guard let error = error as? ArticleError else {
+                    ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                    return
+                }
+                ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
             }
         }
         userLikedArticles = articles
@@ -184,7 +201,11 @@ final class MyPageViewModel: ObservableObject {
                 #if DEBUG
                 print("Error load user hearted trades: \(error.localizedDescription)")
                 #endif
-                ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
+                guard let error = error as? TradeError else {
+                    ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                    return
+                }
+                ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
             }
         }
         userHeartedTrades = trades
@@ -206,7 +227,15 @@ final class MyPageViewModel: ObservableObject {
             #if DEBUG
             print("Error update user profile: \(error.localizedDescription)")
             #endif
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
+            guard let error = error as? UserError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            if error.rawValue == 4009 {
+                ToastManager.shared.toast = Toast(style: .error, message: "사용자 필드 누락(ID)")
+            } else {
+                ToastManager.shared.toast = Toast(style: .error, message: "사용자 필드 누락(이미지)")
+            }
         }
     }
     
@@ -263,7 +292,15 @@ final class MyPageViewModel: ObservableObject {
             #if DEBUG
             print("Error update user info: \(error.localizedDescription)")
             #endif
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
+            guard let error = error as? UserError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            if error.rawValue == 4009 {
+                ToastManager.shared.toast = Toast(style: .error, message: "사용자 필드 누락(ID)")
+            } else {
+                ToastManager.shared.toast = Toast(style: .error, message: "사용자 필드 누락(이미지)")
+            }
         }
     }
     

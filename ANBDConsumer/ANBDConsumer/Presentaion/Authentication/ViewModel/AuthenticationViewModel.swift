@@ -262,7 +262,15 @@ extension AuthenticationViewModel {
             #if DEBUG
             print("updateUserToken:\(error)")
             #endif
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
+            guard let error = error as? UserError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            if error.rawValue == 4009 {
+                ToastManager.shared.toast = Toast(style: .error, message: "사용자 필드 누락(ID)")
+            } else {
+                ToastManager.shared.toast = Toast(style: .error, message: "사용자 필드 누락(이미지)")
+            }
         }
     }
     
@@ -279,8 +287,11 @@ extension AuthenticationViewModel {
             #if DEBUG
             print("Error sign in: \(error.localizedDescription)")
             #endif
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
-            
+            guard let error = error as? AuthError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return false
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
             return false
         }
     }
@@ -294,7 +305,11 @@ extension AuthenticationViewModel {
             #if DEBUG
             print("Error sign out: \(error.localizedDescription)")
             #endif
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
+            guard let error = error as? AuthError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -316,7 +331,11 @@ extension AuthenticationViewModel {
             #if DEBUG
             print("Error sign up: \(error.localizedDescription)")
             #endif
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
+            guard let error = error as? AuthError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -333,7 +352,11 @@ extension AuthenticationViewModel {
             #if DEBUG
             print("Error verify email: \(error.localizedDescription)")
             #endif
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
+            guard let error = error as? AuthError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -364,7 +387,11 @@ extension AuthenticationViewModel {
             #if DEBUG
             print("Error withdrawal: \(error.localizedDescription)")
             #endif
-            // ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
+            guard let error = error as? AuthError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     

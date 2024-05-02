@@ -29,8 +29,11 @@ final class HomeViewModel: ObservableObject {
         do {
             try await bannerItemList = bannerUsecase.loadBannerList()
         } catch {
-            guard let error = error as? DBError else { return }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? DBError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -46,8 +49,11 @@ final class HomeViewModel: ObservableObject {
             print("=== ERROR: LOAD ARTICLE ===")
             print("\(error)")
             
-            guard let error = error as? ArticleError else { return }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? ArticleError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -60,8 +66,11 @@ final class HomeViewModel: ObservableObject {
                 try await baccuaTrades = tradeUsecase.loadRecentTradeList(category: .baccua)
             }
         } catch {
-            guard let error = error as? TradeError else { return }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? TradeError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -76,8 +85,11 @@ final class HomeViewModel: ObservableObject {
             let image = UIImage(named: "ANBDWarning")
             let imageData = image?.pngData()
             
-            guard let error = error as? StorageError else { return imageData ?? Data() }
-            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            guard let error = error as? StorageError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return imageData ?? Data()
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
             
             return imageData ?? Data()
         }

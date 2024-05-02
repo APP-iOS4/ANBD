@@ -138,7 +138,10 @@ struct UserListDetailView: View {
                 HStack {
                     Text("userLevel:").foregroundColor(.gray) + Text(" \(user.userLevel.rawValue)")
                     if (user.userLevel == .consumer) || (user.userLevel == .banned) {
-                        Button(action: { editingUserLevel = true }) {
+                        Button(action: {
+                            editingUserLevel = true
+                            
+                        }) {
                             Text("Edit")
                         }
                         .buttonStyle(.borderedProminent)

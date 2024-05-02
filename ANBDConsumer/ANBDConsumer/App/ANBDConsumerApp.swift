@@ -75,14 +75,29 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 
 extension AppDelegate: MessagingDelegate {
     
+//    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+//        Messaging.messaging().token { token, error in
+//            if let error = error {
+//                print("Error fetching FCM registration token: \(error)")
+//            } else if let token = token {
+//                UserStore.shared.deviceToken = token
+//            }
+//        }
+//    }
+    
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        Messaging.messaging().token { token, error in
-            if let error = error {
-                print("Error fetching FCM registration token: \(error)")
-            } else if let token = token {
-                UserStore.shared.deviceToken = token
-            }
+        print("Firebase registration token: \(String(describing: fcmToken))")
+        
+        let dataDict: [String: String] = ["token": fcmToken ?? ""]
+        NotificationCenter.default.post(
+            name: Notification.Name("FCMToken"),
+            object: nil,
+            userInfo: dataDict
+        )
+        if let fcmToken {
+            UserStore.shared.deviceToken = fcmToken
         }
+
     }
 }
 
@@ -96,11 +111,10 @@ extension AppDelegate {
         }
         coorinator.selectedTab = .chat
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
                 coorinator.channelID = channelID
                 coorinator.appendPath(.chatDetailView)
         }
-
     }
 }
 

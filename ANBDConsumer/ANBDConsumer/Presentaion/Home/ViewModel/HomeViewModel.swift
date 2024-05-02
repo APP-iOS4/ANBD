@@ -29,7 +29,8 @@ final class HomeViewModel: ObservableObject {
         do {
             try await bannerItemList = bannerUsecase.loadBannerList()
         } catch {
-            
+            guard let error = error as? DBError else { return }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
         }
     }
     
@@ -44,6 +45,9 @@ final class HomeViewModel: ObservableObject {
         } catch {
             print("=== ERROR: LOAD ARTICLE ===")
             print("\(error)")
+            
+            guard let error = error as? ArticleError else { return }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
         }
     }
     
@@ -56,7 +60,8 @@ final class HomeViewModel: ObservableObject {
                 try await baccuaTrades = tradeUsecase.loadRecentTradeList(category: .baccua)
             }
         } catch {
-            
+            guard let error = error as? TradeError else { return }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
         }
     }
     
@@ -70,6 +75,10 @@ final class HomeViewModel: ObservableObject {
             /// 이미지 예외 처리
             let image = UIImage(named: "ANBDWarning")
             let imageData = image?.pngData()
+            
+            guard let error = error as? StorageError else { return imageData ?? Data() }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            
             return imageData ?? Data()
         }
     }

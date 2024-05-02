@@ -66,6 +66,9 @@ final class ChatViewModel: ObservableObject {
         } catch {
             print("Error: \(error)")
             self.selectedChannel = nil
+            
+            guard let error = error as? ChannelError else { return }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
         }
     }
     
@@ -80,6 +83,9 @@ final class ChatViewModel: ObservableObject {
             try await chatUsecase.leaveChatRoom(channelID: channelID, lastMessageID: lastMessageID, userID: user.id)
         } catch {
             print("leaveChatRoom ERROR: \(error)")
+            
+            guard let error = error as? ChannelError else { return }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
         }
     }
     
@@ -89,6 +95,9 @@ final class ChatViewModel: ObservableObject {
             try await chatUsecase.updateUnreadCount(channelID: channelID, userID: user.id)
         } catch {
             print("Error: \(error)")
+            
+            guard let error = error as? ChannelError else { return }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
         }
     }
 }
@@ -131,6 +140,9 @@ extension ChatViewModel {
             }
         } catch {
             print("addListener ERROR: \(error)")
+            
+            guard let error = error as? MessageError else { return }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
         }
     }
     
@@ -193,6 +205,9 @@ extension ChatViewModel {
             }
         } catch {
             print("sendMessage Error: \(error)")
+            
+            guard let error = error as? MessageError else { return }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
         }
     }
     
@@ -205,6 +220,9 @@ extension ChatViewModel {
             }
         } catch {
             print("Error: \(error)")
+            
+            guard let error = error as? MessageError else { return }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
         }
     }
     
@@ -221,6 +239,9 @@ extension ChatViewModel {
         }
         catch {
             print("updateActiveUser:\(error)")
+            
+            guard let error = error as? MessageError else { return }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
         }
     }
     
@@ -234,6 +255,10 @@ extension ChatViewModel {
             return true
         } catch {
             print("checkOtherUserInChatRoom error:\(error)")
+            
+            guard let error = error as? ChannelError else { return false }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            
             return false
         }
     }
@@ -262,12 +287,18 @@ extension ChatViewModel {
             self.selectedTrade = try await chatUsecase.getTradeInChannel(channelID: channel.id)
         } catch {
             self.selectedTrade = nil
+            
+            guard let error = error as? ChannelError else { return }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
         }
         
         do {
             self.selectedUser = try await chatUsecase.getOtherUser(channel: channel, userID: user.id)
         } catch {
             self.selectedUser = User(id: "", nickname: "(알수없음)", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
+            
+            guard let error = error as? ChannelError else { return }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
         }
     }
     
@@ -276,6 +307,9 @@ extension ChatViewModel {
             self.selectedUser = try await chatUsecase.getOtherUser(channel: channel, userID: user.id)
         } catch {
             self.selectedUser = User(id: "", nickname: "(알수없음)", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
+            
+            guard let error = error as? ChannelError else { return }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
         }
     }
     
@@ -290,6 +324,9 @@ extension ChatViewModel {
             self.selectedUser = try await userUsecase.getUserInfo(userID: trade.writerID)
         } catch {
             print("error:\(error)")
+            
+            guard let error = error as? UserError else { return }
+            ToastManager.shared.toast = Toast(style: .error, message: error.localizedDescription)
         }
     }
     
@@ -308,6 +345,10 @@ extension ChatViewModel {
             let otherUser = try await chatUsecase.getOtherUser(channel: channel, userID: user.id)
             return otherUser
         } catch {
+            
+            guard let error = error as? ChannelError else { return User(id: "", nickname: "알수없음", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false) }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            
             return User(id: "", nickname: "알수없음", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
         }
     }
@@ -329,6 +370,10 @@ extension ChatViewModel {
             return try await chatUsecase.getTradeInChannel(channelID: channelID)
         } catch {
             print("getTrade Error: \(error)")
+            
+            guard let error = error as? TradeError else { return nil }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            
             return nil
         }
     }
@@ -338,6 +383,9 @@ extension ChatViewModel {
         do {
             return try await chatUsecase.getChannel(tradeID: tradeID, userID: user.id)
         } catch {
+            guard let error = error as? ChannelError else { return nil }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            
             return nil
         }
     }
@@ -347,6 +395,9 @@ extension ChatViewModel {
         do {
             return try await chatUsecase.getChannel(channelID: channelID)
         } catch {
+            guard let error = error as? ChannelError else { return nil }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            
             return nil
         }
     }
@@ -365,6 +416,10 @@ extension ChatViewModel {
             /// 이미지 예외 처리
             let image = UIImage(named: "ANBDWarning")
             let imageData = image?.pngData()
+            
+            guard let error = error as? StorageError else { return imageData ?? Data() }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            
             return imageData ?? Data()
         }
     }
@@ -375,6 +430,10 @@ extension ChatViewModel {
             return try await chatUsecase.downloadImage(messageID: messageID, imagePath: imagePath)
         } catch {
             print("downloadImagePath Error: \(error)")
+            
+            guard let error = error as? StorageError else { return Data() }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            
             return Data()
         }
     }
@@ -385,6 +444,10 @@ extension ChatViewModel {
             return try await storageManager.downloadImageToUrl(path: .chat, containerID: messageID, imagePath: imagePath)
         } catch {
             print("downloadImageUrl Error: \(error)")
+            
+            guard let error = error as? StorageError else { return nil }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
+            
             return nil
         }
     }
@@ -399,6 +462,9 @@ extension ChatViewModel {
             try await tradeUsecase.updateTradeState(tradeID: tradeID, tradeState: tradeState)
         } catch {
             print("updateTradeState Error: \(error.localizedDescription)")
+            
+            guard let error = error as? TradeError else { return }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
         }
     }
     
@@ -407,6 +473,9 @@ extension ChatViewModel {
             self.selectedTrade = try await tradeUsecase.loadTrade(tradeID: tradeID)
         } catch {
             print("loadTrade \(error.localizedDescription)")
+            
+            guard let error = error as? TradeError else { return }
+            ToastManager.shared.toast = Toast(style: .error, message: error.message)
         }
     }
 }

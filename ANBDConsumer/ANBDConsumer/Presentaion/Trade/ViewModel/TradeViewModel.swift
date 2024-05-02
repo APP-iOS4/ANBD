@@ -67,6 +67,12 @@ final class TradeViewModel: ObservableObject {
             self.filteredTrades = self.filteredTrades.filter { $0.tradeState == .trading }
         } catch {
             print(error.localizedDescription)
+            
+            guard let error = error as? TradeError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -99,6 +105,12 @@ final class TradeViewModel: ObservableObject {
                 
         } catch {
             print(error.localizedDescription)
+            
+            guard let error = error as? TradeError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -110,6 +122,12 @@ final class TradeViewModel: ObservableObject {
             self.detailImages = try await loadDetailImages(path: .trade, containerID: self.trade.id, imagePath: self.trade.imagePaths)
         } catch {
             print("trade 하나 불러오기 실패: \(error.localizedDescription)")
+            
+            guard let error = error as? TradeError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -128,6 +146,12 @@ final class TradeViewModel: ObservableObject {
                 let image = UIImage(named: "ANBDWarning")
                 let imageData = image?.pngData()
                 detailImages.append( imageData ?? Data() )
+                
+                guard let error = error as? StorageError else {
+                    ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                    return detailImages
+                }
+                ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
             }
         }
         
@@ -162,6 +186,12 @@ final class TradeViewModel: ObservableObject {
             await UserStore.shared.updateLocalUserInfo()
         } catch {
             print(error.localizedDescription)
+            
+            guard let error = error as? TradeError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -173,6 +203,12 @@ final class TradeViewModel: ObservableObject {
             await UserStore.shared.updateLocalUserInfo()
         } catch {
             print("삭제 실패: \(error.localizedDescription)")
+            
+            guard let error = error as? TradeError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -217,6 +253,12 @@ final class TradeViewModel: ObservableObject {
             await UserStore.shared.updateLocalUserInfo()
         } catch {
             print("수정 실패: \(error.localizedDescription)")
+            
+            guard let error = error as? TradeError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -234,6 +276,12 @@ final class TradeViewModel: ObservableObject {
             }
         } catch {
             print("상태수정 실패: \(error.localizedDescription)")
+            
+            guard let error = error as? TradeError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -244,6 +292,12 @@ final class TradeViewModel: ObservableObject {
             await UserStore.shared.updateLocalUserInfo()
         } catch {
             print("좋아요 실패: \(error.localizedDescription)")
+            
+            guard let error = error as? TradeError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -258,6 +312,12 @@ final class TradeViewModel: ObservableObject {
             }
         } catch {
             print("Error: \(error)")
+            
+            guard let error = error as? TradeError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
 }

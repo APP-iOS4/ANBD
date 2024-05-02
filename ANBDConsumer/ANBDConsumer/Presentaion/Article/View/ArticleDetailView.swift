@@ -133,7 +133,8 @@ struct ArticleDetailView: View {
                                                 .foregroundStyle(.gray900)
                                                 .fontWeight(.semibold)
                                         }
-                                        .padding(.vertical, 250)
+                                        .padding(.top, 200)
+                                        .padding(.bottom, 250)
                                         Spacer()
                                     }
                                 }
@@ -183,7 +184,7 @@ struct ArticleDetailView: View {
                                     .padding(.bottom)
                                     .padding(.leading, 5)
                                 
-                                ForEach(articleViewModel.comments) { comment in
+                                ForEach(articleViewModel.comments.reversed()) { comment in
                                     HStack(alignment: .top) {
                                         KFImage(URL(string: comment.writerProfileImageURL))
                                             .placeholder({ _ in

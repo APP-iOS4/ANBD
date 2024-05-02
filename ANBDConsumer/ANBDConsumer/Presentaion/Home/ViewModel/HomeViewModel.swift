@@ -27,7 +27,6 @@ final class HomeViewModel: ObservableObject {
     /// 광고 · 배너 가져오기
     func loadBanners() async {
         do {
-            bannerItemList.removeAll()
             try await bannerItemList = bannerUsecase.loadBannerList()
         } catch {
             

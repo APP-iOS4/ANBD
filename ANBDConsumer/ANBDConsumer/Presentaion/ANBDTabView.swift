@@ -15,7 +15,7 @@ struct ANBDTabView: View {
     
     @State private var articleCategory: ANBDCategory = .accua
     @State private var tradeCategory: ANBDCategory = .nanua
-    
+
     @EnvironmentObject private var networkMonitor: NetworkMonitor
     
     var body: some View {
@@ -66,9 +66,9 @@ struct ANBDTabView: View {
             /// Chat
             NavigationStack(path: $coordinator.chatPath) {
                 ChatView()
-                    .navigationDestination(for: Page.self) { page in
-                        coordinator.build(page)
-                    }
+//                    .navigationDestination(for: Page.self) { page in
+//                        coordinator.build(page)
+//                    }
             }
             .tabItem {
                 Label("채팅", systemImage: "bubble.right")

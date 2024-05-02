@@ -60,10 +60,11 @@ struct ArticleDetailView: View {
                                                     Circle()
                                                         .stroke(Color.gray100, lineWidth: 1)
                                                 )
-                                        } else {
+                                        } else  {
                                             KFImage(URL(string: writerUser.profileImage))
                                                 .placeholder({ _ in
                                                     ProgressView()
+                                                    
                                                 })
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fill)
@@ -79,6 +80,7 @@ struct ArticleDetailView: View {
                                                     case .home, .article, .trade, .chat:
                                                         if coordinator.isFromUserPage {
                                                             coordinator.pop(2)
+                                                            coordinator.isFromUserPage = false
                                                         } else {
                                                             coordinator.appendPath(.userPageView)
                                                         }
@@ -88,6 +90,13 @@ struct ArticleDetailView: View {
                                                     }
                                                 }
                                         }
+                                    } else {
+                                        ProgressView()
+                                            .frame(width: 33, height: 33)
+                                            .overlay(
+                                                Circle()
+                                                    .stroke(Color.gray100, lineWidth: 1)
+                                            )
                                     }
                                     
                                     Text("\(articleViewModel.article.writerNickname)")
@@ -127,9 +136,20 @@ struct ArticleDetailView: View {
                                     }
                                 }
                                 
+                                //이거 꼭 있어야 할까 고민!!!해봐주세요 기표님
                                 if coordinator.isLoading {
-                                    LoadingView()
-                                        .padding(.vertical, 250)
+                                    HStack {
+                                        Spacer()
+                                        VStack(alignment: .center) {
+                                            ProgressView()
+                                            Text("Loading")
+                                                .font(ANBDFont.body1)
+                                                .foregroundStyle(.gray900)
+                                                .fontWeight(.semibold)
+                                                .padding()
+                                        }
+                                        Spacer()
+                                    }
                                 }
                                 
                                 HStack {
@@ -171,13 +191,11 @@ struct ArticleDetailView: View {
                                     .font(ANBDFont.SubTitle2)
                                     .foregroundStyle(.gray300)
                                     .multilineTextAlignment(.center)
-//                                    .id("댓글 목록")
                             } else {
                                 Text("댓글 \(articleViewModel.comments.count)")
                                     .font(ANBDFont.SubTitle3)
                                     .padding(.bottom)
                                     .padding(.leading, 5)
-//                                    .id("댓글 목록")
                                 
                                 ForEach(articleViewModel.comments) { comment in
                                     HStack(alignment: .top) {
@@ -362,10 +380,9 @@ struct ArticleDetailView: View {
                 isLiked = user.likeArticles.contains(articleViewModel.article.id)
                 
                 Task {
+                    articleViewModel.detailImages = try await articleViewModel.loadDetailImages(path: .article, containerID: articleViewModel.article.id, imagePath: articleViewModel.article.imagePaths)
                     await articleViewModel.loadCommentList(articleID: article.id)
                     writerUser = await myPageViewModel.getUserInfo(userID: article.writerID)
-                    articleViewModel.detailImages = try await articleViewModel.loadDetailImages(path: .article, containerID: articleViewModel.article.id, imagePath: articleViewModel.article.imagePaths)
-                    await articleViewModel.loadOneArticle(articleID: articleViewModel.article.id)
                 }
             }
             .fullScreenCover(isPresented: $isShowingArticleCreateView) {
@@ -380,6 +397,24 @@ struct ArticleDetailView: View {
             .navigationTitle("정보 공유")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarRole(.editor)
+            
+            if isShowingCustomAlertArticle {
+                CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertArticle, viewType: .articleDelete) {
+                    Task {
+                        await articleViewModel.deleteArticle(article: article)
+                        await articleViewModel.refreshSortedArticleList(category: article.category)
+                        dismiss()
+                    }
+                }
+                
+            } else if isShowingCustomAlertComment {
+                CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertComment, viewType: .commentDelete) {
+                    Task {
+                        await articleViewModel.deleteComment(articleID: article.id, commentID: articleViewModel.comment.id)
+                        await articleViewModel.loadCommentList(articleID: article.id)
+                    }
+                }
+            }
         }
         
     }

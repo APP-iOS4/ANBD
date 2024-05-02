@@ -287,7 +287,7 @@ struct ArticleCreateView: View {
                 } label: {
                     Text("완료")
                 }
-                .disabled(title.isEmpty || content.isEmpty || (tmpSelectedData.isEmpty && selectedImageData.isEmpty) || title == article?.title && content == article?.content && category == article?.category && (deletedPhotosData.isEmpty && selectedImageData.isEmpty) || title.trimmingCharacters(in: .whitespaces).isEmpty || content.trimmingCharacters(in: .whitespaces).isEmpty)
+                .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || title == article?.title && content == article?.content && category == article?.category && (deletedPhotosData.isEmpty && selectedImageData.isEmpty))
 
             }
             

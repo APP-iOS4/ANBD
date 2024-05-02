@@ -77,10 +77,10 @@ struct TradeDetailView: View {
                                         case .home, .article, .trade, .chat:
                                             if coordinator.isFromUserPage {
                                                 coordinator.pop(2)
+                                                coordinator.isFromUserPage = false
                                             } else {
                                                 coordinator.appendPath(.userPageView)
                                             }
-                                            coordinator.isFromUserPage.toggle()
                                         case .mypage:
                                             coordinator.pop(coordinator.mypagePath.count)
                                         }
@@ -157,6 +157,9 @@ struct TradeDetailView: View {
                 writerUser = await myPageViewModel.getUserInfo(userID: tradeViewModel.trade.writerID)
                 tradeViewModel.detailImages = try await tradeViewModel.loadDetailImages(path: .trade, containerID: tradeViewModel.trade.id, imagePath: tradeViewModel.trade.imagePaths)
             }
+        }
+        .onDisappear {
+            tradeViewModel.detailImages = []
         }
         .toolbar(.hidden, for: .tabBar)
         .fullScreenCover(isPresented: $isShowingCreat, onDismiss: {

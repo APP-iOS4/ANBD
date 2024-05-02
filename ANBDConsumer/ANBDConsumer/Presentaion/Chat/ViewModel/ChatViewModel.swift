@@ -34,7 +34,7 @@ final class ChatViewModel: ObservableObject {
     var selectedUser: User = User(id: "", nickname: "(알수없음)", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
     
     @Published var selectedTrade: Trade?
-    var selectedChannel: Channel?
+    @Published var selectedChannel: Channel?
     
     @Published var groupedMessages: [(day:String , messages:[Message])] = []
     
@@ -99,7 +99,7 @@ extension ChatViewModel {
     func addListener(channelID: String) async throws {
         do {
             if !isLeaveChatRoom {
-                var preMessages = try await chatUsecase.loadMessageList(channelID: channelID, userID: user.id)
+                    var preMessages = try await chatUsecase.loadMessageList(channelID: channelID, userID: user.id)
                 if let leaveMessageIndex = preMessages.lastIndex(where: { $0.leaveUsers.contains(user.id) }) {
                     isLeaveChatRoom = true
                     preMessages.removeSubrange(0...leaveMessageIndex)
@@ -109,7 +109,9 @@ extension ChatViewModel {
                 setOtherUserProfileImageMessage()
             }
             
+            //채팅방에 들어왔을때 한번만 실행되야 하는 것들
             if !isListener {
+                try await chatUsecase.updateActiveUser(channelID: channelID, userID: user.id , into: true)
                 if let lastMessage = messages.last {
                     try await chatUsecase.updateMessageReadStatus(channelID: channelID, lastMessage: lastMessage, userID: user.id)
                 }
@@ -186,7 +188,9 @@ extension ChatViewModel {
         do {
             try await chatUsecase.sendMessage(message: message, channelID: channelID)
             guard let content = message.content else { return}
-            sendPushNotification(content: content)
+            if await checkOtherUserInChatRoom(channelID: channelID) {
+                sendPushNotification(content: content)
+            }
         } catch {
             print("sendMessage Error: \(error)")
         }
@@ -196,11 +200,47 @@ extension ChatViewModel {
     func sendImageMessage(message: Message, imageData: Data, channelID: String) async throws {
         do {
             try await chatUsecase.sendImageMessage(message: message, imageData: imageData, channelID: channelID)
-            sendPushNotification(content: "사진을 보냈습니다")
+            if await checkOtherUserInChatRoom(channelID: channelID) {
+                sendPushNotification(content: "사진을 보냈습니다")
+            }
         } catch {
             print("Error: \(error)")
         }
     }
+    
+    /// 채팅방 onDisappear시, 메시지 데이터 초기화
+    func resetMessageData(channelID: String) async {
+        isListener = false
+        isLeaveChatRoom = false
+        chatUsecase.initializeListener()
+        messages = []
+        groupedMessages = []
+        otherUserLastMessages = []
+        do {
+            try await chatUsecase.updateActiveUser(channelID: channelID, userID: user.id , into: false)
+        }
+        catch {
+            print("updateActiveUser:\(error)")
+        }
+    }
+    
+    //현재 채팅방에 상대방이 들어와있는지 확인
+    func checkOtherUserInChatRoom(channelID: String) async -> Bool {
+        do {
+            let activeUser = try await chatUsecase.loadActiveUser(channelID: channelID)
+            if activeUser.contains(user.id) && activeUser.count == 2 {
+                return false
+            }
+            return true
+        } catch {
+            print("checkOtherUserInChatRoom error:\(error)")
+            return false
+        }
+    }
+}
+
+//MARK: - 정보를 get OR Set
+extension ChatViewModel {
     
     /// 채팅방 onDisappear시, 메시지 데이터 초기화
     func resetMessageData() {
@@ -219,17 +259,27 @@ extension ChatViewModel {
     func setSelectedInfo(channel: Channel) async throws{
         self.selectedChannel = channel
         do {
-            self.selectedUser = try await chatUsecase.getOtherUser(channel: channel, userID: user.id)
-        } catch {
-            self.selectedUser = User(id: "", nickname: "(알수없음)", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
-        }
-        
-        do {
             self.selectedTrade = try await chatUsecase.getTradeInChannel(channelID: channel.id)
         } catch {
             self.selectedTrade = nil
         }
+        
+        do {
+            self.selectedUser = try await chatUsecase.getOtherUser(channel: channel, userID: user.id)
+        } catch {
+            self.selectedUser = User(id: "", nickname: "(알수없음)", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
+        }
     }
+    
+    func setSelectedUser(channel: Channel) async {
+        do {
+            self.selectedUser = try await chatUsecase.getOtherUser(channel: channel, userID: user.id)
+        } catch {
+            self.selectedUser = User(id: "", nickname: "(알수없음)", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
+        }
+    }
+    
+
     
     //Trade 디테일에서 접근시
     func setSelectedInfo(trade: Trade) async throws {
@@ -284,9 +334,18 @@ extension ChatViewModel {
     }
     
     /// 채널 가져오기
-    private func getChannel(tradeID: String) async throws -> Channel? {
+    func getChannel(tradeID: String) async throws -> Channel? {
         do {
             return try await chatUsecase.getChannel(tradeID: tradeID, userID: user.id)
+        } catch {
+            return nil
+        }
+    }
+    
+    /// 채널 가져오기
+    func getChannel(channelID: String) async throws -> Channel? {
+        do {
+            return try await chatUsecase.getChannel(channelID: channelID)
         } catch {
             return nil
         }
@@ -363,6 +422,8 @@ extension ChatViewModel {
         
         guard selectedUser.fcmToken != "" else {return}
         
+        guard let channel = self.selectedChannel else {return}
+        
         print("serverKey:\(serverKey)")
         print("to:\(selectedUser.fcmToken)")
         
@@ -376,7 +437,10 @@ extension ChatViewModel {
                 "title": "\(user.nickname)",
                 "body": content
             ],
-            "content_available" : true
+            "content_available" : true,
+            "data": [
+                "channelID": channel.id
+            ]
         ]
         let jsonData = try? JSONSerialization.data(withJSONObject: body)
         var request = URLRequest(url: url)

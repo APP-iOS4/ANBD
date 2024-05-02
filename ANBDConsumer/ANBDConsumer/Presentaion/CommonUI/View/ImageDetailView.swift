@@ -67,8 +67,8 @@ struct ImageDetailView: View {
                         .resizable()
                         .frame(width: 18, height: 18)
                         .foregroundStyle(.white)
+                        .padding(18)
                 })
-                .padding(18)
                 
                 Spacer()
             }

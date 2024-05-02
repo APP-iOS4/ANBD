@@ -83,6 +83,7 @@ struct ArticleListView: View {
                         if isArticle {
                             ForEach(articleViewModel.filteredArticles) { item in
                                 Button(action: {
+                                    coordinator.articleID = nil
                                     coordinator.article = item
                                     articleViewModel.getOneArticle(article: item)
                                     coordinator.appendPath(.articleDeatilView)

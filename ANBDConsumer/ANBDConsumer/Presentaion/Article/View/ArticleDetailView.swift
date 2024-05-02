@@ -16,6 +16,7 @@ struct ArticleDetailView: View {
     
     private var article: Article
     private let user = UserStore.shared.user
+    private var articleID: String?
     
     @State private var isLiked: Bool = false
     @State private var isShowingComment: Bool = false
@@ -36,8 +37,9 @@ struct ArticleDetailView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) private var dismiss
     
-    init(article: Article) {
+    init(article: Article, articleID: String?) {
         self.article = article
+        self.articleID = articleID
     }
     
     var body: some View {
@@ -337,15 +339,22 @@ struct ArticleDetailView: View {
             .onDisappear {
                 articleViewModel.detailImages = []
             }
+            
             .onAppear {
-                coordinator.isLoading = true
-                articleViewModel.getOneArticle(article: article)
-                isLiked = user.likeArticles.contains(articleViewModel.article.id)
-                
                 Task {
+                    coordinator.isLoading = true
+                    if let articleID {
+                        await articleViewModel.loadOneArticle(articleID: articleID)
+                    } else {
+                        articleViewModel.getOneArticle(article: article)
+                    }
+                    
+                    isLiked = user.likeArticles.contains(articleViewModel.article.id)
+                    
                     articleViewModel.detailImages = try await articleViewModel.loadDetailImages(path: .article, containerID: articleViewModel.article.id, imagePath: articleViewModel.article.imagePaths)
                     await articleViewModel.loadCommentList(articleID: article.id)
                     writerUser = await myPageViewModel.getUserInfo(userID: article.writerID)
+                    
                 }
             }
             .fullScreenCover(isPresented: $isShowingArticleCreateView) {

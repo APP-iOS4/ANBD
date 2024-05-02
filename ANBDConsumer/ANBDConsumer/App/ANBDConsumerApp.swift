@@ -55,7 +55,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     
     // Foreground(앱 켜진 상태)에서도 알림 오는 설정
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-            completionHandler([.list, .banner])
+        completionHandler([.list, .banner])
     }
     
     func userNotificationCenter(_: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
@@ -68,8 +68,14 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             }
         }
         
+        if let type = userInfo["type"] as? String,
+           let articleID = userInfo["articleID"] as? String {
+            self.presentArticleDeatailView(articleID: articleID)
+        }
+        
         completionHandler()
     }
+    
     
 }
 
@@ -97,10 +103,22 @@ extension AppDelegate {
         coorinator.selectedTab = .chat
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                coorinator.channelID = channelID
-                coorinator.appendPath(.chatDetailView)
+            coorinator.channelID = channelID
+            coorinator.appendPath(.chatDetailView)
         }
-
+        
+    }
+    
+    func presentArticleDeatailView(articleID: String) {
+        let coorinator = Coordinator.shared
+        coorinator.article = nil
+        coorinator.articleID = articleID
+        coorinator.selectedTab = .article
+        coorinator.pop(coorinator.articlePath.count)
+        
+        coorinator.appendPath(.articleDeatilView)
+        
+        
     }
 }
 

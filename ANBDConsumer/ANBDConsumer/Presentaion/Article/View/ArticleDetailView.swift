@@ -274,6 +274,28 @@ struct ArticleDetailView: View {
                     endTextEditing()
                 }
                 
+                if isShowingCustomAlertArticle {
+                    CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertArticle, viewType: .articleDelete) {
+                        Task {
+                            await articleViewModel.deleteArticle(article: article)
+                            await articleViewModel.refreshSortedArticleList(category: article.category)
+                            dismiss()
+                        }
+                    }
+                    .zIndex(2)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    
+                } else if isShowingCustomAlertComment {
+                    CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertComment, viewType: .commentDelete) {
+                        Task {
+                            await articleViewModel.deleteComment(articleID: article.id, commentID: articleViewModel.comment.id)
+                            await articleViewModel.loadCommentList(articleID: article.id)
+                        }
+                    }
+                    .zIndex(2)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+                
                 // MARK: - 댓글 입력 부분
                 if #available(iOS 17.0, *) {
                     commentTextView

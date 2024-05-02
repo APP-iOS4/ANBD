@@ -14,7 +14,7 @@ struct TradeDetailView: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     @StateObject private var coordinator = Coordinator.shared
-
+    
     @State var trade: Trade
     
     @State private var isShowingCreat: Bool = false
@@ -88,6 +88,7 @@ struct TradeDetailView: View {
                             }
                             
                             VStack(alignment: .leading) {
+                                
                                 Text("\(tradeViewModel.trade.writerNickname)")
                                     .font(ANBDFont.SubTitle1)
                                     .foregroundStyle(.gray900)
@@ -149,15 +150,6 @@ struct TradeDetailView: View {
                     }
                 }
             }
-            
-            /// 토스트 뷰
-            if coordinator.isShowingToastView {
-                VStack {
-                    CustomToastView()
-                    
-                    Spacer()
-                }
-            }
         }//ZStack
         .onAppear {
             tradeViewModel.getOneTrade(trade: trade)
@@ -179,7 +171,7 @@ struct TradeDetailView: View {
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
             ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $tradeViewModel.detailImages, idx: $idx)
         }
-        .navigationTitle("나눔 · 거래")
+        .navigationTitle(tradeViewModel.trade.category == .nanua ? "나눠쓰기" : "바꿔쓰기")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarRole(.editor)
         .toolbar {

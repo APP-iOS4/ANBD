@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4204F32F2BC7C60700C56DB8 /* UserActivityListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4204F32E2BC7C60700C56DB8 /* UserActivityListView.swift */; };
+		4232CADE2BE287F4001BF14F /* ToastManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4232CADD2BE287F4001BF14F /* ToastManager.swift */; };
 		424CA0052BC397A600F83F8D /* TextFieldWithTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0042BC397A600F83F8D /* TextFieldWithTitle.swift */; };
 		424CA0072BC39C7C00F83F8D /* BlueSquareButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA0062BC39C7C00F83F8D /* BlueSquareButton.swift */; };
 		424CA00B2BC3AB7800F83F8D /* SignUpPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 424CA00A2BC3AB7800F83F8D /* SignUpPasswordView.swift */; };
@@ -47,7 +48,7 @@
 		A8A269922BD5EFB20099C3A3 /* View+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7BEE222BBD56B900C0F298 /* View+Extension.swift */; };
 		A8A269932BD5EFBF0099C3A3 /* UserPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7BEE142BBD564800C0F298 /* UserPageView.swift */; };
 		A8A269C12BD630BD0099C3A3 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A269C02BD630BD0099C3A3 /* Coordinator.swift */; };
-		A8BD75A02BDA3F730089799D /* CustomToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8BD759F2BDA3F730089799D /* CustomToastView.swift */; };
+		A8BD75A02BDA3F730089799D /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8BD759F2BDA3F730089799D /* ToastView.swift */; };
 		CB198CF02BBF8E84000C2709 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198CEF2BBF8E84000C2709 /* Category.swift */; };
 		CB198CF22BBF8FC8000C2709 /* CategoryDividerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198CF12BBF8FC8000C2709 /* CategoryDividerView.swift */; };
 		CB198CF62BBFD0A3000C2709 /* WriteButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB198CF52BBFD0A3000C2709 /* WriteButtonView.swift */; };
@@ -90,6 +91,7 @@
 
 /* Begin PBXFileReference section */
 		4204F32E2BC7C60700C56DB8 /* UserActivityListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActivityListView.swift; sourceTree = "<group>"; };
+		4232CADD2BE287F4001BF14F /* ToastManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastManager.swift; sourceTree = "<group>"; };
 		424CA0042BC397A600F83F8D /* TextFieldWithTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldWithTitle.swift; sourceTree = "<group>"; };
 		424CA0062BC39C7C00F83F8D /* BlueSquareButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueSquareButton.swift; sourceTree = "<group>"; };
 		424CA0082BC3A79900F83F8D /* SignUpEmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpEmailView.swift; sourceTree = "<group>"; };
@@ -124,7 +126,7 @@
 		A87E89F22BC4370500F5331B /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		A87E89F42BC43B5500F5331B /* SearchResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultView.swift; sourceTree = "<group>"; };
 		A8A269C02BD630BD0099C3A3 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
-		A8BD759F2BDA3F730089799D /* CustomToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomToastView.swift; sourceTree = "<group>"; };
+		A8BD759F2BDA3F730089799D /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
 		CB198CEF2BBF8E84000C2709 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		CB198CF12BBF8FC8000C2709 /* CategoryDividerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryDividerView.swift; sourceTree = "<group>"; };
 		CB198CF52BBFD0A3000C2709 /* WriteButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteButtonView.swift; sourceTree = "<group>"; };
@@ -258,7 +260,7 @@
 				A816E6012BC1706600138CFC /* CustomAlertView.swift */,
 				CB198D0F2BC38BA0000C2709 /* CheckboxView.swift */,
 				42C151702BD1014400917F30 /* ListEmptyView.swift */,
-				A8BD759F2BDA3F730089799D /* CustomToastView.swift */,
+				A8BD759F2BDA3F730089799D /* ToastView.swift */,
 				CB6AA2112BDFDD4D005CA6E4 /* LoadingView.swift */,
 			);
 			path = View;
@@ -463,6 +465,7 @@
 				426EE0302BD37CCD00006C2C /* UserStore.swift */,
 				A8A269C02BD630BD0099C3A3 /* Coordinator.swift */,
 				CBD556F22BE1C88900792CBE /* NetworkMonitor.swift */,
+				4232CADD2BE287F4001BF14F /* ToastManager.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -684,7 +687,7 @@
 				A8A2698C2BD5EF440099C3A3 /* MyPageViewModel.swift in Sources */,
 				CB198D282BC3D069000C2709 /* ItemCategoryPickerMenu.swift in Sources */,
 				D7E56D722BC425AE000AA1BE /* ArticleListView.swift in Sources */,
-				A8BD75A02BDA3F730089799D /* CustomToastView.swift in Sources */,
+				A8BD75A02BDA3F730089799D /* ToastView.swift in Sources */,
 				424CA0072BC39C7C00F83F8D /* BlueSquareButton.swift in Sources */,
 				CB7BEE3B2BBD57FD00C0F298 /* HomeViewModel.swift in Sources */,
 				D7E56D702BC39373000AA1BE /* InstructionsView.swift in Sources */,
@@ -740,6 +743,7 @@
 				A816E5FE2BC1254B00138CFC /* TradeStateChangeView.swift in Sources */,
 				424CA00F2BC3B83700F83F8D /* SignUpPolicyAgreeView.swift in Sources */,
 				CB7BEE172BBD564E00C0F298 /* ChatView.swift in Sources */,
+				4232CADE2BE287F4001BF14F /* ToastManager.swift in Sources */,
 				D75C3A532BC1377400ED948C /* ArticleView.swift in Sources */,
 				A87E89F52BC43B5500F5331B /* SearchResultView.swift in Sources */,
 			);
@@ -869,7 +873,7 @@
 		};
 		CB7BEDC42BBD4E9F00C0F298 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CBD556F62BE226CE00792CBE /* Secrets.xcconfig */;
+			baseConfigurationReference = CBD556F82BE23D5300792CBE /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -906,7 +910,7 @@
 		};
 		CB7BEDC52BBD4E9F00C0F298 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CBD556F62BE226CE00792CBE /* Secrets.xcconfig */;
+			baseConfigurationReference = CBD556F82BE23D5300792CBE /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

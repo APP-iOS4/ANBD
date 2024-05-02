@@ -58,7 +58,6 @@ final class Coordinator: ObservableObject {
     var channel: Channel?
     var channelID: String?
     var isFromUserPage: Bool = false
-    var toastViewType: ToastViewType = .report
     var isShowingToastView: Bool = false
     var isLoading: Bool = false
     

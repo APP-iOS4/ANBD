@@ -273,13 +273,6 @@ struct ArticleDetailView: View {
                     endTextEditing()
                 }
                 
-                if coordinator.isShowingToastView {
-                    VStack {
-                        CustomToastView()
-                        Spacer()
-                    }
-                }
-                
                 // MARK: - 댓글 입력 부분
                 if #available(iOS 17.0, *) {
                     commentTextView
@@ -384,6 +377,11 @@ struct ArticleDetailView: View {
                         await articleViewModel.deleteComment(articleID: article.id, commentID: articleViewModel.comment.id)
                         await articleViewModel.loadCommentList(articleID: article.id)
                     }
+                }
+            } else if coordinator.isShowingToastView {
+                VStack {
+                    CustomToastView()
+                    Spacer()
                 }
             }
         }

@@ -56,24 +56,15 @@ struct ArticleDetailView: View {
                                                 .aspectRatio(contentMode: .fill)
                                                 .frame(width: 33, height: 33)
                                                 .clipShape(Circle())
-                                                .overlay(
-                                                    Circle()
-                                                        .stroke(Color.gray100, lineWidth: 1)
-                                                )
                                         } else  {
                                             KFImage(URL(string: writerUser.profileImage))
                                                 .placeholder({ _ in
                                                     ProgressView()
-                                                    
                                                 })
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fill)
                                                 .frame(width: 33, height: 33)
                                                 .clipShape(.circle)
-                                                .overlay(
-                                                    Circle()
-                                                        .stroke(.gray100, lineWidth: 1)
-                                                )
                                                 .onTapGesture {
                                                     coordinator.user = writerUser
                                                     switch coordinator.selectedTab {
@@ -93,10 +84,6 @@ struct ArticleDetailView: View {
                                     } else {
                                         ProgressView()
                                             .frame(width: 33, height: 33)
-                                            .overlay(
-                                                Circle()
-                                                    .stroke(Color.gray100, lineWidth: 1)
-                                            )
                                     }
                                     
                                     Text("\(articleViewModel.article.writerNickname)")
@@ -136,7 +123,6 @@ struct ArticleDetailView: View {
                                     }
                                 }
                                 
-                                //이거 꼭 있어야 할까 고민!!!해봐주세요 기표님
                                 if coordinator.isLoading {
                                     HStack {
                                         Spacer()

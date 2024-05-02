@@ -56,7 +56,6 @@ final class Coordinator: ObservableObject {
     var searchText: String = ""
     var channel: Channel?
     var isFromUserPage: Bool = false
-    var toastViewType: ToastViewType = .report
     var isShowingToastView: Bool = false
     var isLoading: Bool = false
     

@@ -127,6 +127,8 @@ struct ANBDConsumerApp: App {
                         )
                 }
             }
+            .toastView(toast: Binding(get: { ToastManager.shared.toast },
+                                      set: { ToastManager.shared.toast = $0 }))
         }
     }
 }

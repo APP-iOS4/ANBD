@@ -96,7 +96,7 @@ final class AuthenticationViewModel: ObservableObject {
         
         $signUpEmailString
             .removeDuplicates()
-            .debounce(for: .seconds(0.02), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.65), scheduler: DispatchQueue.main)
             .sink { [weak self] email in
                 guard let self = self else { return }
                 self.signUpEmailStringDebounced = email

@@ -22,6 +22,8 @@ final class ReportViewModel: ObservableObject {
             user = await UserStore.shared.getUserInfo(userID: userID)
             let report = Report(type: reportType, reportReason: reportReason, reportedUser: user.id, reportedObjectID: reportedObjectID, reportedChannelID: reportChannelID)
             try await reportUsecase.submitReport(report: report)
+            
+            ToastManager.shared.toast = Toast(style: .success, message: "신고가 접수되었습니다.")
         } catch {
             print("submitReport ERROR: \(error)")
         }

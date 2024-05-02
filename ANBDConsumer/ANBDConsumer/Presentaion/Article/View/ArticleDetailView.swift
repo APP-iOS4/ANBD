@@ -269,13 +269,6 @@ struct ArticleDetailView: View {
                     endTextEditing()
                 }
                 
-                if coordinator.isShowingToastView {
-                    VStack {
-                        CustomToastView()
-                        Spacer()
-                    }
-                }
-                
                 if isShowingCustomAlertArticle {
                     CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertArticle, viewType: .articleDelete) {
                         Task {

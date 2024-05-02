@@ -259,7 +259,10 @@ extension AuthenticationViewModel {
         do {
             try await userUsecase.updateUserFCMToken(userID: UserStore.shared.user.id, fcmToken: UserStore.shared.deviceToken)
         } catch {
+            #if DEBUG
             print("updateUserToken:\(error)")
+            #endif
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
         }
     }
     
@@ -273,7 +276,10 @@ extension AuthenticationViewModel {
             
             return true
         } catch {
+            #if DEBUG
             print("Error sign in: \(error.localizedDescription)")
+            #endif
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
             
             return false
         }
@@ -285,7 +291,10 @@ extension AuthenticationViewModel {
             try await authUsecase.signOut()
             completion()
         } catch {
+            #if DEBUG
             print("Error sign out: \(error.localizedDescription)")
+            #endif
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
         }
     }
     
@@ -294,7 +303,7 @@ extension AuthenticationViewModel {
             let signedUpUser = try await authUsecase.signUp(email: signUpEmailString,
                                                             password: signUpPasswordString,
                                                             nickname: signUpNicknameString,
-                                                            favoriteLocation: signUpUserFavoriteLoaction, 
+                                                            favoriteLocation: signUpUserFavoriteLoaction,
                                                             fcmToken: "",
                                                             isOlderThanFourteen: isOlderThanFourteen,
                                                             isAgreeService: isAgreeService,
@@ -304,7 +313,10 @@ extension AuthenticationViewModel {
             UserDefaultsClient.shared.userID = signedUpUser.id
             UserStore.shared.user = signedUpUser
         } catch {
+            #if DEBUG
             print("Error sign up: \(error.localizedDescription)")
+            #endif
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
         }
     }
     
@@ -318,7 +330,10 @@ extension AuthenticationViewModel {
         do {
             try await authUsecase.verifyEmail(email: signUpEmailStringDebounced)
         } catch {
+            #if DEBUG
             print("Error verify email: \(error.localizedDescription)")
+            #endif
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
         }
     }
     
@@ -346,7 +361,10 @@ extension AuthenticationViewModel {
             
             completion()
         } catch {
+            #if DEBUG
             print("Error withdrawal: \(error.localizedDescription)")
+            #endif
+            // ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
         }
     }
     
@@ -387,8 +405,4 @@ enum AgreeType {
             return "https://oval-second-abc.notion.site/ANBD-f265775da8fe4fe3957048f4c2028f5a"
         }
     }
-}
-
-extension AuthenticationViewModel {
-    
 }

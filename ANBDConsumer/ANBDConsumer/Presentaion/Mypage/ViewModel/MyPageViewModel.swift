@@ -17,7 +17,7 @@ final class MyPageViewModel: ObservableObject {
                                profileImage: "DefaultUserProfileImage",
                                email: "anbd@anbd.com",
                                favoriteLocation: .seoul,
-                               userLevel: .consumer, 
+                               userLevel: .consumer,
                                fcmToken: "",
                                isOlderThanFourteen: true,
                                isAgreeService: true,
@@ -109,7 +109,10 @@ final class MyPageViewModel: ObservableObject {
             
             return getUser
         } catch {
-            print("\(error.localizedDescription)")
+            #if DEBUG
+            print("Error get user info: \(error.localizedDescription)")
+            #endif
+            // ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
             
             return MyPageViewModel.mockUser
         }
@@ -121,7 +124,10 @@ final class MyPageViewModel: ObservableObject {
             
             return list
         } catch {
-            print("Error load to list of \(category): \(error.localizedDescription)")
+            #if DEBUG
+            print("Error load articles: \(error.localizedDescription)")
+            #endif
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
             
             return []
         }
@@ -133,7 +139,10 @@ final class MyPageViewModel: ObservableObject {
             
             return list
         } catch {
-            print("Error load to list of \(category): \(error.localizedDescription)")
+            #if DEBUG
+            print("Error load trades: \(error.localizedDescription)")
+            #endif
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
             
             return []
         }
@@ -155,7 +164,10 @@ final class MyPageViewModel: ObservableObject {
                 let article = try await articleUsecase.loadArticle(articleID: articleID)
                 articles.append(article)
             } catch {
-                print("Error load to article that the user likes: \(error.localizedDescription)")
+                #if DEBUG
+                print("Error load user liked articles: \(error.localizedDescription)")
+                #endif
+                ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
             }
         }
         userLikedArticles = articles
@@ -169,7 +181,10 @@ final class MyPageViewModel: ObservableObject {
                 let trade = try await tradeUsecase.loadTrade(tradeID: tradeID)
                 trades.append(trade)
             } catch {
-                print("Error load to trade that the user hearted: \(error.localizedDescription)")
+                #if DEBUG
+                print("Error load user hearted trades: \(error.localizedDescription)")
+                #endif
+                ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
             }
         }
         userHeartedTrades = trades
@@ -188,7 +203,10 @@ final class MyPageViewModel: ObservableObject {
         do {
             try await userUsecase.updateUserProfile(user: UserStore.shared.user, profileImage: proflieImage)
         } catch {
-            print("Error update user profile image: \(error.localizedDescription)")
+            #if DEBUG
+            print("Error update user profile: \(error.localizedDescription)")
+            #endif
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
         }
     }
     
@@ -242,7 +260,10 @@ final class MyPageViewModel: ObservableObject {
             try await userUsecase.updateUserInfo(user: updatedUser)
             UserStore.shared.user = updatedUser
         } catch {
-            print("\(error.localizedDescription)")
+            #if DEBUG
+            print("Error update user info: \(error.localizedDescription)")
+            #endif
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
         }
     }
     

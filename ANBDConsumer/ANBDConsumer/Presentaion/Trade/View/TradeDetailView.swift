@@ -280,6 +280,7 @@ extension TradeDetailView {
                     .padding()
                     .onTapGesture {
                         Task {
+                            coordinator.channelID = nil
                             try await chatViewModel.setSelectedInfo(trade: trade)
                             coordinator.channel = nil
                             coordinator.trade = trade

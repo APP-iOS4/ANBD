@@ -6,16 +6,15 @@
 ### ∘ 홈 🏠
 > 아껴쓰기, 나눠쓰기, 바꿔쓰기, 다시쓰기 항목들을 한 눈에 확인할 수 있습니다.
 
-| <img src="https://github.com/choijungp/ANBD/assets/37467592/d7e99fd1-5338-4c18-b4b8-688d43701ebb" width="180"> | <img src="https://github.com/choijungp/ANBD/assets/37467592/b4ad0fa6-ff47-4de5-afe2-f18b183b0e5b" width="180"> | <img src="https://github.com/choijungp/ANBD/assets/37467592/852d954c-1237-40cb-9005-4490c720d7ae" width="180"> |
+| <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/d274e3d2-a067-4c1d-9117-13d95ba01248" width="180"> | <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/b3119673-f16f-42c0-b66b-197708335120" width="180"> | <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/67104e96-7ee8-4ccb-b947-6cc6a471e7cd" width="180"> |
 |--|--|--|
 
 
 ### ∘ 정보 공유 🌱
 > **아나바다** 중 아껴쓰기 / 다시쓰기에 해당하는 탭으로 사용자가 알고 있는 물건을 아껴 쓰거나 다시 쓸 수 있는 꿀팁 · 노하우를 게시할 수 있습니다.
 
-| <img src="https://github.com/choijungp/ANBD/assets/37467592/8dbd6839-5a25-4711-a16a-242c90c07539" width="180"> | <img src="https://github.com/choijungp/ANBD/assets/37467592/ea5da4ff-58b4-47ee-841a-6ed2458674d0" width="180"> | <img src="https://github.com/choijungp/ANBD/assets/37467592/6702b867-eb31-4734-9ae3-b1dc4021030e" width="180"> | <img src="https://github.com/choijungp/ANBD/assets/37467592/ec286760-2ad7-4400-bd8c-1521cdee6501" width="180"> |
+| <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/1ae13738-74b9-49f9-afc1-21a3389c3506" width="180"> | <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/2e9f4333-a65f-4dca-a8ac-9bb133d1b3ea" width="180"> | <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/25182bb6-5a08-4dcd-a8da-0f40faf298ae" width="180"> | <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/a7416f44-e72c-4a51-9420-a57799fba6f0" width="180"> |
 |--|--|--|--|
-
 
 
 
@@ -23,33 +22,30 @@
 ### ∘ 나눔 · 거래 🤝
 > **아나바다** 중 나눠쓰기 / 바꿔쓰기에 해당하는 탭으로 사용자들이 원하는 물건을 무료나눔 혹은 물물교환할 수 있습니다.
 
-| <img src="https://github.com/choijungp/ANBD/assets/37467592/ab21134d-ca43-4af0-917f-ca29fabd7a2a" width="180"> | <img src="https://github.com/choijungp/ANBD/assets/37467592/d53edd83-5c54-4946-95ed-94774949dc8a" width="180"> | <img src="https://github.com/choijungp/ANBD/assets/37467592/254682b8-66c3-45b7-bd88-49149a12273d" width="180"> | <img src="https://github.com/choijungp/ANBD/assets/37467592/335313d5-88de-4e82-9d56-3bd2f09363c5" width="180"> | 
+| <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/ff773521-f5d9-44bf-a38f-b46264243df1" width="180"> | <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/2e678454-8ee3-4d23-849f-a7c11527a33b" width="180"> | <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/5b70c116-e63e-47c5-a218-adffac5b3cc5" width="180"> | <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/ad052478-c0a7-4b59-967f-b9b2cbb827c0" width="180"> | 
 |--|--|--|--|
 
-| <img src="https://github.com/choijungp/ANBD/assets/37467592/88bd48fd-d642-4cd7-87e9-dc20a18f9efa" width="180"> | <img src="https://github.com/choijungp/ANBD/assets/37467592/477da045-9278-4237-adad-20b30e09dd67" width="180"> | <img src="https://github.com/choijungp/ANBD/assets/37467592/7ce44a12-82b3-405a-86e4-09ab235c9ba2" width="180"> | 
+| <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/8c514cd4-c002-4d36-baa8-ed22f4ced94e" width="180"> | <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/9172a73a-d4d8-45a8-b9a6-c89aef6a3b0c" width="180"> | <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/dfbcff0c-542d-495e-8f18-24cc4fc65c41" width="180"> | 
 |--|--|--|
-
-
-
 
 ### ∘ 채팅 💬
 > 다른 사용자와 **나눔 · 거래**를 진행할 때 약속을 잡거나 추가적인 정보들을 주고 받을 수 있도록 1:1 채팅을 지원합니다.
 
-| <img src="https://github.com/choijungp/ANBD/assets/37467592/b285e183-6585-405a-9397-ac16adc367c3" width="180"> | <img src="https://github.com/choijungp/ANBD/assets/37467592/cc801f9f-f89e-4ba2-b49b-d336855e03f1" width="180"> | <img src="https://github.com/choijungp/ANBD/assets/37467592/fd7bb4e7-3c1e-4fbe-ac2c-217af274aa57" width="180"> |
+| <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/5b70c116-e63e-47c5-a218-adffac5b3cc5" width="180"> | <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/ded19b18-a9dd-4116-bdc6-61196a9b9bf5" width="180"> | <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/be61b153-f47b-4b6f-a9e5-6d45663749fd" width="180"> |
 |--|--|--|
 
 
 ### ∘ 내 정보 👤
 > 내가 등록한 정보를 확인하고 수정할 수 있습니다.
 
-| <img src="https://github.com/choijungp/ANBD/assets/37467592/3213a7e2-01e7-485e-8f7c-41b30f643d77" width="180"> | <img src="https://github.com/choijungp/ANBD/assets/37467592/6057ed7b-103d-4c07-a601-efa27dfb2ca3" width="180"> | <img src="https://github.com/choijungp/ANBD/assets/37467592/2bc3bf4e-0a32-4327-a480-9120515a4876" width="180"> | <img src="https://github.com/choijungp/ANBD/assets/37467592/ad252d61-b33c-4d98-8027-3d8bb5e11873" width="180"> | <img src="https://github.com/choijungp/ANBD/assets/37467592/8964a9c5-fd95-4eaa-8dcc-308a04cdcd5e" width="180"> | <img src="https://github.com/choijungp/ANBD/assets/37467592/36f674a2-05e8-4cd3-9511-784b986623cf" width="180"> |
+| <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/622719a2-fbf4-4e81-b724-3b5c4e0b8acb" width="180"> | <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/4683e3a8-5cd1-4a12-9c64-674e45302622" width="180"> | <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/2477ce9b-2177-4274-be69-0d226af04124" width="180"> | <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/61e1764e-cc6d-45a4-9b6e-c6628115b036" width="180"> | <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/93b7dd5f-6b30-4ff6-a160-285b7824e41a" width="180"> | <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/ea3d649a-0ba9-4f4e-bef7-8df92a6e192e" width="180"> |
 |--|--|--|--|--|--|
 
 
 ### ∘ 검색 🔍
 > 통합검색을 통해 원하는 정보를 확인할 수 있습니다. 
 
-| <img src="https://github.com/choijungp/ANBD/assets/37467592/5955e4f8-f0d8-4630-bd45-7dab27a609a0" width="180"> | <img src="https://github.com/choijungp/ANBD/assets/37467592/24b4686d-e42d-4dd0-9779-512b117be931" width="180"> |
+| <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/7b84675d-e4ff-4f8d-83f8-525dbd3bbb6d" width="180"> | <img src="https://github.com/APP-iOS4/ANBD/assets/37467592/8f26cbf7-4abd-4a91-9f68-a0b9b3a4c51e" width="180"> |
 |--|--|
 
 <br>

@@ -14,7 +14,7 @@ struct TradeDetailView: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     @StateObject private var coordinator = Coordinator.shared
-
+    
     @State var trade: Trade
     
     @State private var isShowingCreat: Bool = false
@@ -88,11 +88,10 @@ struct TradeDetailView: View {
                             }
                             
                             VStack(alignment: .leading) {
-                                if let writerUser {
-                                    Text("\(writerUser.nickname)")
-                                        .font(ANBDFont.SubTitle1)
-                                        .foregroundStyle(.gray900)
-                                }
+                                
+                                Text("\(tradeViewModel.trade.writerNickname)")
+                                    .font(ANBDFont.SubTitle1)
+                                    .foregroundStyle(.gray900)
                                 
                                 Text("\(tradeViewModel.trade.createdAt.relativeTimeNamed)")
                                     .font(ANBDFont.body2)

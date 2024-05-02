@@ -100,7 +100,6 @@ struct ReportView: View {
                         await reportViewModel.submitReport(reportType: reportViewType, reportReason: reportReason, reportedObjectID: reportedObjectID, reportChannelID: reportedChannelID)
                         dismiss()
                         try await Task.sleep(nanoseconds: 500_000_000)
-                        coordinator.isShowingToastView = true
                     }
                 }
             }

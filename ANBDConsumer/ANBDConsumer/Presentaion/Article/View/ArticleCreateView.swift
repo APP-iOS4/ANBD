@@ -13,7 +13,8 @@ import ANBDModel
 struct ArticleCreateView: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     @EnvironmentObject private var coordinator: Coordinator
-
+    @EnvironmentObject private var networkMonitor: NetworkMonitor
+    
     @Binding var isShowingCreateView: Bool
     
     @State var category: ANBDCategory = .accua
@@ -110,6 +111,25 @@ struct ArticleCreateView: View {
             } else if isShowingCustomCreateAlert {
                 CustomAlertView(isShowingCustomAlert: $isShowingCustomCreateAlert, viewType: .articleCreate) {
                     isShowingCreateView = false
+                }
+            }
+            if !networkMonitor.isConnected {
+                VStack {
+                    Rectangle()
+                        .frame(width: UIScreen.main.bounds.width, height: 50)
+                        .foregroundStyle(.gray50)
+                        .shadow(radius: 10)
+                        .overlay(
+                            HStack {
+                                Image(systemName: "exclamationmark.triangle")
+                                    .foregroundStyle(.heartRed)
+                                    .padding(.trailing, 10)
+                                Text("인터넷이 연결되지 않았습니다.")
+                                    .font(ANBDFont.body2)
+                                    .foregroundStyle(.gray900)
+                            }
+                        )
+                    Spacer()
                 }
             }
         }
@@ -288,8 +308,6 @@ struct ArticleCreateView: View {
                     Text("완료")
                 }
                 .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || selectedImageData.isEmpty || title == article?.title && content == article?.content && category == article?.category && (deletedPhotosData.isEmpty && selectedImageData.isEmpty))
-                
-
             }
             
             ToolbarItem(placement: .cancellationAction) {

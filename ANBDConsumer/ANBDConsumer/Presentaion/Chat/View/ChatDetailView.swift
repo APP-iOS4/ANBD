@@ -10,6 +10,7 @@ import PhotosUI
 import ANBDModel
 
 struct ChatDetailView: View {
+    @Environment(\.scenePhase) var scenePhase
     @EnvironmentObject private var chatViewModel: ChatViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @StateObject private var coordinator = Coordinator.shared
@@ -173,7 +174,6 @@ struct ChatDetailView: View {
         }
         .onAppear {
             Task {
-                
                 if let channel = chatViewModel.selectedChannel {
                     /// 안읽음 메시지 개수 갱신
                     try await chatViewModel.resetUnreadCount(channelID: channel.id)
@@ -185,6 +185,17 @@ struct ChatDetailView: View {
                 if let channel = chatViewModel.selectedChannel {
                     await chatViewModel.resetMessageData(channelID: channel.id)
                 }
+            }
+        }
+        .onChange(of: scenePhase) { newPhase in
+            Task {
+                guard let channel = chatViewModel.selectedChannel else {return}
+                
+                //두명 다 채팅방에 들어와있고
+                //다른 한명의 앱이 백그라운드로 가도 푸시알림이 오도록
+                //만약 앱이 다시 active가 되면 푸시알람이 안오도록
+                if newPhase == .active {await chatViewModel.updateActiveUser(channelID: channel.id, into: true)}
+                else if newPhase == .background {await chatViewModel.updateActiveUser(channelID: channel.id, into: false)}
             }
         }
     }

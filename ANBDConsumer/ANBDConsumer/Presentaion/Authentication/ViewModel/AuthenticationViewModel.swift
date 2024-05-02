@@ -213,7 +213,7 @@ extension AuthenticationViewModel {
         } else {
             authState = false
             if UserStore.shared.user.userLevel == .banned {
-                errorMessage = "접근 권한이 없습니다."
+                errorMessage = "해당 계정은 접근 권한이 없습니다."
             }
         }
     }
@@ -293,7 +293,10 @@ extension AuthenticationViewModel {
     
     func signOut(_ completion: @escaping () -> Void) async {
         do {
-            try await userUsecase.updateUserFCMToken(userID: UserStore.shared.user.id, fcmToken: "")
+            //중복로그인된 아이디가 로그아웃 되었을때 가장 최근 로그인된 디바이스의 토큰을 초기화 하지 않기 위하여
+            if (UserStore.shared.deviceToken == UserStore.shared.user.fcmToken) || (UserStore.shared.user.userLevel == .banned) {
+                try await userUsecase.updateUserFCMToken(userID: UserStore.shared.user.id, fcmToken: "")
+            }
             try await authUsecase.signOut()
             completion()
         } catch {

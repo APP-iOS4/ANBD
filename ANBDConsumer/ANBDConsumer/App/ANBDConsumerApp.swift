@@ -75,14 +75,29 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 
 extension AppDelegate: MessagingDelegate {
     
+//    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+//        Messaging.messaging().token { token, error in
+//            if let error = error {
+//                print("Error fetching FCM registration token: \(error)")
+//            } else if let token = token {
+//                UserStore.shared.deviceToken = token
+//            }
+//        }
+//    }
+    
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        Messaging.messaging().token { token, error in
-            if let error = error {
-                print("Error fetching FCM registration token: \(error)")
-            } else if let token = token {
-                UserStore.shared.deviceToken = token
-            }
+        print("Firebase registration token: \(String(describing: fcmToken))")
+        
+        let dataDict: [String: String] = ["token": fcmToken ?? ""]
+        NotificationCenter.default.post(
+            name: Notification.Name("FCMToken"),
+            object: nil,
+            userInfo: dataDict
+        )
+        if let fcmToken {
+            UserStore.shared.deviceToken = fcmToken
         }
+
     }
 }
 
@@ -96,11 +111,10 @@ extension AppDelegate {
         }
         coorinator.selectedTab = .chat
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
                 coorinator.channelID = channelID
                 coorinator.appendPath(.chatDetailView)
         }
-
     }
 }
 
@@ -117,6 +131,9 @@ struct ANBDConsumerApp: App {
     @StateObject private var networkMonitor = NetworkMonitor()
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var isShowingBannedAlert = false
     
     var body: some Scene {
         WindowGroup {
@@ -147,9 +164,38 @@ struct ANBDConsumerApp: App {
                             }
                         )
                 }
+                if isShowingBannedAlert {
+                                    CustomAlertView(isShowingCustomAlert: $isShowingBannedAlert, viewType: .userKicked) {
+                                    }
+                                }
             }
             .toastView(toast: Binding(get: { ToastManager.shared.toast },
-                                      set: { ToastManager.shared.toast = $0 }))
+                                                  set: { ToastManager.shared.toast = $0 }))
         }
+        .onChange(of: scenePhase) { newScenePhase in
+                    switch newScenePhase {
+                    case .active:
+                        if UserStore.shared.user.userLevel == .banned {
+                            Task {
+                                await authenticationViewModel.signOut {
+                                    UserDefaultsClient.shared.removeUserID()
+                                    UserStore.shared.user = MyPageViewModel.mockUser
+                                }
+                            }
+                            authenticationViewModel.checkAuthState()
+                            isShowingBannedAlert = true
+                        }
+                    case .inactive:
+                        break
+                    case .background:
+                        if authenticationViewModel.authState == true{
+                            Task{
+                                await UserStore.shared.getUserInfo(userID: UserStore.shared.user.id)
+                            }
+                        }
+                    @unknown default:
+                        break
+                    }
+                }
     }
 }

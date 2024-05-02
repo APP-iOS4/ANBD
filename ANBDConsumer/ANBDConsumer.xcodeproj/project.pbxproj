@@ -24,6 +24,7 @@
 		46652CF32BDF603F000F7376 /* Bundle+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46652CF22BDF603F000F7376 /* Bundle+Extension.swift */; };
 		469FA5D12BDA3DE800D2222B /* SkeletonUI in Frameworks */ = {isa = PBXBuildFile; productRef = 469FA5D02BDA3DE800D2222B /* SkeletonUI */; };
 		469FA5D42BDB405800D2222B /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 469FA5D32BDB405800D2222B /* Kingfisher */; };
+		82396FF12BE363DD00C2E3C4 /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 82396FF02BE363DD00C2E3C4 /* Secrets.xcconfig */; };
 		A816E5FA2BC1056F00138CFC /* ChatListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A816E5F92BC1056F00138CFC /* ChatListCell.swift */; };
 		A816E5FC2BC11B7800138CFC /* ChatDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A816E5FB2BC11B7800138CFC /* ChatDetailView.swift */; };
 		A816E5FE2BC1254B00138CFC /* TradeStateChangeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A816E5FD2BC1254B00138CFC /* TradeStateChangeView.swift */; };
@@ -79,7 +80,6 @@
 		CB7BEE3E2BBD587200C0F298 /* ANBDModel in Frameworks */ = {isa = PBXBuildFile; productRef = CB7BEE3D2BBD587200C0F298 /* ANBDModel */; };
 		CB7BEE432BBD5BEC00C0F298 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CB7BEE422BBD5BEC00C0F298 /* GoogleService-Info.plist */; };
 		CBD556F32BE1C88900792CBE /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD556F22BE1C88900792CBE /* NetworkMonitor.swift */; };
-		CBD556F92BE23D5300792CBE /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CBD556F82BE23D5300792CBE /* Secrets.xcconfig */; };
 		D75C3A4D2BBF8C6900ED948C /* ArticleListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75C3A4C2BBF8C6900ED948C /* ArticleListCell.swift */; };
 		D75C3A512BBFD9DB00ED948C /* ArticleCreateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75C3A502BBFD9DB00ED948C /* ArticleCreateView.swift */; };
 		D75C3A532BC1377400ED948C /* ArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75C3A522BC1377400ED948C /* ArticleView.swift */; };
@@ -108,6 +108,7 @@
 		42EE634D2BC2BCA100100FF4 /* LocationPickerMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPickerMenu.swift; sourceTree = "<group>"; };
 		46652CF02BDF2D19000F7376 /* ANBDConsumer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ANBDConsumer.entitlements; sourceTree = "<group>"; };
 		46652CF22BDF603F000F7376 /* Bundle+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extension.swift"; sourceTree = "<group>"; };
+		82396FF02BE363DD00C2E3C4 /* Secrets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		A816E5F92BC1056F00138CFC /* ChatListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListCell.swift; sourceTree = "<group>"; };
 		A816E5FB2BC11B7800138CFC /* ChatDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatDetailView.swift; sourceTree = "<group>"; };
 		A816E5FD2BC1254B00138CFC /* TradeStateChangeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeStateChangeView.swift; sourceTree = "<group>"; };
@@ -160,7 +161,6 @@
 		CB7BEE3A2BBD57FD00C0F298 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		CB7BEE422BBD5BEC00C0F298 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CBD556F22BE1C88900792CBE /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
-		CBD556F82BE23D5300792CBE /* Secrets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		D75C3A4C2BBF8C6900ED948C /* ArticleListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleListCell.swift; sourceTree = "<group>"; };
 		D75C3A4E2BBFB40200ED948C /* ArticleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleDetailView.swift; sourceTree = "<group>"; };
 		D75C3A502BBFD9DB00ED948C /* ArticleCreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleCreateView.swift; sourceTree = "<group>"; };
@@ -360,8 +360,8 @@
 		CB7BEE062BBD551800C0F298 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				82396FF02BE363DD00C2E3C4 /* Secrets.xcconfig */,
 				CB7BEE422BBD5BEC00C0F298 /* GoogleService-Info.plist */,
-				CBD556F82BE23D5300792CBE /* Secrets.xcconfig */,
 				CB7BEDF72BBD539F00C0F298 /* Font */,
 				CB7BEDBC2BBD4E9F00C0F298 /* Assets.xcassets */,
 				CB7BEDFC2BBD53AF00C0F298 /* Colors.xcassets */,
@@ -656,7 +656,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CBD556F92BE23D5300792CBE /* Secrets.xcconfig in Resources */,
+				82396FF12BE363DD00C2E3C4 /* Secrets.xcconfig in Resources */,
 				CB7BEDBD2BBD4E9F00C0F298 /* Assets.xcassets in Resources */,
 				CB7BEE432BBD5BEC00C0F298 /* GoogleService-Info.plist in Resources */,
 				CB7BEDFA2BBD53A000C0F298 /* Pretendard-Regular.otf in Resources */,
@@ -869,7 +869,6 @@
 		};
 		CB7BEDC42BBD4E9F00C0F298 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CBD556F62BE226CE00792CBE /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -906,7 +905,6 @@
 		};
 		CB7BEDC52BBD4E9F00C0F298 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CBD556F62BE226CE00792CBE /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

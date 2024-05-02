@@ -213,7 +213,7 @@ extension AuthenticationViewModel {
         } else {
             authState = false
             if UserStore.shared.user.userLevel == .banned {
-                errorMessage = "접근 권한이 없습니다."
+                errorMessage = "해당 계정은 접근이 차단된 계정입니다."
             }
         }
     }
@@ -281,7 +281,9 @@ extension AuthenticationViewModel {
     
     func signOut(_ completion: @escaping () -> Void) async {
         do {
-            try await userUsecase.updateUserFCMToken(userID: UserStore.shared.user.id, fcmToken: "")
+            if UserStore.shared.user.userLevel != .banned{
+                try await userUsecase.updateUserFCMToken(userID: UserStore.shared.user.id, fcmToken: "")
+            }
             try await authUsecase.signOut()
             completion()
         } catch {

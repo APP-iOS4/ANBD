@@ -118,6 +118,9 @@ struct ANBDConsumerApp: App {
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var isShowingBannedAlert = false
+    
     var body: some Scene {
         WindowGroup {
             ZStack(alignment: .top) {
@@ -147,7 +150,38 @@ struct ANBDConsumerApp: App {
                             }
                         )
                 }
+                if isShowingBannedAlert {
+                                    CustomAlertView(isShowingCustomAlert: $isShowingBannedAlert, viewType: .userKicked) {
+                                    }
+                                }
             }
         }
+        .onChange(of: scenePhase) { newScenePhase in
+                    switch newScenePhase {
+                    case .active:
+                        print("active")
+                        if UserStore.shared.user.userLevel == .banned {
+                            Task {
+                                await authenticationViewModel.signOut {
+                                    UserDefaultsClient.shared.removeUserID()
+                                    UserStore.shared.user = MyPageViewModel.mockUser
+                                }
+                            }
+                            print(UserStore.shared.user.userLevel)
+                            authenticationViewModel.checkAuthState()
+                            isShowingBannedAlert = true
+                        }
+                    case .inactive:
+                        break
+                    case .background:
+                        if authenticationViewModel.authState == true{
+                            Task{
+                                await UserStore.shared.getUserInfo(userID: UserStore.shared.user.id)
+                            }
+                        }
+                    @unknown default:
+                        break
+                    }
+                }
     }
 }

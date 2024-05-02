@@ -287,11 +287,6 @@ extension AuthenticationViewModel {
             #if DEBUG
             print("Error sign in: \(error.localizedDescription)")
             #endif
-            guard let error = error as? AuthError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
-                return false
-            }
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
             return false
         }
     }

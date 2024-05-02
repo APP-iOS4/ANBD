@@ -45,7 +45,15 @@ final class UserStore: ObservableObject {
             self.user = getUser
             return getUser
         } catch {
-            print("Error get user information: \(error.localizedDescription)")
+            guard let error = error as? UserError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return await MyPageViewModel.mockUser
+            }
+            if error.rawValue == 4009 {
+                ToastManager.shared.toast = Toast(style: .error, message: "사용자 필드 누락(ID)")
+            } else {
+                ToastManager.shared.toast = Toast(style: .error, message: "사용자 필드 누락(이미지)")
+            }
             
             return await MyPageViewModel.mockUser
         }
@@ -56,7 +64,15 @@ final class UserStore: ObservableObject {
             guard let userID = UserDefaultsClient.shared.userID else { return }
             self.user = try await userUsecase.getUserInfo(userID: userID)
         } catch {
-            print("Error save user information: \(error.localizedDescription)")
+            guard let error = error as? UserError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            if error.rawValue == 4009 {
+                ToastManager.shared.toast = Toast(style: .error, message: "사용자 필드 누락(ID)")
+            } else {
+                ToastManager.shared.toast = Toast(style: .error, message: "사용자 필드 누락(이미지)")
+            }
         }
     }
 }

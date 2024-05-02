@@ -4,6 +4,7 @@ import PhotosUI
 
 struct TradeCreateView: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
+    @EnvironmentObject private var networkMonitor: NetworkMonitor
     @StateObject private var coordinator = Coordinator.shared
     @Binding var isShowingCreate: Bool
     @State private var placeHolder: String = ""
@@ -325,7 +326,7 @@ fileprivate extension TradeCreateView {
                 
                 //MARK: - 작성 완료 / 수정 완료 버튼
                 
-                BlueSquareButton(title: isNewProduct ? "작성 완료" : "수정 완료", isDisabled: isFinished) {
+                BlueSquareButton(title: isNewProduct ? "작성 완료" : "수정 완료", isDisabled: isFinished || !networkMonitor.isConnected) {
                     if isNewProduct {
                         isLoading = true
                         
@@ -371,6 +372,26 @@ fileprivate extension TradeCreateView {
             
             if isLoading {
                 LoadingView()
+            }
+            
+            if !networkMonitor.isConnected {
+                VStack {
+                    Rectangle()
+                        .frame(width: UIScreen.main.bounds.width, height: 50)
+                        .foregroundStyle(.gray50)
+                        .shadow(radius: 10)
+                        .overlay(
+                            HStack {
+                                Image(systemName: "exclamationmark.triangle")
+                                    .foregroundStyle(.heartRed)
+                                    .padding(.trailing, 10)
+                                Text("인터넷이 연결되지 않았습니다.")
+                                    .font(ANBDFont.body2)
+                                    .foregroundStyle(.gray900)
+                            }
+                        )
+                    Spacer()
+                }
             }
         }
         .toolbar {

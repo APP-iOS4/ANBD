@@ -51,6 +51,112 @@
 <br>
 <br>
 
+## 디렉토리 구조 📁
+### ∘ ANBDConsumer 
+```
+ANBDConsumer
+ ┣ App
+ ┃ ┗ ANBDConsumerApp.swift
+ ┣ Common
+ ┃ ┣ Extension: Extension해서 사용할 공통 로직
+ ┃ ┗ Util: 공통 로직
+ ┣ Presentaion: 화면에 보일 요소
+ ┃ ┗ ANBDTabView.swift
+ ┃ ┣ Authentication
+ ┃ ┃ ┣ View
+ ┃ ┃ ┗ ViewModel
+ ┃ ┣ Home
+ ┃ ┃ ┣ View
+ ┃ ┃ ┗ ViewModel
+ ┃ ┣ Article
+ ┃ ┃ ┣ View
+ ┃ ┃ ┗ ViewModel
+ ┃ ┣ Trade
+ ┃ ┃ ┣ View
+ ┃ ┃ ┗ ViewModel
+ ┃ ┣ Chat
+ ┃ ┃ ┣ View
+ ┃ ┃ ┗ ViewModel
+ ┃ ┣ Mypage
+ ┃ ┃ ┣ View
+ ┃ ┃ ┗ ViewModel
+ ┃ ┣ CommonUI: 공통적으로 사용되는 View
+ ┃ ┃ ┣ Button
+ ┃ ┃ ┣ Picker
+ ┃ ┃ ┣ Sheet
+ ┃ ┃ ┣ TextField
+ ┃ ┃ ┣ View
+ ┃ ┣ Report
+ ┃ ┃ ┣ View
+ ┃ ┃ ┗ ViewModel
+ ┃ ┣ Search
+ ┃ ┃ ┣ View
+ ┃ ┃ ┗ ViewModel
+ ┗ Resource
+ ┃ ┣ Assets.xcassets
+ ┃ ┃ ┣ AccentColor.colorset
+ ┃ ┃ ┣ AppIcon.appiconset
+ ┃ ┃ ┣ Etc
+ ┃ ┣ Colors.xcassets
+ ┃ ┣ Font
+ ┃ ┣ ANBDConsumer.entitlements
+ ┃ ┣ GoogleService-Info.plist
+ ┃ ┣ Info.plist
+ ┃ ┗ Secrets.xcconfig
+```
+
+### ∘ ANBDAdmin 
+```
+ANBDAdmin
+ ┣ App
+ ┃ ┗ ANBDAdminApp.swift
+ ┣ Common
+ ┃ ┣ Util
+ ┃ ┗ dateFormatter.swift
+ ┣ CommonUI
+ ┃ ┣ Button
+ ┃ ┣ TextField
+ ┃ ┗ View
+ ┣ Presentaion
+ ┃ ┣ AllUserList
+ ┃ ┣ Article
+ ┃ ┣ Auth
+ ┃ ┣ BannerEdit
+ ┃ ┣ Comment
+ ┃ ┣ Reported
+ ┃ ┣ Trade
+ ┃ ┣ ANBDAdminAppHomeView.swift
+ ┃ ┗ AdminHomeView.swift
+ ┗ Resource
+ ┃ ┣ Assets.xcassets
+ ┃ ┃ ┣ AccentColor.colorset
+ ┃ ┃ ┣ AdminLogo.imageset
+ ┃ ┃ ┣ AppIcon.appiconset
+ ┃ ┣ Colors.xcassets
+ ┃ ┣ Font
+ ┃ ┗ Info.plist
+```
+
+### ∘ ANBDModel 
+```
+Sources
+ ┣ Common
+ ┃ ┣ Extension
+ ┃ ┗ Manager
+ ┣ Data
+ ┃ ┣ DataSource
+ ┃ ┣ Database
+ ┃ ┗ Repository
+ ┗ Domain
+ ┃ ┣ Enum
+ ┃ ┣ Error
+ ┃ ┣ RepositoryProtocol
+ ┃ ┣ Usecase
+ ┃ ┗ VO
+```
+<br>
+<br>
+
 ## Skill 🛠️
 ### Architecture
 * `MVVM` + `Coordinator`

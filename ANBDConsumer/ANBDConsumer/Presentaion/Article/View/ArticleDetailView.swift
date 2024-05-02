@@ -178,10 +178,11 @@ struct ArticleDetailView: View {
                                     .font(ANBDFont.SubTitle2)
                                     .foregroundStyle(.gray300)
                                     .multilineTextAlignment(.center)
+                                    .padding(.bottom, 100)
+                                
                             } else {
                                 Text("댓글 \(articleViewModel.comments.count)")
                                     .font(ANBDFont.SubTitle3)
-                                    .padding(.bottom)
                                     .padding(.leading, 5)
                                 
                                 ForEach(articleViewModel.comments.reversed()) { comment in
@@ -194,10 +195,6 @@ struct ArticleDetailView: View {
                                             .aspectRatio(contentMode: .fill)
                                             .frame(width: 40, height: 40)
                                             .clipShape(.circle)
-                                            .overlay(
-                                                Circle()
-                                                    .stroke(.gray100, lineWidth: 1)
-                                            )
                                             .onTapGesture {
                                                 Task {
                                                     commentUser = await myPageViewModel.getUserInfo(userID: comment.writerID)
@@ -265,7 +262,6 @@ struct ArticleDetailView: View {
                                     .padding(.bottom, 20)
                                 }
                             }
-                            Spacer(minLength: 60)
                         }
                         .padding()
                     }
@@ -426,4 +422,21 @@ struct ArticleDetailView: View {
             .background(colorScheme == .dark ? .gray50 : .white)
         }
     }
+}
+
+#Preview {
+    ArticleDetailView(article: Article(writerID: "asd", writerNickname: "asd", category: .accua, title: "asd", content: """
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vulputate arcu dictum felis luctus semper. Integer molestie dolor vitae fermentum sodales. Aenean ac felis lacus. In dictum ipsum ac risus dictum laoreet. Curabitur ullamcorper ullamcorper dolor et tincidunt. Nulla gravida congue neque, vel sagittis est malesuada sit amet. Nulla elementum et mauris sed tristique. In ut urna et nulla feugiat malesuada. Aliquam mi orci, viverra in elit sollicitudin, venenatis euismod risus. Nunc ut dapibus urna. Interdum et malesuada fames ac ante ipsum primis in faucibus.
+
+Pellentesque sed pellentesque felis, non sollicitudin eros. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer fermentum, libero in consequat consequat, nunc risus pharetra justo, a aliquet urna mauris sit amet lectus. Aliquam vitae turpis congue, sodales risus quis, vestibulum dolor. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nunc egestas sem non aliquet convallis. Nulla consequat, dolor quis dignissim euismod, nulla mi dignissim massa, vitae lobortis mi magna nec ipsum. Curabitur in magna gravida, sodales nibh in, congue dolor.
+
+Aenean vel magna lacus. Sed nulla mauris, aliquet sit amet leo non, pretium posuere tortor. Pellentesque lacus purus, ullamcorper non laoreet nec, pharetra sed erat. Proin efficitur ante eget tristique porttitor. Etiam porta, libero at ultrices semper, nulla diam tincidunt mi, interdum consectetur elit justo vitae purus. Suspendisse quis eleifend magna, ac semper magna. Fusce pretium massa ut urna porta maximus. Duis lacinia diam sit amet semper maximus. Nam eu blandit felis.
+
+Sed nibh dui, consequat et velit non, sodales pellentesque mauris. Donec mauris dolor, auctor nec pretium sit amet, eleifend sed eros. Vestibulum posuere rhoncus rutrum. Aenean vitae efficitur turpis, vitae pellentesque dolor. Proin aliquet efficitur ultrices. Integer ut lorem lobortis, sollicitudin dolor vel, condimentum sem. Curabitur vel maximus turpis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Vivamus nunc nulla, mollis ac scelerisque sed, ullamcorper sit amet lectus. Duis nec ligula quis orci sagittis dignissim. Curabitur ornare nisi ac odio sagittis, id commodo sem vulputate. Fusce posuere lorem sit amet consequat malesuada. Vestibulum tempor laoreet molestie.
+
+Vivamus maximus cursus est vel aliquam. Suspendisse nisi dui, pellentesque vitae ligula sit amet, eleifend ornare tortor. Proin vel metus eros. Vivamus volutpat mi vel accumsan rutrum. Aenean ut est mollis tortor vehicula interdum. Nam varius at risus in convallis. Donec volutpat luctus gravida. Aenean tincidunt ultricies imperdiet. Fusce felis tellus, maximus at tempor euismod, viverra nec enim. Suspendisse tincidunt, mauris a sodales egestas, felis nisl hendrerit lorem, non tempus lorem urna nec odio. Maecenas porta nisl eu nisl blandit, vulputate mattis nibh sodales.
+""", thumbnailImagePath: ""))
+        .environmentObject(ArticleViewModel())
+        .environmentObject(MyPageViewModel())
+        .environmentObject(Coordinator())
 }

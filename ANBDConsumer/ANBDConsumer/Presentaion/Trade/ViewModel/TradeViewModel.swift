@@ -26,6 +26,8 @@ final class TradeViewModel: ObservableObject {
     @Published var selectedLocation: Location = .seoul
     @Published var detailImages: [Data] = []
     
+    @State private var isDone: Bool = false
+    
     //MARK: - 로컬 함수 (네트워크 호출 X)
     
     func filteringTrades(category: ANBDCategory) {
@@ -91,7 +93,6 @@ final class TradeViewModel: ObservableObject {
             
             for item in newTrades {
                 if filteredTrades.contains(item) {
-                    print("end")
                 } else {
                     self.filteredTrades.append(contentsOf: newTrades)
                 }

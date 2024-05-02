@@ -88,9 +88,11 @@ struct TradeDetailView: View {
                             }
                             
                             VStack(alignment: .leading) {
-                                Text("\(tradeViewModel.trade.writerNickname)")
-                                    .font(ANBDFont.SubTitle1)
-                                    .foregroundStyle(.gray900)
+                                if let writerUser {
+                                    Text("\(writerUser.nickname)")
+                                        .font(ANBDFont.SubTitle1)
+                                        .foregroundStyle(.gray900)
+                                }
                                 
                                 Text("\(tradeViewModel.trade.createdAt.relativeTimeNamed)")
                                     .font(ANBDFont.body2)
@@ -179,7 +181,7 @@ struct TradeDetailView: View {
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
             ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $tradeViewModel.detailImages, idx: $idx)
         }
-        .navigationTitle("나눔 · 거래")
+        .navigationTitle(tradeViewModel.trade.category == .nanua ? "나눠쓰기" : "바꿔쓰기")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarRole(.editor)
         .toolbar {

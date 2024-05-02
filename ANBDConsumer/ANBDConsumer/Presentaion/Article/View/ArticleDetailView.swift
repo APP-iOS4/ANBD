@@ -132,8 +132,8 @@ struct ArticleDetailView: View {
                                                 .font(ANBDFont.body1)
                                                 .foregroundStyle(.gray900)
                                                 .fontWeight(.semibold)
-                                                .padding()
                                         }
+                                        .padding(.vertical, 250)
                                         Spacer()
                                     }
                                 }

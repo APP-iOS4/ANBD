@@ -92,8 +92,7 @@ final class TradeViewModel: ObservableObject {
             newTrades = newTrades.filter { $0.tradeState == .trading }
             
             for item in newTrades {
-                if filteredTrades.contains(item) {
-                } else {
+                if !filteredTrades.contains(item) {
                     self.filteredTrades.append(contentsOf: newTrades)
                 }
             }

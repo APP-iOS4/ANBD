@@ -347,6 +347,15 @@ extension Postable where Item == Article {
         }
     }
     
+    func likeItem(item: Article) async throws {
+        guard let _ = try? await database.document(item.id).updateData([
+            "likeCount": item.likeCount
+        ])
+        else {
+            throw DBError.updateDocumentError
+        }
+    }
+    
 }
 
 

@@ -111,7 +111,7 @@ extension ChatViewModel {
             
             //채팅방에 들어왔을때 한번만 실행되야 하는 것들
             if !isListener {
-                try await chatUsecase.updateActiveUser(channelID: channelID, userID: user.id , into: true)
+                await updateActiveUser(channelID: channelID, into: true)
                 if let lastMessage = messages.last {
                     try await chatUsecase.updateMessageReadStatus(channelID: channelID, lastMessage: lastMessage, userID: user.id)
                 }
@@ -216,8 +216,12 @@ extension ChatViewModel {
         messages = []
         groupedMessages = []
         otherUserLastMessages = []
+        await updateActiveUser(channelID: channelID, into: false)
+    }
+    
+    func updateActiveUser(channelID: String , into: Bool) async{
         do {
-            try await chatUsecase.updateActiveUser(channelID: channelID, userID: user.id , into: false)
+            try await chatUsecase.updateActiveUser(channelID: channelID, userID: user.id , into: into)
         }
         catch {
             print("updateActiveUser:\(error)")

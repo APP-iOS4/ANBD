@@ -287,7 +287,10 @@ extension AuthenticationViewModel {
     
     func signOut(_ completion: @escaping () -> Void) async {
         do {
-            try await userUsecase.updateUserFCMToken(userID: UserStore.shared.user.id, fcmToken: "")
+            //중복로그인된 아이디가 로그아웃 되었을때 가장 최근 로그인된 디바이스의 토큰을 초기화 하지 않기 위하여
+            if UserStore.shared.deviceToken == UserStore.shared.user.fcmToken {
+                try await userUsecase.updateUserFCMToken(userID: UserStore.shared.user.id, fcmToken: "")
+            }
             try await authUsecase.signOut()
             completion()
         } catch {

@@ -58,7 +58,11 @@ final class ArticleViewModel: ObservableObject {
         do {
             self.filteredArticles = try await articleUseCase.refreshSortedArticleList(category: category, by: self.sortOption, limit: 8)
         } catch {
-            print(error.localizedDescription)
+            guard let error = error as? ArticleError else {
+                print(error.localizedDescription)
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -74,7 +78,11 @@ final class ArticleViewModel: ObservableObject {
                 }
             }
         } catch {
-            print(error.localizedDescription)
+            guard let error = error as? ArticleError else {
+                print(error.localizedDescription)
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -88,7 +96,11 @@ final class ArticleViewModel: ObservableObject {
                     try await storageManager.downloadImage(path: path, containerID: containerID, imagePath: image)
                 )
             } catch {
-                print("이미지 실패요... \(error.localizedDescription)")
+                guard let error = error as? ArticleError else {
+                    print(error.localizedDescription)
+                    return []
+                }
+                ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
                 
                 //이미지 예외
                 let image = UIImage(named: "ANBDWarning")
@@ -122,7 +134,11 @@ final class ArticleViewModel: ObservableObject {
             try await articleUseCase.writeArticle(article: newArticle, imageDatas: newImages)
             await UserStore.shared.updateLocalUserInfo()
         } catch {
-            print(error.localizedDescription)
+            guard let error = error as? ArticleError else {
+                print(error.localizedDescription)
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -157,7 +173,11 @@ final class ArticleViewModel: ObservableObject {
             article = try await articleUseCase.loadArticle(articleID: article.id)
             await UserStore.shared.updateLocalUserInfo()
         } catch {
-            print(error.localizedDescription)
+            guard let error = error as? ArticleError else {
+                print(error.localizedDescription)
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -166,8 +186,11 @@ final class ArticleViewModel: ObservableObject {
             let loadedArticle = try await articleUseCase.loadArticle(articleID: article.id)
             self.article = loadedArticle
         } catch {
-            print(error.localizedDescription)
-            print("실패실패실패실패실패")
+            guard let error = error as? ArticleError else {
+                print(error.localizedDescription)
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -178,20 +201,24 @@ final class ArticleViewModel: ObservableObject {
 
             self.article = loadedArticle
         } catch {
-            print(error.localizedDescription)
+            guard let error = error as? ArticleError else {
+                print(error.localizedDescription)
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
-    
-    
-    
     
     func deleteArticle(article: Article) async {
         do {
             try await articleUseCase.deleteArticle(article: article)
             await UserStore.shared.updateLocalUserInfo()
         } catch {
-            print(error.localizedDescription)
-            print("삭제실패")
+            guard let error = error as? ArticleError else {
+                print(error.localizedDescription)
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -213,7 +240,11 @@ final class ArticleViewModel: ObservableObject {
             try await articleUseCase.likeArticle(articleID: article.id)
             await UserStore.shared.updateLocalUserInfo()
         } catch {
-            print(error.localizedDescription)
+            guard let error = error as? ArticleError else {
+                print(error.localizedDescription)
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -233,7 +264,11 @@ final class ArticleViewModel: ObservableObject {
             try await commentUseCase.writeComment(articleID: articleID, comment: newComment)
             await loadCommentList(articleID: articleID)
         } catch {
-            print(error.localizedDescription)
+            guard let error = error as? CommentError else {
+                print(error.localizedDescription)
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -242,7 +277,11 @@ final class ArticleViewModel: ObservableObject {
             let loadedComment = try await commentUseCase.loadCommentList(articleID: articleID)
             self.comments = loadedComment
         } catch {
-            print(error.localizedDescription)
+            guard let error = error as? CommentError else {
+                print(error.localizedDescription)
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -250,7 +289,11 @@ final class ArticleViewModel: ObservableObject {
         do {
             try await commentUseCase.updateComment(comment: comment)
         } catch {
-            print(error.localizedDescription)
+            guard let error = error as? CommentError else {
+                print(error.localizedDescription)
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -258,7 +301,11 @@ final class ArticleViewModel: ObservableObject {
         do {
             try await commentUseCase.deleteComment(articleID: articleID, commentID: commentID)
         } catch {
-            print("댓글 삭제 실패 - \(error.localizedDescription)")
+            guard let error = error as? CommentError else {
+                print(error.localizedDescription)
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -271,7 +318,11 @@ final class ArticleViewModel: ObservableObject {
                 filteringArticles(category: category)
             }
         } catch {
-            print("Error: \(error)")
+            guard let error = error as? ArticleError else {
+                print(error.localizedDescription)
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
 }

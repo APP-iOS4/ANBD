@@ -110,7 +110,7 @@ public struct StorageManager {
         if !isUpdate,
            let thumbnailImageData = imageDatas.first,
            let resizedImageData = await UIImage(data: thumbnailImageData)?
-            .byPreparingThumbnail(ofSize: .init(width: 256, height: 256))?
+            .byPreparingThumbnail(ofSize: .init(width: 512, height: 512))?
             .jpegData(compressionQuality: 1) {
             let thumbnailImagePath = try await uploadImage(
                 path: storagePath,
@@ -204,7 +204,7 @@ public struct StorageManager {
         )
         
         if let resizedImage = await UIImage(data: thumbnailImage)?
-            .byPreparingThumbnail(ofSize: .init(width: 256, height: 256))?
+            .byPreparingThumbnail(ofSize: .init(width: 512, height: 512))?
             .jpegData(compressionQuality: 1) {
             
             try await updateImage(

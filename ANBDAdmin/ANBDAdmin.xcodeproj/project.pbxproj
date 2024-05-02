@@ -46,7 +46,6 @@
 		82C458D52BDF7D7400688620 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 82C458D42BDF7D7400688620 /* GoogleService-Info.plist */; };
 		82C458D72BDF9D3D00688620 /* UserStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82C458D62BDF9D3D00688620 /* UserStore.swift */; };
 		82C458D92BDF9D6B00688620 /* MyPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82C458D82BDF9D6B00688620 /* MyPageViewModel.swift */; };
-		82C458DE2BE05AEA00688620 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82C458DD2BE05AEA00688620 /* DashboardView.swift */; };
 		CB7BEE412BBD588000C0F298 /* ANBDModel in Frameworks */ = {isa = PBXBuildFile; productRef = CB7BEE402BBD588000C0F298 /* ANBDModel */; };
 /* End PBXBuildFile section */
 
@@ -89,7 +88,6 @@
 		82C458D42BDF7D7400688620 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		82C458D62BDF9D3D00688620 /* UserStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStore.swift; sourceTree = "<group>"; };
 		82C458D82BDF9D6B00688620 /* MyPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageViewModel.swift; sourceTree = "<group>"; };
-		82C458DD2BE05AEA00688620 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		82EC85FC2BD943AF00819CF3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		CB7BEDCF2BBD4EE300C0F298 /* ANBDAdmin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ANBDAdmin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -213,7 +211,6 @@
 			isa = PBXGroup;
 			children = (
 				82318E582BD5B5360071DB7A /* ANBDAdminAppHomeView.swift */,
-				82C458DC2BE05AC800688620 /* Dashboard */,
 				82318E402BD5B5360071DB7A /* AllUserList */,
 				82318E442BD5B5360071DB7A /* Article */,
 				82318E472BD5B5360071DB7A /* Auth */,
@@ -275,14 +272,6 @@
 				82318E682BD5B5360071DB7A /* Util */,
 			);
 			path = Common;
-			sourceTree = "<group>";
-		};
-		82C458DC2BE05AC800688620 /* Dashboard */ = {
-			isa = PBXGroup;
-			children = (
-				82C458DD2BE05AEA00688620 /* DashboardView.swift */,
-			);
-			path = Dashboard;
 			sourceTree = "<group>";
 		};
 		CB7BEDC62BBD4EE300C0F298 = {
@@ -421,7 +410,6 @@
 				82318E722BD5B5360071DB7A /* ArticleListViewModel.swift in Sources */,
 				82318E752BD5B5360071DB7A /* BannerEditDetailView.swift in Sources */,
 				82318E7D2BD5B5360071DB7A /* TradeListDetailView.swift in Sources */,
-				82C458DE2BE05AEA00688620 /* DashboardView.swift in Sources */,
 				82318E812BD5B5360071DB7A /* ANBDAdminApp.swift in Sources */,
 				82318E7F2BD5B5360071DB7A /* TradeListViewModel.swift in Sources */,
 				82318E892BD5B5360071DB7A /* ANBDFont.swift in Sources */,

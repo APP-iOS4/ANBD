@@ -126,6 +126,9 @@ struct UserListDetailView: View {
                     Task {
                         do {
                             try await userUsecase.updateUserInfo(user: updatedUser)
+                            if initialUserLevel == .banned {
+                                try await userUsecase.updateUserFCMToken(userID: updatedUser.id, fcmToken: "")
+                            }
                             editingUserLevel = false
                             userLevelEditPresentationMode.wrappedValue.dismiss()
                         } catch {
@@ -140,7 +143,6 @@ struct UserListDetailView: View {
                     if (user.userLevel == .consumer) || (user.userLevel == .banned) {
                         Button(action: {
                             editingUserLevel = true
-                            
                         }) {
                             Text("Edit")
                         }

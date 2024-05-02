@@ -49,7 +49,7 @@ struct AuthenticationView: View {
                             .submitLabel(.go)
                             .onSubmit {
                                 Task {
-                                    try await authenticationViewModel.signIn()
+                                    await authenticationViewModel.signIn()
                                     authenticationViewModel.checkAuthState()
                                 }
                             }
@@ -68,7 +68,7 @@ struct AuthenticationView: View {
                             BlueSquareButton(title: "로그인",
                                              isDisabled: !authenticationViewModel.isValidLogin) {
                                 Task {
-                                    try await authenticationViewModel.signIn()
+                                    await authenticationViewModel.signIn()
                                     authenticationViewModel.checkAuthState()
                                 }
                             }

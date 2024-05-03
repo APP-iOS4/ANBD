@@ -307,7 +307,23 @@ struct ArticleCreateView: View {
                 } label: {
                     Text("완료")
                 }
-                .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || selectedImageData.isEmpty || title == article?.title && content == article?.content && category == article?.category && (deletedPhotosData.isEmpty && selectedImageData.isEmpty))
+                .disabled({
+                    if !isNewArticle {
+                        guard let article = article else { return true }
+                        
+                        let isNotTitleChanged = title == article.title
+                        let isNotContentChanged = content == article.content
+                        let isNotCategoryChanged = category == article.category
+                        let isNotImageChanged = selectedImageData.isEmpty && deletedPhotosData.isEmpty
+                        
+                        return isNotTitleChanged && isNotContentChanged && isNotImageChanged && isNotCategoryChanged
+                        
+                    } else {
+                        return title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                               content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                               selectedImageData.isEmpty
+                    }
+                }())
             }
             
             ToolbarItem(placement: .cancellationAction) {

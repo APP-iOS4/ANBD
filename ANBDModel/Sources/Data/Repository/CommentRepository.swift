@@ -7,17 +7,21 @@
 
 import Foundation
 import FirebaseFirestore
+import FirebaseAuth
 
 @available(iOS 15, *)
 struct CommentRepositoryImpl: CommentRepository {
     
+    private let userDataSource: UserDataSource
     private let commentDataSource: any Postable<Comment>
     private let articleDataSource: any Postable<Article>
     
     init(
+        userDataSource: UserDataSource = DefaultUserDataSource(),
         commentDataSource: any Postable<Comment> = PostDataSource<Comment>(database: .commentDatabase),
         articleDataSource: any Postable<Article> = PostDataSource<Article>(database: .articleDatabase)
     ) {
+        self.userDataSource = userDataSource
         self.commentDataSource = commentDataSource
         self.articleDataSource = articleDataSource
     }
@@ -25,10 +29,23 @@ struct CommentRepositoryImpl: CommentRepository {
     
     // MARK: Create
     func createComment(articleID: String, comment: Comment) async throws {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            throw UserError.invalidUserID
+        }
+        
+        let userInfo = try await userDataSource.readUserInfo(userID: userID)
         var articleInfo = try await articleDataSource.readItem(itemID: articleID)
+        let writerInfo = try await userDataSource.readUserInfo(userID: articleInfo.writerID)
         
         try await commentDataSource.createItem(item: comment)
         articleInfo.commentCount += 1
+        
+        await NotificationManager.shared.sendCommentNotification(
+            from: userInfo,
+            to: writerInfo.fcmToken,
+            article: articleInfo,
+            comment: comment
+        )
         
         try await articleDataSource.updateItem(item: articleInfo)
     }

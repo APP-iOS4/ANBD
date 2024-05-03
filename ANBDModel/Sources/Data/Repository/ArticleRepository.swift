@@ -154,6 +154,7 @@ struct ArticleRepositoryImpl: ArticleRepository {
         
         var userInfo = try await userDataSource.readUserInfo(userID: userID)
         var articleInfo = try await articleDataSource.readItem(itemID: articleID)
+        let writerInfo = try await userDataSource.readUserInfo(userID: articleInfo.writerID)
         
         if userInfo.likeArticles.contains(articleID) {
             articleInfo.likeCount -= 1
@@ -161,9 +162,14 @@ struct ArticleRepositoryImpl: ArticleRepository {
         } else {
             articleInfo.likeCount += 1
             userInfo.likeArticles.append(articleID)
+            await NotificationManager.shared.sendArticleNotification(
+                from: userInfo,
+                to: writerInfo.fcmToken,
+                article: articleInfo
+            )
         }
         
-        try await articleDataSource.updateItem(item: articleInfo)
+        try await articleDataSource.likeItem(item: articleInfo)
         try await userDataSource.updateUserInfo(user: userInfo)
     }
     
@@ -193,18 +199,20 @@ struct ArticleRepositoryImpl: ArticleRepository {
         try await articleDataSource.deleteItem(itemID: article.id)
         try await userDataSource.updateUserInfoList(articleID: article.id)
         
-        switch article.category {
-        case .accua:
-            userInfo.accuaCount -= 1
-        case .nanua:
-            userInfo.nanuaCount -= 1
-        case .baccua:
-            userInfo.baccuaCount -= 1
-        case .dasi:
-            userInfo.dasiCount -= 1
-        }
+        if userInfo.userLevel == .consumer {
+            switch article.category {
+            case .accua:
+                userInfo.accuaCount -= 1
+            case .nanua:
+                userInfo.nanuaCount -= 1
+            case .baccua:
+                userInfo.baccuaCount -= 1
+            case .dasi:
+                userInfo.dasiCount -= 1
+            }
         
-        try await userDataSource.updateUserPostCount(user: userInfo)
+            try await userDataSource.updateUserPostCount(user: userInfo)
+        }
     }
     
     func resetQuery() {

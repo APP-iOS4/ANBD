@@ -16,6 +16,7 @@ struct ArticleDetailView: View {
     
     private var article: Article
     private let user = UserStore.shared.user
+    private var articleID: String?
     
     @State private var isLiked: Bool = false
     @State private var isShowingComment: Bool = false
@@ -36,8 +37,9 @@ struct ArticleDetailView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) private var dismiss
     
-    init(article: Article) {
+    init(article: Article, articleID: String?) {
         self.article = article
+        self.articleID = articleID
     }
     
     var body: some View {
@@ -56,24 +58,15 @@ struct ArticleDetailView: View {
                                                 .aspectRatio(contentMode: .fill)
                                                 .frame(width: 33, height: 33)
                                                 .clipShape(Circle())
-                                                .overlay(
-                                                    Circle()
-                                                        .stroke(Color.gray100, lineWidth: 1)
-                                                )
                                         } else  {
                                             KFImage(URL(string: writerUser.profileImage))
                                                 .placeholder({ _ in
                                                     ProgressView()
-                                                    
                                                 })
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fill)
                                                 .frame(width: 33, height: 33)
                                                 .clipShape(.circle)
-                                                .overlay(
-                                                    Circle()
-                                                        .stroke(.gray100, lineWidth: 1)
-                                                )
                                                 .onTapGesture {
                                                     coordinator.user = writerUser
                                                     switch coordinator.selectedTab {
@@ -93,10 +86,6 @@ struct ArticleDetailView: View {
                                     } else {
                                         ProgressView()
                                             .frame(width: 33, height: 33)
-                                            .overlay(
-                                                Circle()
-                                                    .stroke(Color.gray100, lineWidth: 1)
-                                            )
                                     }
                                     
                                     Text("\(articleViewModel.article.writerNickname)")
@@ -136,7 +125,6 @@ struct ArticleDetailView: View {
                                     }
                                 }
                                 
-                                //이거 꼭 있어야 할까 고민!!!해봐주세요 기표님
                                 if coordinator.isLoading {
                                     HStack {
                                         Spacer()
@@ -146,8 +134,9 @@ struct ArticleDetailView: View {
                                                 .font(ANBDFont.body1)
                                                 .foregroundStyle(.gray900)
                                                 .fontWeight(.semibold)
-                                                .padding()
                                         }
+                                        .padding(.top, 200)
+                                        .padding(.bottom, 250)
                                         Spacer()
                                     }
                                 }
@@ -191,13 +180,15 @@ struct ArticleDetailView: View {
                                     .font(ANBDFont.SubTitle2)
                                     .foregroundStyle(.gray300)
                                     .multilineTextAlignment(.center)
+                                    .padding(.bottom, 100)
+                                
                             } else {
                                 Text("댓글 \(articleViewModel.comments.count)")
                                     .font(ANBDFont.SubTitle3)
                                     .padding(.bottom)
                                     .padding(.leading, 5)
                                 
-                                ForEach(articleViewModel.comments) { comment in
+                                ForEach(articleViewModel.comments.reversed()) { comment in
                                     HStack(alignment: .top) {
                                         KFImage(URL(string: comment.writerProfileImageURL))
                                             .placeholder({ _ in
@@ -207,10 +198,6 @@ struct ArticleDetailView: View {
                                             .aspectRatio(contentMode: .fill)
                                             .frame(width: 40, height: 40)
                                             .clipShape(.circle)
-                                            .overlay(
-                                                Circle()
-                                                    .stroke(.gray100, lineWidth: 1)
-                                            )
                                             .onTapGesture {
                                                 Task {
                                                     commentUser = await myPageViewModel.getUserInfo(userID: comment.writerID)
@@ -276,37 +263,15 @@ struct ArticleDetailView: View {
                                     }
                                     .padding(.horizontal, 10)
                                     .padding(.bottom, 20)
+                                    
                                 }
                             }
-                            Spacer(minLength: 60)
                         }
                         .padding()
                     }
                 }
                 .onTapGesture {
                     endTextEditing()
-                }
-                
-                if isShowingCustomAlertArticle {
-                    CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertArticle, viewType: .articleDelete) {
-                        Task {
-                            await articleViewModel.deleteArticle(article: article)
-                            await articleViewModel.refreshSortedArticleList(category: article.category)
-                            dismiss()
-                        }
-                    }
-                    .zIndex(2)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    
-                } else if isShowingCustomAlertComment {
-                    CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertComment, viewType: .commentDelete) {
-                        Task {
-                            await articleViewModel.deleteComment(articleID: article.id, commentID: articleViewModel.comment.id)
-                            await articleViewModel.loadCommentList(articleID: article.id)
-                        }
-                    }
-                    .zIndex(2)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
                 
                 // MARK: - 댓글 입력 부분
@@ -374,15 +339,22 @@ struct ArticleDetailView: View {
             .onDisappear {
                 articleViewModel.detailImages = []
             }
+            
             .onAppear {
-                coordinator.isLoading = true
-                articleViewModel.getOneArticle(article: article)
-                isLiked = user.likeArticles.contains(articleViewModel.article.id)
-                
                 Task {
+                    coordinator.isLoading = true
+                    if let articleID {
+                        await articleViewModel.loadOneArticle(articleID: articleID)
+                    } else {
+                        articleViewModel.getOneArticle(article: article)
+                    }
+                    
+                    isLiked = user.likeArticles.contains(articleViewModel.article.id)
+                    
                     articleViewModel.detailImages = try await articleViewModel.loadDetailImages(path: .article, containerID: articleViewModel.article.id, imagePath: articleViewModel.article.imagePaths)
                     await articleViewModel.loadCommentList(articleID: article.id)
                     writerUser = await myPageViewModel.getUserInfo(userID: article.writerID)
+                    
                 }
             }
             .fullScreenCover(isPresented: $isShowingArticleCreateView) {
@@ -394,7 +366,7 @@ struct ArticleDetailView: View {
             .fullScreenCover(isPresented: $isShowingCommentEditView) {
                 CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: articleViewModel.comment, isEditComment: false)
             }
-            .navigationTitle("정보 공유")
+            .navigationTitle(navigationTitleText)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarRole(.editor)
             
@@ -416,7 +388,6 @@ struct ArticleDetailView: View {
                 }
             }
         }
-        
     }
     
     var commentTextView: some View {
@@ -454,6 +425,17 @@ struct ArticleDetailView: View {
             .padding(.horizontal, 10)
             .toolbar(.hidden, for: .tabBar)
             .background(colorScheme == .dark ? .gray50 : .white)
+        }
+    }
+    
+    private var navigationTitleText: String {
+        switch article.category {
+        case .accua:
+            return "아껴쓰기"
+        case .dasi:
+            return "다시쓰기"
+        default:
+            return "정보 공유"
         }
     }
 }

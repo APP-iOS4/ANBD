@@ -48,6 +48,7 @@ final class Coordinator: ObservableObject {
     
     var category: ANBDCategory = .accua
     var article: Article?
+    var articleID: String?
     var trade: Trade?
     var reportType: ReportType = .trade
     var reportedObjectID: String = ""
@@ -69,7 +70,10 @@ final class Coordinator: ObservableObject {
             
         case .articleDeatilView:
             if let article = article {
-                ArticleDetailView(article: article)
+                ArticleDetailView(article: article, articleID: articleID)
+            } else if let articleID {
+                let article = Article(writerID: "asdasd", writerNickname: "asdasd", category: .accua, title: "asdasd", content: "asdasd", thumbnailImagePath: "")
+                ArticleDetailView(article: article, articleID: articleID)
             }
             
         case .tradeDetailView:

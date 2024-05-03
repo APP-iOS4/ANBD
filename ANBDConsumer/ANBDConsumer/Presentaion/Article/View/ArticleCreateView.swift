@@ -311,12 +311,12 @@ struct ArticleCreateView: View {
                     if !isNewArticle {
                         guard let article = article else { return true }
                         
-                        let isNotTitleChanged = title == article.title
-                        let isNotContentChanged = content == article.content
-                        let isNotCategoryChanged = category == article.category
-                        let isNotImageChanged = selectedImageData.isEmpty && deletedPhotosData.isEmpty
-                        
-                        return isNotTitleChanged && isNotContentChanged && isNotImageChanged && isNotCategoryChanged
+                        return title == article.title &&
+                               content == article.content &&
+                               category == article.category &&
+                               selectedImageData.isEmpty && deletedPhotosData.isEmpty ||
+                               (title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                               content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                         
                     } else {
                         return title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||

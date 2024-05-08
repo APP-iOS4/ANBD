@@ -73,12 +73,12 @@ struct ChatDetailView: View {
                                         if let channel {
                                             try await chatViewModel.setSelectedInfo(channel: channel)
                                         }
-                                        if chatViewModel.selectedUser.id == "" {
-                                            isWithdrawlUser = true
-                                        }
                                     }
                                     if let channel = chatViewModel.selectedChannel {
                                         try await chatViewModel.addListener(channelID: channel.id)
+                                    }
+                                    if chatViewModel.selectedUser.id == "" {
+                                        isWithdrawlUser = true
                                     }
                                 }
                             }

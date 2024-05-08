@@ -117,7 +117,7 @@ extension ChatViewModel {
     func addListener(channelID: String) async throws {
         do {
             if !isLeaveChatRoom {
-                    var preMessages = try await chatUsecase.loadMessageList(channelID: channelID, userID: user.id)
+                var preMessages = try await chatUsecase.loadMessageList(channelID: channelID, userID: user.id)
                 if let leaveMessageIndex = preMessages.lastIndex(where: { $0.leaveUsers.contains(user.id) }) {
                     isLeaveChatRoom = true
                     preMessages.removeSubrange(0...leaveMessageIndex)
@@ -311,28 +311,11 @@ extension ChatViewModel {
     //채팅방 리스트에서 접근시
     func setSelectedInfo(channel: Channel) async throws{
         self.selectedChannel = channel
-        do {
-            self.selectedTrade = try await chatUsecase.getTradeInChannel(channelID: channel.id)
-        } catch {
-            self.selectedTrade = nil
-            
-            guard let error = error as? ChannelError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
-                return
-            }
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
-        }
-        
+        self.selectedTrade = try await chatUsecase.getTradeInChannel(channelID: channel.id)
         do {
             self.selectedUser = try await chatUsecase.getOtherUser(channel: channel, userID: user.id)
         } catch {
             self.selectedUser = User(id: "", nickname: "(알수없음)", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
-            
-            guard let error = error as? ChannelError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
-                return
-            }
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -350,7 +333,7 @@ extension ChatViewModel {
         }
     }
     
-
+    
     
     //Trade 디테일에서 접근시
     func setSelectedInfo(trade: Trade) async throws {

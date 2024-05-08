@@ -111,7 +111,7 @@ extension AppDelegate {
         if !coorinator.chatPath.isEmpty {
             coorinator.pop(coorinator.chatPath.count)
             coorinator.channelID = channelID
-            coorinator.selectedTab = .home
+//            coorinator.selectedTab = .home
         }
         coorinator.selectedTab = .chat
         

@@ -46,7 +46,7 @@ final class UserStore: ObservableObject {
             return getUser
         } catch {
             guard let error = error as? UserError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+//                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
                 return await MyPageViewModel.mockUser
             }
             if error.rawValue == 4009 {

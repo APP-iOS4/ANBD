@@ -32,7 +32,7 @@ struct CustomAlertView: View {
                     .foregroundStyle(.gray900)
                     .padding(.bottom, 15)
                 
-                if viewType == .duplicatedEmail || viewType == .duplicatedNickname || viewType == .signInFail || viewType == .imageSelelct || viewType == .validEmail {
+                if viewType == .duplicatedEmail || viewType == .duplicatedNickname || viewType == .signInFail || viewType == .imageSelelct || viewType == .validEmail || viewType == .deletedCachingData {
                     Button(action: {
                         completionHandler()
                         isShowingCustomAlert.toggle()
@@ -121,6 +121,7 @@ extension CustomAlertView {
         case articleCreate
         // setting
         case editingCancel
+        case deletedCachingData
     }
     
     private var title: String {
@@ -163,6 +164,8 @@ extension CustomAlertView {
             return "게시글 삭제"
         case .userKicked:
             return "접근 권한이 없습니다"
+        case .deletedCachingData:
+            return "캐시 데이터 삭제 완료"
         }
     }
     
@@ -210,6 +213,8 @@ extension CustomAlertView {
             return "이메일 인증을 다시 진행해야합니다.\n돌아가시겠습니까?"
         case .userKicked:
             return "문의 사항은 이메일로 연락 바랍니다."
+        case .deletedCachingData:
+            return "캐시 데이터가 삭제되었습니다."
         }
     }
     
@@ -221,7 +226,7 @@ extension CustomAlertView {
             return "로그아웃하기"
         case .withdrawal:
             return "탈퇴하기"
-        case .duplicatedEmail, .duplicatedNickname, .signInFail, .imageSelelct, .userKicked:
+        case .duplicatedEmail, .duplicatedNickname, .signInFail, .imageSelelct, .userKicked, .deletedCachingData:
             return "확인"
         case .changeState:
             return "변경하기"
@@ -242,7 +247,7 @@ extension CustomAlertView {
     
     private var confirmButtonColor: Color {
         switch viewType {
-        case .leaveChatRoom, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .imageSelelct, .signOut, .editingCancel, .writingCancel, .validEmail, .signUpCancel, .emailRerequest, .userKicked:
+        case .leaveChatRoom, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .imageSelelct, .signOut, .editingCancel, .writingCancel, .validEmail, .signUpCancel, .emailRerequest, .userKicked, .deletedCachingData:
             return .accent
         case .withdrawal, .tradeDelete, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .articleCreate:
             return .heartRed
@@ -251,7 +256,7 @@ extension CustomAlertView {
     
     private var textWeight: Font.Weight {
         switch viewType {
-        case .leaveChatRoom, .signOut, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .tradeDelete, .writingCancel, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .imageSelelct, .editingCancel, .articleCreate, .validEmail, .signUpCancel, .emailRerequest, .userKicked:
+        case .leaveChatRoom, .signOut, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .tradeDelete, .writingCancel, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .imageSelelct, .editingCancel, .articleCreate, .validEmail, .signUpCancel, .emailRerequest, .userKicked, .deletedCachingData:
             return .medium
         case .withdrawal:
             return .heavy

@@ -66,13 +66,9 @@ final class TradeViewModel: ObservableObject {
             }
             self.filteredTrades = self.filteredTrades.filter { $0.tradeState == .trading }
         } catch {
-            print(error.localizedDescription)
-            
-            guard let error = error as? TradeError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
-                return
-            }
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
+            #if DEBUG
+            print("reloadFilteredTrades: \(error)")
+            #endif
         }
     }
     
@@ -104,13 +100,9 @@ final class TradeViewModel: ObservableObject {
             }
                 
         } catch {
-            print(error.localizedDescription)
-            
-            guard let error = error as? TradeError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
-                return
-            }
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
+            #if DEBUG
+            print("loadMoreFilteredTrades: \(error)")
+            #endif
         }
     }
     
@@ -121,13 +113,9 @@ final class TradeViewModel: ObservableObject {
             self.trade = try await tradeUseCase.loadTrade(tradeID: trade.id)
             self.detailImages = try await loadDetailImages(path: .trade, containerID: self.trade.id, imagePath: self.trade.imagePaths)
         } catch {
-            print("trade 하나 불러오기 실패: \(error.localizedDescription)")
-            
-            guard let error = error as? TradeError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
-                return
-            }
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
+            #if DEBUG
+            print("trade 하나 불러오기 실패: \(error)")
+            #endif
         }
     }
     
@@ -140,18 +128,13 @@ final class TradeViewModel: ObservableObject {
                     try await storageManager.downloadImage(path: path, containerID: containerID, imagePath: image)
                 )
             } catch {
-                print(error.localizedDescription)
-                
+                #if DEBUG
+                print("loadDetailImages: \(error)")
+                #endif
                 //이미지 예외
                 let image = UIImage(named: "ANBDWarning")
                 let imageData = image?.pngData()
                 detailImages.append( imageData ?? Data() )
-                
-                guard let error = error as? StorageError else {
-                    ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
-                    return detailImages
-                }
-                ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
             }
         }
         
@@ -185,8 +168,9 @@ final class TradeViewModel: ObservableObject {
             try await tradeUseCase.writeTrade(trade: newTrade, imageDatas: newImages)
             await UserStore.shared.updateLocalUserInfo()
         } catch {
-            print(error.localizedDescription)
-            
+            #if DEBUG
+            print("createTrade: \(error)")
+            #endif
             guard let error = error as? TradeError else {
                 ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
                 return
@@ -202,8 +186,9 @@ final class TradeViewModel: ObservableObject {
             try await tradeUseCase.deleteTrade(trade: trade)
             await UserStore.shared.updateLocalUserInfo()
         } catch {
+            #if DEBUG
             print("삭제 실패: \(error.localizedDescription)")
-            
+            #endif
             guard let error = error as? TradeError else {
                 ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
                 return
@@ -252,8 +237,9 @@ final class TradeViewModel: ObservableObject {
             trade = try await tradeUseCase.loadTrade(tradeID: trade.id)
             await UserStore.shared.updateLocalUserInfo()
         } catch {
-            print("수정 실패: \(error.localizedDescription)")
-            
+            #if DEBUG
+            print("수정 실패: \(error)")
+            #endif
             guard let error = error as? TradeError else {
                 ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
                 return
@@ -275,8 +261,9 @@ final class TradeViewModel: ObservableObject {
                 self.trade.tradeState = .trading
             }
         } catch {
-            print("상태수정 실패: \(error.localizedDescription)")
-            
+            #if DEBUG
+            print("상태수정 실패: \(error)")
+            #endif
             guard let error = error as? TradeError else {
                 ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
                 return
@@ -291,8 +278,9 @@ final class TradeViewModel: ObservableObject {
             try await tradeUseCase.likeTrade(tradeID: trade.id)
             await UserStore.shared.updateLocalUserInfo()
         } catch {
-            print("좋아요 실패: \(error.localizedDescription)")
-            
+            #if DEBUG
+            print("좋아요 실패: \(error)")
+            #endif
             guard let error = error as? TradeError else {
                 ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
                 return
@@ -311,13 +299,9 @@ final class TradeViewModel: ObservableObject {
                 filteringTrades(category: category)
             }
         } catch {
-            print("Error: \(error)")
-            
-            guard let error = error as? TradeError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
-                return
-            }
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
+            #if DEBUG
+            print("searchTrade: \(error)")
+            #endif
         }
     }
 }

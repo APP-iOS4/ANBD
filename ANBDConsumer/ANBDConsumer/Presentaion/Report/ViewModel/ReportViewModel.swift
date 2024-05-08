@@ -22,8 +22,17 @@ final class ReportViewModel: ObservableObject {
             user = await UserStore.shared.getUserInfo(userID: userID)
             let report = Report(type: reportType, reportReason: reportReason, reportedUser: user.id, reportedObjectID: reportedObjectID, reportedChannelID: reportChannelID)
             try await reportUsecase.submitReport(report: report)
+            
+            ToastManager.shared.toast = Toast(style: .success, message: "신고가 접수되었습니다.")
         } catch {
+            #if DEBUG
             print("submitReport ERROR: \(error)")
+            #endif
+            guard let error = error as? DBError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
 }

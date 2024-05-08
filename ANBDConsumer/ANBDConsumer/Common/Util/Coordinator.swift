@@ -24,15 +24,20 @@ enum Page {
     case reportView
     
     case userPageView
-    case accountManagementView
     case userInfoEditingView
     case userActivityView
     case userLikedContentView
     case settingsView
 }
 
+
 final class Coordinator: ObservableObject {
-    @Published var selectedTab: ANBDTabViewType = .home
+    
+    static let shared = Coordinator()
+    
+    init() { }
+    
+    var selectedTab: ANBDTabViewType = .home
     
     /// path
     @Published var homePath: NavigationPath = NavigationPath()
@@ -41,18 +46,20 @@ final class Coordinator: ObservableObject {
     @Published var chatPath: NavigationPath = NavigationPath()
     @Published var mypagePath: NavigationPath = NavigationPath()
     
-    @Published var category: ANBDCategory = .accua
-    @Published var article: Article?
-    @Published var trade: Trade?
-    @Published var reportType: ReportType = .trade
-    @Published var reportedObjectID: String = ""
-    @Published var reportedChannelID: String?
-    @Published var user: User?
-    @Published var searchText: String = ""
-    @Published var channel: Channel?
-    @Published var isFromUserPage: Bool = false
-    @Published var toastViewType: ToastViewType = .report
-    @Published var isShowingToastView: Bool = false
+    var category: ANBDCategory = .accua
+    var article: Article?
+    var articleID: String?
+    var trade: Trade?
+    var reportType: ReportType = .trade
+    var reportedObjectID: String = ""
+    var reportedChannelID: String?
+    var user: User?
+    var searchText: String = ""
+    var channel: Channel?
+    var channelID: String?
+    var isFromUserPage: Bool = false
+    var isShowingToastView: Bool = false
+    var isLoading: Bool = false
     
     
     @ViewBuilder
@@ -63,7 +70,10 @@ final class Coordinator: ObservableObject {
             
         case .articleDeatilView:
             if let article = article {
-                ArticleDetailView(article: article)
+                ArticleDetailView(article: article, articleID: articleID)
+            } else if let articleID {
+                let article = Article(writerID: "asdasd", writerNickname: "asdasd", category: .accua, title: "asdasd", content: "asdasd", thumbnailImagePath: "")
+                ArticleDetailView(article: article, articleID: articleID)
             }
             
         case .tradeDetailView:
@@ -78,7 +88,7 @@ final class Coordinator: ObservableObject {
             SearchResultView(category: category, searchText: searchText)
             
         case .chatDetailView:
-            ChatDetailView()
+            ChatDetailView(channelID: channelID)
             
         case .reportView:
             ReportView(reportViewType: reportType, reportedObjectID: reportedObjectID, reportedChannelID: reportedChannelID)
@@ -87,9 +97,6 @@ final class Coordinator: ObservableObject {
             if let user = user {
                 UserPageView(writerUser: user)
             }
-            
-        case .accountManagementView:
-            AccountManagementView()
         
         case .userInfoEditingView:
             UserInfoEditingView()
@@ -120,7 +127,6 @@ final class Coordinator: ObservableObject {
             mypagePath.append(page)
         }
     }
-    
     
     /// dismiss
     func pop(_ depth: Int = 1) {

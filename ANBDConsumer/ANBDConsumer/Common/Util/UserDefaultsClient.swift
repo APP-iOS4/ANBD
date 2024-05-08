@@ -13,23 +13,6 @@ final class UserDefaultsClient: ObservableObject {
     
     init() { }
     
-    var userInfo: User? {
-        get {
-            guard let data = UserDefaults.standard.data(forKey: Keys.userInfo.id),
-                  let decodedData = try? JSONDecoder().decode(User.self, from: data)
-            else { return nil }
-            
-            return decodedData
-        }
-        
-        set {
-            guard let encodedData = try? JSONEncoder().encode(newValue)
-            else { return }
-            
-            UserDefaults.standard.setValue(encodedData, forKey: Keys.userInfo.id)
-        }
-    }
-    
     var userID: String? {
         get {
             UserDefaults.standard.string(forKey: Keys.userID.id)

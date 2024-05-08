@@ -9,18 +9,15 @@ import Foundation
 import Combine
 import ANBDModel
 
-enum AgreeType {
-    case olderThanFourTeen
-    case agreeService
-    case agreeCollectionInfo
-    case agreeMarketing
-}
-
 @MainActor
 final class AuthenticationViewModel: ObservableObject {
     private let authUsecase: AuthUsecase = DefaultAuthUsecase()
+    private let userUsecase: UserUsecase = DefaultUserUsecase()
     
     @Published var authState: Bool = false
+    
+    @Published var validEmailRemainingTime = 30
+    @Published var isValidEmailButtonDisabled = false
     
     // MARK: Login Field
     @Published var loginEmailString: String = ""
@@ -59,8 +56,12 @@ final class AuthenticationViewModel: ObservableObject {
     @Published var isAgreeCollectInfo: Bool = false
     @Published var isAgreeMarketing: Bool = false
     
-    @Published private(set) var termsString: String = ""
-    @Published var showingTermsView: Bool = false
+    @Published var agreeType: AgreeType = .agreeCollectionInfo
+    
+    @Published var isShowingTermsView: Bool = false
+    @Published var isShowingService: Bool = false
+    @Published var isShowingCollectInfo: Bool = false
+    @Published var isShowingMarketing: Bool = false
     
     @Published private(set) var errorMessage: String = ""
     
@@ -95,7 +96,7 @@ final class AuthenticationViewModel: ObservableObject {
         
         $signUpEmailString
             .removeDuplicates()
-            .debounce(for: .seconds(0.02), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.65), scheduler: DispatchQueue.main)
             .sink { [weak self] email in
                 guard let self = self else { return }
                 self.signUpEmailStringDebounced = email
@@ -212,7 +213,7 @@ extension AuthenticationViewModel {
         } else {
             authState = false
             if UserStore.shared.user.userLevel == .banned {
-                errorMessage = "접근 권한이 없습니다."
+                errorMessage = "해당 계정은 접근 권한이 없습니다."
             }
         }
     }
@@ -242,17 +243,26 @@ extension AuthenticationViewModel {
     func showTermsView(type: AgreeType) {
         switch type {
         case .agreeService:
-            termsString = "서비스 이용 약관에 동의하십니까?"
+            agreeType = .agreeService
         case .agreeCollectionInfo:
-            termsString = "개인정보 수집 및 이용에 동의하십니까?"
+            agreeType = .agreeCollectionInfo
         case .agreeMarketing:
-            termsString = "광고 및 마케팅 수신에 동의하십니까?"
+            agreeType = .agreeMarketing
         default:
-            termsString = ""
             return
         }
         
-        showingTermsView.toggle()
+        isShowingTermsView.toggle()
+    }
+    
+    func updateUserToken() async {
+        do {
+            try await userUsecase.updateUserFCMToken(userID: UserStore.shared.user.id, fcmToken: UserStore.shared.deviceToken)
+        } catch {
+            #if DEBUG
+            print("updateUserToken:\(error)")
+            #endif
+        }
     }
     
     func signIn() async -> Bool {
@@ -265,19 +275,30 @@ extension AuthenticationViewModel {
             
             return true
         } catch {
+            #if DEBUG
             print("Error sign in: \(error.localizedDescription)")
-            
+            #endif
             return false
         }
     }
     
-    func signOut(completion: @escaping () -> Void) async {
+    func signOut(_ completion: @escaping () -> Void) async {
         do {
+            //중복로그인된 아이디가 로그아웃 되었을때 가장 최근 로그인된 디바이스의 토큰을 초기화 하지 않기 위하여
+            if (UserStore.shared.deviceToken == UserStore.shared.user.fcmToken) || (UserStore.shared.user.userLevel == .banned) {
+                try await userUsecase.updateUserFCMToken(userID: UserStore.shared.user.id, fcmToken: "")
+            }
             try await authUsecase.signOut()
-            
             completion()
         } catch {
+            #if DEBUG
             print("Error sign out: \(error.localizedDescription)")
+            #endif
+            guard let error = error as? AuthError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -286,7 +307,7 @@ extension AuthenticationViewModel {
             let signedUpUser = try await authUsecase.signUp(email: signUpEmailString,
                                                             password: signUpPasswordString,
                                                             nickname: signUpNicknameString,
-                                                            favoriteLocation: signUpUserFavoriteLoaction, 
+                                                            favoriteLocation: signUpUserFavoriteLoaction,
                                                             fcmToken: "",
                                                             isOlderThanFourteen: isOlderThanFourteen,
                                                             isAgreeService: isAgreeService,
@@ -296,7 +317,14 @@ extension AuthenticationViewModel {
             UserDefaultsClient.shared.userID = signedUpUser.id
             UserStore.shared.user = signedUpUser
         } catch {
+            #if DEBUG
             print("Error sign up: \(error.localizedDescription)")
+            #endif
+            guard let error = error as? AuthError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -306,6 +334,25 @@ extension AuthenticationViewModel {
         return isDuplicate
     }
     
+    func verifyEmail() async {
+        do {
+            try await authUsecase.verifyEmail(email: signUpEmailStringDebounced)
+        } catch {
+            #if DEBUG
+            print("Error verify email: \(error.localizedDescription)")
+            #endif
+            guard let error = error as? AuthError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
+        }
+    }
+    
+    func checkEmailVerified() -> Bool {
+        return authUsecase.checkEmailVerified()
+    }
+    
     func checkDuplicatedNickname() async -> Bool {
         let isDuplicate = await authUsecase.checkDuplicatedNickname(nickname: signUpNicknameString)
         
@@ -313,50 +360,29 @@ extension AuthenticationViewModel {
     }
     
     func checkNicknameLength(_ nickname: String) -> String {
-        if nickname.count > 20 {
-            return String(nickname.prefix(20))
+        if nickname.count > 18 {
+            return String(nickname.prefix(18))
         } else {
             return nickname
         }
     }
     
-    func withdrawal(completion: @escaping () -> Void) async {
+    func withdrawal(_ completion: @escaping () -> Void) async {
         do {
-            await signOut(completion: { })
-            try await authUsecase.withdrawal(userID: UserStore.shared.user.id)
+            try await authUsecase.withdrawal()
             
             completion()
         } catch {
+            #if DEBUG
             print("Error withdrawal: \(error.localizedDescription)")
+            #endif
+            guard let error = error as? AuthError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
-    
-    /*
-     func signUpWithGoogle() async {
-     do {
-     guard let user = Auth.auth().currentUser
-     else {
-     throw AuthError.tokenError(message: "잘못된 액세스 토큰입니다.")
-     }
-     
-     let serviceUser = User(
-     userNickname: signUpNicknameString,
-     email: user.email ?? "",
-     accessToken: user.uid,
-     isOlderThanFourteen: isOlderThanFourteen,
-     isAgreeService: isAgreeService,
-     isAgreeCollectInfo: isAgreeCollectInfo,
-     isAgreeMarketing: isAgreeMarketing
-     )
-     
-     try await userStore.saveUserInfo(userInfo: serviceUser)
-     isValidSignUp = true
-     UserDefaultsManager.shared.userInfo = serviceUser
-     } catch {
-     errorMessage = error.localizedDescription
-     }
-     }
-     */
     
     func clearSignUpDatas() {
         loginEmailString = ""
@@ -374,5 +400,25 @@ extension AuthenticationViewModel {
         isAgreeMarketing = false
         
         isValidSignUp = false
+    }
+}
+
+enum AgreeType {
+    case olderThanFourTeen
+    case agreeService
+    case agreeCollectionInfo
+    case agreeMarketing
+    
+    var url: String {
+        switch self {
+        case .olderThanFourTeen:
+            return ""
+        case .agreeService:
+            return "https://oval-second-abc.notion.site/ANBD-0cde8fed32014e19830309431bfcdebb"
+        case .agreeCollectionInfo:
+            return "https://oval-second-abc.notion.site/ANBD-4b59058a70ba46ef9753fe40502f94e3"
+        case .agreeMarketing:
+            return "https://oval-second-abc.notion.site/ANBD-f265775da8fe4fe3957048f4c2028f5a"
+        }
     }
 }

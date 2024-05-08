@@ -22,16 +22,16 @@ struct UserActivityListView: View {
                 .padding([.leading, .trailing, .bottom])
             
             TabView(selection: $category) {
-                userArticleListView(list: myPageViewModel.accuaArticlesWrittenByUser)
+                userArticleListView(articles: myPageViewModel.accuaArticlesWrittenByUser)
                     .tag(ANBDCategory.accua)
                 
-                userTradeListView(list: myPageViewModel.nanuaTradesWrittenByUser)
+                userTradeListView(trades: myPageViewModel.nanuaTradesWrittenByUser)
                     .tag(ANBDCategory.nanua)
                 
-                userTradeListView(list: myPageViewModel.baccuaTradesWrittenByUser)
+                userTradeListView(trades: myPageViewModel.baccuaTradesWrittenByUser)
                     .tag(ANBDCategory.baccua)
                 
-                userArticleListView(list: myPageViewModel.dasiArticlesWrittenByUser)
+                userArticleListView(articles: myPageViewModel.dasiArticlesWrittenByUser)
                     .tag(ANBDCategory.dasi)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
@@ -52,13 +52,13 @@ struct UserActivityListView: View {
     }
     
     @ViewBuilder
-    private func userArticleListView(list: [Article]) -> some View {
-        if list.isEmpty {
+    private func userArticleListView(articles: [Article]) -> some View {
+        if articles.isEmpty {
             ListEmptyView(description: "\(myPageViewModel.user.nickname)님의\n\(category.description) 활동이 없습니다.")
         } else {
             ScrollView(.vertical) {
                 LazyVStack {
-                    ForEach(list) { article in
+                    ForEach(articles) { article in
                         ArticleListCell(value: .article(article))
                             .padding(.vertical, 5)
                             .onTapGesture {
@@ -70,7 +70,7 @@ struct UserActivityListView: View {
                     }
                     
                     HStack {
-                        Text("\(list.count)")
+                        Text("\(articles.count)")
                             .foregroundStyle(Color.accent)
                         Text("건의 \(category.description) 활동을 했어요.")
                     }
@@ -88,14 +88,14 @@ struct UserActivityListView: View {
     }
     
     @ViewBuilder
-    private func userTradeListView(list: [Trade]) -> some View {
+    private func userTradeListView(trades: [Trade]) -> some View {
         VStack {
-            if list.isEmpty {
+            if trades.isEmpty {
                 ListEmptyView(description: "\(myPageViewModel.user.nickname)님의\n\(category.description) 활동이 없습니다.")
             } else {
                 ScrollView(.vertical) {
                     LazyVStack {
-                        ForEach(list) { trade in
+                        ForEach(trades) { trade in
                             
                             ArticleListCell(value: .trade(trade))
                                 .padding(.vertical, 5)
@@ -112,7 +112,7 @@ struct UserActivityListView: View {
                         }
                         
                         HStack {
-                            Text("\(list.count)")
+                            Text("\(trades.count)")
                                 .foregroundStyle(Color.accent)
                             Text("건의 \(category.description) 활동을 했어요.")
                         }

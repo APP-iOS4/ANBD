@@ -17,6 +17,7 @@ struct SettingsView: View {
     @State private var isShowingSignOutAlertView = false
     @State private var isShowingWithdrawalAlertView = false
     @State private var isShowingOpenSourceLicense = false
+    @State private var isShowingDeletedCachingDataAlertView = false
     
     private let spacingValue: CGFloat = 30
     
@@ -44,6 +45,21 @@ struct SettingsView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                     })
                     
+                    Button(action: {
+                        isShowingOpenSourceLicense.toggle()
+                    }, label: {
+                        Text("오픈소스 라이선스")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    })
+                    
+                    Button(action: {
+                        isShowingDeletedCachingDataAlertView.toggle()
+                        // TODO: - 캐시 데이터 삭제하기 메서드 넣기
+                    }, label: {
+                        Text("캐시 데이터 삭제하기")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    })
+                    
                     HStack {
                         Text("앱 버전")
                         
@@ -61,13 +77,6 @@ struct SettingsView: View {
                         }
                     }
                     
-                    Button(action: {
-                        isShowingOpenSourceLicense.toggle()
-                    }, label: {
-                        Text("오픈소스 라이선스")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    })
-                    
                     HStack {
                         Text("문의 메일")
                         
@@ -76,11 +85,11 @@ struct SettingsView: View {
                         if #available(iOS 16.1, *) {
                             Text("jrjr4426@gmail.com")
                                 .fontDesign(.monospaced)
-                                .font(.system(size: 15))
+                                .font(.system(size: 14))
                                 .foregroundStyle(Color.gray500)
                         } else {
                             Text("jrjr4426@gmail.com")
-                                .font(.system(size: 15))
+                                .font(.system(size: 14))
                                 .foregroundStyle(Color.gray500)
                         }
                     }
@@ -141,6 +150,10 @@ struct SettingsView: View {
                         }
                     }
                 }
+            }
+            
+            if isShowingDeletedCachingDataAlertView {
+                CustomAlertView(isShowingCustomAlert: $isShowingDeletedCachingDataAlertView, viewType: .deletedCachingData) { }
             }
         }
         .navigationTitle("설정")

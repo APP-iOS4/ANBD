@@ -13,8 +13,8 @@ struct TradeDetailView: View {
     @EnvironmentObject private var tradeViewModel: TradeViewModel
     @EnvironmentObject private var chatViewModel: ChatViewModel
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
-    @EnvironmentObject private var coordinator: Coordinator
-
+    @StateObject private var coordinator = Coordinator.shared
+    
     @State var trade: Trade
     
     @State private var isShowingCreat: Bool = false
@@ -23,15 +23,16 @@ struct TradeDetailView: View {
     @State private var isShowingImageDetailView: Bool = false
     @State private var isShowingStateChangeCustomAlert: Bool = false
     @State private var isShowingDeleteCustomAlert: Bool = false
+    @State private var isLoading: Bool = false
     @Environment(\.dismiss) private var dismiss
     
-    @State private var detailImage: Image = Image("DummyPuppy1")
-    @State private var imageData: [Data] = []
+    @State private var idx: Int = 0
     
     @State private var writerUser: User?
     @State private var user = UserStore.shared.user
     
     @State private var isLiked: Bool = false
+    @State private var isMine: Bool = false
     
     var body: some View {
         ZStack {
@@ -39,15 +40,15 @@ struct TradeDetailView: View {
                 ScrollView {
                     VStack(alignment: .leading) {
                         //이미지
-                        TabView() {
-                            ForEach(imageData, id: \.self) { photoData in
-                                if let image = UIImage(data: photoData) {
+                        TabView(selection: $idx) {
+                            ForEach(0..<tradeViewModel.detailImages.count, id: \.self) { i in
+                                if let image = UIImage(data: tradeViewModel.detailImages[i]) {
                                     Image(uiImage: image)
                                         .resizable()
                                         .scaledToFill()
                                         .onTapGesture {
-                                            detailImage = Image(uiImage: image)
                                             isShowingImageDetailView.toggle()
+                                            idx = i
                                         }
                                 } else {
                                     ProgressView()
@@ -76,10 +77,10 @@ struct TradeDetailView: View {
                                         case .home, .article, .trade, .chat:
                                             if coordinator.isFromUserPage {
                                                 coordinator.pop(2)
+                                                coordinator.isFromUserPage = false
                                             } else {
                                                 coordinator.appendPath(.userPageView)
                                             }
-                                            coordinator.isFromUserPage.toggle()
                                         case .mypage:
                                             coordinator.pop(coordinator.mypagePath.count)
                                         }
@@ -87,6 +88,7 @@ struct TradeDetailView: View {
                             }
                             
                             VStack(alignment: .leading) {
+                                
                                 Text("\(tradeViewModel.trade.writerNickname)")
                                     .font(ANBDFont.SubTitle1)
                                     .foregroundStyle(.gray900)
@@ -148,32 +150,28 @@ struct TradeDetailView: View {
                     }
                 }
             }
-            
-            /// 토스트 뷰
-            if coordinator.isShowingToastView {
-                VStack {
-                    CustomToastView()
-                    
-                    Spacer()
-                }
-            }
         }//ZStack
         .onAppear {
             tradeViewModel.getOneTrade(trade: trade)
             isLiked = user.likeTrades.contains(tradeViewModel.trade.id)
             Task {
                 writerUser = await myPageViewModel.getUserInfo(userID: tradeViewModel.trade.writerID)
-                imageData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: tradeViewModel.trade.id, imagePath: tradeViewModel.trade.imagePaths)
+                tradeViewModel.detailImages = try await tradeViewModel.loadDetailImages(path: .trade, containerID: tradeViewModel.trade.id, imagePath: tradeViewModel.trade.imagePaths)
             }
         }
+        .onDisappear {
+            tradeViewModel.detailImages = []
+        }
         .toolbar(.hidden, for: .tabBar)
-        .fullScreenCover(isPresented: $isShowingCreat) {
+        .fullScreenCover(isPresented: $isShowingCreat, onDismiss: {
+            
+        }) {
             TradeCreateView(isShowingCreate: $isShowingCreat, isNewProduct: false, trade: tradeViewModel.trade)
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
-            ImageDetailView(detailImage: $detailImage, isShowingImageDetailView: $isShowingImageDetailView)
+            ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $tradeViewModel.detailImages, idx: $idx)
         }
-        .navigationTitle("나눔 · 거래")
+        .navigationTitle(tradeViewModel.trade.category == .nanua ? "나눠쓰기" : "바꿔쓰기")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarRole(.editor)
         .toolbar {
@@ -232,32 +230,28 @@ extension TradeDetailView {
             case .nanua:
                 Text("\(tradeViewModel.trade.myProduct)")
                     .font(ANBDFont.SubTitle1)
-            case .baccua:
                 
+            case .baccua:
                 VStack(alignment: .leading, spacing: 5) {
                     HStack {
-                        VStack(alignment: .leading) {
-                            Text("줄 것")
-                                .foregroundStyle(.gray400)
-                                .font(ANBDFont.SubTitle3)
-                            Text("받을 것")
-                                .foregroundStyle(.gray400)
-                                .font(ANBDFont.SubTitle3)
-                        }
-                        VStack(alignment: .leading) {
-                            Text("\(tradeViewModel.trade.myProduct)")
-                                .font(ANBDFont.SubTitle2)
-                            if let want = tradeViewModel.trade.wantProduct {
-                                Text("\(want)")
-                                    .font(ANBDFont.SubTitle2)
-                            } else {
-                                Text("제시")
-                                    .font(ANBDFont.SubTitle2)
-                            }
-                        }
+                        Text("줄 것    ")
+                            .foregroundStyle(.gray400)
+                            .font(ANBDFont.SubTitle3)
+                        
+                        Text(isMine ? tradeViewModel.trade.myProduct : tradeViewModel.trade.wantProduct ?? "제시")
+                            .font(ANBDFont.SubTitle2)
+                    }
+                    
+                    HStack {
+                        Text("받을 것")
+                            .foregroundStyle(.gray400)
+                            .font(ANBDFont.SubTitle3)
+                        
+                        Text(isMine ? tradeViewModel.trade.wantProduct ?? "제시" : tradeViewModel.trade.myProduct)
+                            .font(ANBDFont.SubTitle2)
                     }
                 }
-                .padding(.leading, -10)
+                
             case .accua:
                 EmptyView()
             case .dasi:
@@ -278,7 +272,8 @@ extension TradeDetailView {
                     .padding()
                     .onTapGesture {
                         Task {
-                            try await chatViewModel.setSelectedUser(trade: trade)
+                            coordinator.channelID = nil
+                            try await chatViewModel.setSelectedInfo(trade: trade)
                             coordinator.channel = nil
                             coordinator.trade = trade
                             tradeViewModel.getOneTrade(trade: trade)
@@ -293,6 +288,9 @@ extension TradeDetailView {
                     }
             }
             
+        }
+        .onAppear {
+            isMine = user.id == tradeViewModel.trade.writerID
         }
     }
 }

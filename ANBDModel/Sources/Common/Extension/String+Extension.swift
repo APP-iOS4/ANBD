@@ -10,9 +10,8 @@ import Foundation
 public extension String {
     
     func isValidateEmail() -> Bool {
-        let emailRegEx = #"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,64}"#
-        let last = self.contains("com") || self.contains("net") || self.contains("co.kr")
-        return NSPredicate(format: "SELF MATCHES %@", emailRegEx).evaluate(with: self) && last
+        let emailRegEx = #"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+(?:\.com|\.net|\.co\.kr)"#
+        return NSPredicate(format: "SELF MATCHES %@", emailRegEx).evaluate(with: self)
     }
     
     func isValidatePassword() -> Bool {

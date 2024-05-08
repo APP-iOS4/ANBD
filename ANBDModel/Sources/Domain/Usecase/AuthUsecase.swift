@@ -21,7 +21,9 @@ public protocol AuthUsecase {
                 isAgreeCollectInfo: Bool,
                 isAgreeMarketing: Bool) async throws -> User
     func signOut() async throws
-    func withdrawal(userID: String) async throws
+    func withdrawal() async throws
+    func verifyEmail(email: String) async throws
+    func checkEmailVerified() -> Bool
     func checkDuplicatedEmail(email: String) async -> Bool
     func checkDuplicatedNickname(nickname: String) async -> Bool
 }
@@ -96,7 +98,11 @@ public struct DefaultAuthUsecase: AuthUsecase {
             throw AuthError.invalidNicknameRegularExpression
         }
         
-        let signUpResult = try await Auth.auth().createUser(withEmail: email, password: password)
+        let signUpResult = try await Auth.auth().createUser(
+            withEmail: email,
+            password: password
+        )
+        
         let userID = signUpResult.user.uid
         
         let newUser = User(
@@ -127,24 +133,19 @@ public struct DefaultAuthUsecase: AuthUsecase {
     ///
     /// UserDB 상에서 User document를 삭제한다.
     /// 로컬에 저장된 User정보는 별도로 처리해줄 것
-    public func withdrawal(userID: String) async throws {
-        if userID.isEmpty {
+    public func withdrawal() async throws {
+        guard let user = Auth.auth().currentUser else {
+            print("로그인 되어있지 않음")
             throw UserError.invalidUserID
         }
         
-        let user = Auth.auth().currentUser
-        
-        // 최근 로그인 기록이 없다면 재인증 처리해야함
-//        var credential = EmailAuthProvider.credential(withEmail: <#T##String#>, password: <#T##String#>)
-//        try await user?.reauthenticate(with: credential)
-        
-        let articleList = try await articleRepository.readAllArticleList(writerID: userID)
+        let articleList = try await articleRepository.readAllArticleList(writerID: user.uid)
         
         for article in articleList {
             try await articleRepository.updateArticle(articleID: article.id, nickname: "탈퇴한 사용자")
         }
         
-        let commentList = try await commentRepository.readAllCommentList(writerID: userID)
+        let commentList = try await commentRepository.readAllCommentList(writerID: user.uid)
         
         for comment in commentList {
             var updatedComment = comment
@@ -153,14 +154,44 @@ public struct DefaultAuthUsecase: AuthUsecase {
             try await commentRepository.updateComment(comment: updatedComment)
         }
         
-        let tradeList = try await tradeRepository.readAllTradeList(writerID: userID)
+        let tradeList = try await tradeRepository.readAllTradeList(writerID: user.uid)
         
         for trade in tradeList {
             try await tradeRepository.deleteTrade(trade: trade)
         }
         
-        try await userRepository.deleteUserInfo(userID: userID)
-        try await user?.delete()
+        try await userRepository.deleteUserInfo(userID: user.uid)
+        
+        do {
+            try await user.delete()
+        } catch AuthErrorCode.requiresRecentLogin {
+            print("재인증 필요")
+//            let credential = AuthCredential(email: <#T##String#>, password: <#T##String#>)
+//            try await user.reauthenticate(with: <#T##AuthCredential#>)
+        }
+    }
+    
+    public func verifyEmail(email: String) async throws {
+        if email.isEmpty { throw AuthError.invalidEmailField }
+        
+        let tempResult = try await Auth.auth().createUser(
+            withEmail: email,
+            password: UUID().uuidString
+        )
+        
+        let tempUser = tempResult.user
+        
+        try await tempUser.sendEmailVerification()
+    }
+    
+    public func checkEmailVerified() -> Bool {
+        guard let tempUser = Auth.auth().currentUser else {
+            print("invalid temp user")
+            return false
+        }
+        
+        tempUser.reload()
+        return tempUser.isEmailVerified
     }
     
     /// 이메일 중복체크 API

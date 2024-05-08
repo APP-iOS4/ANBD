@@ -19,7 +19,7 @@ class ArticleListViewModel: ObservableObject {
         if articleList.isEmpty {
             Task {
                 do {
-                    let articles = try await articleUsecase.refreshAllArticleList()
+                    let articles = try await articleUsecase.refreshAllArticleList(limit: 10)
                     DispatchQueue.main.async {
                         self.articleList = articles
                         self.canLoadMoreArticles = true
@@ -31,7 +31,6 @@ class ArticleListViewModel: ObservableObject {
         }
     }
     func loadMoreArticles() {
-        guard canLoadMoreArticles else { return }
 
         Task {
             do {

@@ -29,7 +29,9 @@ final class HomeViewModel: ObservableObject {
         do {
             try await bannerItemList = bannerUsecase.loadBannerList()
         } catch {
-            
+            #if DEBUG
+            print("loadBanners: \(error)")
+            #endif
         }
     }
     
@@ -42,8 +44,14 @@ final class HomeViewModel: ObservableObject {
                 dasiArticle = try await articleUsecase.loadRecentArticle(category: .dasi)
             }
         } catch {
-            print("=== ERROR: LOAD ARTICLE ===")
-            print("\(error)")
+            #if DEBUG
+            print("loadArticle: \(error)")
+            #endif
+            guard let error = error as? ArticleError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -56,7 +64,14 @@ final class HomeViewModel: ObservableObject {
                 try await baccuaTrades = tradeUsecase.loadRecentTradeList(category: .baccua)
             }
         } catch {
-            
+            #if DEBUG
+            print("loadTrades: \(error)")
+            #endif
+            guard let error = error as? TradeError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -65,11 +80,13 @@ final class HomeViewModel: ObservableObject {
         do {
             return try await storageManager.downloadImage(path: path, containerID: "\(containerID)/thumbnail", imagePath: imagePath)
         } catch {
+            #if DEBUG
             print("HomeViewModel Error loadImage : \(error) \(error.localizedDescription)")
-
+            #endif
             /// 이미지 예외 처리
             let image = UIImage(named: "ANBDWarning")
             let imageData = image?.pngData()
+            
             return imageData ?? Data()
         }
     }

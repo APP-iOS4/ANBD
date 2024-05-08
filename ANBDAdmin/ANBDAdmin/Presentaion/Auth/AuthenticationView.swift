@@ -49,7 +49,7 @@ struct AuthenticationView: View {
                             .submitLabel(.go)
                             .onSubmit {
                                 Task {
-                                    try await authenticationViewModel.signIn()
+                                    await authenticationViewModel.signIn()
                                     authenticationViewModel.checkAuthState()
                                 }
                             }
@@ -68,41 +68,11 @@ struct AuthenticationView: View {
                             BlueSquareButton(title: "로그인",
                                              isDisabled: !authenticationViewModel.isValidLogin) {
                                 Task {
-                                    try await authenticationViewModel.signIn()
+                                    await authenticationViewModel.signIn()
                                     authenticationViewModel.checkAuthState()
                                 }
                             }
-                            
-                            Button(action: {
-                                // 구글 로그인
-#if DEBUG
-                                print("구글 로그인 - 프로토타입")
-#endif
-                            }, label: {
-                                RoundedRectangle(cornerRadius: 14)
-                                    .stroke(Color.gray200)
-                                    .overlay {
-                                        HStack {
-                                            Image("Google")
-                                                .padding(.leading, 14)
-                                            
-                                            Spacer()
-                                            
-                                            Text("Google로 시작하기")
-                                                .font(ANBDFont.SubTitle1)
-                                                .foregroundStyle(Color.gray900)
-                                                .padding(.trailing, 30)
-                                            
-                                            Spacer()
-                                        }
-                                        .contentShape(RoundedRectangle(cornerRadius: 14))
-                                    }
-                            })
-                            .frame(height: 56)
-                            
-                            
                         }
-                        
                         Spacer()
                     }
                     .padding(.horizontal, 50)

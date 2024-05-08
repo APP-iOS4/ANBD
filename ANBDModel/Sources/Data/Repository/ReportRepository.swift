@@ -11,9 +11,11 @@ import FirebaseFirestore
 
 @available(iOS 15, *)
 final class DefaultReportRepository: ReportRepository {
+    
     private let reportDB = Firestore.firestore().collection("Report")
     
     private var nextDoc: DocumentSnapshot?
+    private var allTypeNextDoc: DocumentSnapshot?
     
     func createReport(report: Report) async throws {
         guard let _ = try? reportDB.document(report.id).setData(from: report)
@@ -22,12 +24,12 @@ final class DefaultReportRepository: ReportRepository {
         }
     }
     
-    func readReport(reportType: ReportType) async throws -> [Report] {
+    func readReport(reportType: ReportType , limit: Int) async throws -> [Report] {
         
         let commonQuery = reportDB
             .whereField("type", isEqualTo: reportType.rawValue)
             .order(by: "createDate" ,descending: true)
-            .limit(toLast: 20)
+            .limit(toLast: limit)
         
         var requestQuery : Query
         
@@ -51,10 +53,83 @@ final class DefaultReportRepository: ReportRepository {
         return reportList
     }
     
+    func resetAndReadReport(limit: Int) async throws -> [Report] {
+        allTypeNextDoc = nil
+        return try await readReport(limit: limit)
+    }
+    
+    func resetAndReadReportByType(reportType: ReportType , limit: Int) async throws -> [Report] {
+        nextDoc = nil
+        return try await readReport(reportType: reportType, limit: limit)
+    }
+    
+    func readReport(limit: Int) async throws -> [Report] {
+        
+        let commonQuery = reportDB
+            .order(by: "createDate" ,descending: true)
+            .limit(toLast: limit)
+        
+        var requestQuery : Query
+        
+        if let allTypeNextDoc = allTypeNextDoc {
+            requestQuery = commonQuery.end(beforeDocument: allTypeNextDoc)
+        } else {
+            requestQuery = commonQuery
+        }
+        
+        guard let snapshot = try? await requestQuery.getDocuments() else {
+            throw DBError.getReportDocumentError
+        }
+        
+        if snapshot.documents.isEmpty {
+            return []
+        }
+        
+        allTypeNextDoc = snapshot.documents.first
+        
+        let reportList = try snapshot.documents.compactMap { try $0.data(as: Report.self) }
+        return reportList
+    }
+    func readReportByType(reportType: ReportType , limit: Int) async throws -> [Report] {
+            
+        let commonQuery = reportDB
+            .whereField("type", isEqualTo: reportType.rawValue)
+            .order(by: "createDate" ,descending: true)
+            .limit(toLast: limit)
+            
+        var requestQuery : Query
+            
+        if let nextDoc = nextDoc {
+            requestQuery = commonQuery.end(beforeDocument: nextDoc)
+        } else {
+            requestQuery = commonQuery
+        }
+            
+        guard let snapshot = try? await requestQuery.getDocuments() else {
+            throw DBError.getReportDocumentError
+        }
+            
+        if snapshot.documents.isEmpty {
+            return []
+        }
+            
+        nextDoc = snapshot.documents.first
+            
+        let reportList = try snapshot.documents.compactMap { try $0.data(as: Report.self) }
+        return reportList
+    }
+
+    func countReports() async throws -> Int {
+            let countQuery = reportDB.count
+            guard let snapshot = try? await countQuery.getAggregation(source: .server) else {
+                throw DBError.getDocumentError
+            }
+        return Int(truncating: snapshot.count)
+        }
+    
     func deleteReport(reportID : String) async throws {
         guard let _ = try? await reportDB.document(reportID).delete() else {
             throw DBError.deleteReportDocumentError
         }
     }
-    
 }

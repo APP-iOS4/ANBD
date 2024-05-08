@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 import ANBDModel
+import UIKit
 
 enum AgreeType {
     case olderThanFourTeen
@@ -69,7 +70,7 @@ final class AuthenticationViewModel: ObservableObject {
                                profileImage: "",
                                email: "",
                                favoriteLocation: .seoul,
-                               userLevel: .consumer,
+                               userLevel: .consumer, fcmToken: "",
                                isOlderThanFourteen: false,
                                isAgreeService: false,
                                isAgreeCollectInfo: false,
@@ -225,23 +226,13 @@ extension AuthenticationViewModel {
     }
     
     func checkAuthState() {
-        if let user = UserDefaultsClient.shared.userInfo {
-            self.user = user
-        }
-        
-        if (UserDefaultsClient.shared.userInfo == nil) || user.userLevel != ANBDModel.UserLevel.admin{
-            switch (UserDefaultsClient.shared.userInfo, user.userLevel) {
-            case (nil, _):
+        if let _ = UserDefaultsClient.shared.userID, UserStore.shared.user.userLevel == .admin {
+                authState = true
+            } else {
                 authState = false
-                errorMessage = ""
-            default:
-                authState = false
-                errorMessage = "접근 권한이 없습니다"
+                errorMessage = "접근 권한이 없습니다."
             }
-        } else {
-            authState = true
         }
-    }
     
     func toggleAllAgree() {
         if !isAllAgree() {
@@ -281,35 +272,32 @@ extension AuthenticationViewModel {
         showingTermsView.toggle()
     }
     
-    func signIn() async throws {
-        do {
-            UserDefaultsClient.shared.userInfo = try await authUsecase.signIn(email: loginEmailString,
-                                                                              password: loginPasswordString)
-        } catch {
-            print("\(error.localizedDescription)")
+    func signIn() async -> Bool {
+            do {
+                let signedInUser = try await authUsecase.signIn(email: loginEmailString,
+                                                                password: loginPasswordString)
+                
+                UserDefaultsClient.shared.userID = signedInUser.id
+                UserStore.shared.user = signedInUser
+                
+                return true
+            } catch {
+                print("Error sign in: \(error.localizedDescription)")
+                
+                return false
+            }
         }
-    }
     
     func signOut(completion: @escaping () -> Void) async throws {
         do {
             try await authUsecase.signOut()
             
             completion()
-        } catch {
-            print("\(error.localizedDescription)")
-        }
-    }
-    
-    func signUp() async throws {
-        do {
-            UserDefaultsClient.shared.userInfo = try await authUsecase.signUp(email: signUpEmailString,
-                                                                              password: signUpPasswordString,
-                                                                              nickname: signUpNicknameString,
-                                                                              favoriteLocation: signUpUserFavoriteLoaction,
-                                                                              isOlderThanFourteen: isOlderThanFourteen,
-                                                                              isAgreeService: isAgreeService,
-                                                                              isAgreeCollectInfo: isAgreeCollectInfo,
-                                                                              isAgreeMarketing: isAgreeMarketing)
+            authState = false
+            UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                exit(0)
+            }
         } catch {
             print("\(error.localizedDescription)")
         }
@@ -325,20 +313,6 @@ extension AuthenticationViewModel {
         let isDuplicate = await authUsecase.checkDuplicatedNickname(nickname: signUpNicknameString)
         
         return isDuplicate
-    }
-    
-    func withdrawal(completion: @escaping () -> Void) async throws {
-        do {
-            try await signOut(completion: { })
-            
-            if let user = UserDefaultsClient.shared.userInfo {
-                try await authUsecase.withdrawal(userID: user.id)
-            }
-            
-            completion()
-        } catch {
-            print("\(error.localizedDescription)")
-        }
     }
     
     /*

@@ -90,19 +90,19 @@ final class PostDataSource<T: Codable & Identifiable>: Postable {
             requestQuery = database
                 .order(by: "createdAt", descending: true)
                 .limit(to: limit)
-            
-            guard let lastSnapshot = try await requestQuery
-                .getDocuments()
-                .documents
-                .last
-            else {
-                print("end")
-                return []
-            }
-            
-            let next = requestQuery.start(afterDocument: lastSnapshot)
-            self.allQuery = next
         }
+        
+        guard let lastSnapshot = try await requestQuery
+            .getDocuments()
+            .documents
+            .last
+        else {
+            print("end")
+            return []
+        }
+        
+        let next = requestQuery.start(afterDocument: lastSnapshot)
+        self.allQuery = next
         
         guard let snapshot = try? await requestQuery
             .getDocuments()
@@ -133,19 +133,19 @@ final class PostDataSource<T: Codable & Identifiable>: Postable {
                     .order(by: "createdAt", descending: true)
                     .limit(to: limit)
             }
-            
-            guard let lastSnapshot = try await requestQuery
-                .getDocuments()
-                .documents
-                .last
-            else {
-                print("end")
-                return []
-            }
-            
-            let next = requestQuery.start(afterDocument: lastSnapshot)
-            self.writerIDQuery = next
         }
+        
+        guard let lastSnapshot = try await requestQuery
+            .getDocuments()
+            .documents
+            .last
+        else {
+            print("end")
+            return []
+        }
+        
+        let next = requestQuery.start(afterDocument: lastSnapshot)
+        self.writerIDQuery = next
         
         guard let snapshot = try? await requestQuery
             .getDocuments()
@@ -220,7 +220,7 @@ extension Postable where Item == Article {
             .first?
             .data(as: Item.self)
         else {
-            throw DBError.getArticleDocumentError
+            throw DBError.getDocumentError
         }
         
         return article
@@ -249,23 +249,23 @@ extension Postable where Item == Article {
                     .order(by: "createdAt", descending: true)
                     .limit(to: limit)
             }
-            
-            guard let lastSnapshot = try await requestQuery
-                .getDocuments()
-                .documents
-                .last
-            else {
-                print("end")
-                return []
-            }
-            
-            let next = requestQuery.start(afterDocument: lastSnapshot)
-            orderQuery = next
         }
+            
+        guard let lastSnapshot = try await requestQuery
+            .getDocuments()
+            .documents
+            .last
+        else {
+            print("end")
+            return []
+        }
+        
+        let next = requestQuery.start(afterDocument: lastSnapshot)
+        orderQuery = next
         
         guard let snapshot = try? await requestQuery.getDocuments().documents
         else {
-            throw DBError.getArticleDocumentError
+            throw DBError.getDocumentError
         }
         
         let articleList = snapshot.compactMap { try? $0.data(as: Item.self) }
@@ -293,23 +293,23 @@ extension Postable where Item == Article {
                 )
                 .order(by: "createdAt", descending: true)
                 .limit(to: limit)
-            
-            guard let lastSnapshot = try await requestQuery
-                .getDocuments()
-                .documents
-                .last
-            else {
-                print("end")
-                return []
-            }
-            
-            let next = requestQuery.start(afterDocument: lastSnapshot)
-            searchQuery = next
         }
+        
+        guard let lastSnapshot = try await requestQuery
+            .getDocuments()
+            .documents
+            .last
+        else {
+            print("end")
+            return []
+        }
+        
+        let next = requestQuery.start(afterDocument: lastSnapshot)
+        searchQuery = next
         
         guard let snapshot = try? await requestQuery.getDocuments().documents
         else {
-            throw DBError.getArticleDocumentError
+            throw DBError.getDocumentError
         }
         
         let articleList = snapshot.compactMap { try? $0.data(as: Item.self) }
@@ -343,7 +343,16 @@ extension Postable where Item == Article {
             "commentCount": item.commentCount
         ])
         else {
-            throw DBError.updateArticleDocumentError
+            throw DBError.updateDocumentError
+        }
+    }
+    
+    func likeItem(item: Article) async throws {
+        guard let _ = try? await database.document(item.id).updateData([
+            "likeCount": item.likeCount
+        ])
+        else {
+            throw DBError.updateDocumentError
         }
     }
     
@@ -361,7 +370,7 @@ extension Postable where Item == Comment {
             .getDocuments()
             .documents
         else {
-            throw DBError.getCommentDocumentError
+            throw DBError.getDocumentError
         }
         
         return snapshot.compactMap { try? $0.data(as: Comment.self) }
@@ -372,7 +381,7 @@ extension Postable where Item == Comment {
             .document(item.id)
             .updateData(["content": item.content])
         else {
-            throw DBError.updateCommentDocumentError
+            throw DBError.updateDocumentError
         }
     }
     
@@ -382,7 +391,7 @@ extension Postable where Item == Comment {
             .getDocuments()
             .documents
         else {
-            throw DBError.getCommentDocumentError
+            throw DBError.getDocumentError
         }
         
         let commentList = snapshot.compactMap { try? $0.data(as: Comment.self) }
@@ -439,19 +448,19 @@ extension Postable where Item == Trade {
                     .order(by: "createdAt", descending: true)
                     .limit(to: limit)
             }
-            
-            guard let lastSnapshot = try await requestQuery
-                .getDocuments()
-                .documents
-                .last
-            else {
-                print("end")
-                return []
-            }
-            
-            let next = requestQuery.start(afterDocument: lastSnapshot)
-            filterQuery = next
         }
+        
+        guard let lastSnapshot = try await requestQuery
+            .getDocuments()
+            .documents
+            .last
+        else {
+            print("end")
+            return []
+        }
+        
+        let next = requestQuery.start(afterDocument: lastSnapshot)
+        filterQuery = next
         
         guard let snapshot = try? await requestQuery.getDocuments().documents
         else {
@@ -484,19 +493,19 @@ extension Postable where Item == Trade {
                 )
                 .order(by: "createdAt", descending: true)
                 .limit(to: limit)
-            
-            guard let lastSnapshot = try await requestQuery
-                .getDocuments()
-                .documents
-                .last
-            else {
-                print("end")
-                return []
-            }
-            
-            let next = requestQuery.start(afterDocument: lastSnapshot)
-            searchQuery = next
         }
+        
+        guard let lastSnapshot = try await requestQuery
+            .getDocuments()
+            .documents
+            .last
+        else {
+            print("end")
+            return []
+        }
+        
+        let next = requestQuery.start(afterDocument: lastSnapshot)
+        searchQuery = next
         
         guard let snapshot = try? await requestQuery
             .getDocuments()

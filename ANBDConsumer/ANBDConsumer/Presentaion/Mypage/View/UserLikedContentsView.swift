@@ -11,7 +11,9 @@ import ANBDModel
 struct UserLikedContentsView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
-    @EnvironmentObject private var coordinator: Coordinator
+    @Environment(\.dismiss) private var dismiss
+    
+    @StateObject private var coordinator = Coordinator.shared
     
     @State var category: ANBDCategory
     
@@ -64,7 +66,22 @@ struct UserLikedContentsView: View {
     @ViewBuilder
     private func userLikedArticleListView(list: [Article]) -> some View {
         if list.isEmpty {
-            ListEmptyView(description: "\(UserStore.shared.user.nickname)님이 좋아요한\n\(category.description) 게시글이 없습니다.")
+            ZStack {
+                ListEmptyView(description: "\(UserStore.shared.user.nickname)님이 좋아요한\n\(category.description) 게시글이 없습니다.")
+                
+                Button(action: {
+                    dismiss()
+                    coordinator.selectedTab = .article
+                }, label: {
+                    HStack {
+                        Text("게시글 둘러보기")
+                            .font(ANBDFont.body1)
+                        Image(systemName: "chevron.forward")
+                            .font(ANBDFont.Caption3)
+                    }
+                })
+                .offset(y: 100)
+            }
         } else {
             ScrollView(.vertical) {
                 LazyVStack {
@@ -89,7 +106,22 @@ struct UserLikedContentsView: View {
     @ViewBuilder
     private func userHeartTradeListView(list: [Trade]) -> some View {
         if list.isEmpty {
-            ListEmptyView(description: "\(UserStore.shared.user.nickname)님이 찜한\n\(category.description) 거래가 없습니다.")
+            ZStack {
+                ListEmptyView(description: "\(UserStore.shared.user.nickname)님이 찜한\n\(category.description) 거래가 없습니다.")
+                
+                Button(action: {
+                    dismiss()
+                    coordinator.selectedTab = .trade
+                }, label: {
+                    HStack {
+                        Text("거래글 둘러보기")
+                            .font(ANBDFont.body1)
+                        Image(systemName: "chevron.forward")
+                            .font(ANBDFont.Caption3)
+                    }
+                })
+                .offset(y: 100)
+            }
         } else {
             ScrollView(.vertical) {
                 LazyVStack {

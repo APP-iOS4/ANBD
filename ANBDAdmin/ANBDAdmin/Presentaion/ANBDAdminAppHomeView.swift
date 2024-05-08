@@ -46,7 +46,7 @@ struct ANBDAdminAppHomeView: View {
                     Text("배너 관리").bold()
                 }
                 Spacer()
-                Text("로그인 유저: \(authenticationViewModel.user.nickname)")
+                Text("로그인 유저: \(UserStore.shared.user.nickname)")
                 Button(action: {
                     isShowingSignOutAlertView.toggle()
                 }, label: {
@@ -56,7 +56,6 @@ struct ANBDAdminAppHomeView: View {
                 .buttonStyle(.bordered)
             }
             .listStyle(SidebarListStyle())
-            
             Text("항목을 선택하세요.")
         }
         if isShowingSignOutAlertView {

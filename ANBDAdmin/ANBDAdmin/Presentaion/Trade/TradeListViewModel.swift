@@ -32,7 +32,6 @@ class TradeListViewModel: ObservableObject {
         }
     }
     func loadMoreTrades() {
-        guard canLoadMoreTrades else { return }
 
         Task {
             do {

@@ -7,11 +7,11 @@
 
 import SwiftUI
 import ANBDModel
-import CachedAsyncImage
 
 struct ArticleListView: View {
     @StateObject private var articleListViewModel = ArticleListViewModel()
     @State private var searchArticleText = ""
+    @State private var showOnlySearchedArticle:Bool = false
     
     var body: some View {
         VStack {
@@ -22,8 +22,10 @@ struct ArticleListView: View {
                 .cornerRadius(8)
                 .padding(.horizontal, 10)
                 .onSubmit {
+                    showOnlySearchedArticle = true
                     if !searchArticleText.isEmpty {
                         Task {
+                            articleListViewModel.articleList = []
                             await articleListViewModel.searchArticle(articleID: searchArticleText)
                         }
                     }
@@ -65,7 +67,7 @@ struct ArticleListView: View {
                                     Text("\(article.title)")
                                         .lineLimit(1)
                                         .font(.title3)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Color("DefaultTextColor"))
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
@@ -73,20 +75,20 @@ struct ArticleListView: View {
                                 VStack(alignment: .leading) {
                                     Text("\(article.writerNickname)")
                                         .lineLimit(2)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Color("DefaultTextColor"))
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
                                     Text("\(DateFormatterSingleton.shared.dateFormatter(article.createdAt))")
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Color("DefaultTextColor"))
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Spacer()
                             }
+                            .background(Color("DefaultCellColor"))
                             .frame(maxWidth: .infinity, minHeight: 50)
-                            .background(Color.white)
                             .cornerRadius(10)
                             .padding(.horizontal)
                             
@@ -96,7 +98,9 @@ struct ArticleListView: View {
                         Text("List End")
                             .foregroundColor(.gray)
                           .onAppear {
-                              articleListViewModel.loadMoreArticles()
+                              if showOnlySearchedArticle == false {
+                                  articleListViewModel.loadMoreArticles()
+                              }
                           }
                       }
                 }
@@ -106,6 +110,7 @@ struct ArticleListView: View {
                 .navigationBarTitle("게시글 목록")
                 .toolbar {
                     Button(action: {
+                        showOnlySearchedArticle = false
                         self.searchArticleText = ""
                         articleListViewModel.articleList = []
                         articleListViewModel.firstLoadArticles()

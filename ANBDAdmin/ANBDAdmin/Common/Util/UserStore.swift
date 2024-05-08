@@ -1,6 +1,6 @@
 //
 //  UserStore.swift
-//  ANBDConsumer
+//  ANBDAdmin
 //
 //  Created by 김성민 on 4/20/24.
 //
@@ -12,8 +12,6 @@ final class UserStore: ObservableObject {
     static let shared = UserStore()
     
     private let userUsecase: UserUsecase = DefaultUserUsecase()
-    
-    var deviceToken: String = ""
     
     @Published var user = User(id: "",
                                nickname: "",
@@ -45,14 +43,7 @@ final class UserStore: ObservableObject {
             self.user = getUser
             return getUser
         } catch {
-            guard let error = error as? UserError else {
-                return await MyPageViewModel.mockUser
-            }
-            if error.rawValue == 4009 {
-                ToastManager.shared.toast = Toast(style: .error, message: "사용자 필드 누락(ID)")
-            } else {
-                ToastManager.shared.toast = Toast(style: .error, message: "사용자 필드 누락(이미지)")
-            }
+            print("Error get user information: \(error.localizedDescription)")
             
             return await MyPageViewModel.mockUser
         }
@@ -63,15 +54,7 @@ final class UserStore: ObservableObject {
             guard let userID = UserDefaultsClient.shared.userID else { return }
             self.user = try await userUsecase.getUserInfo(userID: userID)
         } catch {
-            guard let error = error as? UserError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
-                return
-            }
-            if error.rawValue == 4009 {
-                ToastManager.shared.toast = Toast(style: .error, message: "사용자 필드 누락(ID)")
-            } else {
-                ToastManager.shared.toast = Toast(style: .error, message: "사용자 필드 누락(이미지)")
-            }
+            print("Error save user information: \(error.localizedDescription)")
         }
     }
 }

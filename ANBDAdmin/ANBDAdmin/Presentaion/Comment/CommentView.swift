@@ -28,7 +28,6 @@ struct CommentView: View {
                     Text("내용")
                         .font(.title3)
                         .lineLimit(2)
-                        .foregroundColor(.black)
                 }
                 .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
                 Divider()
@@ -36,14 +35,12 @@ struct CommentView: View {
                 VStack(alignment: .leading) {
                     Text("작성자")
                         .lineLimit(2)
-                        .foregroundColor(.black)
                 }
                 .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
                 Divider()
                 Spacer()
                 VStack(alignment: .leading) {
                     Text("ID")
-                        .foregroundColor(.black)
                 }
                 .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
                 Divider()
@@ -52,7 +49,6 @@ struct CommentView: View {
                     Text("작성일자")
                         .font(.title3)
                         .lineLimit(2)
-                        .foregroundColor(.black)
                 }
                 .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
                 Spacer()
@@ -79,7 +75,7 @@ struct CommentView: View {
                         VStack(alignment: .leading) {
                             Text("\(comment.content)")
                                 .font(.title3)
-                                .foregroundColor(.black)
+                                .foregroundColor(Color("DefaultTextColor"))
                         }
                         .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
                         Divider()
@@ -87,27 +83,27 @@ struct CommentView: View {
                         VStack(alignment: .leading) {
                             Text("\(comment.writerNickname)")
                                 .lineLimit(2)
-                                .foregroundColor(.black)
+                                .foregroundColor(Color("DefaultTextColor"))
                         }
                         .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
                         Divider()
                         Spacer()
                         VStack(alignment: .leading) {
                             Text("\(comment.id)")
-                                .foregroundColor(.black)
+                                .foregroundColor(Color("DefaultTextColor"))
                         }
                         .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
                         Divider()
                         Spacer()
                         VStack(alignment: .leading) {
                             Text("\(DateFormatterSingleton.shared.dateFormatter(comment.createdAt))")
-                                .foregroundColor(.black)
+                                .foregroundColor(Color("DefaultTextColor"))
                         }
                         .frame(minWidth: 0, maxWidth: 200, alignment: .leading)
                         Spacer()
                     }
                     .frame(maxWidth: .infinity, minHeight: 50)
-                    .background(Color.white)
+                    .foregroundStyle(Color("DefaultCellColor"))
                     .cornerRadius(10)
                     .padding(.horizontal)
                     .contextMenu {

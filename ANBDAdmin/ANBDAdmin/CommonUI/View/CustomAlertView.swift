@@ -17,19 +17,20 @@ struct CustomAlertView: View {
         
             ZStack {
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(.white)
+                    .fill(Color("DefaultCellColor"))
                     .frame(height: 200)
                 
                 VStack {
                     Text(title)
-                        .font(ANBDFont.Heading3)
+                        .font(ANBDFont.Heading2)
                         .padding(.vertical, 20)
+                        .foregroundColor(Color("DefaultTextColor"))
                     
                     Text(description)
                         .multilineTextAlignment(.center)
-                        .font(ANBDFont.SubTitle1)
+                        .font(ANBDFont.Heading3)
                         .padding(.bottom, 30)
-                    
+                        .foregroundColor(Color("DefaultTextColor"))
                     
                     HStack {
                         Button(action: {
@@ -41,6 +42,7 @@ struct CustomAlertView: View {
                                     .frame(height: 45)
                                 
                                 Text("취소")
+                                    .font(ANBDFont.Heading3)
                             }
                         })
                         .padding(.leading, 15)
@@ -55,13 +57,14 @@ struct CustomAlertView: View {
                                     .frame(height: 45)
                                 
                                 Text(confirmMessage)
+                                    .font(ANBDFont.Heading3)
                                     .foregroundStyle(.white)
                                     .fontWeight(textWeight)
                             }
                         })
                         .padding(.trailing, 15)
                     }
-                    .font(ANBDFont.body1)
+                    .font(ANBDFont.Caption3)
                 }
             }
             .padding(.horizontal, 50)
@@ -112,7 +115,7 @@ extension CustomAlertView {
         case .leaveChatRoom:
             return "정말 채팅방을 나가시겠습니까?\n채팅 내용은 복구되지 않습니다."
         case .signOut:
-            return "정말 로그아웃 하시겠습니까?"
+            return "정말 로그아웃 하시겠습니까? \n보안을 위해 앱이 종료됩니다."
         case .withdrawal:
             return "정말 ANBD 회원에서 탈퇴하시겠습니까?\n회원 탈퇴 시 회원 정보가\n복구되지 않습니다."
         case .changeState:

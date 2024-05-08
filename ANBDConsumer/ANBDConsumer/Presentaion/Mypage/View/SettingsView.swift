@@ -55,6 +55,9 @@ struct SettingsView: View {
                     Button(action: {
                         isShowingDeletedCachingDataAlertView.toggle()
                         // TODO: - 캐시 데이터 삭제하기 메서드 넣기
+                        #if DEBUG
+                        print("캐시 데이터 삭제 완료")
+                        #endif
                     }, label: {
                         Text("캐시 데이터 삭제하기")
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -114,11 +117,11 @@ struct SettingsView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .ignoresSafeArea()
                     .overlay {
-                        Text("Copyright iOS 앱 스쿨 4기 TeamGG\n\nAll rights reserved\nLicensed under the MIT license")
+                        Text("Copyright iOS 앱 스쿨 4기 TeamGG.\n\nAll rights reserved.\nLicensed under the MIT license.")
                             .multilineTextAlignment(.center)
                             .font(ANBDFont.Caption1)
                             .foregroundStyle(Color.gray400)
-                            .offset(y: -50)
+                            .offset(y: -20)
                     }
             }
             

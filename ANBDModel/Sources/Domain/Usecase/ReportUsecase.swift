@@ -13,6 +13,7 @@ public protocol ReportUsecase {
     func loadReport(reportType: ReportType , limit: Int) async throws -> [Report]
     func loadReport(limit: Int) async throws -> [Report]
     func removeReport(reportID : String) async throws
+    func countReports() async throws -> Int
 }
 
 @available(iOS 15, *)
@@ -27,11 +28,19 @@ public struct DefaultReportUsecase: ReportUsecase {
     }
     
     //타입별
+    public func resetAndLoadReport(reportType: ReportType , limit: Int) async throws -> [Report] {
+            try await reportRepository.resetAndReadReportByType(reportType: reportType , limit: limit)
+    }
+    
     public func loadReport(reportType: ReportType , limit: Int) async throws -> [Report] {
         try await reportRepository.readReport(reportType: reportType, limit: limit)
     }
     
     //전체
+    public func resetAndLoadReport(limit: Int) async throws -> [Report] {
+            try await reportRepository.resetAndReadReport(limit: limit)
+        }
+    
     public func loadReport(limit: Int) async throws -> [Report] {
         try await reportRepository.readReport(limit: limit)
     }
@@ -39,5 +48,8 @@ public struct DefaultReportUsecase: ReportUsecase {
     public func removeReport(reportID: String) async throws {
         try await reportRepository.deleteReport(reportID: reportID)
     }
-    
+    //Count
+    public func countReports() async throws -> Int {
+            try await reportRepository.countReports()
+        }
 }

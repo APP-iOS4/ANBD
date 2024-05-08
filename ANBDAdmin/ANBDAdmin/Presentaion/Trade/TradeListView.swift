@@ -7,11 +7,11 @@
 
 import SwiftUI
 import ANBDModel
-import CachedAsyncImage
 
 struct TradeListView: View {
     @StateObject private var tradeListViewModel = TradeListViewModel()
     @State private var searchTradeText = ""
+    @State private var showOnlySearchedTrade:Bool = false
     
     var body: some View {
         VStack {
@@ -22,8 +22,10 @@ struct TradeListView: View {
                 .cornerRadius(8)
                 .padding(.horizontal, 10)
                 .onSubmit {
+                    showOnlySearchedTrade = true
                     if !searchTradeText.isEmpty {
                         Task {
+                            tradeListViewModel.tradeList = []
                             await tradeListViewModel.searchTrade(tradeID: searchTradeText)
                         }
                     }
@@ -65,7 +67,7 @@ struct TradeListView: View {
                                     Text("\(trade.title)")
                                         .font(.title3)
                                         .lineLimit(1)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Color("DefaultTextColor"))
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
@@ -73,20 +75,20 @@ struct TradeListView: View {
                                 VStack(alignment: .leading) {
                                     Text("\(trade.writerNickname)")
                                         .lineLimit(2)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Color("DefaultTextColor"))
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
                                     Text("\(DateFormatterSingleton.shared.dateFormatter(trade.createdAt))")
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Color("DefaultTextColor"))
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Spacer()
                             }
+                            .background(Color("DefaultCellColor"))
                             .frame(maxWidth: .infinity, minHeight: 50)
-                            .background(Color.white)
                             .cornerRadius(10)
                             .padding(.horizontal)
                         }
@@ -94,18 +96,20 @@ struct TradeListView: View {
                     if !tradeListViewModel.tradeList.isEmpty {
                         Text("List End")
                             .foregroundColor(.gray)
-                          .onAppear {
-                              tradeListViewModel.loadMoreTrades()
-                          }
-                      }
+                            .onAppear {
+                                if showOnlySearchedTrade == false {
+                                    tradeListViewModel.loadMoreTrades()
+                                }
+                            }
+                    }
                 }
-                
                 .onAppear {
                     tradeListViewModel.firstLoadTrades()
                 }
                 .navigationBarTitle("거래글 목록")
                 .toolbar {
                     Button(action: {
+                        showOnlySearchedTrade = false
                         self.searchTradeText = ""
                         tradeListViewModel.tradeList = []
                         tradeListViewModel.firstLoadTrades()

@@ -6,12 +6,33 @@
 //
 
 import SwiftUI
+import ANBDModel
 
 struct ReportListView: View {
     @StateObject private var reportListViewModel = ReportListViewModel()
+    @State private var selectedReportType: ReportType = .article // 기본 선택값은 '게시물'
+    
     
     var body: some View {
         VStack {
+            Text("신고 메세지 개수: \(reportListViewModel.reportCount)")
+                .font(ANBDFont.Heading3)
+                .task {
+                    await reportListViewModel.fetchReportCount()
+                }
+            Picker("신고 유형 선택", selection: $selectedReportType) {
+                ForEach(ReportType.allCases, id: \.self) { type in
+                    Text(type.rawValue).tag(type)
+                }
+            }
+            .pickerStyle(SegmentedPickerStyle())
+            .padding()
+            .onChange(of: selectedReportType){ newType in
+                Task {
+                    reportListViewModel.reportList = []
+                    await reportListViewModel.firstLoadReports(of: newType)
+                }
+            }
             HStack{
                 Spacer()
                 VStack(alignment: .leading) {
@@ -47,7 +68,7 @@ struct ReportListView: View {
                                 VStack(alignment: .leading) {
                                     Text("\(report.type)")
                                         .font(.title3)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Color("DefaultTextColor"))
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
@@ -55,20 +76,20 @@ struct ReportListView: View {
                                 VStack(alignment: .leading) {
                                     Text("\(report.reportReason)")
                                         .lineLimit(1)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Color("DefaultTextColor"))
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
                                     Text("\(report.reportedDate)")
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Color("DefaultTextColor"))
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Spacer()
                             }
                             .frame(maxWidth: .infinity, minHeight: 50)
-                            .background(Color.white)
+                            .background(Color("DefaultCellColor"))
                             .cornerRadius(10)
                             .padding(.horizontal)
                         }
@@ -76,19 +97,23 @@ struct ReportListView: View {
                     if !reportListViewModel.reportList.isEmpty {
                         Text("List End")
                             .foregroundColor(.gray)
-                          .onAppear {
-                              //페이지네이션 로딩 함수 추가 예정
-                          }
-                      }
+                            .onAppear {
+                                reportListViewModel.loadMoreReports(of: selectedReportType)
+                            }
+                    }
                 }
                 .onAppear {
-                    reportListViewModel.firstLoadReports()
+                    Task{
+                        await reportListViewModel.firstLoadReports(of: selectedReportType)
+                    }
                 }
                 .navigationBarTitle("신고함 목록")
                 .toolbar {
                     Button(action: {
                         reportListViewModel.reportList = []
-                        reportListViewModel.firstLoadReports()
+                        Task{
+                            await reportListViewModel.firstLoadReports(of: selectedReportType)
+                        }
                     }) {
                         Image(systemName: "arrow.clockwise")
                     }
@@ -99,4 +124,3 @@ struct ReportListView: View {
         }
     }
 }
-

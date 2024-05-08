@@ -135,6 +135,12 @@ final class TradeViewModel: ObservableObject {
                 let image = UIImage(named: "ANBDWarning")
                 let imageData = image?.pngData()
                 detailImages.append( imageData ?? Data() )
+                
+                guard let error = error as? StorageError else {
+                    ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                    return detailImages
+                }
+                ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
             }
         }
         

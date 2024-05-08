@@ -12,6 +12,7 @@ import Kingfisher
 struct UserListView: View {
     @StateObject private var userListViewModel = UserListViewModel()
     @State private var searchUserText = "" // 검색 텍스트 추적하는 변수
+    @State private var showOnlySearchedUser:Bool = false
     let userLevel: UserLevel
     
     var body: some View {
@@ -23,8 +24,10 @@ struct UserListView: View {
                 .cornerRadius(8)
                 .padding(.horizontal, 10)
                 .onSubmit {
+                    showOnlySearchedUser = true
                     if !searchUserText.isEmpty {
                         Task {
+                            userListViewModel.userList = []
                             await userListViewModel.searchUser(userID:searchUserText)
                         }
                     }
@@ -67,14 +70,14 @@ struct UserListView: View {
                                     Text("\(user.nickname)")
                                         .font(.title3)
                                         .lineLimit(2)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Color("DefaultTextColor"))
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
                                 Spacer()
                                 VStack(alignment: .leading) {
                                     Text("\(user.email)")
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Color("DefaultTextColor"))
                                 }
                                 .frame(minWidth: 0, maxWidth: 260, alignment: .leading)
                                 Divider()
@@ -101,7 +104,7 @@ struct UserListView: View {
                                 Spacer()
                             }
                             .frame(maxWidth: .infinity, minHeight: 50)
-                            .background(Color.white)
+                            .background(Color("DefaultCellColor"))
                             .cornerRadius(10)
                             .padding(.horizontal)
                         }
@@ -110,7 +113,9 @@ struct UserListView: View {
                         Text("List End")
                             .foregroundColor(.gray)
                             .onAppear {
-                                userListViewModel.loadMoreUsers()
+                                if showOnlySearchedUser == false {
+                                    userListViewModel.loadMoreUsers()
+                                }
                             }
                     }
                 }
@@ -120,6 +125,7 @@ struct UserListView: View {
                 .navigationBarTitle("유저 목록")
                 .toolbar {
                     Button(action: {
+                        showOnlySearchedUser = false
                         self.searchUserText = ""
                         userListViewModel.userList = []
                         userListViewModel.firstLoadUsers()

@@ -26,7 +26,6 @@ struct TextFieldWithTitle: View {
         VStack(alignment: .leading) {
             Text("\(title)")
                 .font(ANBDFont.SubTitle1)
-                .foregroundStyle(Color.gray900)
                 .frame(height: 50)
             
             if fieldType == .normal {
@@ -61,6 +60,7 @@ struct TextFieldWithTitle: View {
                 .foregroundStyle(.gray200)
         }
     }
+    
     
     func TextFieldUIKit(placeholder: String, text: Binding<String>) -> some View {
         UITextField.appearance().clearButtonMode = .whileEditing

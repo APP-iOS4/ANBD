@@ -101,7 +101,7 @@ final class DefaultChatRepository: ChatRepository {
             throw DBError.getChannelDocumentError        }
         
         guard let trade = try? await db.collection("TradeBoard").document(tradeID).getDocument(as : Trade.self) else {
-            throw DBError.getTradeDocumentError
+            return nil
         }
         
         return trade

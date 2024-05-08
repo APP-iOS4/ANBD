@@ -100,7 +100,7 @@ struct UserPageView: View {
                     
                     Button(action: {
                         coordinator.category = .accua
-                        coordinator.mypagePath.append(Page.userLikedContentView)
+                        coordinator.appendPath(.userLikedContentView)
                     }, label: {
                         listButtonView(title: "내가 좋아요한 게시글 보기")
                     })
@@ -109,7 +109,7 @@ struct UserPageView: View {
                     
                     Button(action: {
                         coordinator.category = .nanua
-                        coordinator.mypagePath.append(Page.userLikedContentView)
+                        coordinator.appendPath(.userLikedContentView)
                     }, label: {
                         listButtonView(title: "내가 찜한 나눔・거래 보기")
                             .padding(.bottom, -10)
@@ -125,10 +125,10 @@ struct UserPageView: View {
         }
         .toolbarRole(.editor)
         .toolbar {
-            if isSignedInUser {
+            if isSignedInUser && coordinator.selectedTab == .mypage {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
-                        coordinator.mypagePath.append(Page.settingsView)
+                        coordinator.appendPath(.settingsView)
                     }, label: {
                         Image(systemName: "gearshape")
                             .font(.system(size: 14))
@@ -228,7 +228,7 @@ struct UserPageView: View {
 extension UserPageView {
     private var navigationTitle: String {
         switch isSignedInUser {
-        case true: return "마이페이지"
+        case true: return "내 정보"
         case false: return "사용자 정보"
         }
     }

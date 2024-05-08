@@ -58,13 +58,9 @@ final class ArticleViewModel: ObservableObject {
         do {
             self.filteredArticles = try await articleUseCase.refreshSortedArticleList(category: category, by: self.sortOption, limit: 8)
         } catch {
-            print(error.localizedDescription)
-            
-            guard let error = error as? ArticleError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
-                return
-            }
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
+            #if DEBUG
+            print("refreshSortedArticleList: \(error)")
+            #endif
         }
     }
     
@@ -80,13 +76,9 @@ final class ArticleViewModel: ObservableObject {
                 }
             }
         } catch {
-            print(error.localizedDescription)
-            
-            guard let error = error as? ArticleError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
-                return
-            }
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
+            #if DEBUG
+            print("loadMoreArticles: \(error)")
+            #endif
         }
     }
     
@@ -100,14 +92,9 @@ final class ArticleViewModel: ObservableObject {
                     try await storageManager.downloadImage(path: path, containerID: containerID, imagePath: image)
                 )
             } catch {
-                print(error.localizedDescription)
-                
-                guard let error = error as? ArticleError else {
-                    ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
-                    return []
-                }
-                ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
-                
+                #if DEBUG
+                print("loadDetailImages: \(error)")
+                #endif
                 //이미지 예외
                 let image = UIImage(named: "ANBDWarning")
                 let imageData = image?.pngData()
@@ -140,8 +127,9 @@ final class ArticleViewModel: ObservableObject {
             try await articleUseCase.writeArticle(article: newArticle, imageDatas: newImages)
             await UserStore.shared.updateLocalUserInfo()
         } catch {
-            print(error.localizedDescription)
-            
+            #if DEBUG
+            print("writeArticle: \(error)")
+            #endif
             guard let error = error as? ArticleError else {
                 ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
                 return
@@ -181,8 +169,9 @@ final class ArticleViewModel: ObservableObject {
             article = try await articleUseCase.loadArticle(articleID: article.id)
             await UserStore.shared.updateLocalUserInfo()
         } catch {
-            print(error.localizedDescription)
-            
+            #if DEBUG
+            print("updateArticle: \(error)")
+            #endif
             guard let error = error as? ArticleError else {
                 ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
                 return
@@ -191,21 +180,19 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
+    /// homeView에서 사용하는 load article
     func loadArticle(article: Article) async {
         do {
             let loadedArticle = try await articleUseCase.loadArticle(articleID: article.id)
             self.article = loadedArticle
         } catch {
-            print(error.localizedDescription)
-            
-            guard let error = error as? ArticleError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
-                return
-            }
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
+            #if DEBUG
+            print("loadArticle: \(error)")
+            #endif
         }
     }
     
+    /// articleDetail, create view에서 사용하는 load article
     func loadOneArticle(articleID: String) async {
         do {
             let loadedArticle = try await articleUseCase.loadArticle(articleID: articleID)
@@ -213,13 +200,9 @@ final class ArticleViewModel: ObservableObject {
 
             self.article = loadedArticle
         } catch {
-            print(error.localizedDescription)
-            
-            guard let error = error as? ArticleError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
-                return
-            }
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
+            #if DEBUG
+            print("loadOneArticle: \(error)")
+            #endif
         }
     }
     
@@ -228,8 +211,9 @@ final class ArticleViewModel: ObservableObject {
             try await articleUseCase.deleteArticle(article: article)
             await UserStore.shared.updateLocalUserInfo()
         } catch {
-            print(error.localizedDescription)
-            
+            #if DEBUG
+            print("deleteArticle: \(error)")
+            #endif
             guard let error = error as? ArticleError else {
                 ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
                 return
@@ -256,8 +240,9 @@ final class ArticleViewModel: ObservableObject {
             try await articleUseCase.likeArticle(articleID: article.id)
             await UserStore.shared.updateLocalUserInfo()
         } catch {
-            print(error.localizedDescription)
-            
+            #if DEBUG
+            print("likeArticle: \(error)")
+            #endif
             guard let error = error as? ArticleError else {
                 ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
                 return
@@ -282,8 +267,9 @@ final class ArticleViewModel: ObservableObject {
             try await commentUseCase.writeComment(articleID: articleID, comment: newComment)
             await loadCommentList(articleID: articleID)
         } catch {
-            print(error.localizedDescription)
-            
+            #if DEBUG
+            print("writeComment: \(error)")
+            #endif
             guard let error = error as? CommentError else {
                 ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
                 return
@@ -297,13 +283,9 @@ final class ArticleViewModel: ObservableObject {
             let loadedComment = try await commentUseCase.loadCommentList(articleID: articleID)
             self.comments = loadedComment
         } catch {
-            print(error.localizedDescription)
-            
-            guard let error = error as? CommentError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
-                return
-            }
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
+            #if DEBUG
+            print("loadCommentList: \(error)")
+            #endif
         }
     }
     
@@ -311,8 +293,9 @@ final class ArticleViewModel: ObservableObject {
         do {
             try await commentUseCase.updateComment(comment: comment)
         } catch {
-            print(error.localizedDescription)
-            
+            #if DEBUG
+            print("updateComment: \(error)")
+            #endif
             guard let error = error as? CommentError else {
                 ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
                 return
@@ -325,8 +308,9 @@ final class ArticleViewModel: ObservableObject {
         do {
             try await commentUseCase.deleteComment(articleID: articleID, commentID: commentID)
         } catch {
-            print(error.localizedDescription)
-            
+            #if DEBUG
+            print("deleteComment: \(error)")
+            #endif
             guard let error = error as? CommentError else {
                 ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
                 return
@@ -344,13 +328,9 @@ final class ArticleViewModel: ObservableObject {
                 filteringArticles(category: category)
             }
         } catch {
-            print(error.localizedDescription)
-            
-            guard let error = error as? ArticleError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
-                return
-            }
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
+            #if DEBUG
+            print("searchArticle: \(error)")
+            #endif
         }
     }
 }

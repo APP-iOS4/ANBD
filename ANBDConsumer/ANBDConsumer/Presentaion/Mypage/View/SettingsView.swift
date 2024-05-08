@@ -17,6 +17,7 @@ struct SettingsView: View {
     @State private var isShowingSignOutAlertView = false
     @State private var isShowingWithdrawalAlertView = false
     @State private var isShowingOpenSourceLicense = false
+    @State private var isShowingDeletedCachingDataAlertView = false
     
     private let spacingValue: CGFloat = 30
     
@@ -44,6 +45,24 @@ struct SettingsView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                     })
                     
+                    Button(action: {
+                        isShowingOpenSourceLicense.toggle()
+                    }, label: {
+                        Text("오픈소스 라이선스")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    })
+                    
+                    Button(action: {
+                        isShowingDeletedCachingDataAlertView.toggle()
+                        // TODO: - 캐시 데이터 삭제하기 메서드 넣기
+                        #if DEBUG
+                        print("캐시 데이터 삭제 완료")
+                        #endif
+                    }, label: {
+                        Text("캐시 데이터 삭제하기")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    })
+                    
                     HStack {
                         Text("앱 버전")
                         
@@ -61,13 +80,6 @@ struct SettingsView: View {
                         }
                     }
                     
-                    Button(action: {
-                        isShowingOpenSourceLicense.toggle()
-                    }, label: {
-                        Text("오픈소스 라이선스")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    })
-                    
                     HStack {
                         Text("문의 메일")
                         
@@ -76,11 +88,11 @@ struct SettingsView: View {
                         if #available(iOS 16.1, *) {
                             Text("jrjr4426@gmail.com")
                                 .fontDesign(.monospaced)
-                                .font(.system(size: 15))
+                                .font(.system(size: 14))
                                 .foregroundStyle(Color.gray500)
                         } else {
                             Text("jrjr4426@gmail.com")
-                                .font(.system(size: 15))
+                                .font(.system(size: 14))
                                 .foregroundStyle(Color.gray500)
                         }
                     }
@@ -105,11 +117,11 @@ struct SettingsView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .ignoresSafeArea()
                     .overlay {
-                        Text("Copyright iOS 앱 스쿨 4기 TeamGG\n\nAll rights reserved\nLicensed under the MIT license")
+                        Text("Copyright iOS 앱 스쿨 4기 TeamGG.\n\nAll rights reserved.\nLicensed under the MIT license.")
                             .multilineTextAlignment(.center)
                             .font(ANBDFont.Caption1)
                             .foregroundStyle(Color.gray400)
-                            .offset(y: -50)
+                            .offset(y: -20)
                     }
             }
             
@@ -141,6 +153,10 @@ struct SettingsView: View {
                         }
                     }
                 }
+            }
+            
+            if isShowingDeletedCachingDataAlertView {
+                CustomAlertView(isShowingCustomAlert: $isShowingDeletedCachingDataAlertView, viewType: .deletedCachingData) { }
             }
         }
         .navigationTitle("설정")

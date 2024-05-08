@@ -11,4 +11,8 @@ extension View {
     func endTextEditing() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
+    
+    func toastView(toast: Binding<Toast?>) -> some View {
+        self.modifier(ToastModifier(toast: toast))
+    }
 }

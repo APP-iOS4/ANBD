@@ -24,6 +24,9 @@ final class TradeViewModel: ObservableObject {
     
     @Published var selectedItemCategory: ItemCategory = .digital
     @Published var selectedLocation: Location = .seoul
+    @Published var detailImages: [Data] = []
+    
+    @State private var isDone: Bool = false
     
     //MARK: - 로컬 함수 (네트워크 호출 X)
     
@@ -50,26 +53,22 @@ final class TradeViewModel: ObservableObject {
     func reloadFilteredTrades(category: ANBDCategory) async {
         do {
             if self.selectedLocations.isEmpty && self.selectedItemCategories.isEmpty {
-                //print("둘다 엠티여요")
-                
                 self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: nil, itemCategory: nil, limit: 8)
                 
-                //print("🥹\(filteredTrades)")
-                
             } else if self.selectedLocations.isEmpty {
-                //print("지역 엠티여요")
                 self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: nil, itemCategory: self.selectedItemCategories, limit: 8)
                 
             } else if self.selectedItemCategories.isEmpty {
-                //print("카테고리 엠티여요")
                 self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: nil, limit: 8)
                 
             } else {
-                //print("둘다 풀")
                 self.filteredTrades = try await tradeUseCase.refreshFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: self.selectedItemCategories, limit: 8)
             }
+            self.filteredTrades = self.filteredTrades.filter { $0.tradeState == .trading }
         } catch {
-            print(error.localizedDescription)
+            #if DEBUG
+            print("reloadFilteredTrades: \(error)")
+            #endif
         }
     }
     
@@ -79,7 +78,7 @@ final class TradeViewModel: ObservableObject {
         do {
             var newTrades: [Trade] = []
             if self.selectedLocations.isEmpty && self.selectedItemCategories.isEmpty {
-                //print("둘다 엠티여요")
+                //print("페이지네이션!! 둘다 엠티여요")
                 newTrades = try await tradeUseCase.loadFilteredTradeList(category: category, location: nil, itemCategory: nil, limit: 5)
             } else if self.selectedLocations.isEmpty {
                 //print("지역 엠티여요")
@@ -92,16 +91,18 @@ final class TradeViewModel: ObservableObject {
                 newTrades = try await tradeUseCase.loadFilteredTradeList(category: category, location: self.selectedLocations, itemCategory: self.selectedItemCategories, limit: 5)
             }
             
+            newTrades = newTrades.filter { $0.tradeState == .trading }
+            
             for item in newTrades {
-                if filteredTrades.contains(item) {
-                    print("end")
-                } else {
+                if !filteredTrades.contains(item) {
                     self.filteredTrades.append(contentsOf: newTrades)
                 }
             }
                 
         } catch {
-            print(error.localizedDescription)
+            #if DEBUG
+            print("loadMoreFilteredTrades: \(error)")
+            #endif
         }
     }
     
@@ -110,8 +111,11 @@ final class TradeViewModel: ObservableObject {
     func loadOneTrade(trade: Trade) async {
         do {
             self.trade = try await tradeUseCase.loadTrade(tradeID: trade.id)
+            self.detailImages = try await loadDetailImages(path: .trade, containerID: self.trade.id, imagePath: self.trade.imagePaths)
         } catch {
-            print("trade 하나 불러오기 실패: \(error.localizedDescription)")
+            #if DEBUG
+            print("trade 하나 불러오기 실패: \(error)")
+            #endif
         }
     }
     
@@ -124,8 +128,9 @@ final class TradeViewModel: ObservableObject {
                     try await storageManager.downloadImage(path: path, containerID: containerID, imagePath: image)
                 )
             } catch {
-                print(error.localizedDescription)
-                
+                #if DEBUG
+                print("loadDetailImages: \(error)")
+                #endif
                 //이미지 예외
                 let image = UIImage(named: "ANBDWarning")
                 let imageData = image?.pngData()
@@ -163,7 +168,14 @@ final class TradeViewModel: ObservableObject {
             try await tradeUseCase.writeTrade(trade: newTrade, imageDatas: newImages)
             await UserStore.shared.updateLocalUserInfo()
         } catch {
-            print(error.localizedDescription)
+            #if DEBUG
+            print("createTrade: \(error)")
+            #endif
+            guard let error = error as? TradeError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -174,7 +186,14 @@ final class TradeViewModel: ObservableObject {
             try await tradeUseCase.deleteTrade(trade: trade)
             await UserStore.shared.updateLocalUserInfo()
         } catch {
+            #if DEBUG
             print("삭제 실패: \(error.localizedDescription)")
+            #endif
+            guard let error = error as? TradeError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -218,7 +237,14 @@ final class TradeViewModel: ObservableObject {
             trade = try await tradeUseCase.loadTrade(tradeID: trade.id)
             await UserStore.shared.updateLocalUserInfo()
         } catch {
-            print("수정 실패: \(error.localizedDescription)")
+            #if DEBUG
+            print("수정 실패: \(error)")
+            #endif
+            guard let error = error as? TradeError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -235,7 +261,14 @@ final class TradeViewModel: ObservableObject {
                 self.trade.tradeState = .trading
             }
         } catch {
-            print("상태수정 실패: \(error.localizedDescription)")
+            #if DEBUG
+            print("상태수정 실패: \(error)")
+            #endif
+            guard let error = error as? TradeError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -245,7 +278,14 @@ final class TradeViewModel: ObservableObject {
             try await tradeUseCase.likeTrade(tradeID: trade.id)
             await UserStore.shared.updateLocalUserInfo()
         } catch {
-            print("좋아요 실패: \(error.localizedDescription)")
+            #if DEBUG
+            print("좋아요 실패: \(error)")
+            #endif
+            guard let error = error as? TradeError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -259,7 +299,9 @@ final class TradeViewModel: ObservableObject {
                 filteringTrades(category: category)
             }
         } catch {
-            print("Error: \(error)")
+            #if DEBUG
+            print("searchTrade: \(error)")
+            #endif
         }
     }
 }

@@ -10,9 +10,10 @@ import ANBDModel
 import Combine
 
 struct ArticleView: View {
-    @EnvironmentObject private var coordinator: Coordinator
+    @StateObject private var coordinator = Coordinator.shared
     @EnvironmentObject private var articleViewModel: ArticleViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
+    @EnvironmentObject private var networkMonitor: NetworkMonitor
     
     @State private var isShowingArticleCreateView: Bool = false
     @State private var isShowingTradeCreateView: Bool = false
@@ -23,7 +24,6 @@ struct ArticleView: View {
     
     var body: some View {
         
-        // TODO: combine으로 고치기
         if #available(iOS 17.0, *) {
             listView
                 .onChange(of: category) {
@@ -73,10 +73,14 @@ struct ArticleView: View {
             }
             
             Button {
-                if isArticle {
-                    self.isShowingArticleCreateView.toggle()
+                if !networkMonitor.isConnected {
+                    ToastManager.shared.toast = Toast(style: .error, message: "인터넷 연결을 확인해주세요.")
                 } else {
-                    self.isShowingTradeCreateView.toggle()
+                    if isArticle {
+                        self.isShowingArticleCreateView.toggle()
+                    } else {
+                        self.isShowingTradeCreateView.toggle()
+                    }
                 }
             } label: {
                 WriteButtonView()
@@ -107,6 +111,7 @@ struct ArticleView: View {
                 }, label: {
                     Image(systemName: "magnifyingglass")
                         .resizable()
+                        .aspectRatio(contentMode: .fit)
                         .frame(width: 20)
                         .foregroundStyle(.gray900)
                 })

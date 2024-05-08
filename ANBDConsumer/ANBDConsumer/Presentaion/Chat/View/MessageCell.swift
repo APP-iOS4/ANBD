@@ -12,20 +12,21 @@ import Kingfisher
 
 struct MessageCell: View {
     @EnvironmentObject private var chatViewModel: ChatViewModel
-    @EnvironmentObject private var coordinator: Coordinator
+    @StateObject private var coordinator = Coordinator.shared
     @Environment(\.colorScheme) private var colorScheme: ColorScheme
     
     var message: Message
     var isLast: Bool = false
     @State var imageUrl: URL?
     @State private var isMine: Bool = true
+    @State private var isWithdrawlUser: Bool = false
     @State private var isLoading: Bool = true
     @State private var otherUser: User?
     
     var channel: Channel
     
     @Binding var isShowingImageDetailView: Bool
-    @Binding var detailImage: Image
+    @Binding var imageData: [Data]
     
     var body: some View {
         HStack(alignment: .bottom) {
@@ -60,6 +61,7 @@ struct MessageCell: View {
                         .overlay(Circle().stroke(Color.gray, lineWidth: 0.5))
                         .frame(width: 30)
                 })
+                .disabled(isWithdrawlUser)
             } else if !isMine {
                 Circle()
                     .fill(Color.clear)
@@ -70,9 +72,9 @@ struct MessageCell: View {
             if let content = message.content {
                 Text(content)
                     .padding(15)
-                    .foregroundStyle(isMine ? .white : (colorScheme == .dark ? Color(red: 13/255, green: 15/255, blue: 20/255) : .gray900))
+                    .foregroundStyle(isMine ? .white : .gray900)
                     .font(ANBDFont.Caption3)
-                    .background(isMine ? Color.accentColor : .gray50)
+                    .background(isMine ? Color.accentColor : (colorScheme == .light ? .gray50 : .gray400))
                     .clipShape(RoundedRectangle(cornerRadius: 15))
                     .contextMenu {
                         if !isMine {
@@ -94,7 +96,7 @@ struct MessageCell: View {
                 Button {
                     Task {
                         let (data, _) = try await URLSession.shared.data(from: imageUrl)
-                        detailImage = Image(uiImage: UIImage(data: data))
+                        imageData = [data]
                         isShowingImageDetailView.toggle()
                     }
                 } label: {
@@ -132,6 +134,7 @@ struct MessageCell: View {
         .onAppear {
             Task {
                 isMine = message.userID == chatViewModel.user.id
+                isWithdrawlUser = chatViewModel.selectedUser.id == ""
                 otherUser = await chatViewModel.getOtherUser(channel: channel)
                 if let imagePath = message.imagePath {
                     /// 이미지 로드

@@ -11,6 +11,8 @@ import ANBDModel
 struct UserActivityListView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
     @EnvironmentObject private var tradeViewModel: TradeViewModel
+    @Environment(\.dismiss) private var dismiss
+    
     @StateObject private var coordinator = Coordinator.shared
     
     @State var category: ANBDCategory
@@ -54,7 +56,22 @@ struct UserActivityListView: View {
     @ViewBuilder
     private func userArticleListView(articles: [Article]) -> some View {
         if articles.isEmpty {
-            ListEmptyView(description: "\(myPageViewModel.user.nickname)님의\n\(category.description) 활동이 없습니다.")
+            ZStack {
+                ListEmptyView(description: "\(myPageViewModel.user.nickname)님의\n\(category.description) 활동이 없습니다.")
+                
+                Button(action: {
+                    dismiss()
+                    coordinator.selectedTab = .article
+                }, label: {
+                    HStack {
+                        Text("활동하러 가기")
+                            .font(ANBDFont.body1)
+                        Image(systemName: "chevron.forward")
+                            .font(ANBDFont.Caption3)
+                    }
+                })
+                .offset(y: 100)
+            }
         } else {
             ScrollView(.vertical) {
                 LazyVStack {
@@ -91,7 +108,22 @@ struct UserActivityListView: View {
     private func userTradeListView(trades: [Trade]) -> some View {
         VStack {
             if trades.isEmpty {
-                ListEmptyView(description: "\(myPageViewModel.user.nickname)님의\n\(category.description) 활동이 없습니다.")
+                ZStack {
+                    ListEmptyView(description: "\(myPageViewModel.user.nickname)님의\n\(category.description) 활동이 없습니다.")
+                    
+                    Button(action: {
+                        dismiss()
+                        coordinator.selectedTab = .trade
+                    }, label: {
+                        HStack {
+                            Text("활동하러 가기")
+                                .font(ANBDFont.body1)
+                            Image(systemName: "chevron.forward")
+                                .font(ANBDFont.Caption3)
+                        }
+                    })
+                    .offset(y: 100)
+                }
             } else {
                 ScrollView(.vertical) {
                     LazyVStack {

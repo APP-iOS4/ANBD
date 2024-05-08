@@ -162,7 +162,7 @@ extension ChatViewModel {
     }
     
     //채팅방에서 상대방 프로필 이미지를 메시지 그룹 맨 마지막에만 띄워주기위한 함수
-    func setOtherUserProfileImageMessage() {
+    private func setOtherUserProfileImageMessage() {
         var otherMessages: [Message] = []
         
         for message in messages {
@@ -185,8 +185,8 @@ extension ChatViewModel {
         }
     }
     
-    //상대방이 메시지 보내면 그 메시지에 프로필 이미지 띄우기 위한 메소드
-    func UpdateOtherUserProfileImageMessage(addMessage: Message) {
+    //상대방이 실시간으로 메시지 보내면 그 메시지에 프로필 이미지 띄우기 위한 메소드
+    private func UpdateOtherUserProfileImageMessage(addMessage: Message) {
         guard addMessage.userID != user.id  else{
             return
         }
@@ -258,7 +258,7 @@ extension ChatViewModel {
     }
     
     //현재 채팅방에 상대방이 들어와있는지 확인
-    func checkOtherUserInChatRoom(channelID: String) async -> Bool {
+    private func checkOtherUserInChatRoom(channelID: String) async -> Bool {
         do {
             let activeUser = try await chatUsecase.loadActiveUser(channelID: channelID)
             if activeUser.contains(user.id) && activeUser.count == 2 {
@@ -274,18 +274,6 @@ extension ChatViewModel {
     }
 }
 
-//MARK: - 정보를 get OR Set
-extension ChatViewModel {
-    
-    /// 채팅방 onDisappear시, 메시지 데이터 초기화
-    func resetMessageData() {
-        isListener = false
-        isLeaveChatRoom = false
-        chatUsecase.initializeListener()
-        messages = []
-        groupedMessages = []
-    }
-}
 
 //MARK: - 정보를 get OR Set
 extension ChatViewModel {
@@ -300,19 +288,6 @@ extension ChatViewModel {
             self.selectedUser = User(id: "", nickname: "(알수없음)", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
         }
     }
-    
-    func setSelectedUser(channel: Channel) async {
-        do {
-            self.selectedUser = try await chatUsecase.getOtherUser(channel: channel, userID: user.id)
-        } catch {
-            #if DEBUG
-            print("setSelectedUser: \(error)")
-            #endif
-            self.selectedUser = User(id: "", nickname: "(알수없음)", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
-        }
-    }
-    
-    
     
     //Trade 디테일에서 접근시
     func setSelectedInfo(trade: Trade) async throws {
@@ -411,22 +386,6 @@ extension ChatViewModel {
         } catch {
             #if DEBUG
             print("HomeViewModel Error loadImage : \(error) \(error.localizedDescription)")
-            #endif
-            /// 이미지 예외 처리
-            let image = UIImage(named: "ANBDWarning")
-            let imageData = image?.pngData()
-
-            return imageData ?? Data()
-        }
-    }
-    
-    /// 메시지 사진 로드 -> 얘도 안쓰는 듯!!!
-    func downloadImagePath(messageID: String, imagePath: String) async throws -> Data {
-        do {
-            return try await chatUsecase.downloadImage(messageID: messageID, imagePath: imagePath)
-        } catch {
-            #if DEBUG
-            print("downloadImagePath Error: \(error)")
             #endif
             /// 이미지 예외 처리
             let image = UIImage(named: "ANBDWarning")

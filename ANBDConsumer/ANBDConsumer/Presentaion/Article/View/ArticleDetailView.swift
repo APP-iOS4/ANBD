@@ -271,7 +271,7 @@ struct ArticleDetailView: View {
                                 }
                             }
                         }
-                        .padding()
+                        .padding(.horizontal)
                     }
                 }
                 .onTapGesture {

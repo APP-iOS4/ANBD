@@ -125,7 +125,7 @@ struct ArticleDetailView: View {
                                             .onAppear {
                                                 coordinator.isLoading = false
                                             }
-                                            .padding(.top, 10)
+                                            .padding(.top, 3)
                                     }
                                 }
                                 

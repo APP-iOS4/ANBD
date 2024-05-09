@@ -422,11 +422,13 @@ struct ArticleDetailView: View {
                     Image(systemName: "paperplane.fill")
                         .font(ANBDFont.pretendardSemiBold(28))
                         .rotationEffect(.degrees(45))
+                        .padding(.trailing, 4)
                         .foregroundStyle(commentText.isEmpty || trimmedCommentText.isEmpty ? (colorScheme == .dark ? .gray600 : .gray300) : .accent)
                 }
                 .disabled(commentText.isEmpty || trimmedCommentText.isEmpty)
             }
             .padding(.horizontal, 10)
+            .padding(.bottom, 5)
             .toolbar(.hidden, for: .tabBar)
             .background(colorScheme == .dark ? .gray50 : .white)
         }

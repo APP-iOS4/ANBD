@@ -53,11 +53,15 @@ struct ArticleDetailView: View {
                                 HStack {
                                     if let writerUser {
                                         if writerUser.id == "abcd1234" {
-                                            Image("ANBDWarning")
+                                            Image("DefaultUserProfileImage")
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fill)
                                                 .frame(width: 33, height: 33)
                                                 .clipShape(Circle())
+                                                .overlay(
+                                                    Circle()
+                                                        .stroke(Color.gray100, lineWidth: 1)
+                                                )
                                         } else  {
                                             KFImage(URL(string: writerUser.profileImage))
                                                 .placeholder({ _ in

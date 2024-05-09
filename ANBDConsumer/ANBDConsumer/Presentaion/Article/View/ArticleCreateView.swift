@@ -314,6 +314,7 @@ struct ArticleCreateView: View {
                         return title == article.title &&
                                content == article.content &&
                                category == article.category &&
+                               tmpSelectedData.isEmpty ||
                                selectedImageData.isEmpty && deletedPhotosData.isEmpty ||
                                (title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
                                content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)

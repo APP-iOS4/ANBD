@@ -332,7 +332,7 @@ struct ArticleCreateView: View {
                         if let article = article {
                             let isTitleChanged = title != article.title
                             let isContentChanged = content != article.content
-                            let isImageChanged = tmpSelectedData != selectedImageData
+                            let isImageChanged = tmpSelectedData != selectedImageData && !selectedImageData.isEmpty || !deletedPhotosData.isEmpty
                             
                             if isTitleChanged || isContentChanged || isImageChanged {
                                 isShowingCustomEditAlert.toggle()

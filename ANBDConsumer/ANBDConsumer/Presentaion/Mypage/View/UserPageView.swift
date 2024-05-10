@@ -142,7 +142,7 @@ struct UserPageView: View {
                             coordinator.reportedObjectID = writerUser.id
                             coordinator.appendPath(.reportView)
                         } label: {
-                            Label("신고하기", systemImage: "exclamationmark.bubble")
+                            Label("사용자 신고하기", systemImage: "exclamationmark.bubble")
                         }
                     } label: {
                         Image(systemName: "ellipsis")

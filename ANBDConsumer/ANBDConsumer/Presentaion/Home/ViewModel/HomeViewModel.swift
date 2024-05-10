@@ -48,7 +48,7 @@ final class HomeViewModel: ObservableObject {
             print("loadArticle: \(error)")
             #endif
             guard let error = error as? ArticleError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "게시글 불러오기에 실패하였습니다.")
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
@@ -68,7 +68,7 @@ final class HomeViewModel: ObservableObject {
             print("loadTrades: \(error)")
             #endif
             guard let error = error as? TradeError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "거래글 불러오기에 실패하였습니다.")
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")

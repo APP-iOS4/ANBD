@@ -254,7 +254,7 @@ struct ArticleDetailView: View {
                                                     coordinator.reportedObjectID = comment.id
                                                     coordinator.appendPath(.reportView)
                                                 } label: {
-                                                    Label("신고하기", systemImage: "exclamationmark.bubble")
+                                                    Label("댓글 신고하기", systemImage: "exclamationmark.bubble")
                                                 }
                                             }
                                         } label: {
@@ -329,7 +329,7 @@ struct ArticleDetailView: View {
                                 coordinator.reportedObjectID = article.id
                                 coordinator.appendPath(.reportView)
                             } label: {
-                                Label("신고하기", systemImage: "exclamationmark.bubble")
+                                Label("게시글 신고하기", systemImage: "exclamationmark.bubble")
                             }
                         }
                     } label: {

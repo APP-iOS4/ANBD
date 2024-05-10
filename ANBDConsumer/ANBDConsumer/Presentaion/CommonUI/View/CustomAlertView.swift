@@ -141,7 +141,7 @@ extension CustomAlertView {
         case .changeState:
             return "거래 상태 변경"
         case .tradeDelete:
-            return "삭제"
+            return "거래글 삭제"
         case .articleEdit, .commentEdit:
             return "수정 취소"
         case .commentDelete:

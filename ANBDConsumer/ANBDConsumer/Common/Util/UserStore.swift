@@ -64,7 +64,7 @@ final class UserStore: ObservableObject {
             self.user = try await userUsecase.getUserInfo(userID: userID)
         } catch {
             guard let error = error as? UserError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "유저 정보 저장에 실패하였습니다.")
                 return
             }
             if error.rawValue == 4009 {

@@ -183,7 +183,7 @@ struct TradeDetailView: View {
                             coordinator.reportedObjectID = trade.id
                             coordinator.appendPath(.reportView)
                         } label: {
-                            Label("신고하기", systemImage: "exclamationmark.bubble")
+                            Label("거래글 신고하기", systemImage: "exclamationmark.bubble")
                         }
                     } else {
                         Button {

@@ -137,7 +137,7 @@ final class TradeViewModel: ObservableObject {
                 detailImages.append( imageData ?? Data() )
                 
                 guard let error = error as? StorageError else {
-                    ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                    ToastManager.shared.toast = Toast(style: .error, message: "사진 불러오기에 실패하였습니다.")
                     return detailImages
                 }
                 ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
@@ -178,7 +178,7 @@ final class TradeViewModel: ObservableObject {
             print("createTrade: \(error)")
             #endif
             guard let error = error as? TradeError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "거래글 작성에 실패하였습니다.")
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
@@ -196,7 +196,7 @@ final class TradeViewModel: ObservableObject {
             print("삭제 실패: \(error.localizedDescription)")
             #endif
             guard let error = error as? TradeError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "거래글 삭제에 실패하였습니다.")
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
@@ -247,7 +247,7 @@ final class TradeViewModel: ObservableObject {
             print("수정 실패: \(error)")
             #endif
             guard let error = error as? TradeError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "거래글 수정에 실패하였습니다.")
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
@@ -271,7 +271,7 @@ final class TradeViewModel: ObservableObject {
             print("상태수정 실패: \(error)")
             #endif
             guard let error = error as? TradeError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "거래 상태 변경에 실패하였습니다.")
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
@@ -288,7 +288,7 @@ final class TradeViewModel: ObservableObject {
             print("좋아요 실패: \(error)")
             #endif
             guard let error = error as? TradeError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "거래글 찜하기에 실패하였습니다.")
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")

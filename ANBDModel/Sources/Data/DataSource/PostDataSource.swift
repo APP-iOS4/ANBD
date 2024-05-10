@@ -379,7 +379,11 @@ extension Postable where Item == Comment {
     func updateItem(item: Comment) async throws {
         guard let _ = try? await database
             .document(item.id)
-            .updateData(["content": item.content])
+            .updateData([
+                "content": item.content,
+                "writerNickname": item.writerNickname,
+                "writerProfileImageURL": item.writerProfileImageURL
+            ])
         else {
             throw DBError.updateDocumentError
         }

@@ -396,42 +396,53 @@ struct ArticleDetailView: View {
     
     var commentTextView: some View {
         VStack {
-            HStack {
-                let trimmedCommentText = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
-                
-                TextField("댓글을 입력해주세요.", text: $commentText, axis: .vertical)
-                    .font(ANBDFont.Caption3)
-                    .lineLimit(3, reservesSpace: false)
-                    .keyboardType(.twitter)
-                    .padding(13)
-                    .background {
-                        Rectangle()
-                            .clipShape(RoundedRectangle(cornerRadius: 20))
-                            .foregroundStyle(colorScheme == .dark ? .gray700 : .gray100)
-                    }
-                
-                    .padding(.vertical, 5)
-                Button {
-                    if !trimmedCommentText.isEmpty {
-                        Task {
-                            await articleViewModel.writeComment(articleID: article.id, commentText: trimmedCommentText)
-                            commentText = ""
+            if writerUser?.id != "abcd1234" {
+                HStack {
+                    let trimmedCommentText = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
+                    
+                    TextField("댓글을 입력해주세요.", text: $commentText, axis: .vertical)
+                        .font(ANBDFont.Caption3)
+                        .lineLimit(3, reservesSpace: false)
+                        .keyboardType(.twitter)
+                        .padding(13)
+                        .background {
+                            Rectangle()
+                                .clipShape(RoundedRectangle(cornerRadius: 20))
+                                .foregroundStyle(colorScheme == .dark ? .gray700 : .gray100)
                         }
+                    
+                        .padding(.vertical, 5)
+                    Button {
+                        if !trimmedCommentText.isEmpty {
+                            Task {
+                                await articleViewModel.writeComment(articleID: article.id, commentText: trimmedCommentText)
+                                commentText = ""
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "paperplane.fill")
+                            .font(ANBDFont.pretendardSemiBold(28))
+                            .rotationEffect(.degrees(45))
+                            .padding(.trailing, 4)
+                            .foregroundStyle(commentText.isEmpty || trimmedCommentText.isEmpty ? (colorScheme == .dark ? .gray600 : .gray300) : .accent)
                     }
-                } label: {
-                    Image(systemName: "paperplane.fill")
-                        .font(ANBDFont.pretendardSemiBold(28))
-                        .rotationEffect(.degrees(45))
-                        .padding(.trailing, 4)
-                        .foregroundStyle(commentText.isEmpty || trimmedCommentText.isEmpty ? (colorScheme == .dark ? .gray600 : .gray300) : .accent)
+                    .disabled(commentText.isEmpty || trimmedCommentText.isEmpty)
                 }
-                .disabled(commentText.isEmpty || trimmedCommentText.isEmpty)
+                .padding(.horizontal, 10)
+                .padding(.bottom, 5)
+                .background(colorScheme == .dark ? .gray50 : .white)
+            } else {
+                Text("이 게시글에는 댓글을 작성할 수 없습니다.")
+                    .font(ANBDFont.SubTitle1)
+                    .foregroundColor(.gray300)
+                    .padding(.top, 10)
+                    .background(colorScheme == .dark ? Color.black : Color.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 10)
             }
-            .padding(.horizontal, 10)
-            .padding(.bottom, 5)
-            .toolbar(.hidden, for: .tabBar)
-            .background(colorScheme == .dark ? .gray50 : .white)
         }
+        .toolbar(.hidden, for: .tabBar)
     }
     
     private var navigationTitleText: String {

@@ -168,6 +168,15 @@ struct ArticleListView: View {
             CategoryBottomSheet(isShowingCategory: $isShowingItemCategory, category: category)
                 .presentationDetents([.fraction(0.6)])
         }
+        .onDisappear {
+            //home view에서 온거라면 필터 초기화
+            if isFromHomeView {
+                tradeViewModel.selectedLocations = []
+                tradeViewModel.selectedItemCategories = []
+                
+                articleViewModel.sortOption = .latest
+            }
+        }
     }
 }
 

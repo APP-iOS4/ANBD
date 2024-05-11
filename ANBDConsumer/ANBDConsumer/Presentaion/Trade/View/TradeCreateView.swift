@@ -661,6 +661,7 @@ fileprivate extension TradeCreateView {
             }//Horizontal ScrollView
             .padding(.horizontal, 10)
         }
+        .padding(.top, -50)
     }
     
     var selectCategoryView: some View {

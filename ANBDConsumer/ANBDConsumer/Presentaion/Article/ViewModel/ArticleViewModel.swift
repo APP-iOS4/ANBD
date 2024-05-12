@@ -82,6 +82,27 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
+    func createImageURL(from imageData: Data) -> URL? {
+        // Documents 디렉토리 경로 가져오기
+        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            return nil
+        }
+        
+        // 이미지 파일 경로 설정
+        let imageFileName = "image\(Date().timeIntervalSince1970).jpeg"
+        let imageURL = documentsDirectory.appendingPathComponent(imageFileName)
+        
+        // 이미지 데이터를 파일로 저장
+        do {
+            try imageData.write(to: imageURL)
+            return imageURL
+        } catch {
+            print("\(error.localizedDescription)")
+            return nil
+        }
+    }
+
+    
     func loadDetailImages(path: StoragePath, containerID: String, imagePath: [String]) async throws -> [Data] {
         var detailImages: [Data] = []
         

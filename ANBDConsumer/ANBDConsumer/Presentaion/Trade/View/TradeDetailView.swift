@@ -42,8 +42,9 @@ struct TradeDetailView: View {
                         //이미지
                         TabView(selection: $idx) {
                             ForEach(0..<tradeViewModel.detailImages.count, id: \.self) { i in
-                                if let image = UIImage(data: tradeViewModel.detailImages[i]) {
-                                    Image(uiImage: image)
+                                let imageData = tradeViewModel.detailImages[i]
+                                if let image = tradeViewModel.createImageURL(from: imageData) {
+                                    KFImage(image)
                                         .resizable()
                                         .scaledToFill()
                                         .onTapGesture {

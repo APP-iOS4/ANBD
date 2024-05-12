@@ -22,6 +22,8 @@ struct ArticleDetailView: View {
     @State private var isShowingComment: Bool = false
     @State private var commentText: String = ""
     
+    @State private var articleImageURL: URL?
+
     @State private var isShowingImageDetailView: Bool = false
     @State private var isShowingArticleCreateView: Bool = false
     @State private var isShowingArticleConfirmSheet: Bool = false
@@ -113,8 +115,9 @@ struct ArticleDetailView: View {
                                     .font(ANBDFont.body1)
                                 
                                 ForEach(0..<articleViewModel.detailImages.count, id: \.self) { i in
-                                    if let image = UIImage(data: articleViewModel.detailImages[i]) {
-                                        Image(uiImage: image)
+                                    let imageData = articleViewModel.detailImages[i]
+                                    if let image = articleViewModel.createImageURL(from: imageData) {
+                                        KFImage(image)
                                             .resizable()
                                             .aspectRatio(contentMode: .fit)
                                             .scaledToFit()
@@ -128,6 +131,7 @@ struct ArticleDetailView: View {
                                             .padding(.top, 3)
                                     }
                                 }
+                                
                                 
                                 if coordinator.isLoading {
                                     HStack {

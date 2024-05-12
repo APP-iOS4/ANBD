@@ -147,6 +147,26 @@ final class TradeViewModel: ObservableObject {
         return detailImages
     }
     
+    func createImageURL(from imageData: Data) -> URL? {
+        // Documents 디렉토리 경로 가져오기
+        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            return nil
+        }
+        
+        // 이미지 파일 경로 설정
+        let imageFileName = "image\(Date().timeIntervalSince1970).jpeg"
+        let imageURL = documentsDirectory.appendingPathComponent(imageFileName)
+        
+        // 이미지 데이터를 파일로 저장
+        do {
+            try imageData.write(to: imageURL)
+            return imageURL
+        } catch {
+            print("\(error.localizedDescription)")
+            return nil
+        }
+    }
+    
     //MARK: - CREATE
     
     func createTrade(category: ANBDCategory, itemCategory: ItemCategory, location: Location, title: String, content: String, myProduct: String, wantProduct: String, images: [Data]) async {

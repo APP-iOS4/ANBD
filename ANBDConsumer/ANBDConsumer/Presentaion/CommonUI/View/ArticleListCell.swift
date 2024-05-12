@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ANBDModel
+import Kingfisher
 
 struct ArticleListCell: View {
     @EnvironmentObject private var articleViewModel: ArticleViewModel
@@ -111,8 +112,9 @@ struct ArticleListCell: View {
         HStack(alignment: .top) {
             
             if let thumbnailImageData {
-                if let uiImage = UIImage(data: thumbnailImageData) {
-                    Image(uiImage: uiImage)
+                let imageData = thumbnailImageData
+                if let image = articleViewModel.createImageURL(from: imageData) {
+                    KFImage(image)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 100, height: 100)
@@ -205,8 +207,9 @@ struct ArticleListCell: View {
     fileprivate func articleListCell(_ article: Article) -> some View {
         HStack(alignment: .top) {
             if let thumbnailImageData {
-                if let uiImage = UIImage(data: thumbnailImageData) {
-                    Image(uiImage: uiImage)
+                let imageData = thumbnailImageData
+                if let image = articleViewModel.createImageURL(from: imageData) {
+                    KFImage(image)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 100, height: 100)

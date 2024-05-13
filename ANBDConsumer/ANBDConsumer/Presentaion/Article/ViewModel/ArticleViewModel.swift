@@ -131,7 +131,7 @@ final class ArticleViewModel: ObservableObject {
             print("writeArticle: \(error)")
             #endif
             guard let error = error as? ArticleError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "게시글 작성에 실패하였습니다.")
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
@@ -173,7 +173,7 @@ final class ArticleViewModel: ObservableObject {
             print("updateArticle: \(error)")
             #endif
             guard let error = error as? ArticleError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "게시글 수정에 실패하였습니다.")
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
@@ -215,7 +215,7 @@ final class ArticleViewModel: ObservableObject {
             print("deleteArticle: \(error)")
             #endif
             guard let error = error as? ArticleError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "게시글 삭제에 실패하였습니다.")
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
@@ -244,7 +244,7 @@ final class ArticleViewModel: ObservableObject {
             print("likeArticle: \(error)")
             #endif
             guard let error = error as? ArticleError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "게시글 좋아요에 실패하였습니다.")
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
@@ -271,7 +271,7 @@ final class ArticleViewModel: ObservableObject {
             print("writeComment: \(error)")
             #endif
             guard let error = error as? CommentError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "댓글 작성에 실패하였습니다.")
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
@@ -297,7 +297,7 @@ final class ArticleViewModel: ObservableObject {
             print("updateComment: \(error)")
             #endif
             guard let error = error as? CommentError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "댓글 수정에 실패하였습니다.")
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
@@ -312,7 +312,7 @@ final class ArticleViewModel: ObservableObject {
             print("deleteComment: \(error)")
             #endif
             guard let error = error as? CommentError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "댓글 삭제에 실패하였습니다.")
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")

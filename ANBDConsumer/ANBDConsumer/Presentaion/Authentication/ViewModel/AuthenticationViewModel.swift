@@ -295,7 +295,7 @@ extension AuthenticationViewModel {
             print("Error sign out: \(error.localizedDescription)")
             #endif
             guard let error = error as? AuthError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "로그아웃에 실패하였습니다.")
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
@@ -321,7 +321,7 @@ extension AuthenticationViewModel {
             print("Error sign up: \(error.localizedDescription)")
             #endif
             guard let error = error as? AuthError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "회원가입에 실패하였습니다.")
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
@@ -342,7 +342,7 @@ extension AuthenticationViewModel {
             print("Error verify email: \(error.localizedDescription)")
             #endif
             guard let error = error as? AuthError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "이메일 인증에 실패하였습니다.")
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
@@ -377,7 +377,8 @@ extension AuthenticationViewModel {
             print("Error withdrawal: \(error.localizedDescription)")
             #endif
             guard let error = error as? AuthError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                // 로직 해결 전까지 Toast 임시 주석
+                // ToastManager.shared.toast = Toast(style: .error, message: "회원 탈퇴에 실패하였습니다.")
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")

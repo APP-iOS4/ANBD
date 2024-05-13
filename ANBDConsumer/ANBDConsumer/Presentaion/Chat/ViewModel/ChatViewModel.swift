@@ -68,7 +68,7 @@ final class ChatViewModel: ObservableObject {
             print("Error: \(error)")
             #endif
             guard let error = error as? ChannelError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "채팅방 생성에 실패하였습니다.")
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
@@ -209,7 +209,7 @@ extension ChatViewModel {
             print("sendMessage Error: \(error)")
             #endif
             guard let error = error as? MessageError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "메시지 보내기에 실패하였습니다.")
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
@@ -228,7 +228,7 @@ extension ChatViewModel {
             print("Error: \(error)")
             #endif
             guard let error = error as? MessageError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "사진 보내기에 실패하였습니다.")
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
@@ -391,7 +391,7 @@ extension ChatViewModel {
             print("getChannel(channelId:): \(error)")
             #endif
             guard let error = error as? ChannelError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "채팅방 정보 가져오기에 실패하였습니다.")
                 return nil
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
@@ -461,7 +461,7 @@ extension ChatViewModel {
             print("updateTradeState Error: \(error.localizedDescription)")
             #endif
             guard let error = error as? TradeError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "거래 상태 변경에 실패하였습니다.")
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
@@ -476,7 +476,7 @@ extension ChatViewModel {
             print("loadTrade \(error.localizedDescription)")
             #endif
             guard let error = error as? TradeError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "알 수 없는 오류가 발생하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "거래글 불러오기에 실패하였습니다.")
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")

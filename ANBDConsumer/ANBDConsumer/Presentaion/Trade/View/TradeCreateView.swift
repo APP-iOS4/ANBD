@@ -49,107 +49,25 @@ struct TradeCreateView: View {
         NavigationStack {
             if #available(iOS 17.0, *) {
                 wholeView
-                    .onChange(of: mustTextFields, {
-                        if self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0 {
-                            self.isFinished = false
-                        } else {
-                            self.isFinished = true
-                        }
-                        
-                        // 공백입력 시 저장 x
-                        for item in mustTextFields {
-                            if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
-                                isFinished = true
-                            }
-                        }
-                        if category == .baccua {
-                            if wantProduct.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || wantProduct == "" {
-                                self.isFinished = true
-                            }
-                        }
-                    })
-                    .onChange(of: selectedPhotosData, {
-                        if self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0 {
-                            self.isFinished = false
-                        } else {
-                            self.isFinished = true
-                        }
-                        
-                        // 공백입력 시 저장 x
-                        for item in mustTextFields {
-                            if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
-                                isFinished = true
-                            }
-                        }
-                        if category == .baccua {
-                            if wantProduct.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || wantProduct == "" {
-                                self.isFinished = true
-                            }
-                        }
-                        
+                    .onChange(of: mustTextFields) {
+                        checkIsFinished()
+                    }
+                    .onChange(of: selectedPhotosData) {
+                        checkIsFinished()
                         isCancelable = false
-                    })
-                    .onChange(of: tmpSelectedData, {
+                    }
+                    .onChange(of: tmpSelectedData) {
                         if tmpSelectedData.count != tradeViewModel.trade.imagePaths.count {
-                            if self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0 {
-                                self.isFinished = false
-                            } else {
-                                self.isFinished = true
-                            }
-                            
-                            // 공백입력 시 저장 x
-                            for item in mustTextFields {
-                                if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
-                                    isFinished = true
-                                }
-                            }
-                            if category == .baccua {
-                                if wantProduct.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || wantProduct == "" {
-                                    self.isFinished = true
-                                }
-                            }
-                            
+                            checkIsFinished()
                             isCancelable = false
                         }
-                    })
+                    }
                     .onChange(of: category) {
-        
-                        if self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0 {
-                            self.isFinished = false
-                        } else {
-                            self.isFinished = true
-                        }
-                        
-                        // 공백입력 시 저장 x
-                        for item in mustTextFields {
-                            if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
-                                isFinished = true
-                            }
-                        }
-                        if category == .baccua {
-                            if wantProduct.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || wantProduct == "" {
-                                self.isFinished = true
-                            }
-                        }
+                        checkIsFinished()
                     }
                     .onChange(of: wantProduct) {
                         isCancelable = false
-                        if self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0 {
-                            self.isFinished = false
-                        } else {
-                            self.isFinished = true
-                        }
-                        // 공백입력 시 저장 x
-                        for item in mustTextFields {
-                            if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
-                                isFinished = true
-                            }
-                        }
-                        if category == .baccua {
-                            if wantProduct.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || wantProduct == "" {
-                                self.isFinished = true
-                            }
-                        }
+                        checkIsFinished()
                     }
                 
                     .onChange(of: title) {
@@ -166,103 +84,23 @@ struct TradeCreateView: View {
             } else {
                 wholeView
                     .onChange(of: mustTextFields) { _ in
-                        if self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0 {
-                            self.isFinished = false
-                        } else {
-                            self.isFinished = true
-                        }
-                        // 공백입력 시 저장 x
-                        for item in mustTextFields {
-                            if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
-                                isFinished = true
-                            }
-                        }
-                        if category == .baccua {
-                            if wantProduct.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || wantProduct == "" {
-                                self.isFinished = true
-                            }
-                        }
+                        checkIsFinished()
                     }
                     .onChange(of: selectedPhotosData) { _ in
-                        if self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0 {
-                            self.isFinished = false
-                        } else {
-                            self.isFinished = true
-                        }
-                        
-                        // 공백입력 시 저장 x
-                        for item in mustTextFields {
-                            if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
-                                isFinished = true
-                            }
-                        }
-                        if category == .baccua {
-                            if wantProduct.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || wantProduct == "" {
-                                self.isFinished = true
-                            }
-                        }
-                        
+                        checkIsFinished()
                         isCancelable = false
                     }
                     .onChange(of: tmpSelectedData) { _ in
                         if tmpSelectedData.count != tradeViewModel.trade.imagePaths.count {
-                            if self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0 {
-                                self.isFinished = false
-                            } else {
-                                self.isFinished = true
-                            }
-                            
-                            // 공백입력 시 저장 x
-                            for item in mustTextFields {
-                                if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
-                                    isFinished = true
-                                }
-                            }
-                            if category == .baccua {
-                                if wantProduct.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || wantProduct == "" {
-                                    self.isFinished = true
-                                }
-                            }
-                            
+                            checkIsFinished()
                             isCancelable = false
                         }
                     }
                     .onChange(of: category) { _ in
-        
-                        if self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0 {
-                            self.isFinished = false
-                        } else {
-                            self.isFinished = true
-                        }
-                        // 공백입력 시 저장 x
-                        for item in mustTextFields {
-                            if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
-                                isFinished = true
-                            }
-                        }
-                        if category == .baccua {
-                            if wantProduct.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || wantProduct == "" {
-                                self.isFinished = true
-                            }
-                        }
+                        checkIsFinished()
                     }
                     .onChange(of: wantProduct) { _ in
-                        if self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0 {
-                            self.isFinished = false
-                        } else {
-                            self.isFinished = true
-                        }
-                        // 공백입력 시 저장 x
-                        for item in mustTextFields {
-                            if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
-                                isFinished = true
-                            }
-                        }
-                        if category == .baccua {
-                            if wantProduct.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || wantProduct == "" {
-                                self.isFinished = true
-                            }
-                        }
+                        checkIsFinished()
                     }
                 
                     .onChange(of: title) { _ in
@@ -270,7 +108,6 @@ struct TradeCreateView: View {
                             title = String(title.prefix(50))
                         }
                     }
-                
                     .onChange(of: content) { _ in
                         if content.count > 5000 {
                             content = String(content.prefix(5000))
@@ -570,6 +407,10 @@ fileprivate extension TradeCreateView {
         }
     }
     
+    
+}
+
+extension TradeCreateView {
     var photosView: some View {
         HStack {
             PhotosPicker(selection: $selectedItems, maxSelectionCount: 5 - tmpSelectedData.count, matching: .images) {
@@ -725,6 +566,26 @@ fileprivate extension TradeCreateView {
             .padding(.bottom, 30)
         }
         .padding(.horizontal, 20)
+    }
+    
+    func checkIsFinished() {
+        if self.tmpSelectedData.count != 0 || self.selectedPhotosData.count != 0 {
+            self.isFinished = false
+        } else {
+            self.isFinished = true
+        }
+        
+        // 공백입력 시 저장 x
+        for item in mustTextFields {
+            if item.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || item == "" {
+                isFinished = true
+            }
+        }
+        if category == .baccua {
+            if wantProduct.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || wantProduct == "" {
+                self.isFinished = true
+            }
+        }
     }
 }
 

@@ -132,7 +132,6 @@ struct ArticleDetailView: View {
                                     }
                                 }
                                 
-                                
                                 if coordinator.isLoading {
                                     HStack {
                                         Spacer()
@@ -275,6 +274,7 @@ struct ArticleDetailView: View {
                                 }
                             }
                         }
+                        .padding(.top, 20)
                         .padding(.horizontal)
                     }
                 }

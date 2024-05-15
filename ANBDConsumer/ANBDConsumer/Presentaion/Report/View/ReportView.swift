@@ -58,7 +58,7 @@ struct ReportView: View {
                         
                         
                         if reportReason.isEmpty {
-                            Text("신고 내용을 입력해주세요. (최대 200자)")
+                            Text("신고 내용을 입력해주세요.\n적절하지 않은 신고 사유일 경우, 해당 신고는 접수되지 않을 수 있습니다. 누적 신고 횟수가 3회 이상인 유저는 ANBD 활동을 할 수 없게 됩니다.")
                                 .padding()
                                 .padding(.top, 5)
                         }

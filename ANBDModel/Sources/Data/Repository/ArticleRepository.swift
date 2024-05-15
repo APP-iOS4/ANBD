@@ -203,15 +203,24 @@ struct ArticleRepositoryImpl: ArticleRepository {
             switch article.category {
             case .accua:
                 userInfo.accuaCount -= 1
-            case .nanua:
-                userInfo.nanuaCount -= 1
-            case .baccua:
-                userInfo.baccuaCount -= 1
             case .dasi:
                 userInfo.dasiCount -= 1
+            default: return
             }
         
             try await userDataSource.updateUserPostCount(user: userInfo)
+        } else if userInfo.userLevel == .admin {
+            var writerInfo = try await userDataSource.readUserInfo(userID: article.writerID)
+            
+            switch article.category {
+            case .accua:
+                writerInfo.accuaCount -= 1
+            case .dasi:
+                writerInfo.dasiCount -= 1
+            default: return
+            }
+            
+            try await userDataSource.updateUserPostCount(user: writerInfo)
         }
     }
     

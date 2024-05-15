@@ -205,18 +205,29 @@ struct TradeRepositoryImpl: TradeRepository {
         try await tradeDataSource.deleteItem(itemID: trade.id)
         try await userDataSource.updateUserInfoList(tradeID: trade.id)
         
-        switch trade.category {
-        case .accua:
-            userInfo.accuaCount -= 1
-        case .nanua:
-            userInfo.nanuaCount -= 1
-        case .baccua:
-            userInfo.baccuaCount -= 1
-        case .dasi:
-            userInfo.dasiCount -= 1
-        }
+        if userInfo.userLevel == .consumer {
+            switch trade.category {
+            case .nanua:
+                userInfo.nanuaCount -= 1
+            case .baccua:
+                userInfo.baccuaCount -= 1
+            default: return
+            }
         
-        try await userDataSource.updateUserPostCount(user: userInfo)
+            try await userDataSource.updateUserPostCount(user: userInfo)
+        } else if userInfo.userLevel == .admin {
+            var writerInfo = try await userDataSource.readUserInfo(userID: trade.writerID)
+            
+            switch trade.category {
+            case .nanua:
+                writerInfo.nanuaCount -= 1
+            case .baccua:
+                writerInfo.baccuaCount -= 1
+            default: return
+            }
+            
+            try await userDataSource.updateUserPostCount(user: writerInfo)
+        }
     }
     
     func resetQuery() {

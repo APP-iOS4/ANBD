@@ -36,9 +36,19 @@ struct DefaultUserRepository: UserRepository {
         return userInfoList
     }
     
+    func readBlockList(blockList: [String], limit: Int) async throws -> [User] {
+        let blockUserList = try await userDataSource.readBlockList(blockList: blockList, limit: limit)
+        return blockUserList
+    }
+    
     func refreshAll(limit: Int) async throws -> [User] {
         let userInfoList = try await userDataSource.refreshAll(limit: limit)
         return userInfoList
+    }
+    
+    func refreshBlock(blockList: [String], limit: Int) async throws -> [User] {
+        let blockList = try await userDataSource.refreshBlock(blockList: blockList, limit: limit)
+        return blockList
     }
     
     func checkUser(email: String) async throws {
@@ -82,6 +92,14 @@ struct DefaultUserRepository: UserRepository {
         }
         
         try await userDataSource.updateUserPostCount(user: userInfo)
+    }
+    
+    func blockUser(userID: String, blockUserID: String) async throws {
+        try await userDataSource.blockUser(userID: userID, blockUserID: blockUserID)
+    }
+    
+    func unblockUser(userID: String, unblockUserID: String) async throws {
+        try await userDataSource.unblockUser(userID: userID, unblockUserID: unblockUserID)
     }
     
     /// 좋아요한 게시글이 삭제됐을 때 User의 좋아요한 배열에서 삭제하는 메서드

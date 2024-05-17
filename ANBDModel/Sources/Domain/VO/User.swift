@@ -55,6 +55,8 @@ public struct User: Codable, Identifiable, Hashable {
     /// 작성한 다시쓰기 글 갯수
     public var dasiCount: Int
     
+    public var blockList: [String]
+    
     
     public init(
         id: String,
@@ -73,7 +75,8 @@ public struct User: Codable, Identifiable, Hashable {
         accuaCount: Int = 0,
         nanuaCount: Int = 0,
         baccuaCount: Int = 0,
-        dasiCount: Int = 0
+        dasiCount: Int = 0,
+        blockList: [String] = []
     ) {
         self.id = id
         self.nickname = nickname
@@ -92,5 +95,6 @@ public struct User: Codable, Identifiable, Hashable {
         self.nanuaCount = nanuaCount
         self.baccuaCount = baccuaCount
         self.dasiCount = dasiCount
+        self.blockList = blockList
     }
 }

@@ -58,12 +58,24 @@ struct CommentRepositoryImpl: CommentRepository {
     }
     
     func readCommentList(articleID: String) async throws -> [Comment] {
-        let commentList = try await commentDataSource.readItemList(articleID: articleID)
+        var blockList: [String] = []
+        
+        if let userID = Auth.auth().currentUser?.uid {
+            blockList = try await userDataSource.readUserInfo(userID: userID).blockList
+        }
+        
+        let commentList = try await commentDataSource.readItemList(articleID: articleID, blockList: blockList)
         return commentList
     }
     
     func readCommentList(writerID: String, limit: Int) async throws -> [Comment] {
-        let commentList = try await commentDataSource.readItemList(writerID: writerID, category: nil, limit: limit)
+        var blockList: [String] = []
+        
+        if let userID = Auth.auth().currentUser?.uid {
+            blockList = try await userDataSource.readUserInfo(userID: userID).blockList
+        }
+        
+        let commentList = try await commentDataSource.readItemList(writerID: writerID, category: nil, blockList: blockList, limit: limit)
         return commentList
     }
     

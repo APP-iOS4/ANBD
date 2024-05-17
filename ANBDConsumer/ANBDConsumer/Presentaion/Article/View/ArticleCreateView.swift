@@ -274,9 +274,9 @@ struct ArticleCreateView: View {
                     self.category = article.category
                     self.content = article.content
                     
-                    Task {
-                        tmpSelectedData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
-                    }
+//                    Task {
+//                        tmpSelectedData = try await articleViewModel.loadDetailImages(path: .article, containerID: article.id, imagePath: article.imagePaths)
+//                    }
                 }
             }
         }

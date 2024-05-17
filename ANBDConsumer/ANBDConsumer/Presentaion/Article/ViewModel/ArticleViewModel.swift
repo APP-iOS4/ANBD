@@ -41,7 +41,7 @@ final class ArticleViewModel: ObservableObject {
                                               content: "")
     
     @Published var commentText: String = ""
-    @Published var detailImages: [Data] = []
+    @Published var detailImages: [URL] = []
 
     func getOneArticle(article: Article) {
         self.article = article
@@ -82,44 +82,18 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
-    func createImageURL(from imageData: Data) -> URL? {
-        // Documents 디렉토리 경로 가져오기
-        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            return nil
-        }
-        
-        // 이미지 파일 경로 설정
-        let imageFileName = "image\(Date().timeIntervalSince1970).jpeg"
-        let imageURL = documentsDirectory.appendingPathComponent(imageFileName)
-        
-        // 이미지 데이터를 파일로 저장
-        do {
-            try imageData.write(to: imageURL)
-            return imageURL
-        } catch {
-            print("\(error.localizedDescription)")
-            return nil
-        }
-    }
-
-    
-    func loadDetailImages(path: StoragePath, containerID: String, imagePath: [String]) async throws -> [Data] {
-        var detailImages: [Data] = []
-        
+    func loadDetailImages(path: StoragePath, containerID: String, imagePath: [String]) async throws -> [URL] {
+        var detailImages: [URL] = []
         
         for image in imagePath {
             do {
                 detailImages.append(
-                    try await storageManager.downloadImage(path: path, containerID: containerID, imagePath: image)
+                    try await storageManager.downloadImageToUrl(path: path, containerID: containerID, imagePath: image)
                 )
             } catch {
                 #if DEBUG
                 print("loadDetailImages: \(error)")
                 #endif
-                //이미지 예외
-                let image = UIImage(named: "ANBDWarning")
-                let imageData = image?.pngData()
-                detailImages.append( imageData ?? Data() )
             }
         }
         return detailImages
@@ -210,6 +184,15 @@ final class ArticleViewModel: ObservableObject {
             #if DEBUG
             print("loadArticle: \(error)")
             #endif
+        }
+    }
+    
+    func loadCellImageURL(article: Article, path: String) async -> URL {
+        do {
+            return try await storageManager.downloadImageToUrl(path: .article, containerID: "\(article.id)/thumbnail", imagePath: path)
+        } catch {
+            print(error.localizedDescription)
+            return URL(string: "https://firebasestorage.googleapis.com/v0/b/anbd-project3.appspot.com/o/Profile%2FDefaultUserProfileImage.png?alt=media&token=fc0e56d9-6855-4ead-ab28-d8ff789799b3")!
         }
     }
     

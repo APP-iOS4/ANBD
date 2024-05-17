@@ -23,14 +23,14 @@ struct ArticleDetailView: View {
     @State private var commentText: String = ""
     
     @State private var articleImageURL: URL?
-
+    
     @State private var isShowingImageDetailView: Bool = false
     @State private var isShowingArticleCreateView: Bool = false
     @State private var isShowingArticleConfirmSheet: Bool = false
     @State private var isShowingCustomAlertArticle: Bool = false
     @State private var isShowingCustomAlertComment: Bool = false
     @State private var isShowingCommentEditView: Bool = false
-    
+    @State private var isShowingUserBlockAlertView: Bool = false
     @State private var idx: Int = 0
     
     @State private var writerUser: User?
@@ -64,7 +64,7 @@ struct ArticleDetailView: View {
                                                     Circle()
                                                         .stroke(Color.gray100, lineWidth: 1)
                                                 )
-                                        } else  {
+                                        } else {
                                             KFImage(URL(string: writerUser.profileImage))
                                                 .placeholder({ _ in
                                                     ProgressView()
@@ -115,21 +115,20 @@ struct ArticleDetailView: View {
                                     .font(ANBDFont.body1)
                                 
                                 ForEach(0..<articleViewModel.detailImages.count, id: \.self) { i in
-                                    let imageData = articleViewModel.detailImages[i]
-                                    if let image = articleViewModel.createImageURL(from: imageData) {
-                                        KFImage(image)
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .scaledToFit()
-                                            .onTapGesture {
-                                                isShowingImageDetailView.toggle()
-                                                idx = i
-                                            }
-                                            .onAppear {
-                                                coordinator.isLoading = false
-                                            }
-                                            .padding(.top, 3)
-                                    }
+                                    let url = articleViewModel.detailImages[i]
+                                    
+                                    KFImage(url)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .scaledToFit()
+                                        .onTapGesture {
+                                            isShowingImageDetailView.toggle()
+                                            idx = i
+                                        }
+                                        .onAppear {
+                                            coordinator.isLoading = false
+                                        }
+                                        .padding(.top, 3)
                                 }
                                 
                                 if coordinator.isLoading {
@@ -197,26 +196,38 @@ struct ArticleDetailView: View {
                                 
                                 ForEach(articleViewModel.comments.reversed()) { comment in
                                     HStack(alignment: .top) {
-                                        KFImage(URL(string: comment.writerProfileImageURL))
-                                            .placeholder({ _ in
-                                                ProgressView()
-                                            })
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 40, height: 40)
-                                            .clipShape(.circle)
-                                            .onTapGesture {
-                                                Task {
-                                                    commentUser = await myPageViewModel.getUserInfo(userID: comment.writerID)
-                                                    coordinator.user = commentUser
-                                                    switch coordinator.selectedTab {
-                                                    case .home, .article, .trade, .chat:
-                                                        coordinator.appendPath(.userPageView)
-                                                    case .mypage:
-                                                        coordinator.pop()
+                                        if comment.writerNickname == "탈퇴한 사용자" {
+                                            Image("DefaultUserProfileImage")
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: 33, height: 33)
+                                                .clipShape(Circle())
+                                                .overlay(
+                                                    Circle()
+                                                        .stroke(Color.gray100, lineWidth: 1)
+                                                )
+                                        } else {
+                                            KFImage(URL(string: comment.writerProfileImageURL))
+                                                .placeholder({ _ in
+                                                    ProgressView()
+                                                })
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: 40, height: 40)
+                                                .clipShape(.circle)
+                                                .onTapGesture {
+                                                    Task {
+                                                        commentUser = await myPageViewModel.getUserInfo(userID: comment.writerID)
+                                                        coordinator.user = commentUser
+                                                        switch coordinator.selectedTab {
+                                                        case .home, .article, .trade, .chat:
+                                                            coordinator.appendPath(.userPageView)
+                                                        case .mypage:
+                                                            coordinator.pop()
+                                                        }
                                                     }
                                                 }
-                                            }
+                                        }
                                         
                                         VStack(alignment: .leading) {
                                             HStack {
@@ -335,6 +346,16 @@ struct ArticleDetailView: View {
                             } label: {
                                 Label("게시글 신고하기", systemImage: "exclamationmark.bubble")
                             }
+                            if let writerUser {
+                                if writerUser.id != "abcd1234" {
+                                    Button(role: .destructive) {
+                                        isShowingUserBlockAlertView.toggle()
+                                        ToastManager.shared.toast = Toast(style: .success, message: "\(articleViewModel.article.writerNickname)님을 차단했습니다.")
+                                    } label: {
+                                        Label("사용자 차단하기", systemImage: "person.slash")
+                                    }
+                                }
+                            }
                         }
                     } label: {
                         Image(systemName: "ellipsis")
@@ -368,9 +389,9 @@ struct ArticleDetailView: View {
             .fullScreenCover(isPresented: $isShowingArticleCreateView) {
                 ArticleCreateView(isShowingCreateView: $isShowingArticleCreateView, category: article.category, commentCount: articleViewModel.comments.count, isNewArticle: false, article: articleViewModel.article)
             }
-            .fullScreenCover(isPresented: $isShowingImageDetailView) {
-                ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $articleViewModel.detailImages, idx: $idx)
-            }
+            //            .fullScreenCover(isPresented: $isShowingImageDetailView) {
+            //                ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $articleViewModel.detailImages, idx: $idx)
+            //            }
             .fullScreenCover(isPresented: $isShowingCommentEditView) {
                 CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: articleViewModel.comment, isEditComment: false)
             }
@@ -393,6 +414,10 @@ struct ArticleDetailView: View {
                         await articleViewModel.deleteComment(articleID: article.id, commentID: articleViewModel.comment.id)
                         await articleViewModel.loadCommentList(articleID: article.id)
                     }
+                }
+            } else if isShowingUserBlockAlertView {
+                CustomAlertView(isShowingCustomAlert: $isShowingUserBlockAlertView, viewType: .userBlocked) {
+                    dismiss()
                 }
             }
         }

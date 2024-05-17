@@ -34,12 +34,8 @@ struct ArticleListCell: View {
                     .onChange(of: networkMonitor.isConnected) {
                         if networkMonitor.isConnected {
                             Task {
-                                do {
-                                    let url = await articleViewModel.loadCellImageURL(article: article, path: article.thumbnailImagePath)
-                                    thumbnailImageURL = url
-                                } catch {
-                                    print(error.localizedDescription)
-                                }
+                                let url = await articleViewModel.loadCellImageURL(article: article, path: article.thumbnailImagePath)
+                                thumbnailImageURL = url
                             }
                         }
                     }
@@ -48,12 +44,8 @@ struct ArticleListCell: View {
                     .onChange(of: networkMonitor.isConnected) { _ in
                         if networkMonitor.isConnected {
                             Task {
-                                do {
-                                    let url = await articleViewModel.loadCellImageURL(article: article, path: article.thumbnailImagePath)
-                                    thumbnailImageURL = url
-                                } catch {
-                                    print(error.localizedDescription)
-                                }
+                                let url = await articleViewModel.loadCellImageURL(article: article, path: article.thumbnailImagePath)
+                                thumbnailImageURL = url
                             }
                         }
                     }
@@ -101,109 +93,109 @@ struct ArticleListCell: View {
     }
     
     fileprivate func tradeListCell(_ trade: Trade) -> some View {
-         HStack(alignment: .top) {
-             
-             if let thumbnailImageData {
-                 if let uiImage = UIImage(data: thumbnailImageData) {
-                     Image(uiImage: uiImage)
-                         .resizable()
-                         .aspectRatio(contentMode: .fill)
-                         .frame(width: 100, height: 100)
-                         .clipShape(RoundedRectangle(cornerRadius: 10))
-                         .padding(.trailing, 10)
-                 }
-             } else {
-                 ProgressView()
-                     .frame(width: 100, height: 100)
-                     .clipShape(RoundedRectangle(cornerRadius: 10))
-                     .padding(.trailing, 10)
-             }
-             
-             VStack(alignment: .leading, spacing: 5) {
-                 HStack {
-                     Text("\(trade.title)")
-                         .font(ANBDFont.SubTitle1)
-                         .foregroundStyle(.gray900)
-                         .lineLimit(2)
-                         .multilineTextAlignment(.leading)
-                     
-                     Spacer()
-                     
-                     if trade.tradeState == .finish {
-                         RoundedRectangle(cornerRadius: 5)
-                             .foregroundColor(.gray800)
-                             .frame(width: 65, height: 38)
-                             .overlay {
-                                 Text("\(trade.tradeState.description)")
-                                     .font(ANBDFont.body2)
-                                     .frame(maxWidth: 65, maxHeight: 38)
-                                     .foregroundStyle(.gray50)
-                             }
-                     }
-                 }
-                 
-                 HStack {
-                     Text("\(trade.location.description)")
-                     
-                     Text("・")
-                         .padding(.leading, -5)
-                     
-                     Text("\(trade.createdAt.relativeTimeNamed)")
-                         .padding(.leading, -5)
-                     Spacer()
-                 }
-                 .lineLimit(1)
-                 .font(ANBDFont.Caption3)
-                 .foregroundStyle(.gray400)
-                 Spacer(minLength: 0)
-                 
-                 HStack {
-                     
-                     Spacer()
-             
-                     Image(systemName: isLiked ? "heart.fill" : "heart")
-                         .resizable()
-                         .aspectRatio(contentMode: .fit)
-                         .frame(width: 20)
-                         .foregroundStyle(isLiked ? .heartRed : .gray800)
-                         .onTapGesture {
-                             Task {
-                                 await tradeViewModel.updateLikeTrade(trade: trade)
-                             }
-                             isLiked.toggle()
-                         }
-                         .padding(.leading, 10)
-                 }
-                 .foregroundStyle(.gray800)
-             }
-         }
-         .frame(height: 100)
-         .onAppear {
-             isLiked = UserStore.shared.user.likeTrades.contains(trade.id)
-             Task {
-                 do {
-                     let image = try await StorageManager.shared.downloadImage(
-                         path: .trade,
-                         containerID: "\(trade.id)/thumbnail",
-                         imagePath: trade.thumbnailImagePath
-                     )
-                     thumbnailImageData = image
-                 } catch {
-                     print(error.localizedDescription)
-                 }
-             }
-         }
-     }
-    
-    fileprivate func articleListCell(_ article: Article) -> some View {
         HStack(alignment: .top) {
-            if let thumbnailImageURL {
-                    KFImage(thumbnailImageURL)
+            
+            if let thumbnailImageData {
+                if let uiImage = UIImage(data: thumbnailImageData) {
+                    Image(uiImage: uiImage)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 100, height: 100)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                         .padding(.trailing, 10)
+                }
+            } else {
+                ProgressView()
+                    .frame(width: 100, height: 100)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .padding(.trailing, 10)
+            }
+            
+            VStack(alignment: .leading, spacing: 5) {
+                HStack {
+                    Text("\(trade.title)")
+                        .font(ANBDFont.SubTitle1)
+                        .foregroundStyle(.gray900)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                    
+                    Spacer()
+                    
+                    if trade.tradeState == .finish {
+                        RoundedRectangle(cornerRadius: 5)
+                            .foregroundColor(.gray800)
+                            .frame(width: 65, height: 38)
+                            .overlay {
+                                Text("\(trade.tradeState.description)")
+                                    .font(ANBDFont.body2)
+                                    .frame(maxWidth: 65, maxHeight: 38)
+                                    .foregroundStyle(.gray50)
+                            }
+                    }
+                }
+                
+                HStack {
+                    Text("\(trade.location.description)")
+                    
+                    Text("・")
+                        .padding(.leading, -5)
+                    
+                    Text("\(trade.createdAt.relativeTimeNamed)")
+                        .padding(.leading, -5)
+                    Spacer()
+                }
+                .lineLimit(1)
+                .font(ANBDFont.Caption3)
+                .foregroundStyle(.gray400)
+                Spacer(minLength: 0)
+                
+                HStack {
+                    
+                    Spacer()
+                    
+                    Image(systemName: isLiked ? "heart.fill" : "heart")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 20)
+                        .foregroundStyle(isLiked ? .heartRed : .gray800)
+                        .onTapGesture {
+                            Task {
+                                await tradeViewModel.updateLikeTrade(trade: trade)
+                            }
+                            isLiked.toggle()
+                        }
+                        .padding(.leading, 10)
+                }
+                .foregroundStyle(.gray800)
+            }
+        }
+        .frame(height: 100)
+        .onAppear {
+            isLiked = UserStore.shared.user.likeTrades.contains(trade.id)
+            Task {
+                do {
+                    let image = try await StorageManager.shared.downloadImage(
+                        path: .trade,
+                        containerID: "\(trade.id)/thumbnail",
+                        imagePath: trade.thumbnailImagePath
+                    )
+                    thumbnailImageData = image
+                } catch {
+                    print(error.localizedDescription)
+                }
+            }
+        }
+    }
+    
+    fileprivate func articleListCell(_ article: Article) -> some View {
+        HStack(alignment: .top) {
+            if let thumbnailImageURL {
+                KFImage(thumbnailImageURL)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 100, height: 100)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .padding(.trailing, 10)
             } else {
                 ProgressView()
                     .frame(width: 100, height: 100)
@@ -257,12 +249,8 @@ struct ArticleListCell: View {
         .frame(height: 100)
         .onAppear {
             Task {
-                do {
-                    let url = await articleViewModel.loadCellImageURL(article: article, path: article.thumbnailImagePath)
-                    thumbnailImageURL = url
-                } catch {
-                    
-                }
+                let url = await articleViewModel.loadCellImageURL(article: article, path: article.thumbnailImagePath)
+                thumbnailImageURL = url
             }
         }
     }

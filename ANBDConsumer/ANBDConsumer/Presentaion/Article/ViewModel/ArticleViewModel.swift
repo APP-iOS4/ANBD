@@ -82,13 +82,30 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
-    func loadDetailImages(path: StoragePath, containerID: String, imagePath: [String]) async throws -> [URL] {
+    func loadDetailImagesURL(path: StoragePath, containerID: String, imagePath: [String]) async throws -> [URL] {
         var detailImages: [URL] = []
         
         for image in imagePath {
             do {
                 detailImages.append(
                     try await storageManager.downloadImageToUrl(path: path, containerID: containerID, imagePath: image)
+                )
+            } catch {
+                #if DEBUG
+                print("loadDetailImages: \(error)")
+                #endif
+            }
+        }
+        return detailImages
+    }
+    
+    func loadDetailImages(path: StoragePath, containerID: String, imagePath: [String]) async throws -> [Data] {
+        var detailImages: [Data] = []
+        
+        for image in imagePath {
+            do {
+                detailImages.append(
+                    try await storageManager.downloadImage(path: path, containerID: containerID, imagePath: image)
                 )
             } catch {
                 #if DEBUG
@@ -200,7 +217,7 @@ final class ArticleViewModel: ObservableObject {
     func loadOneArticle(articleID: String) async {
         do {
             let loadedArticle = try await articleUseCase.loadArticle(articleID: articleID)
-            self.detailImages = try await loadDetailImages(path: .article, containerID: self.article.id, imagePath: self.article.imagePaths)
+            self.detailImages = try await loadDetailImagesURL(path: .article, containerID: self.article.id, imagePath: self.article.imagePaths)
 
             self.article = loadedArticle
         } catch {

@@ -380,7 +380,7 @@ struct ArticleDetailView: View {
                     
                     isLiked = user.likeArticles.contains(articleViewModel.article.id)
                     
-                    articleViewModel.detailImages = try await articleViewModel.loadDetailImages(path: .article, containerID: articleViewModel.article.id, imagePath: articleViewModel.article.imagePaths)
+                    articleViewModel.detailImages = try await articleViewModel.loadDetailImagesURL(path: .article, containerID: articleViewModel.article.id, imagePath: articleViewModel.article.imagePaths)
                     await articleViewModel.loadCommentList(articleID: article.id)
                     writerUser = await myPageViewModel.getUserInfo(userID: article.writerID)
                     
@@ -389,9 +389,9 @@ struct ArticleDetailView: View {
             .fullScreenCover(isPresented: $isShowingArticleCreateView) {
                 ArticleCreateView(isShowingCreateView: $isShowingArticleCreateView, category: article.category, commentCount: articleViewModel.comments.count, isNewArticle: false, article: articleViewModel.article)
             }
-            //            .fullScreenCover(isPresented: $isShowingImageDetailView) {
-            //                ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $articleViewModel.detailImages, idx: $idx)
-            //            }
+//            .fullScreenCover(isPresented: $isShowingImageDetailView) {
+//                ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $articleViewModel.detailImages, idx: $idx)
+//            }
             .fullScreenCover(isPresented: $isShowingCommentEditView) {
                 CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: articleViewModel.comment, isEditComment: false)
             }

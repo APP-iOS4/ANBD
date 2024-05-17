@@ -94,7 +94,7 @@ final class PostDataSource<T: Codable & Identifiable>: Postable {
             requestQuery = allQuery
         } else {
             requestQuery = database
-                .whereField("writerID", notIn: blockList)
+                .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
                 .order(by: "createdAt", descending: true)
                 .limit(to: limit)
         }
@@ -135,12 +135,14 @@ final class PostDataSource<T: Codable & Identifiable>: Postable {
         } else {
             if let category {
                 requestQuery = database
+                    .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
                     .whereField("writerID", isEqualTo: writerID)
                     .whereField("category", isEqualTo: category.rawValue)
                     .order(by: "createdAt", descending: true)
                     .limit(to: limit)
             } else {
                 requestQuery = database
+                    .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
                     .whereField("writerID", isEqualTo: writerID)
                     .order(by: "createdAt", descending: true)
                     .limit(to: limit)
@@ -232,7 +234,7 @@ extension Postable where Item == Article {
     
     func readRecentItem(category: ANBDCategory, blockList: [String]) async throws -> Article {
         let requestQuery = database
-            .whereField("writerID", notIn: blockList)
+            .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
             .whereField("category", isEqualTo: category.rawValue)
             .order(by: "createdAt", descending: true)
             .limit(to: 1)
@@ -256,7 +258,7 @@ extension Postable where Item == Article {
         limit: Int
     ) async throws -> [Article] {
         var requestQuery: Query = database
-            .whereField("writerID", notIn: blockList)
+            .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
             .whereField("category", isEqualTo: category.rawValue)
         
         if let orderQuery {
@@ -308,7 +310,7 @@ extension Postable where Item == Article {
             requestQuery = searchQuery
         } else {
             requestQuery = database
-                .whereField("writerID", notIn: blockList)
+                .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
                 .whereFilter(
                     .orFilter([
                         .andFilter([
@@ -401,8 +403,8 @@ extension Postable where Item == Comment {
     
     func readItemList(articleID: String, blockList: [String]) async throws -> [Comment] {
         guard let snapshot = try? await database
+            .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
             .whereField("articleID", isEqualTo: articleID)
-            .whereField("writerID", notIn: blockList)
             .order(by: "createdAt", descending: true)
             .getDocuments()
             .documents
@@ -457,9 +459,9 @@ extension Postable where Item == Trade {
         limit: Int
     ) async throws -> [Trade] {
         var requestQuery = database
+            .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
             .whereField("category", isEqualTo: category.rawValue)
-            .whereField("writerID", notIn: blockList)
-        
+            
         if let filterQuery {
             requestQuery = filterQuery
         } else {
@@ -512,7 +514,7 @@ extension Postable where Item == Trade {
             requestQuery = searchQuery
         } else {
             requestQuery = database
-                .whereField("writerID", notIn: blockList)
+                .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
                 .whereFilter(
                     .orFilter([
                         .whereField("itemCategory", isEqualTo: keyword),
@@ -555,7 +557,7 @@ extension Postable where Item == Trade {
     
     func readRecentItemList(category: ANBDCategory, blockList: [String]) async throws -> [Trade] {
         let query = database
-            .whereField("writerID", notIn: blockList)
+            .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
             .whereField("category", isEqualTo: category.rawValue)
             .whereField("tradeState", isEqualTo: 0)
             .order(by: "createdAt", descending: true)

@@ -280,31 +280,6 @@ final class MyPageViewModel: ObservableObject {
         }
     }
     
-    func checkBlockUser(userID: String, checkingUserID: String, limit: Int = 99) async -> Bool {
-        var blockUserList: [User] = []
-        var blockUserIDList: [String] = []
-        
-        do {
-            blockUserList = try await userUsecase.getBlockList(userID: userID, limit: limit)
-            
-            for blockUser in blockUserList {
-                blockUserIDList.append(blockUser.id)
-            }
-            
-            if blockUserIDList.contains(checkingUserID) {
-                return true
-            } else {
-                return false
-            }
-        } catch {
-            #if DEBUG
-            print(" failed: \(error.localizedDescription)")
-            #endif
-            
-            return false
-        }
-    }
-    
     // MARK: - 사용자 정보 수정
     func updateUserProfile(proflieImage: Data?) async {
         do {

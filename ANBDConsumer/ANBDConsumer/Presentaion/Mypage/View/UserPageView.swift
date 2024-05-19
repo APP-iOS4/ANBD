@@ -14,6 +14,7 @@ struct UserPageView: View {
     @StateObject private var coordinator = Coordinator.shared
     
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.dismiss) private var dismiss
     
     private var writerUser: User
     
@@ -126,7 +127,10 @@ struct UserPageView: View {
             
             if isShowingBlockingUserAlert {
                 CustomAlertView(isShowingCustomAlert: $isShowingBlockingUserAlert, viewType: .userBlocked) {
-                    print("TEST BLOCKING")
+                    Task {
+                        await myPageViewModel.blockUser(userID: UserStore.shared.user.id, blockingUserID: writerUser.id)
+                        coordinator.pop(2)
+                    }
                 }
             }
         }

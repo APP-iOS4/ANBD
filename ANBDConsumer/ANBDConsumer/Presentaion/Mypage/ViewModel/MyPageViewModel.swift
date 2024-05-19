@@ -73,6 +73,8 @@ final class MyPageViewModel: ObservableObject {
     @Published private(set) var isValidUpdatingNickname = false
     @Published private(set) var errorMessage = ""
     
+    @Published private(set) var blockedUserList: [User] = []
+    
     private var cancellables = Set<AnyCancellable>()
     
     init() {
@@ -94,7 +96,7 @@ final class MyPageViewModel: ObservableObject {
             .assign(to: &$isValidUpdatingNickname)
     }
     
-    // MARK: - 유저 관련 정보 불러오기
+    // MARK: - 사용자 관련 정보 불러오기
     func checkSignInedUser(userID: String) -> Bool {
         if userID == UserStore.shared.user.id {
             return true
@@ -110,8 +112,9 @@ final class MyPageViewModel: ObservableObject {
             return getUser
         } catch {
             #if DEBUG
-            print("Error get user info: \(error.localizedDescription)")
+            print("Failed to get user info: \(error.localizedDescription)")
             #endif
+            
             return MyPageViewModel.mockUser
         }
     }
@@ -123,13 +126,16 @@ final class MyPageViewModel: ObservableObject {
             return list
         } catch {
             #if DEBUG
-            print("Error load articles: \(error.localizedDescription)")
+            print("Failed to load articles: \(error.localizedDescription)")
             #endif
+            
             guard let error = error as? ArticleError else {
                 ToastManager.shared.toast = Toast(style: .error, message: "게시글 불러오기에 실패하였습니다.")
                 return []
             }
+            
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
+            
             return []
         }
     }
@@ -141,13 +147,16 @@ final class MyPageViewModel: ObservableObject {
             return list
         } catch {
             #if DEBUG
-            print("Error load trades: \(error.localizedDescription)")
+            print("Failed to load trades: \(error.localizedDescription)")
             #endif
+            
             guard let error = error as? TradeError else {
                 ToastManager.shared.toast = Toast(style: .error, message: "거래글 불러오기에 실패하였습니다.")
                 return []
             }
+            
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
+            
             return []
         }
     }
@@ -169,12 +178,14 @@ final class MyPageViewModel: ObservableObject {
                 articles.append(article)
             } catch {
                 #if DEBUG
-                print("Error load user liked articles: \(error.localizedDescription)")
+                print("Failed to load user liked articles: \(error.localizedDescription)")
                 #endif
+                
                 guard let error = error as? ArticleError else {
                     ToastManager.shared.toast = Toast(style: .error, message: "게시글 불러오기에 실패하였습니다.")
                     return
                 }
+                
                 ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
             }
         }
@@ -190,12 +201,14 @@ final class MyPageViewModel: ObservableObject {
                 trades.append(trade)
             } catch {
                 #if DEBUG
-                print("Error load user hearted trades: \(error.localizedDescription)")
+                print("Failed to load user hearted trades: \(error.localizedDescription)")
                 #endif
+                
                 guard let error = error as? TradeError else {
                     ToastManager.shared.toast = Toast(style: .error, message: "거래글 불러오기에 실패하였습니다.")
                     return
                 }
+                
                 ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
             }
         }
@@ -210,16 +223,99 @@ final class MyPageViewModel: ObservableObject {
         userHeartedBaccuaTrades = userHeartedTrades.filter({ $0.category == .baccua})
     }
     
-    // MARK: - 유저 정보 수정
+    // MARK: - 사용자 차단하기
+    func blockUser(userID: String, blockingUserID: String) async {
+        do {
+            try await userUsecase.blockUser(userID: userID, blockUserID: blockingUserID)
+        } catch {
+            #if DEBUG
+            print("Failed to block User: \(error.localizedDescription)")
+            #endif
+            
+            guard let error = error as? UserError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "사용자 차단에 실패하였습니다.")
+                return
+            }
+            
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
+        }
+    }
+    
+    func unblockUser(userID: String, unblockingUserID: String) async {
+        do {
+            try await userUsecase.unblockUser(userID: userID, unblockUserID: unblockingUserID)
+        } catch {
+            #if DEBUG
+            print("Failed to unblock User: \(error.localizedDescription)")
+            #endif
+            
+            guard let error = error as? UserError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "사용자 차단 해제에 실패하였습니다.")
+                return
+            }
+            
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
+        }
+    }
+    
+    func getBlockList(userID: String, limit: Int = 99) async -> [User] {
+        do {
+            blockedUserList = try await userUsecase.getBlockList(userID: userID, limit: limit)
+            
+            return blockedUserList
+        } catch {
+            #if DEBUG
+            print("Failed to retrieve blocked user list: \(error.localizedDescription)")
+            #endif
+            
+            guard let error = error as? UserError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "차단한 사용자 목록 불러오기에 실패하였습니다.")
+                
+                return []
+            }
+            
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
+            
+            return []
+        }
+    }
+    
+    func checkBlockUser(userID: String, checkingUserID: String, limit: Int = 99) async -> Bool {
+        var blockUserList: [User] = []
+        var blockUserIDList: [String] = []
+        
+        do {
+            blockUserList = try await userUsecase.getBlockList(userID: userID, limit: limit)
+            
+            for blockUser in blockUserList {
+                blockUserIDList.append(blockUser.id)
+            }
+            
+            if blockUserIDList.contains(checkingUserID) {
+                return true
+            } else {
+                return false
+            }
+        } catch {
+            #if DEBUG
+            print(" failed: \(error.localizedDescription)")
+            #endif
+            
+            return false
+        }
+    }
+    
+    // MARK: - 사용자 정보 수정
     func updateUserProfile(proflieImage: Data?) async {
         do {
             try await userUsecase.updateUserProfile(user: UserStore.shared.user, profileImage: proflieImage)
         } catch {
             #if DEBUG
-            print("Error update user profile: \(error.localizedDescription)")
+            print("Failed to update user profile: \(error.localizedDescription)")
             #endif
+            
             guard let error = error as? UserError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "유저 프로필 사진 수정에 실패하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "사용자 프로필 사진 수정에 실패하였습니다.")
                 return
             }
             if error.rawValue == 4009 {
@@ -281,12 +377,14 @@ final class MyPageViewModel: ObservableObject {
             UserStore.shared.user = updatedUser
         } catch {
             #if DEBUG
-            print("Error update user info: \(error.localizedDescription)")
+            print("Failed to update user info: \(error.localizedDescription)")
             #endif
+            
             guard let error = error as? UserError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "유저 정보 수정에 실패하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "사용자 정보 수정에 실패하였습니다.")
                 return
             }
+            
             if error.rawValue == 4009 {
                 ToastManager.shared.toast = Toast(style: .error, message: "사용자 필드 누락(ID)")
             } else {

@@ -219,7 +219,7 @@ extension CustomAlertView {
         case .deletedCachingData:
             return "캐시 데이터가 삭제되었습니다."
         case .userBlocked:
-            return "해당 사용자를 차단하시겠습니까?\n차단한 사용자의 채팅이나 게시글은\n확인할 수 없습니다."
+            return "해당 사용자를 차단하시겠습니까?\n차단한 사용자가 작성한 글이나 채팅은\n확인할 수 없습니다."
         }
     }
     

@@ -22,6 +22,7 @@ struct UserPageView: View {
     @State private var isSignedInUser: Bool = false
     
     @State private var isShowingReportView = false
+    @State private var isShowingBlockingUserAlert = false
     @State private var refreshView = false
     
     init(writerUser: User) {
@@ -29,99 +30,105 @@ struct UserPageView: View {
     }
     
     var body: some View {
-        VStack(spacing: 20) {
-            // UserInfo
-            HStack {
-                if #available(iOS 17.0, *) {
-                    userProfileImage
-                        .onChange(of: myPageViewModel.tempUserProfileImage) {
-                            Task {
-                                try await Task.sleep(nanoseconds: 800_000_000)
-                                refreshView.toggle()
+        ZStack {
+            VStack(spacing: 20) {
+                HStack {
+                    if #available(iOS 17.0, *) {
+                        userProfileImage
+                            .onChange(of: myPageViewModel.tempUserProfileImage) {
+                                Task {
+                                    try await Task.sleep(nanoseconds: 800_000_000)
+                                    refreshView.toggle()
+                                }
                             }
-                        }
-                } else {
-                    userProfileImage
-                        .onChange(of: myPageViewModel.tempUserProfileImage) { _ in
-                            Task {
-                                try await Task.sleep(nanoseconds: 800_000_000)
-                                refreshView.toggle()
+                    } else {
+                        userProfileImage
+                            .onChange(of: myPageViewModel.tempUserProfileImage) { _ in
+                                Task {
+                                    try await Task.sleep(nanoseconds: 800_000_000)
+                                    refreshView.toggle()
+                                }
                             }
-                        }
-                }
-                
-                VStack(alignment: .leading, spacing: 3) {
-                    Text("\(myPageViewModel.user.nickname)")
-                        .foregroundStyle(Color.gray900)
-                        .font(ANBDFont.pretendardBold(24))
-                        .padding(.bottom, 10)
+                    }
                     
-                    Text("선호 지역 : \(myPageViewModel.user.favoriteLocation.description)")
-                        .foregroundStyle(Color.gray400)
-                        .font(ANBDFont.Caption3)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    if isSignedInUser {
-                        HStack {
-                            Text(verbatim: "\(myPageViewModel.user.email)")
-                                .foregroundStyle(Color.gray400)
-                            
-                            Spacer()
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("\(myPageViewModel.user.nickname)")
+                            .foregroundStyle(Color.gray900)
+                            .font(ANBDFont.pretendardBold(24))
+                            .padding(.bottom, 10)
+                        
+                        Text("선호 지역 : \(myPageViewModel.user.favoriteLocation.description)")
+                            .foregroundStyle(Color.gray400)
+                            .font(ANBDFont.Caption3)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        if isSignedInUser {
+                            HStack {
+                                Text(verbatim: "\(myPageViewModel.user.email)")
+                                    .foregroundStyle(Color.gray400)
+                                
+                                Spacer()
+                            }
+                            .font(ANBDFont.Caption3)
                         }
-                        .font(ANBDFont.Caption3)
                     }
                 }
-            }
-            .padding()
-            
-            HStack(spacing: 12) {
-                activityInfoComponent(title: "아껴 쓴 개수", category: .accua)
+                .padding()
                 
-                Divider()
-                    .frame(height: 60)
-                
-                activityInfoComponent(title: "나눠 쓴 개수", category: .nanua)
-                
-                Divider()
-                    .frame(height: 60)
-                
-                activityInfoComponent(title: "바꿔 쓴 개수", category: .baccua)
-                
-                Divider()
-                    .frame(height: 60)
-                
-                activityInfoComponent(title: "다시 쓴 개수", category: .dasi)
-            }
-            
-            if isSignedInUser {
-                // Another Functions
-                VStack(alignment: .leading) {
-                    Divider()
-                    
-                    Button(action: {
-                        coordinator.category = .accua
-                        coordinator.appendPath(.userLikedContentView)
-                    }, label: {
-                        listButtonView(title: "내가 좋아요한 게시글 보기")
-                    })
+                HStack(spacing: 12) {
+                    activityInfoComponent(title: "아껴 쓴 개수", category: .accua)
                     
                     Divider()
+                        .frame(height: 60)
                     
-                    Button(action: {
-                        coordinator.category = .nanua
-                        coordinator.appendPath(.userLikedContentView)
-                    }, label: {
-                        listButtonView(title: "내가 찜한 나눔・거래 보기")
-                            .padding(.bottom, -10)
-                    })
+                    activityInfoComponent(title: "나눠 쓴 개수", category: .nanua)
+                    
+                    Divider()
+                        .frame(height: 60)
+                    
+                    activityInfoComponent(title: "바꿔 쓴 개수", category: .baccua)
+                    
+                    Divider()
+                        .frame(height: 60)
+                    
+                    activityInfoComponent(title: "다시 쓴 개수", category: .dasi)
+                }
+                
+                if isSignedInUser {
+                    VStack(alignment: .leading) {
+                        Divider()
+                        
+                        Button(action: {
+                            coordinator.category = .accua
+                            coordinator.appendPath(.userLikedContentView)
+                        }, label: {
+                            listButtonView(title: "내가 좋아요한 게시글 보기")
+                        })
+                        
+                        Divider()
+                        
+                        Button(action: {
+                            coordinator.category = .nanua
+                            coordinator.appendPath(.userLikedContentView)
+                        }, label: {
+                            listButtonView(title: "내가 찜한 나눔・거래 보기")
+                                .padding(.bottom, -10)
+                        })
+                    }
+                }
+                
+                Rectangle()
+                    .fill(Color.gray50)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .ignoresSafeArea()
+                
+            }
+            
+            if isShowingBlockingUserAlert {
+                CustomAlertView(isShowingCustomAlert: $isShowingBlockingUserAlert, viewType: .userBlocked) {
+                    print("TEST BLOCKING")
                 }
             }
-            
-            Rectangle()
-                .fill(Color.gray50)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .ignoresSafeArea()
-            
         }
         .toolbarRole(.editor)
         .toolbar {
@@ -137,6 +144,12 @@ struct UserPageView: View {
             } else if isSignedInUser == false && writerUser.id != "abcd1234" {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
+                        Button {
+                            isShowingBlockingUserAlert.toggle()
+                        } label: {
+                            Label("사용자 차단하기", systemImage: "person.slash")
+                        }
+
                         Button(role: .destructive) {
                             coordinator.reportType = .user
                             coordinator.reportedObjectID = writerUser.id

@@ -338,9 +338,8 @@ struct ArticleDetailView: View {
                         } else {
                             if let writerUser {
                                 if writerUser.id != "abcd1234" {
-                                    Button(role: .destructive) {
+                                    Button {
                                         isShowingUserBlockAlertView.toggle()
-                                        ToastManager.shared.toast = Toast(style: .success, message: "\(articleViewModel.article.writerNickname)님을 차단했습니다.")
                                     } label: {
                                         Label("사용자 차단하기", systemImage: "person.slash")
                                     }

@@ -22,8 +22,6 @@ struct ArticleDetailView: View {
     @State private var isShowingComment: Bool = false
     @State private var commentText: String = ""
     
-    @State private var articleImageURL: URL?
-    
     @State private var isShowingImageDetailView: Bool = false
     @State private var isShowingArticleCreateView: Bool = false
     @State private var isShowingArticleConfirmSheet: Bool = false

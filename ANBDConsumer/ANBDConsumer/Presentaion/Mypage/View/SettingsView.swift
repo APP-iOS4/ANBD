@@ -30,6 +30,15 @@ struct SettingsView: View {
                         isShowingEditorView.toggle()
                     }, label: {
                         Text("유저 정보 수정")
+                            .font(ANBDFont.pretendardRegular(17))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    })
+                    
+                    Button(action: {
+                        coordinator.appendPath(.blockingUserListView)
+                    }, label: {
+                        Text("차단 사용자 관리")
+                            .font(ANBDFont.pretendardRegular(17))
                             .frame(maxWidth: .infinity, alignment: .leading)
                     })
                 }
@@ -42,6 +51,7 @@ struct SettingsView: View {
                         isShowingPolicyView.toggle()
                     }, label: {
                         Text("약관 및 정책")
+                            .font(ANBDFont.pretendardRegular(17))
                             .frame(maxWidth: .infinity, alignment: .leading)
                     })
                     
@@ -49,6 +59,7 @@ struct SettingsView: View {
                         isShowingOpenSourceLicense.toggle()
                     }, label: {
                         Text("오픈소스 라이선스")
+                            .font(ANBDFont.pretendardRegular(17))
                             .frame(maxWidth: .infinity, alignment: .leading)
                     })
                     
@@ -65,6 +76,7 @@ struct SettingsView: View {
                     
                     HStack {
                         Text("앱 버전")
+                            .font(ANBDFont.pretendardRegular(17))
                         
                         Spacer()
                         
@@ -82,6 +94,7 @@ struct SettingsView: View {
                     
                     HStack {
                         Text("문의 메일")
+                            .font(ANBDFont.pretendardRegular(17))
                         
                         Spacer()
                         
@@ -101,6 +114,7 @@ struct SettingsView: View {
                         isShowingSignOutAlertView.toggle()
                     }, label: {
                         Text("로그아웃")
+                            .font(ANBDFont.pretendardRegular(17))
                             .frame(maxWidth: .infinity, alignment: .leading)
                     })
                     
@@ -108,6 +122,7 @@ struct SettingsView: View {
                         isShowingWithdrawalAlertView.toggle()
                     }, label: {
                         Text("회원 탈퇴")
+                            .font(ANBDFont.pretendardRegular(17))
                             .frame(maxWidth: .infinity, alignment: .leading)
                     })
                 }
@@ -121,7 +136,7 @@ struct SettingsView: View {
                             .multilineTextAlignment(.center)
                             .font(ANBDFont.Caption1)
                             .foregroundStyle(Color.gray400)
-                            .offset(y: -20)
+                            .offset(y: -5)
                     }
             }
             

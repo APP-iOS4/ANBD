@@ -101,7 +101,7 @@ final class DefaultUserDataSource: UserDataSource {
             requestQuery = blockQuery
         } else {
             requestQuery = userDB
-                .whereField("id", notIn: blockList.isEmpty ? [""] : blockList)
+                .whereField("id", in: blockList.isEmpty ? [""] : blockList)
                 .limit(to: limit)
         }
         

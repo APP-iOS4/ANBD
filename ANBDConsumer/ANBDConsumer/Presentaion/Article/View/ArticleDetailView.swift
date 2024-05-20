@@ -118,7 +118,6 @@ struct ArticleDetailView: View {
                                     KFImage(url)
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
-                                        .scaledToFit()
                                         .onTapGesture {
                                             isShowingImageDetailView.toggle()
                                             idx = i
@@ -467,11 +466,10 @@ struct ArticleDetailView: View {
                 Text("이 게시글에는 댓글을 작성할 수 없습니다.")
                     .font(ANBDFont.SubTitle1)
                     .foregroundColor(.gray300)
-                    .padding(.top, 10)
                     .background(colorScheme == .dark ? Color.black : Color.white)
                     .frame(maxWidth: .infinity)
                     .padding(.horizontal, 20)
-                    .padding(.bottom, 10)
+                    .padding(.vertical, 10)
             }
         }
         .toolbar(.hidden, for: .tabBar)

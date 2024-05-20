@@ -42,6 +42,7 @@ final class ArticleViewModel: ObservableObject {
     
     @Published var commentText: String = ""
     @Published var detailImages: [URL] = []
+    @Published var detailImagesData: [Data] = []
 
     func getOneArticle(article: Article) {
         self.article = article

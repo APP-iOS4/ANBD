@@ -32,6 +32,8 @@ final class ChatViewModel: ObservableObject {
     
     //채팅방 내부에 필요한 변수
     var selectedUser: User = User(id: "", nickname: "(알수없음)", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
+    @Published var isBlocked: Bool = false
+
     
     @Published var selectedTrade: Trade?
     @Published var selectedChannel: Channel?
@@ -199,39 +201,36 @@ extension ChatViewModel {
     /// 메시지 보내기 (Text)
     func sendMessage(message: Message, channelID: String) async throws {
         do {
-            try await chatUsecase.sendMessage(message: message, channelID: channelID)
-            guard let content = message.content else { return}
-            if await checkOtherUserInChatRoom(channelID: channelID) {
-                sendPushNotification(content: content)
+            /// 상대방 block 확인
+            Task {
+                self.selectedUser = try await userUsecase.getUserInfo(userID: selectedUser.id)
+                if selectedUser.blockList.contains(user.id) {
+                    ToastManager.shared.toast = Toast(style: .info, message: "대화 상대에게 차단되어 메시지를 보낼 수 없습니다.")
+                } else {
+                    try await chatUsecase.sendMessage(message: message, channelID: channelID)
+                    guard let content = message.content else { return}
+                    if await checkOtherUserInChatRoom(channelID: channelID) {
+                        sendPushNotification(content: content)
+                    }
+                }
             }
-        } catch {
-            #if DEBUG
-            print("sendMessage Error: \(error)")
-            #endif
-            guard let error = error as? MessageError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "메시지 보내기에 실패하였습니다.")
-                return
-            }
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
     /// 메시지 보내기 (Image)
     func sendImageMessage(message: Message, imageData: Data, channelID: String) async throws {
         do {
-            try await chatUsecase.sendImageMessage(message: message, imageData: imageData, channelID: channelID)
-            if await checkOtherUserInChatRoom(channelID: channelID) {
-                sendPushNotification(content: "사진을 보냈습니다")
+            Task {
+                self.selectedUser = try await userUsecase.getUserInfo(userID: selectedUser.id)
+                if selectedUser.blockList.contains(user.id) {
+                    ToastManager.shared.toast = Toast(style: .info, message: "대화 상대에게 차단되어 메시지를 보낼 수 없습니다.")
+                } else {
+                    try await chatUsecase.sendImageMessage(message: message, imageData: imageData, channelID: channelID)
+                    if await checkOtherUserInChatRoom(channelID: channelID) {
+                        sendPushNotification(content: "사진을 보냈습니다")
+                    }
+                }
             }
-        } catch {
-            #if DEBUG
-            print("Error: \(error)")
-            #endif
-            guard let error = error as? MessageError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "사진 보내기에 실패하였습니다.")
-                return
-            }
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
     }
     
@@ -296,6 +295,7 @@ extension ChatViewModel {
         self.selectedTrade = try await chatUsecase.getTradeInChannel(channelID: channel.id)
         do {
             self.selectedUser = try await chatUsecase.getOtherUser(channel: channel, userID: user.id)
+            self.isBlocked = user.blockList.contains(selectedUser.id)
         } catch {
             self.selectedUser = User(id: "", nickname: "(알수없음)", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
         }
@@ -304,6 +304,7 @@ extension ChatViewModel {
     func setSelectedUser(channel: Channel) async {
         do {
             self.selectedUser = try await chatUsecase.getOtherUser(channel: channel, userID: user.id)
+            self.isBlocked = user.blockList.contains(selectedUser.id)
         } catch {
             #if DEBUG
             print("setSelectedUser: \(error)")
@@ -321,6 +322,7 @@ extension ChatViewModel {
         self.selectedChannel = try await getChannel(tradeID: trade.id)
         do {
             self.selectedUser = try await userUsecase.getUserInfo(userID: trade.writerID)
+            self.isBlocked = user.blockList.contains(selectedUser.id)
         } catch {
             #if DEBUG
             print("setSelectedInfo: \(error)")
@@ -337,13 +339,30 @@ extension ChatViewModel {
         return cnt
     }
     
-    //채팅방에 있는 다른 유저를 얻어오는 메소드
+    /// 채팅방에 있는 다른 유저를 얻어오는 메소드
     func getOtherUser(channel: Channel) async -> User {
         do {
             let otherUser = try await chatUsecase.getOtherUser(channel: channel, userID: user.id)
             return otherUser
         } catch {
             return User(id: "", nickname: "알수없음", email: "", favoriteLocation: .seoul, fcmToken: "", isOlderThanFourteen: false, isAgreeService: false, isAgreeCollectInfo: false, isAgreeMarketing: false)
+        }
+    }
+    
+    /// 채팅방 유저 Block · Unblock
+    func blockUnBlockUser() async {
+        do {
+            if isBlocked {
+                try await userUsecase.unblockUser(userID: self.user.id, unblockUserID: self.selectedUser.id)
+                isBlocked = false
+            } else {
+                try await userUsecase.blockUser(userID: self.user.id, blockUserID: self.selectedUser.id)
+                isBlocked = true
+            }
+        } catch {
+            #if DEBUG
+            print("Block User : \(error)")
+            #endif
         }
     }
     

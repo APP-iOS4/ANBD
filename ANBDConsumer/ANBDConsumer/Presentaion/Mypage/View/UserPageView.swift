@@ -14,7 +14,6 @@ struct UserPageView: View {
     @StateObject private var coordinator = Coordinator.shared
     
     @Environment(\.colorScheme) private var colorScheme
-    @Environment(\.dismiss) private var dismiss
     
     private var writerUser: User
     

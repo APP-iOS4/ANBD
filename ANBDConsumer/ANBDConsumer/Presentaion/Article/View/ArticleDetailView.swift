@@ -339,13 +339,6 @@ struct ArticleDetailView: View {
                                 Label("삭제하기", systemImage: "trash")
                             }
                         } else {
-                            Button(role: .destructive) {
-                                coordinator.reportType = .article
-                                coordinator.reportedObjectID = article.id
-                                coordinator.appendPath(.reportView)
-                            } label: {
-                                Label("게시글 신고하기", systemImage: "exclamationmark.bubble")
-                            }
                             if let writerUser {
                                 if writerUser.id != "abcd1234" {
                                     Button(role: .destructive) {
@@ -355,6 +348,14 @@ struct ArticleDetailView: View {
                                         Label("사용자 차단하기", systemImage: "person.slash")
                                     }
                                 }
+                            }
+                            
+                            Button(role: .destructive) {
+                                coordinator.reportType = .article
+                                coordinator.reportedObjectID = article.id
+                                coordinator.appendPath(.reportView)
+                            } label: {
+                                Label("게시글 신고하기", systemImage: "exclamationmark.bubble")
                             }
                         }
                     } label: {
@@ -417,7 +418,10 @@ struct ArticleDetailView: View {
                 }
             } else if isShowingUserBlockAlertView {
                 CustomAlertView(isShowingCustomAlert: $isShowingUserBlockAlertView, viewType: .userBlocked) {
-                    dismiss()
+                    Task {
+                        await articleViewModel.blockUser(userID: UserStore.shared.user.id, blockUserID: articleViewModel.article.writerID)
+                        dismiss()
+                    }
                 }
             }
         }

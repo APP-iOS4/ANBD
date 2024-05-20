@@ -73,7 +73,7 @@ final class MyPageViewModel: ObservableObject {
     @Published private(set) var isValidUpdatingNickname = false
     @Published private(set) var errorMessage = ""
     
-    @Published private(set) var blockedUserList: [User] = []
+    @Published var blockedUserList: [User] = []
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -227,6 +227,8 @@ final class MyPageViewModel: ObservableObject {
     func blockUser(userID: String, blockingUserID: String) async {
         do {
             try await userUsecase.blockUser(userID: userID, blockUserID: blockingUserID)
+            
+            ToastManager.shared.toast = Toast(style: .success, message: "사용자를 차단하였습니다.")
         } catch {
             #if DEBUG
             print("Failed to block User: \(error.localizedDescription)")
@@ -258,11 +260,9 @@ final class MyPageViewModel: ObservableObject {
         }
     }
     
-    func getBlockList(userID: String, limit: Int = 99) async -> [User] {
+    func getBlockList(userID: String, limit: Int = 99) async {
         do {
-            blockedUserList = try await userUsecase.getBlockList(userID: userID, limit: limit)
-            
-            return blockedUserList
+            blockedUserList = try await userUsecase.refreshBlockUserList(userID: userID, limit: limit)
         } catch {
             #if DEBUG
             print("Failed to retrieve blocked user list: \(error.localizedDescription)")
@@ -270,13 +270,10 @@ final class MyPageViewModel: ObservableObject {
             
             guard let error = error as? UserError else {
                 ToastManager.shared.toast = Toast(style: .error, message: "차단한 사용자 목록 불러오기에 실패하였습니다.")
-                
-                return []
+                return
             }
             
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
-            
-            return []
         }
     }
     

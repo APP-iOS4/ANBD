@@ -28,6 +28,7 @@ enum Page {
     case userActivityView
     case userLikedContentView
     case settingsView
+    case blockingUserListView
 }
 
 
@@ -108,6 +109,9 @@ final class Coordinator: ObservableObject {
             
         case .settingsView:
             SettingsView()
+            
+        case .blockingUserListView:
+            BlockingUserListView()
         }
     }
     

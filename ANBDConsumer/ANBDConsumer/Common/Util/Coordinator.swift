@@ -60,6 +60,7 @@ final class Coordinator: ObservableObject {
     var channelID: String?
     var isFromUserPage: Bool = false
     var isLoading: Bool = false
+    var isSignedInUser: Bool = false
     
     
     @ViewBuilder
@@ -102,7 +103,7 @@ final class Coordinator: ObservableObject {
             UserInfoEditingView()
             
         case .userActivityView:
-            UserActivityListView(category: category)
+            UserActivityListView(category: category, isSignedInUser: isSignedInUser)
             
         case .userLikedContentView:
             UserLikedContentsView(category: category)

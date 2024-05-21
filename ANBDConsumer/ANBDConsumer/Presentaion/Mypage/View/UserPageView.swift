@@ -207,6 +207,7 @@ struct UserPageView: View {
     private func activityInfoComponent(title: String, category: ANBDCategory) -> some View {
         Button(action: {
             coordinator.category = category
+            coordinator.isSignedInUser = isSignedInUser
             coordinator.appendPath(.userActivityView)
         }, label: {
             VStack(alignment: .center, spacing: 5) {

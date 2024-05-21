@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct SettingsView: View {
     @EnvironmentObject private var myPageViewModel: MyPageViewModel
@@ -18,6 +19,9 @@ struct SettingsView: View {
     @State private var isShowingWithdrawalAlertView = false
     @State private var isShowingOpenSourceLicense = false
     @State private var isShowingDeletedCachingDataAlertView = false
+    
+    @State private var cacheData = 0.0
+    private let cache = ImageCache.default
     
     private let spacingValue: CGFloat = 30
     
@@ -63,16 +67,26 @@ struct SettingsView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                     })
                     
-                    Button(action: {
-                        isShowingDeletedCachingDataAlertView.toggle()
-                        // TODO: - 캐시 데이터 삭제하기 메서드 넣기
-                        #if DEBUG
-                        print("캐시 데이터 삭제 완료")
-                        #endif
-                    }, label: {
-                        Text("캐시 데이터 삭제하기")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    })
+                    HStack {
+                        Button(action: {
+                            isShowingDeletedCachingDataAlertView.toggle()
+                            cache.clearCache()
+                        }, label: {
+                            Text("캐시 데이터 삭제하기")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        })
+                        
+                        if #available(iOS 16.1, *) {
+                            Text("\(String(format: "%.3f", cacheData / 1024 / 1024)) MB")
+                                .fontDesign(.monospaced)
+                                .font(.system(size: 15))
+                                .foregroundStyle(Color.gray500)
+                        } else {
+                            Text("\(String(format: "%.3f", cacheData / 1024 / 1024)) MB")
+                                .font(.system(size: 15))
+                                .foregroundStyle(Color.gray500)
+                        }
+                    }
                     
                     HStack {
                         Text("앱 버전")
@@ -171,7 +185,19 @@ struct SettingsView: View {
             }
             
             if isShowingDeletedCachingDataAlertView {
-                CustomAlertView(isShowingCustomAlert: $isShowingDeletedCachingDataAlertView, viewType: .deletedCachingData) { }
+                CustomAlertView(isShowingCustomAlert: $isShowingDeletedCachingDataAlertView, viewType: .deletedCachingData) {
+                    cacheData = 0.0
+                }
+            }
+        }
+        .onAppear {
+            cache.calculateDiskStorageSize { result in
+                switch result {
+                case .success(let size):
+                    cacheData = Double(size)
+                case .failure(let error):
+                    print(error)
+                }
             }
         }
         .navigationTitle("설정")

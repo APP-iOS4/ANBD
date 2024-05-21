@@ -23,6 +23,7 @@ struct TradeDetailView: View {
     @State private var isShowingImageDetailView: Bool = false
     @State private var isShowingStateChangeCustomAlert: Bool = false
     @State private var isShowingDeleteCustomAlert: Bool = false
+    @State private var isShowingBlockingAlert: Bool = false
     @State private var isLoading: Bool = false
     @Environment(\.dismiss) private var dismiss
     
@@ -150,6 +151,16 @@ struct TradeDetailView: View {
                     }
                 }
             }
+            if isShowingBlockingAlert {
+                CustomAlertView(isShowingCustomAlert: $isShowingBlockingAlert, viewType: .userBlocked) {
+                    Task {
+                        guard let writerUser else { return }
+                        
+                        await myPageViewModel.blockUser(userID: UserStore.shared.user.id, blockingUserID: writerUser.id)
+                        coordinator.pop()
+                    }
+                }
+            }
         }//ZStack
         .onAppear {
             tradeViewModel.getOneTrade(trade: trade)
@@ -178,6 +189,11 @@ struct TradeDetailView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     if user.id != tradeViewModel.trade.writerID {
+                        Button {
+                            isShowingBlockingAlert.toggle()
+                        } label: {
+                            Label("사용자 차단하기", systemImage: "person.slash")
+                        }
                         Button(role: .destructive) {
                             coordinator.reportType = .trade
                             coordinator.reportedObjectID = trade.id

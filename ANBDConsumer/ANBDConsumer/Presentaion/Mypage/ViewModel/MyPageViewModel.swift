@@ -228,7 +228,7 @@ final class MyPageViewModel: ObservableObject {
         do {
             try await userUsecase.blockUser(userID: userID, blockUserID: blockingUserID)
             
-            ToastManager.shared.toast = Toast(style: .success, message: "사용자를 차단하였습니다.")
+            ToastManager.shared.toast = Toast(style: .success, message: "사용자를 차단하였습니다.", duration: 1)
         } catch {
             #if DEBUG
             print("Failed to block User: \(error.localizedDescription)")

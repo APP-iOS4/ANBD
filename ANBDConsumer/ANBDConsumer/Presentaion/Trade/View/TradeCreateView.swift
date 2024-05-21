@@ -335,6 +335,7 @@ fileprivate extension TradeCreateView {
                 }
             }
         }
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal, content: {
                 if isNewProduct {

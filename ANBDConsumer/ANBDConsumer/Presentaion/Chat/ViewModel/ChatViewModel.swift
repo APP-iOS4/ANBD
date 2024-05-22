@@ -358,6 +358,7 @@ extension ChatViewModel {
             } else {
                 try await userUsecase.blockUser(userID: self.user.id, blockUserID: self.selectedUser.id)
                 isBlocked = true
+                ToastManager.shared.toast = Toast(style: .success, message: "\(selectedUser.nickname)님을 차단했습니다.")
             }
         } catch {
             #if DEBUG

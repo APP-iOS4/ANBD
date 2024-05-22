@@ -66,8 +66,10 @@ struct TradeCreateView: View {
                         checkIsFinished()
                     }
                     .onChange(of: wantProduct) {
-                        isCancelable = false
-                        checkIsFinished()
+                        if self.wantProduct != tradeViewModel.trade.wantProduct {
+                            isCancelable = false
+                            checkIsFinished()
+                        }
                     }
                 
                     .onChange(of: title) {
@@ -332,6 +334,7 @@ fileprivate extension TradeCreateView {
                 }
             }
         }
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal, content: {
                 if isNewProduct {
@@ -347,30 +350,29 @@ fileprivate extension TradeCreateView {
             ToolbarItem(placement: .cancellationAction) {
                 Button {
                     endTextEditing()
-                    
-                    // 수정: 바뀐 정보가 있다면 backAlert
-                    if let trade = trade {
-                        if self.title != trade.title || self.content != trade.content || self.category != trade.category || self.myProduct != trade.myProduct || tradeViewModel.selectedItemCategory != trade.itemCategory || tradeViewModel.selectedLocation != trade.location {
-                            isCancelable = false
-                        } else {
-                            isFinished = false
-                        }
-                    } else {
-                        // 새로 작성: 쓰여진 필드가 있다면 backAleart
-                        for item in mustTextFields {
-                            if item != "" {
+                    Task {
+                        // 수정: 바뀐 정보가 있다면 backAlert
+                        if let trade = trade {
+                            if self.title != trade.title || self.content != trade.content || self.category != trade.category || self.myProduct != trade.myProduct || tradeViewModel.selectedItemCategory != trade.itemCategory || tradeViewModel.selectedLocation != trade.location {
                                 isCancelable = false
                             }
+                        } else {
+                            // 새로 작성: 쓰여진 필드가 있다면 backAleart
+                            for item in mustTextFields {
+                                if item != "" {
+                                    isCancelable = false
+                                }
+                            }
                         }
-                    }
-                    
-                    if isCancelable {
-                        //지역은 user 선호 지역으로 선택되게
-                        tradeViewModel.selectedLocation = UserStore.shared.user.favoriteLocation
-                        tradeViewModel.selectedItemCategory = .digital
-                        isShowingCreate.toggle()
-                    } else {
-                        isShowingBackAlert.toggle()
+
+                        if isCancelable {
+                            //지역은 user 선호 지역으로 선택되게
+                            tradeViewModel.selectedLocation = UserStore.shared.user.favoriteLocation
+                            tradeViewModel.selectedItemCategory = .digital
+                            isShowingCreate.toggle()
+                        } else {
+                            isShowingBackAlert.toggle()
+                        }
                     }
                 } label: {
                     Text("취소")
@@ -394,7 +396,7 @@ fileprivate extension TradeCreateView {
                 self.itemCategory = trade.itemCategory
                 self.location = trade.location
                 Task {
-                    tmpSelectedData = try await tradeViewModel.loadDetailImages(path: .trade, containerID: trade.id, imagePath: trade.imagePaths)
+                    tmpSelectedData = try await tradeViewModel.loadOriginImages(path: .trade, containerID: trade.id, imagePath: trade.imagePaths)
                 }
                 //self.isFinished = false
             }
@@ -502,7 +504,6 @@ extension TradeCreateView {
             }//Horizontal ScrollView
             .padding(.horizontal, 10)
         }
-        .padding(.top, -50)
     }
     
     var selectCategoryView: some View {

@@ -308,7 +308,6 @@ fileprivate extension TradeCreateView {
                     tradeViewModel.selectedItemCategory = .digital
                     isShowingCreate.toggle()
                 }
-                .padding(.bottom, 50)
             }
             
             if isLoading {

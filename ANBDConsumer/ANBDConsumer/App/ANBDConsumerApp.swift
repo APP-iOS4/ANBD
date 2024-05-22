@@ -146,6 +146,7 @@ struct ANBDConsumerApp: App {
     @StateObject private var searchViewModel = SearchViewModel()
     @StateObject private var reportViewModel = ReportViewModel()
     @StateObject private var networkMonitor = NetworkMonitor()
+    @StateObject private var toastManager = ToastManager.shared
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
@@ -164,6 +165,7 @@ struct ANBDConsumerApp: App {
                     .environmentObject(searchViewModel)
                     .environmentObject(reportViewModel)
                     .environmentObject(networkMonitor)
+                    .environmentObject(toastManager)
                 
                 if !networkMonitor.isConnected {
                     Rectangle()

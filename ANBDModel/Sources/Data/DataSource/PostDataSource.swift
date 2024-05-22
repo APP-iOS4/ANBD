@@ -22,11 +22,17 @@ protocol Postable<Item>: AnyObject {
     
     func createItem(item: Item) async throws
     func readItem(itemID: String) async throws -> Item
-    func readItemList(limit: Int) async throws -> [Item]
-    func readItemList(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [Item]
+    func readItemList(blockList: [String], limit: Int) async throws -> [Item]
+    func readItemList(writerID: String,
+                      category: ANBDCategory?,
+                      blockList: [String],
+                      limit: Int) async throws -> [Item]
     func readAllItemList(writerID: String) async throws -> [Item]
-    func refreshAll(limit: Int) async throws -> [Item]
-    func refreshWriterID(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [Item]
+    func refreshAll(blockList: [String], limit: Int) async throws -> [Item]
+    func refreshWriterID(writerID: String,
+                         category: ANBDCategory?,
+                         blockList: [String],
+                         limit: Int) async throws -> [Item]
     func updateItem(itemID: String, writerNickname: String) async throws
     func deleteItem(itemID: String) async throws
     func resetSearchQuery()
@@ -81,13 +87,14 @@ final class PostDataSource<T: Codable & Identifiable>: Postable {
         return item
     }
     
-    func readItemList(limit: Int) async throws -> [T] {
+    func readItemList(blockList: [String], limit: Int) async throws -> [T] {
         var requestQuery: Query
         
         if let allQuery {
             requestQuery = allQuery
         } else {
             requestQuery = database
+                .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
                 .order(by: "createdAt", descending: true)
                 .limit(to: limit)
         }
@@ -115,7 +122,12 @@ final class PostDataSource<T: Codable & Identifiable>: Postable {
         return itemList
     }
     
-    func readItemList(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [T] {
+    func readItemList(
+        writerID: String,
+        category: ANBDCategory?,
+        blockList: [String],
+        limit: Int
+    ) async throws -> [T] {
         var requestQuery: Query
         
         if let writerIDQuery {
@@ -123,12 +135,14 @@ final class PostDataSource<T: Codable & Identifiable>: Postable {
         } else {
             if let category {
                 requestQuery = database
+                    .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
                     .whereField("writerID", isEqualTo: writerID)
                     .whereField("category", isEqualTo: category.rawValue)
                     .order(by: "createdAt", descending: true)
                     .limit(to: limit)
             } else {
                 requestQuery = database
+                    .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
                     .whereField("writerID", isEqualTo: writerID)
                     .order(by: "createdAt", descending: true)
                     .limit(to: limit)
@@ -171,14 +185,24 @@ final class PostDataSource<T: Codable & Identifiable>: Postable {
         return itemList
     }
     
-    func refreshAll(limit: Int) async throws -> [T] {
+    func refreshAll(blockList: [String], limit: Int) async throws -> [T] {
         allQuery = nil
-        return try await readItemList(limit: limit)
+        return try await readItemList(blockList: blockList, limit: limit)
     }
     
-    func refreshWriterID(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [T] {
+    func refreshWriterID(
+        writerID: String,
+        category: ANBDCategory?,
+        blockList: [String],
+        limit: Int
+    ) async throws -> [T] {
         writerIDQuery = nil
-        return try await readItemList(writerID: writerID, category: category, limit: limit)
+        return try await readItemList(
+            writerID: writerID,
+            category: category,
+            blockList: blockList,
+            limit: limit
+        )
     }
     
     func updateItem(itemID: String, writerNickname: String) async throws {
@@ -208,8 +232,9 @@ final class PostDataSource<T: Codable & Identifiable>: Postable {
 @available(iOS 15, *)
 extension Postable where Item == Article {
     
-    func readRecentItem(category: ANBDCategory) async throws -> Article {
+    func readRecentItem(category: ANBDCategory, blockList: [String]) async throws -> Article {
         let requestQuery = database
+            .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
             .whereField("category", isEqualTo: category.rawValue)
             .order(by: "createdAt", descending: true)
             .limit(to: 1)
@@ -226,8 +251,14 @@ extension Postable where Item == Article {
         return article
     }
     
-    func readItemList(category: ANBDCategory, by order: ArticleOrder, limit: Int) async throws -> [Article] {
+    func readItemList(
+        category: ANBDCategory,
+        by order: ArticleOrder,
+        blockList: [String],
+        limit: Int
+    ) async throws -> [Article] {
         var requestQuery: Query = database
+            .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
             .whereField("category", isEqualTo: category.rawValue)
         
         if let orderQuery {
@@ -272,13 +303,14 @@ extension Postable where Item == Article {
         return articleList
     }
     
-    func readItemList(keyword: String, limit: Int) async throws -> [Article] {
+    func readItemList(keyword: String, blockList: [String], limit: Int) async throws -> [Article] {
         var requestQuery: Query
         
         if let searchQuery {
             requestQuery = searchQuery
         } else {
             requestQuery = database
+                .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
                 .whereFilter(
                     .orFilter([
                         .andFilter([
@@ -319,15 +351,21 @@ extension Postable where Item == Article {
     func refreshOrder(
         category: ANBDCategory,
         by order: ArticleOrder,
+        blockList: [String],
         limit: Int
     ) async throws -> [Article] {
         orderQuery = nil
-        return try await readItemList(category: category, by: order, limit: limit)
+        return try await readItemList(
+            category: category,
+            by: order,
+            blockList: blockList,
+            limit: limit
+        )
     }
     
-    func refreshSearch(keyword: String, limit: Int) async throws -> [Article] {
+    func refreshSearch(keyword: String, blockList: [String], limit: Int) async throws -> [Article] {
         searchQuery = nil
-        return try await readItemList(keyword: keyword, limit: limit)
+        return try await readItemList(keyword: keyword, blockList: blockList, limit: limit)
     }
     
     
@@ -363,8 +401,9 @@ extension Postable where Item == Article {
 @available(iOS 15, *)
 extension Postable where Item == Comment {
     
-    func readItemList(articleID: String) async throws -> [Comment] {
+    func readItemList(articleID: String, blockList: [String]) async throws -> [Comment] {
         guard let snapshot = try? await database
+            .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
             .whereField("articleID", isEqualTo: articleID)
             .order(by: "createdAt", descending: true)
             .getDocuments()
@@ -416,42 +455,35 @@ extension Postable where Item == Trade {
         category: ANBDCategory,
         location: [Location]?,
         itemCategory: [ItemCategory]?,
+        blockList: [String],
         limit: Int
     ) async throws -> [Trade] {
-        var requestQuery: Query
-        
+        var requestQuery = database
+            .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
+            .whereField("category", isEqualTo: category.rawValue)
+            
         if let filterQuery {
             requestQuery = filterQuery
         } else {
             if let location, let itemCategory {
-                requestQuery = database
-                    .whereField("category", isEqualTo: category.rawValue)
+                requestQuery = requestQuery
                     .whereFilter(
                         .andFilter([
                             .whereField("location", in: location.map { $0.rawValue }),
                             .whereField("itemCategory", in: itemCategory.map { $0.rawValue })
                         ])
                     )
-                    .order(by: "createdAt", descending: true)
-                    .limit(to: limit)
             } else if let location {
-                requestQuery = database
-                    .whereField("category", isEqualTo: category.rawValue)
+                requestQuery = requestQuery
                     .whereField("location", in: location.map { $0.rawValue })
-                    .order(by: "createdAt", descending: true)
-                    .limit(to: limit)
             } else if let itemCategory {
-                requestQuery = database
-                    .whereField("category", isEqualTo: category.rawValue)
+                requestQuery = requestQuery
                     .whereField("itemCategory", in: itemCategory.map { $0.rawValue })
-                    .order(by: "createdAt", descending: true)
-                    .limit(to: limit)
-            } else {
-                requestQuery = database
-                    .whereField("category", isEqualTo: category.rawValue)
-                    .order(by: "createdAt", descending: true)
-                    .limit(to: limit)
             }
+            
+            requestQuery = requestQuery
+                .order(by: "createdAt", descending: true)
+                .limit(to: limit)
         }
         
         guard let lastSnapshot = try await requestQuery
@@ -475,13 +507,14 @@ extension Postable where Item == Trade {
         return tradeList
     }
     
-    func readItemList(keyword: String, limit: Int) async throws -> [Trade] {
+    func readItemList(keyword: String, blockList: [String], limit: Int) async throws -> [Trade] {
         var requestQuery: Query
         
         if let searchQuery {
             requestQuery = searchQuery
         } else {
             requestQuery = database
+                .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
                 .whereFilter(
                     .orFilter([
                         .whereField("itemCategory", isEqualTo: keyword),
@@ -522,8 +555,9 @@ extension Postable where Item == Trade {
         return tradeList
     }
     
-    func readRecentItemList(category: ANBDCategory) async throws -> [Trade] {
+    func readRecentItemList(category: ANBDCategory, blockList: [String]) async throws -> [Trade] {
         let query = database
+            .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
             .whereField("category", isEqualTo: category.rawValue)
             .whereField("tradeState", isEqualTo: 0)
             .order(by: "createdAt", descending: true)
@@ -544,6 +578,7 @@ extension Postable where Item == Trade {
         category: ANBDCategory,
         location: [Location]?,
         itemCategory: [ItemCategory]?,
+        blockList: [String],
         limit: Int
     ) async throws -> [Trade] {
         filterQuery = nil
@@ -552,14 +587,15 @@ extension Postable where Item == Trade {
             category: category,
             location: location,
             itemCategory: itemCategory,
+            blockList: blockList,
             limit: limit
         )
     }
     
-    func refreshSearch(keyword: String, limit: Int) async throws -> [Trade] {
+    func refreshSearch(keyword: String, blockList: [String], limit: Int) async throws -> [Trade] {
         guard !keyword.isEmpty else { return [] }
         searchQuery = nil
-        return try await readItemList(keyword: keyword, limit: limit)
+        return try await readItemList(keyword: keyword, blockList: blockList, limit: limit)
     }
     
     

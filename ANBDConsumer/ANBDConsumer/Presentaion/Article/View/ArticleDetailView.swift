@@ -28,7 +28,7 @@ struct ArticleDetailView: View {
     @State private var isShowingCustomAlertArticle: Bool = false
     @State private var isShowingCustomAlertComment: Bool = false
     @State private var isShowingCommentEditView: Bool = false
-    
+    @State private var isShowingUserBlockAlertView: Bool = false
     @State private var idx: Int = 0
     
     @State private var writerUser: User?
@@ -53,12 +53,16 @@ struct ArticleDetailView: View {
                                 HStack {
                                     if let writerUser {
                                         if writerUser.id == "abcd1234" {
-                                            Image("ANBDWarning")
+                                            Image("DefaultUserProfileImage")
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fill)
                                                 .frame(width: 33, height: 33)
                                                 .clipShape(Circle())
-                                        } else  {
+                                                .overlay(
+                                                    Circle()
+                                                        .stroke(Color.gray100, lineWidth: 1)
+                                                )
+                                        } else {
                                             KFImage(URL(string: writerUser.profileImage))
                                                 .placeholder({ _ in
                                                     ProgressView()
@@ -109,20 +113,19 @@ struct ArticleDetailView: View {
                                     .font(ANBDFont.body1)
                                 
                                 ForEach(0..<articleViewModel.detailImages.count, id: \.self) { i in
-                                    if let image = UIImage(data: articleViewModel.detailImages[i]) {
-                                        Image(uiImage: image)
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .scaledToFit()
-                                            .onTapGesture {
-                                                isShowingImageDetailView.toggle()
-                                                idx = i
-                                            }
-                                            .onAppear {
-                                                coordinator.isLoading = false
-                                            }
-                                            .padding(.top, 10)
-                                    }
+                                    let url = articleViewModel.detailImages[i]
+                                    
+                                    KFImage(url)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .onTapGesture {
+                                            isShowingImageDetailView.toggle()
+                                            idx = i
+                                        }
+                                        .onAppear {
+                                            coordinator.isLoading = false
+                                        }
+                                        .padding(.top, 3)
                                 }
                                 
                                 if coordinator.isLoading {
@@ -190,26 +193,38 @@ struct ArticleDetailView: View {
                                 
                                 ForEach(articleViewModel.comments.reversed()) { comment in
                                     HStack(alignment: .top) {
-                                        KFImage(URL(string: comment.writerProfileImageURL))
-                                            .placeholder({ _ in
-                                                ProgressView()
-                                            })
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 40, height: 40)
-                                            .clipShape(.circle)
-                                            .onTapGesture {
-                                                Task {
-                                                    commentUser = await myPageViewModel.getUserInfo(userID: comment.writerID)
-                                                    coordinator.user = commentUser
-                                                    switch coordinator.selectedTab {
-                                                    case .home, .article, .trade, .chat:
-                                                        coordinator.appendPath(.userPageView)
-                                                    case .mypage:
-                                                        coordinator.pop()
+                                        if comment.writerNickname == "탈퇴한 사용자" {
+                                            Image("DefaultUserProfileImage")
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: 33, height: 33)
+                                                .clipShape(Circle())
+                                                .overlay(
+                                                    Circle()
+                                                        .stroke(Color.gray100, lineWidth: 1)
+                                                )
+                                        } else {
+                                            KFImage(URL(string: comment.writerProfileImageURL))
+                                                .placeholder({ _ in
+                                                    ProgressView()
+                                                })
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: 40, height: 40)
+                                                .clipShape(.circle)
+                                                .onTapGesture {
+                                                    Task {
+                                                        commentUser = await myPageViewModel.getUserInfo(userID: comment.writerID)
+                                                        coordinator.user = commentUser
+                                                        switch coordinator.selectedTab {
+                                                        case .home, .article, .trade, .chat:
+                                                            coordinator.appendPath(.userPageView)
+                                                        case .mypage:
+                                                            coordinator.pop()
+                                                        }
                                                     }
                                                 }
-                                            }
+                                        }
                                         
                                         VStack(alignment: .leading) {
                                             HStack {
@@ -267,7 +282,8 @@ struct ArticleDetailView: View {
                                 }
                             }
                         }
-                        .padding()
+                        .padding(.top, 20)
+                        .padding(.horizontal)
                     }
                 }
                 .onTapGesture {
@@ -320,6 +336,16 @@ struct ArticleDetailView: View {
                                 Label("삭제하기", systemImage: "trash")
                             }
                         } else {
+                            if let writerUser {
+                                if writerUser.id != "abcd1234" {
+                                    Button {
+                                        isShowingUserBlockAlertView.toggle()
+                                    } label: {
+                                        Label("사용자 차단하기", systemImage: "person.slash")
+                                    }
+                                }
+                            }
+                            
                             Button(role: .destructive) {
                                 coordinator.reportType = .article
                                 coordinator.reportedObjectID = article.id
@@ -351,7 +377,8 @@ struct ArticleDetailView: View {
                     
                     isLiked = user.likeArticles.contains(articleViewModel.article.id)
                     
-                    articleViewModel.detailImages = try await articleViewModel.loadDetailImages(path: .article, containerID: articleViewModel.article.id, imagePath: articleViewModel.article.imagePaths)
+                    articleViewModel.detailImages = try await articleViewModel.loadDetailImagesURL(path: .article, containerID: articleViewModel.article.id, imagePath: articleViewModel.article.imagePaths)
+                    articleViewModel.detailImagesData = try await articleViewModel.loadDetailImages(path: .article, containerID: articleViewModel.article.id, imagePath: articleViewModel.article.imagePaths)
                     await articleViewModel.loadCommentList(articleID: article.id)
                     writerUser = await myPageViewModel.getUserInfo(userID: article.writerID)
                     
@@ -361,7 +388,7 @@ struct ArticleDetailView: View {
                 ArticleCreateView(isShowingCreateView: $isShowingArticleCreateView, category: article.category, commentCount: articleViewModel.comments.count, isNewArticle: false, article: articleViewModel.article)
             }
             .fullScreenCover(isPresented: $isShowingImageDetailView) {
-                ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $articleViewModel.detailImages, idx: $idx)
+                ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $articleViewModel.detailImagesData, idx: $idx)
             }
             .fullScreenCover(isPresented: $isShowingCommentEditView) {
                 CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: articleViewModel.comment, isEditComment: false)
@@ -386,46 +413,65 @@ struct ArticleDetailView: View {
                         await articleViewModel.loadCommentList(articleID: article.id)
                     }
                 }
+            } else if isShowingUserBlockAlertView {
+                CustomAlertView(isShowingCustomAlert: $isShowingUserBlockAlertView, viewType: .userBlocked) {
+                    Task {
+                        await articleViewModel.blockUser(userID: UserStore.shared.user.id, blockUserID: articleViewModel.article.writerID)
+                        dismiss()
+                    }
+                }
             }
         }
     }
     
     var commentTextView: some View {
         VStack {
-            HStack {
-                let trimmedCommentText = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
-                
-                TextField("댓글을 입력해주세요.", text: $commentText, axis: .vertical)
-                    .font(ANBDFont.Caption3)
-                    .lineLimit(3, reservesSpace: false)
-                    .keyboardType(.twitter)
-                    .padding(13)
-                    .background {
-                        Rectangle()
-                            .clipShape(RoundedRectangle(cornerRadius: 20))
-                            .foregroundStyle(colorScheme == .dark ? .gray700 : .gray100)
-                    }
-                
-                    .padding(.vertical, 5)
-                Button {
-                    if !trimmedCommentText.isEmpty {
-                        Task {
-                            await articleViewModel.writeComment(articleID: article.id, commentText: trimmedCommentText)
-                            commentText = ""
+            if writerUser?.id != "abcd1234" {
+                HStack {
+                    let trimmedCommentText = commentText.trimmingCharacters(in: .whitespacesAndNewlines)
+                    
+                    TextField("댓글을 입력해주세요.", text: $commentText, axis: .vertical)
+                        .font(ANBDFont.Caption3)
+                        .lineLimit(3, reservesSpace: false)
+                        .keyboardType(.twitter)
+                        .padding(13)
+                        .background {
+                            Rectangle()
+                                .clipShape(RoundedRectangle(cornerRadius: 20))
+                                .foregroundStyle(colorScheme == .dark ? .gray700 : .gray100)
                         }
+                    
+                        .padding(.vertical, 5)
+                    Button {
+                        if !trimmedCommentText.isEmpty {
+                            Task {
+                                await articleViewModel.writeComment(articleID: article.id, commentText: trimmedCommentText)
+                                commentText = ""
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "paperplane.fill")
+                            .font(ANBDFont.pretendardSemiBold(28))
+                            .rotationEffect(.degrees(45))
+                            .padding(.trailing, 4)
+                            .foregroundStyle(commentText.isEmpty || trimmedCommentText.isEmpty ? (colorScheme == .dark ? .gray600 : .gray300) : .accent)
                     }
-                } label: {
-                    Image(systemName: "paperplane.fill")
-                        .font(ANBDFont.pretendardSemiBold(28))
-                        .rotationEffect(.degrees(45))
-                        .foregroundStyle(commentText.isEmpty || trimmedCommentText.isEmpty ? (colorScheme == .dark ? .gray600 : .gray300) : .accent)
+                    .disabled(commentText.isEmpty || trimmedCommentText.isEmpty)
                 }
-                .disabled(commentText.isEmpty || trimmedCommentText.isEmpty)
+                .padding(.horizontal, 10)
+                .padding(.bottom, 5)
+                .background(colorScheme == .dark ? .gray50 : .white)
+            } else {
+                Text("이 게시글에는 댓글을 작성할 수 없습니다.")
+                    .font(ANBDFont.SubTitle1)
+                    .foregroundColor(.gray300)
+                    .background(colorScheme == .dark ? Color.black : Color.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
             }
-            .padding(.horizontal, 10)
-            .toolbar(.hidden, for: .tabBar)
-            .background(colorScheme == .dark ? .gray50 : .white)
         }
+        .toolbar(.hidden, for: .tabBar)
     }
     
     private var navigationTitleText: String {

@@ -41,7 +41,8 @@ final class ArticleViewModel: ObservableObject {
                                               content: "")
     
     @Published var commentText: String = ""
-    @Published var detailImages: [Data] = []
+    @Published var detailImages: [URL] = []
+    @Published var detailImagesData: [Data] = []
 
     func getOneArticle(article: Article) {
         self.article = article
@@ -82,9 +83,25 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
+    func loadDetailImagesURL(path: StoragePath, containerID: String, imagePath: [String]) async throws -> [URL] {
+        var detailImages: [URL] = []
+        
+        for image in imagePath {
+            do {
+                detailImages.append(
+                    try await storageManager.downloadImageToUrl(path: path, containerID: containerID, imagePath: image)
+                )
+            } catch {
+                #if DEBUG
+                print("loadDetailImages: \(error)")
+                #endif
+            }
+        }
+        return detailImages
+    }
+    
     func loadDetailImages(path: StoragePath, containerID: String, imagePath: [String]) async throws -> [Data] {
         var detailImages: [Data] = []
-        
         
         for image in imagePath {
             do {
@@ -95,10 +112,6 @@ final class ArticleViewModel: ObservableObject {
                 #if DEBUG
                 print("loadDetailImages: \(error)")
                 #endif
-                //이미지 예외
-                let image = UIImage(named: "ANBDWarning")
-                let imageData = image?.pngData()
-                detailImages.append( imageData ?? Data() )
             }
         }
         return detailImages
@@ -192,11 +205,20 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
+    func loadCellImageURL(article: Article, path: String) async -> URL {
+        do {
+            return try await storageManager.downloadImageToUrl(path: .article, containerID: "\(article.id)/thumbnail", imagePath: path)
+        } catch {
+            print(error.localizedDescription)
+            return URL(string: "https://firebasestorage.googleapis.com/v0/b/anbd-project3.appspot.com/o/Profile%2FDefaultUserProfileImage.png?alt=media&token=fc0e56d9-6855-4ead-ab28-d8ff789799b3")!
+        }
+    }
+    
     /// articleDetail, create view에서 사용하는 load article
     func loadOneArticle(articleID: String) async {
         do {
             let loadedArticle = try await articleUseCase.loadArticle(articleID: articleID)
-            self.detailImages = try await loadDetailImages(path: .article, containerID: self.article.id, imagePath: self.article.imagePaths)
+            self.detailImages = try await loadDetailImagesURL(path: .article, containerID: self.article.id, imagePath: self.article.imagePaths)
 
             self.article = loadedArticle
         } catch {
@@ -219,6 +241,22 @@ final class ArticleViewModel: ObservableObject {
                 return
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
+        }
+    }
+    
+    func blockUser(userID: String, blockUserID: String) async {
+        do {
+            try await userUsecase.blockUser(userID: userID, blockUserID: blockUserID)
+            ToastManager.shared.toast = Toast(style: .success, message: "\(article.writerNickname)님을 차단했습니다.")
+        } catch {
+            #if DEBUG
+            print("\(error.localizedDescription)")
+            #endif
+            guard let error = error as? UserError else {
+                ToastManager.shared.toast = Toast(style: .error, message: "\(article.writerNickname)님 차단에 실패하였습니다.")
+                return
+            }
+            ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
         }
     }
     

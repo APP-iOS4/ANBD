@@ -311,17 +311,14 @@ struct ArticleCreateView: View {
                     if !isNewArticle {
                         guard let article = article else { return true }
                         
-                        return title == article.title &&
-                               content == article.content &&
-                               category == article.category &&
-                               selectedImageData.isEmpty && deletedPhotosData.isEmpty ||
-                               (title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
-                               content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                        return title == article.title && content == article.content && category == article.category &&
+                        (tmpSelectedData.isEmpty || selectedImageData.isEmpty && deletedPhotosData.isEmpty) ||
+                        (title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                         
                     } else {
                         return title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
-                               content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
-                               selectedImageData.isEmpty
+                        content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                        selectedImageData.isEmpty
                     }
                 }())
             }
@@ -332,9 +329,10 @@ struct ArticleCreateView: View {
                         if let article = article {
                             let isTitleChanged = title != article.title
                             let isContentChanged = content != article.content
-                            let isImageChanged = tmpSelectedData != selectedImageData
+                            let isCategoryChanged = category != article.category
+                            let isImageChanged = tmpSelectedData != selectedImageData && !selectedImageData.isEmpty || !deletedPhotosData.isEmpty
                             
-                            if isTitleChanged || isContentChanged || isImageChanged {
+                            if isTitleChanged || isContentChanged || isImageChanged || isCategoryChanged {
                                 isShowingCustomEditAlert.toggle()
                             } else {
                                 isShowingCreateView.toggle()

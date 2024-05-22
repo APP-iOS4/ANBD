@@ -69,12 +69,24 @@ struct TradeRepositoryImpl: TradeRepository {
     }
     
     func readTradeList(limit: Int) async throws -> [Trade] {
-        let tradeList = try await tradeDataSource.readItemList(limit: limit)
+        var blockList: [String] = []
+        
+        if let userID = Auth.auth().currentUser?.uid {
+            blockList = try await userDataSource.readUserInfo(userID: userID).blockList
+        }
+        
+        let tradeList = try await tradeDataSource.readItemList(blockList: blockList, limit: limit)
         return tradeList
     }
     
     func readTradeList(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [Trade] {
-        let tradeList = try await tradeDataSource.readItemList(writerID: writerID, category: category, limit: limit)
+        var blockList: [String] = []
+        
+        if let userID = Auth.auth().currentUser?.uid {
+            blockList = try await userDataSource.readUserInfo(userID: userID).blockList
+        }
+        
+        let tradeList = try await tradeDataSource.readItemList(writerID: writerID, category: category, blockList: blockList, limit: limit)
         return tradeList
     }
     
@@ -84,10 +96,17 @@ struct TradeRepositoryImpl: TradeRepository {
         itemCategory: [ItemCategory]?,
         limit: Int
     ) async throws -> [Trade] {
+        var blockList: [String] = []
+        
+        if let userID = Auth.auth().currentUser?.uid {
+            blockList = try await userDataSource.readUserInfo(userID: userID).blockList
+        }
+        
         let tradeList = try await tradeDataSource.readItemList(
             category: category,
             location: location,
-            itemCategory: itemCategory,
+            itemCategory: itemCategory, 
+            blockList: blockList,
             limit: limit
         )
         return tradeList
@@ -96,12 +115,24 @@ struct TradeRepositoryImpl: TradeRepository {
     func readTradeList(keyword: String, limit: Int) async throws -> [Trade] {
         guard !keyword.isEmpty else { return [] }
         
-        let tradeList = try await tradeDataSource.readItemList(keyword: keyword, limit: limit)
+        var blockList: [String] = []
+        
+        if let userID = Auth.auth().currentUser?.uid {
+            blockList = try await userDataSource.readUserInfo(userID: userID).blockList
+        }
+        
+        let tradeList = try await tradeDataSource.readItemList(keyword: keyword, blockList: blockList, limit: limit)
         return tradeList
     }
     
     func readRecentTradeList(category: ANBDCategory) async throws -> [Trade] {
-        let tradeList = try await tradeDataSource.readRecentItemList(category: category)
+        var blockList: [String] = []
+        
+        if let userID = Auth.auth().currentUser?.uid {
+            blockList = try await userDataSource.readUserInfo(userID: userID).blockList
+        }
+        
+        let tradeList = try await tradeDataSource.readRecentItemList(category: category, blockList: blockList)
         return tradeList
     }
     
@@ -111,12 +142,24 @@ struct TradeRepositoryImpl: TradeRepository {
     }
     
     func refreshAll(limit: Int) async throws -> [Trade] {
-        let refreshedList = try await tradeDataSource.refreshAll(limit: limit)
+        var blockList: [String] = []
+        
+        if let userID = Auth.auth().currentUser?.uid {
+            blockList = try await userDataSource.readUserInfo(userID: userID).blockList
+        }
+        
+        let refreshedList = try await tradeDataSource.refreshAll(blockList: blockList, limit: limit)
         return refreshedList
     }
     
     func refreshWriterID(writerID: String, category: ANBDCategory?, limit: Int) async throws -> [Trade] {
-        let refreshedList = try await tradeDataSource.refreshWriterID(writerID: writerID, category: category, limit: limit)
+        var blockList: [String] = []
+        
+        if let userID = Auth.auth().currentUser?.uid {
+            blockList = try await userDataSource.readUserInfo(userID: userID).blockList
+        }
+        
+        let refreshedList = try await tradeDataSource.refreshWriterID(writerID: writerID, category: category, blockList: blockList, limit: limit)
         return refreshedList
     }
     
@@ -126,10 +169,17 @@ struct TradeRepositoryImpl: TradeRepository {
         itemCategory: [ItemCategory]?,
         limit: Int
     ) async throws -> [Trade] {
+        var blockList: [String] = []
+        
+        if let userID = Auth.auth().currentUser?.uid {
+            blockList = try await userDataSource.readUserInfo(userID: userID).blockList
+        }
+        
         let refreshedList = try await tradeDataSource.refreshFilter(
             category: category,
             location: location,
-            itemCategory: itemCategory,
+            itemCategory: itemCategory, 
+            blockList: blockList,
             limit: limit
         )
         return refreshedList
@@ -138,7 +188,13 @@ struct TradeRepositoryImpl: TradeRepository {
     func refreshSearch(keyword: String, limit: Int) async throws -> [Trade] {
         guard !keyword.isEmpty else { return [] }
         
-        let refreshedList = try await tradeDataSource.refreshSearch(keyword: keyword, limit: limit)
+        var blockList: [String] = []
+        
+        if let userID = Auth.auth().currentUser?.uid {
+            blockList = try await userDataSource.readUserInfo(userID: userID).blockList
+        }
+        
+        let refreshedList = try await tradeDataSource.refreshSearch(keyword: keyword, blockList: blockList, limit: limit)
         return refreshedList
     }
     
@@ -205,18 +261,29 @@ struct TradeRepositoryImpl: TradeRepository {
         try await tradeDataSource.deleteItem(itemID: trade.id)
         try await userDataSource.updateUserInfoList(tradeID: trade.id)
         
-        switch trade.category {
-        case .accua:
-            userInfo.accuaCount -= 1
-        case .nanua:
-            userInfo.nanuaCount -= 1
-        case .baccua:
-            userInfo.baccuaCount -= 1
-        case .dasi:
-            userInfo.dasiCount -= 1
-        }
+        if userInfo.userLevel == .consumer {
+            switch trade.category {
+            case .nanua:
+                userInfo.nanuaCount -= 1
+            case .baccua:
+                userInfo.baccuaCount -= 1
+            default: return
+            }
         
-        try await userDataSource.updateUserPostCount(user: userInfo)
+            try await userDataSource.updateUserPostCount(user: userInfo)
+        } else if userInfo.userLevel == .admin {
+            var writerInfo = try await userDataSource.readUserInfo(userID: trade.writerID)
+            
+            switch trade.category {
+            case .nanua:
+                writerInfo.nanuaCount -= 1
+            case .baccua:
+                writerInfo.baccuaCount -= 1
+            default: return
+            }
+            
+            try await userDataSource.updateUserPostCount(user: writerInfo)
+        }
     }
     
     func resetQuery() {

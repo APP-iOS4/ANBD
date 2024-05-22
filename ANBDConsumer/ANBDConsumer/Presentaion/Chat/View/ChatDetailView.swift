@@ -17,7 +17,6 @@ struct ChatDetailView: View {
     @Environment(\.colorScheme) var colorScheme
     
     @State var channelID: String?
-    //    @State var channel: Channel?
     
     /// 보낼 메시지 관련 변수
     @State private var message: String = ""
@@ -30,6 +29,7 @@ struct ChatDetailView: View {
     @State private var imageData: [Data] = []
     @State private var isShowingStateChangeCustomAlert: Bool = false
     @State private var isWithdrawlUser: Bool = false
+    @State private var isShowingUserBlockAlertView: Bool = false
     
     var body: some View {
         ZStack {
@@ -123,6 +123,16 @@ struct ChatDetailView: View {
                 }
             }
             
+            /// 사용자 차단하기 Custom Alert View
+            if isShowingUserBlockAlertView {
+                CustomAlertView(isShowingCustomAlert: $isShowingUserBlockAlertView, viewType: .userBlocked) {
+                    Task {
+                        await chatViewModel.blockUnBlockUser()
+                    }
+                }
+            }
+            
+            /// 채팅방 나가기 Custom Alert View
             if isShowingCustomAlertView {
                 CustomAlertView(isShowingCustomAlert: $isShowingCustomAlertView, viewType: .leaveChatRoom) {
                     Task {
@@ -145,6 +155,20 @@ struct ChatDetailView: View {
             if !chatViewModel.messages.isEmpty {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
+                        Button {
+                            if chatViewModel.isBlocked {
+                                Task {
+                                    await chatViewModel.blockUnBlockUser()
+                                    ToastManager.shared.toast = Toast(style: .success, message: "\(chatViewModel.selectedUser.nickname)님 차단을 해제했습니다.")
+                                }
+                            } else {
+                                isShowingUserBlockAlertView.toggle()
+                                ToastManager.shared.toast = Toast(style: .success, message: "\(chatViewModel.selectedUser.nickname)님을 차단했습니다.")
+                            }
+                        } label: {
+                            Label("\(chatViewModel.isBlocked ? "차단 해제하기": "사용자 차단하기")", systemImage: "person.slash")
+                        }
+                        
                         Button {
                             coordinator.reportType = .chatRoom
                             if let channel = chatViewModel.selectedChannel {
@@ -227,14 +251,14 @@ struct ChatDetailView: View {
                     .foregroundStyle(.gray400)
                     .padding(.horizontal, 5)
             }
-            .disabled(isWithdrawlUser)
+            .disabled(isWithdrawlUser || chatViewModel.isBlocked)
             
-            TextField(isWithdrawlUser ? "탈퇴한 회원이므로 메시지를 보낼 수 없습니다" : "메시지 보내기", text: $message, axis: .vertical)
+            TextField(isWithdrawlUser ? "탈퇴한 회원이므로 메시지를 보낼 수 없습니다" : (chatViewModel.isBlocked ? "차단한 사용자이므로 메시지를 보낼 수 없습니다": "메시지 보내기"), text: $message, axis: .vertical)
                 .lineLimit(3, reservesSpace: false)
                 .foregroundStyle(.gray900)
                 .font(ANBDFont.Caption3)
                 .padding(13)
-                .disabled(isWithdrawlUser)
+                .disabled(isWithdrawlUser || chatViewModel.isBlocked)
                 .background {
                     Rectangle()
                         .fill(colorScheme == .light ? .gray50 : .gray700)

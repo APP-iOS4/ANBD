@@ -13,12 +13,16 @@ protocol UserDataSource {
     func createUserInfo(user: User) async throws -> User
     func readUserInfo(userID: String) async throws -> User
     func readUserInfoList(limit: Int) async throws -> [User]
+    func readBlockList(blockList: [String], limit: Int) async throws -> [User]
     func refreshAll(limit: Int) async throws -> [User]
+    func refreshBlock(blockList: [String], limit: Int) async throws -> [User]
     func checkUser(email: String) async throws
     func checkUser(nickname: String) async throws
     func updateUserInfo(user: User) async throws
     func updateUserFCMToken(userID: String, fcmToken: String) async throws
     func updateUserPostCount(user: User) async throws
+    func blockUser(userID: String, blockUserID: String) async throws
+    func unblockUser(userID: String, unblockUserID: String) async throws
     func updateUserInfoList(articleID: String) async throws
     func updateUserInfoList(tradeID: String) async throws
     func deleteUserInfo(userID: String) async throws
@@ -30,6 +34,7 @@ final class DefaultUserDataSource: UserDataSource {
     private let userDB = Firestore.firestore().collection("User")
     
     private var allQuery: Query?
+    private var blockQuery: Query?
     
     init() { }
     
@@ -89,9 +94,48 @@ final class DefaultUserDataSource: UserDataSource {
         return userInfoList
     }
     
+    func readBlockList(blockList: [String], limit: Int) async throws -> [User] {
+        var requestQuery: Query
+        
+        if let blockQuery {
+            requestQuery = blockQuery
+        } else {
+            requestQuery = userDB
+                .whereField("id", in: blockList.isEmpty ? [""] : blockList)
+                .limit(to: limit)
+        }
+        
+        guard let lastSnapshot = try await requestQuery
+            .getDocuments()
+            .documents
+            .last
+        else {
+            print("end")
+            return []
+        }
+        
+        let next = requestQuery.start(afterDocument: lastSnapshot)
+        self.blockQuery = next
+        
+        guard let snapshot = try? await requestQuery
+            .getDocuments()
+            .documents
+        else {
+            throw DBError.getDocumentError
+        }
+        
+        let blockUserList = snapshot.compactMap { try? $0.data(as: User.self) }
+        return blockUserList
+    }
+    
     func refreshAll(limit: Int) async throws -> [User] {
         allQuery = nil
         return try await readUserInfoList(limit: limit)
+    }
+    
+    func refreshBlock(blockList: [String], limit: Int) async throws -> [User] {
+        blockQuery = nil
+        return try await readBlockList(blockList: blockList, limit: limit)
     }
     
     func checkUser(email: String) async throws {
@@ -142,6 +186,24 @@ final class DefaultUserDataSource: UserDataSource {
             "nanuaCount": user.nanuaCount,
             "baccuaCount": user.baccuaCount,
             "dasiCount": user.dasiCount
+        ])
+        else {
+            throw DBError.updateDocumentError
+        }
+    }
+    
+    func blockUser(userID: String, blockUserID: String) async throws {
+        guard let _ = try? await userDB.document(userID).updateData([
+            "blockList": FieldValue.arrayUnion([blockUserID])
+        ])
+        else {
+            throw DBError.updateDocumentError
+        }
+    }
+    
+    func unblockUser(userID: String, unblockUserID: String) async throws {
+        guard let _ = try? await userDB.document(userID).updateData([
+            "blockList": FieldValue.arrayRemove([unblockUserID])
         ])
         else {
             throw DBError.updateDocumentError

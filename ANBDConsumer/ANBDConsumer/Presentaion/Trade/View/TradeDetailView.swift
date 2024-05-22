@@ -23,6 +23,7 @@ struct TradeDetailView: View {
     @State private var isShowingImageDetailView: Bool = false
     @State private var isShowingStateChangeCustomAlert: Bool = false
     @State private var isShowingDeleteCustomAlert: Bool = false
+    @State private var isShowingBlockingAlert: Bool = false
     @State private var isLoading: Bool = false
     @Environment(\.dismiss) private var dismiss
     
@@ -42,17 +43,19 @@ struct TradeDetailView: View {
                         //이미지
                         TabView(selection: $idx) {
                             ForEach(0..<tradeViewModel.detailImages.count, id: \.self) { i in
-                                if let image = UIImage(data: tradeViewModel.detailImages[i]) {
-                                    Image(uiImage: image)
-                                        .resizable()
-                                        .scaledToFill()
-                                        .onTapGesture {
-                                            isShowingImageDetailView.toggle()
-                                            idx = i
-                                        }
-                                } else {
-                                    ProgressView()
-                                }
+                                let url = tradeViewModel.detailImages[i]
+                                
+                                KFImage(url)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .onTapGesture {
+                                        isShowingImageDetailView.toggle()
+                                        idx = i
+                                    }
+                                    .onAppear {
+                                        coordinator.isLoading = false
+                                    }
+                                    .padding(.top, 3)
                             }
                         }
                         .frame(height: 300)
@@ -150,6 +153,16 @@ struct TradeDetailView: View {
                     }
                 }
             }
+            if isShowingBlockingAlert {
+                CustomAlertView(isShowingCustomAlert: $isShowingBlockingAlert, viewType: .userBlocked) {
+                    Task {
+                        guard let writerUser else { return }
+                        
+                        await myPageViewModel.blockUser(userID: UserStore.shared.user.id, blockingUserID: writerUser.id)
+                        coordinator.pop()
+                    }
+                }
+            }
         }//ZStack
         .onAppear {
             tradeViewModel.getOneTrade(trade: trade)
@@ -157,10 +170,12 @@ struct TradeDetailView: View {
             Task {
                 writerUser = await myPageViewModel.getUserInfo(userID: tradeViewModel.trade.writerID)
                 tradeViewModel.detailImages = try await tradeViewModel.loadDetailImages(path: .trade, containerID: tradeViewModel.trade.id, imagePath: tradeViewModel.trade.imagePaths)
+                tradeViewModel.detailImagesData = try await tradeViewModel.loadOriginImages(path: .trade, containerID: tradeViewModel.trade.id, imagePath: tradeViewModel.trade.imagePaths)
             }
         }
         .onDisappear {
             tradeViewModel.detailImages = []
+            tradeViewModel.detailImagesData = []
         }
         .toolbar(.hidden, for: .tabBar)
         .fullScreenCover(isPresented: $isShowingCreat, onDismiss: {
@@ -169,7 +184,7 @@ struct TradeDetailView: View {
             TradeCreateView(isShowingCreate: $isShowingCreat, isNewProduct: false, trade: tradeViewModel.trade)
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
-            ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $tradeViewModel.detailImages, idx: $idx)
+            ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $tradeViewModel.detailImagesData, idx: $idx)
         }
         .navigationTitle(tradeViewModel.trade.category == .nanua ? "나눠쓰기" : "바꿔쓰기")
         .navigationBarTitleDisplayMode(.inline)
@@ -178,6 +193,11 @@ struct TradeDetailView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     if user.id != tradeViewModel.trade.writerID {
+                        Button {
+                            isShowingBlockingAlert.toggle()
+                        } label: {
+                            Label("사용자 차단하기", systemImage: "person.slash")
+                        }
                         Button(role: .destructive) {
                             coordinator.reportType = .trade
                             coordinator.reportedObjectID = trade.id

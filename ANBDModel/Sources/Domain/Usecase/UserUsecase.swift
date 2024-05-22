@@ -11,7 +11,9 @@ import Foundation
 public protocol UserUsecase {
     func getUserInfo(userID: String) async throws -> User
     func getUserInfoList(limit: Int) async throws -> [User]
+    func getBlockList(userID: String, limit: Int) async throws -> [User]
     func refreshAllUserInfoList(limit: Int) async throws -> [User]
+    func refreshBlockUserList(userID: String, limit: Int) async throws -> [User]
     func checkDuplicatedNickname(nickname: String) async -> Bool
     func updateUserInfo(user: User) async throws
     func updateUserFCMToken(userID: String, fcmToken: String) async throws
@@ -19,6 +21,8 @@ public protocol UserUsecase {
                              before: ANBDCategory,
                              after: ANBDCategory) async throws
     func updateUserProfile(user: User, profileImage: Data?) async throws
+    func blockUser(userID: String, blockUserID: String) async throws
+    func unblockUser(userID: String, unblockUserID: String) async throws
 }
 
 @available(iOS 15, *)
@@ -43,8 +47,20 @@ public struct DefaultUserUsecase: UserUsecase {
         try await userRepository.readUserInfoList(limit: limit)
     }
     
+    public func getBlockList(userID: String, limit: Int) async throws -> [User] {
+        let blockList = try await userRepository.readUserInfo(userID: userID).blockList
+        let blockedUserList = try await userRepository.readBlockList(blockList: blockList, limit: limit)
+        return blockedUserList
+    }
+    
     public func refreshAllUserInfoList(limit: Int) async throws -> [User] {
         try await userRepository.refreshAll(limit: limit)
+    }
+    
+    public func refreshBlockUserList(userID: String, limit: Int) async throws -> [User] {
+        let blockList = try await userRepository.readUserInfo(userID: userID).blockList
+        let blockedUserList = try await userRepository.refreshBlock(blockList: blockList, limit: limit)
+        return blockedUserList
     }
     
     /// User의 정보를 수정한다. (profile, level)
@@ -84,6 +100,14 @@ public struct DefaultUserUsecase: UserUsecase {
             before: before,
             after: after
         )
+    }
+    
+    public func blockUser(userID: String, blockUserID: String) async throws {
+        try await userRepository.blockUser(userID: userID, blockUserID: blockUserID)
+    }
+    
+    public func unblockUser(userID: String, unblockUserID: String) async throws {
+        try await userRepository.unblockUser(userID: userID, unblockUserID: unblockUserID)
     }
     
     /// 닉네임 중복체크 API

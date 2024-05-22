@@ -24,7 +24,8 @@ final class TradeViewModel: ObservableObject {
     
     @Published var selectedItemCategory: ItemCategory = .digital
     @Published var selectedLocation: Location = .seoul
-    @Published var detailImages: [Data] = []
+    @Published var detailImages: [URL] = []
+    @Published var detailImagesData: [Data] = []
     
     @State private var isDone: Bool = false
     
@@ -112,6 +113,7 @@ final class TradeViewModel: ObservableObject {
         do {
             self.trade = try await tradeUseCase.loadTrade(tradeID: trade.id)
             self.detailImages = try await loadDetailImages(path: .trade, containerID: self.trade.id, imagePath: self.trade.imagePaths)
+            self.detailImagesData = try await loadOriginImages(path: .trade, containerID: self.trade.id, imagePath: self.trade.imagePaths)
         } catch {
             #if DEBUG
             print("trade 하나 불러오기 실패: \(error)")
@@ -119,23 +121,18 @@ final class TradeViewModel: ObservableObject {
         }
     }
     
-    func loadDetailImages(path: StoragePath, containerID: String, imagePath: [String]) async throws -> [Data] {
-        var detailImages: [Data] = []
+    func loadDetailImages(path: StoragePath, containerID: String, imagePath: [String]) async throws -> [URL] {
+        var detailImages: [URL] = []
         
         for image in imagePath {
             do {
                 detailImages.append( 
-                    try await storageManager.downloadImage(path: path, containerID: containerID, imagePath: image)
+                    try await storageManager.downloadImageToUrl(path: path, containerID: containerID, imagePath: image)
                 )
             } catch {
                 #if DEBUG
                 print("loadDetailImages: \(error)")
                 #endif
-                //이미지 예외
-                let image = UIImage(named: "ANBDWarning")
-                let imageData = image?.pngData()
-                detailImages.append( imageData ?? Data() )
-                
                 guard let error = error as? StorageError else {
                     ToastManager.shared.toast = Toast(style: .error, message: "사진 불러오기에 실패하였습니다.")
                     return detailImages
@@ -293,6 +290,29 @@ final class TradeViewModel: ObservableObject {
             }
             ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
         }
+    }
+    
+    func loadOriginImages(path: StoragePath, containerID: String, imagePath: [String]) async throws -> [Data] {
+        var detailImages: [Data] = []
+        
+        for image in imagePath {
+            do {
+                detailImages.append(
+                    try await storageManager.downloadImage(path: path, containerID: containerID, imagePath: image)
+                )
+            } catch {
+                #if DEBUG
+                print("loadDetailImages: \(error)")
+                #endif
+                guard let error = error as? StorageError else {
+                    ToastManager.shared.toast = Toast(style: .error, message: "사진 불러오기에 실패하였습니다.")
+                    return detailImages
+                }
+                ToastManager.shared.toast = Toast(style: .error, message: "\(error.message)")
+            }
+        }
+        
+        return detailImages
     }
     
     //MARK: - SEARCH

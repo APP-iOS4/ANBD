@@ -17,6 +17,8 @@ struct UserActivityListView: View {
     
     @State var category: ANBDCategory
     
+    var isSignedInUser: Bool
+    
     var body: some View {
         VStack {
             CategoryDividerView(category: $category, isFromSearchView: true)
@@ -59,18 +61,20 @@ struct UserActivityListView: View {
             ZStack {
                 ListEmptyView(description: "\(myPageViewModel.user.nickname)님의\n\(category.description) 활동이 없습니다.")
                 
-                Button(action: {
-                    dismiss()
-                    coordinator.selectedTab = .article
-                }, label: {
-                    HStack {
-                        Text("활동하러 가기")
-                            .font(ANBDFont.body1)
-                        Image(systemName: "chevron.forward")
-                            .font(ANBDFont.Caption3)
-                    }
-                })
-                .offset(y: 100)
+                if isSignedInUser {
+                    Button(action: {
+                        dismiss()
+                        coordinator.selectedTab = .article
+                    }, label: {
+                        HStack {
+                            Text("활동하러 가기")
+                                .font(ANBDFont.body1)
+                            Image(systemName: "chevron.forward")
+                                .font(ANBDFont.Caption3)
+                        }
+                    })
+                    .offset(y: 100)
+                }
             }
         } else {
             ScrollView(.vertical) {
@@ -111,18 +115,20 @@ struct UserActivityListView: View {
                 ZStack {
                     ListEmptyView(description: "\(myPageViewModel.user.nickname)님의\n\(category.description) 활동이 없습니다.")
                     
-                    Button(action: {
-                        dismiss()
-                        coordinator.selectedTab = .trade
-                    }, label: {
-                        HStack {
-                            Text("활동하러 가기")
-                                .font(ANBDFont.body1)
-                            Image(systemName: "chevron.forward")
-                                .font(ANBDFont.Caption3)
-                        }
-                    })
-                    .offset(y: 100)
+                    if isSignedInUser {
+                        Button(action: {
+                            dismiss()
+                            coordinator.selectedTab = .trade
+                        }, label: {
+                            HStack {
+                                Text("활동하러 가기")
+                                    .font(ANBDFont.body1)
+                                Image(systemName: "chevron.forward")
+                                    .font(ANBDFont.Caption3)
+                            }
+                        })
+                        .offset(y: 100)
+                    }
                 }
             } else {
                 ScrollView(.vertical) {
@@ -177,7 +183,7 @@ extension UserActivityListView {
 
 #Preview {
     NavigationStack {
-        UserActivityListView(category: .accua)
+        UserActivityListView(category: .accua, isSignedInUser: true)
             .environmentObject(MyPageViewModel())
             .environmentObject(TradeViewModel())
     }

@@ -26,7 +26,7 @@ struct ChatDetailView: View {
     /// Sheet 관련 변수
     @State private var isShowingCustomAlertView: Bool = false
     @State private var isShowingImageDetailView: Bool = false
-    @State private var imageData: [Data] = []
+    @State private var imageData: [URL] = []
     @State private var isShowingStateChangeCustomAlert: Bool = false
     @State private var isWithdrawlUser: Bool = false
     @State private var isShowingUserBlockAlertView: Bool = false
@@ -46,7 +46,6 @@ struct ChatDetailView: View {
                         ForEach(chatViewModel.groupedMessages, id: \.day) { day, messages in
                             ForEach(messages) { message in
                                 if let channel = chatViewModel.selectedChannel {
-                                    
                                     MessageCell(message: message, isLast: message == chatViewModel.messages.last, channel: channel, isShowingImageDetailView: $isShowingImageDetailView, imageData: $imageData)
                                         .padding(.vertical, 1)
                                         .padding(.horizontal, 20)

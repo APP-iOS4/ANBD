@@ -170,12 +170,10 @@ struct TradeDetailView: View {
             Task {
                 writerUser = await myPageViewModel.getUserInfo(userID: tradeViewModel.trade.writerID)
                 tradeViewModel.detailImages = try await tradeViewModel.loadDetailImages(path: .trade, containerID: tradeViewModel.trade.id, imagePath: tradeViewModel.trade.imagePaths)
-                tradeViewModel.detailImagesData = try await tradeViewModel.loadOriginImages(path: .trade, containerID: tradeViewModel.trade.id, imagePath: tradeViewModel.trade.imagePaths)
             }
         }
         .onDisappear {
             tradeViewModel.detailImages = []
-            tradeViewModel.detailImagesData = []
         }
         .toolbar(.hidden, for: .tabBar)
         .fullScreenCover(isPresented: $isShowingCreat, onDismiss: {
@@ -184,7 +182,7 @@ struct TradeDetailView: View {
             TradeCreateView(isShowingCreate: $isShowingCreat, isNewProduct: false, trade: tradeViewModel.trade)
         }
         .fullScreenCover(isPresented: $isShowingImageDetailView) {
-            ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $tradeViewModel.detailImagesData, idx: $idx)
+            ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $tradeViewModel.detailImages, idx: $idx)
         }
         .navigationTitle(tradeViewModel.trade.category == .nanua ? "나눠쓰기" : "바꿔쓰기")
         .navigationBarTitleDisplayMode(.inline)

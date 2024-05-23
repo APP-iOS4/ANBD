@@ -6,10 +6,11 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct ImageDetailView: View {
     @Binding var isShowingImageDetailView: Bool
-    @Binding var images: [Data]
+    @Binding var images: [URL]
     @Binding var idx: Int
     
     @State private var currentZoom = 0.0
@@ -22,34 +23,33 @@ struct ImageDetailView: View {
                 
                 TabView(selection: $idx) {
                     ForEach(0..<images.count, id: \.self) { i in
-                        if let image = UIImage(data: images[i]) {
-                            Image(uiImage: image)
-                                .resizable()
-                                .scaledToFit()
-                                .scaleEffect(currentZoom + totalZoom)
-                                .gesture(
-                                    MagnificationGesture()
-                                        .onChanged { value in
-                                            if totalZoom >= 1.0 {
-                                                currentZoom = value - 1
-                                            }
+                        KFImage(images[i])
+                            .placeholder { _ in
+                                ProgressView()
+                            }
+                            .resizable()
+                            .scaledToFit()
+                            .scaleEffect(currentZoom + totalZoom)
+                            .gesture(
+                                MagnificationGesture()
+                                    .onChanged { value in
+                                        if totalZoom >= 1.0 {
+                                            currentZoom = value - 1
                                         }
-                                        .onEnded { value in
-                                            totalZoom += currentZoom
-                                            currentZoom = 0
-                                            if totalZoom < 1.0 {
-                                                totalZoom = 1.0
-                                                currentZoom = 0.0
-                                            }
+                                    }
+                                    .onEnded { value in
+                                        totalZoom += currentZoom
+                                        currentZoom = 0
+                                        if totalZoom < 1.0 {
+                                            totalZoom = 1.0
+                                            currentZoom = 0.0
                                         }
-                                )
-                                .onAppear {
-                                    currentZoom = 0.0
-                                    totalZoom = 1.0
-                                }
-                        } else {
-                            ProgressView()
-                        }
+                                    }
+                            )
+                            .onAppear {
+                                currentZoom = 0.0
+                                totalZoom = 1.0
+                            }
                     }
                 }
                 .tabViewStyle(PageTabViewStyle())

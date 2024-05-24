@@ -158,7 +158,11 @@ struct TradeDetailView: View {
                     Task {
                         guard let writerUser else { return }
                         
-                        await myPageViewModel.blockUser(userID: UserStore.shared.user.id, blockingUserID: writerUser.id)
+                        await myPageViewModel.blockUser(
+                            userID: UserStore.shared.user.id,
+                            blockingUserID: writerUser.id,
+                            blockingUserNickname: writerUser.nickname
+                        )
                         coordinator.pop()
                     }
                 }

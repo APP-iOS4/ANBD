@@ -368,7 +368,10 @@ struct ArticleDetailView: View {
             
             .onAppear {
                 Task {
+                    writerUser = await myPageViewModel.getUserInfo(userID: article.writerID)
+                    
                     coordinator.isLoading = true
+                    
                     if let articleID {
                         await articleViewModel.loadOneArticle(articleID: articleID)
                     } else {
@@ -379,8 +382,6 @@ struct ArticleDetailView: View {
                     
                     articleViewModel.detailImages = try await articleViewModel.loadDetailImagesURL(path: .article, containerID: articleViewModel.article.id, imagePath: articleViewModel.article.imagePaths)
                     await articleViewModel.loadCommentList(articleID: article.id)
-                    writerUser = await myPageViewModel.getUserInfo(userID: article.writerID)
-                    
                 }
             }
             .fullScreenCover(isPresented: $isShowingArticleCreateView) {
@@ -415,7 +416,11 @@ struct ArticleDetailView: View {
             } else if isShowingUserBlockAlertView {
                 CustomAlertView(isShowingCustomAlert: $isShowingUserBlockAlertView, viewType: .userBlocked) {
                     Task {
-                        await articleViewModel.blockUser(userID: UserStore.shared.user.id, blockUserID: articleViewModel.article.writerID)
+                        await myPageViewModel.blockUser(
+                            userID: UserStore.shared.user.id,
+                            blockingUserID: articleViewModel.article.writerID,
+                            blockingUserNickname: articleViewModel.article.writerNickname
+                        )
                         dismiss()
                     }
                 }

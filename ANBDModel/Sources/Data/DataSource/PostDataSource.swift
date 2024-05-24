@@ -459,7 +459,7 @@ extension Postable where Item == Trade {
         limit: Int
     ) async throws -> [Trade] {
         var requestQuery = database
-            .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
+//            .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
             .whereField("category", isEqualTo: category.rawValue)
             
         if let filterQuery {
@@ -503,7 +503,9 @@ extension Postable where Item == Trade {
             throw DBError.getTradeDocumentError
         }
         
-        let tradeList = snapshot.compactMap { try? $0.data(as: Trade.self) }
+        let tradeList = snapshot.compactMap { try? $0.data(as: Trade.self) }.filter {
+            !blockList.contains($0.writerID)
+        }
         return tradeList
     }
     

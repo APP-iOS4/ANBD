@@ -76,7 +76,11 @@ fileprivate struct BlockingUserCell: View {
                 if isBlocked {
                     Button {
                         Task {
-                            await myPageViewModel.unblockUser(userID: UserStore.shared.user.id, unblockingUserID: blockedUser.id)
+                            await myPageViewModel.unblockUser(
+                                userID: UserStore.shared.user.id,
+                                unblockingUserID: blockedUser.id,
+                                blockingUserNickname: blockedUser.nickname
+                            )
                             isBlocked.toggle()
                         }
                     } label: {
@@ -86,7 +90,11 @@ fileprivate struct BlockingUserCell: View {
                 } else {
                     Button {
                         Task {
-                            await myPageViewModel.blockUser(userID: UserStore.shared.user.id, blockingUserID: blockedUser.id)
+                            await myPageViewModel.blockUser(
+                                userID: UserStore.shared.user.id,
+                                blockingUserID: blockedUser.id,
+                                blockingUserNickname: blockedUser.nickname
+                            )
                             isBlocked.toggle()
                         }
                     } label: {

@@ -244,22 +244,6 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
-    func blockUser(userID: String, blockUserID: String) async {
-        do {
-            try await userUsecase.blockUser(userID: userID, blockUserID: blockUserID)
-            ToastManager.shared.toast = Toast(style: .success, message: "\(article.writerNickname)님을 차단했습니다.")
-        } catch {
-            #if DEBUG
-            print("\(error.localizedDescription)")
-            #endif
-            guard let error = error as? UserError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "\(article.writerNickname)님 차단에 실패하였습니다.")
-                return
-            }
-            ToastManager.shared.toast = Toast(style: .error, message: "\(error.localizedDescription)")
-        }
-    }
-    
     func getSortOptionLabel() -> String {
         switch sortOption {
         case .latest:

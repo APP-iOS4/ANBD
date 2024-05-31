@@ -5,6 +5,9 @@
       location = "group:ANBDModel">
    </FileRef>
    <FileRef
+      location = "group:ANBDUIKit/ANBDUIKit.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:ANBDConsumer/ANBDConsumer.xcodeproj">
    </FileRef>
    <FileRef

@@ -1,5 +1,5 @@
 {
-  "originHash" : "71dd47f5b9b8aa4152cf2e88113d33cd067f7246f008fc3ff0703731032bb9df",
+  "originHash" : "1502c90d11329febea163b987104311e7c78d38f141de732361f77e9461500b5",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -125,6 +125,15 @@
       "state" : {
         "revision" : "d5c8a4f62be6a631bd4fe1922505eb34e82e5b4e",
         "version" : "2.0.1"
+      }
+    },
+    {
+      "identity" : "snapkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SnapKit/SnapKit",
+      "state" : {
+        "revision" : "2842e6e84e82eb9a8dac0100ca90d9444b0307f4",
+        "version" : "5.7.1"
       }
     },
     {

@@ -179,7 +179,14 @@ extension ArticleViewController: UIScrollViewDelegate {
     
 }
 
-extension ArticleViewController: UITableViewDelegate { }
+extension ArticleViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let detailView = ArticleDetailViewController()
+        self.navigationController?.pushViewController(detailView, animated: true)
+    }
+    
+}
 
 extension ArticleViewController: UITableViewDataSource {
     

@@ -100,6 +100,7 @@ final class ArticleViewController: UIViewController {
             button.setImage(.init(systemName: "plus"), for: .normal)
             button.layer.cornerRadius = 25
             button.clipsToBounds = true
+            button.addTarget(self, action: #selector(writeButtonAction), for: .touchUpInside)
             return button
         }()
     }
@@ -148,6 +149,13 @@ final class ArticleViewController: UIViewController {
     @objc
     private func rightTabAction() {
         selectedTab = .dasi
+    }
+    
+    @objc
+    private func writeButtonAction() {
+        let vc = ArticleCreateViewController()
+        vc.modalPresentationStyle = .fullScreen
+        self.present(vc, animated: true)
     }
     
 }

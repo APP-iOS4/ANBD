@@ -23,6 +23,7 @@
 		A8D62D042C09531E00C281D8 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D62D032C09531E00C281D8 /* Common.swift */; };
 		A8D62D072C09542100C281D8 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = A8D62D062C09542100C281D8 /* SnapKit */; };
 		A8D62D092C09542100C281D8 /* SnapKit-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = A8D62D082C09542100C281D8 /* SnapKit-Dynamic */; };
+		CB6EEB282C1839F100902751 /* NanuaCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6EEB272C1839F100902751 /* NanuaCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 		A8D62CFF2C09530900C281D8 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		A8D62D012C09531200C281D8 /* Authentication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authentication.swift; sourceTree = "<group>"; };
 		A8D62D032C09531E00C281D8 /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
+		CB6EEB272C1839F100902751 /* NanuaCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NanuaCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,6 +181,7 @@
 			isa = PBXGroup;
 			children = (
 				A8D62CFF2C09530900C281D8 /* HomeViewController.swift */,
+				CB6EEB272C1839F100902751 /* NanuaCollectionViewCell.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -283,6 +286,7 @@
 				A8D62D042C09531E00C281D8 /* Common.swift in Sources */,
 				A8D62CFA2C0952F700C281D8 /* Chat.swift in Sources */,
 				A8D62CEF2C09529400C281D8 /* Util.swift in Sources */,
+				CB6EEB282C1839F100902751 /* NanuaCollectionViewCell.swift in Sources */,
 				A8D62CED2C09527A00C281D8 /* View+Extension.swift in Sources */,
 				A8D62CF82C0952EA00C281D8 /* Mypage.swift in Sources */,
 				A8D62CFC2C0952FD00C281D8 /* Trade.swift in Sources */,

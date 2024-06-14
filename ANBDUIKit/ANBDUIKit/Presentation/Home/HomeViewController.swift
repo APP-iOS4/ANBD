@@ -22,6 +22,7 @@ class HomeViewController: UIViewController {
     private lazy var contentStackView = UIStackView()
     
     private lazy var commerceImageView = UIImageView()
+    private lazy var commerceCollectionView = UICollectionView()
     private lazy var accuaStackView = UIStackView()
     private lazy var nanuaStackView = UIStackView()
     private lazy var baccuaStackView = UIStackView()
@@ -111,6 +112,20 @@ class HomeViewController: UIViewController {
             return view
         }()
         
+        commerceCollectionView = {
+            let layout = UICollectionViewFlowLayout()
+            layout.scrollDirection = .horizontal
+            layout.itemSize = CGSize(width: view.frame.width - 70, height: 150)
+            
+            let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+            cv.isScrollEnabled = true
+            cv.showsHorizontalScrollIndicator = false
+            cv.contentInset = .zero
+            cv.backgroundColor = .clear
+            cv.tag = 1
+            
+            return cv
+        }()
         commerceImageView = {
             let imageView = UIImageView()
             let image = UIImage(named: "sampleImage")
@@ -214,6 +229,7 @@ class HomeViewController: UIViewController {
             cv.showsHorizontalScrollIndicator = false
             cv.contentInset = .zero
             cv.backgroundColor = .clear
+            cv.tag = 2
             return cv
         }()
         
@@ -279,7 +295,8 @@ class HomeViewController: UIViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(contentStackView)
         
-        contentStackView.addArrangedSubview(commerceImageView)
+//        contentStackView.addArrangedSubview(commerceImageView)
+        contentStackView.addArrangedSubview(commerceCollectionView)
         
         [accuaStackView, nanuaStackView, baccuaStackView, dasiStackView].forEach {
             contentStackView.addArrangedSubview($0)
@@ -327,10 +344,15 @@ class HomeViewController: UIViewController {
             $0.width.equalTo(scrollView.frameLayoutGuide).offset(-32)
         }
         
-        commerceImageView.snp.makeConstraints {
-            $0.horizontalEdges.equalTo(contentStackView)
-            $0.top.equalTo(contentStackView.snp.top)
+        commerceCollectionView.snp.makeConstraints {
+            $0.left.right.equalToSuperview()
+            $0.height.equalTo(150)
         }
+        
+//        commerceImageView.snp.makeConstraints {
+//            $0.horizontalEdges.equalTo(contentStackView)
+//            $0.top.equalTo(contentStackView.snp.top)
+//        }
         
         nanuaCollectionView.snp.makeConstraints {
             $0.left.right.equalToSuperview()
@@ -354,6 +376,15 @@ class HomeViewController: UIViewController {
         nanuaCollectionView.register(NanuaCollectionViewCell.self, forCellWithReuseIdentifier: "nanuaCell")
         nanuaCollectionView.dataSource = self
         nanuaCollectionView.delegate = self
+        
+        commerceCollectionView.register(CommerceCollectionViewCell.self, forCellWithReuseIdentifier: "CommerceCell")
+        commerceCollectionView.dataSource = self
+        commerceCollectionView.delegate = self
+        //이거 작동 안 됨! ㅠ
+//        commerceCollectionView.isPagingEnabled = true
+        //center로 paging 맞춰주기 위한 설정
+        commerceCollectionView.decelerationRate = .fast
+        commerceCollectionView.isPagingEnabled = false
     }
 }
 
@@ -365,19 +396,46 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
     
     // 셀과 뷰의 간격
     func collectionView( _ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10)
+        if collectionView.tag == 1 {
+            return UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10)
+        } else {
+            return UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10)
+        }
     }
     
     // 셀이 눌렸을 때
     //    func collectionView( _ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     //    }
+    
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        guard let layout = self.commerceCollectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
+        
+        let cellWidth = layout.itemSize.width + layout.minimumLineSpacing
+        let estimatedIndex = scrollView.contentOffset.x / cellWidth
+        let index: Int
+        if velocity.x > 0 {
+            index = Int(ceil(estimatedIndex))
+        } else if velocity.x < 0 {
+            index = Int(floor(estimatedIndex))
+        } else {
+            index = Int(round(estimatedIndex))
+        }
+        
+        targetContentOffset.pointee = CGPoint(x: CGFloat(index) * cellWidth, y: 0)
+    }
 }
 
 extension HomeViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "nanuaCell", for: indexPath) as! NanuaCollectionViewCell
-        cell.prepare(image: dataSource[indexPath.item])
-        return cell
+        if collectionView.tag == 1 {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CommerceCell", for: indexPath) as! CommerceCollectionViewCell
+            cell.prepare(image: dataSource[indexPath.item])
+            return cell
+        } else {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "nanuaCell", for: indexPath) as! NanuaCollectionViewCell
+            cell.prepare(image: dataSource[indexPath.item])
+            return cell
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

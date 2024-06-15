@@ -17,11 +17,12 @@ class HomeViewController: UIViewController {
     
     private lazy var moreButtonConfig = UIButton.Configuration.borderless()
     
+    private lazy var pager = UIPageControl()
     private lazy var searchButton = UIBarButtonItem()
     private lazy var scrollView = UIScrollView()
     private lazy var contentStackView = UIStackView()
     
-    private lazy var commerceImageView = UIImageView()
+    private lazy var commerceView = UIView()
     private lazy var commerceCollectionView = UICollectionView()
     private lazy var accuaStackView = UIStackView()
     private lazy var nanuaStackView = UIStackView()
@@ -79,6 +80,17 @@ class HomeViewController: UIViewController {
         moreButtonConfig.baseForegroundColor = .black
         moreButtonConfig.buttonSize = .mini
         
+        pager = {
+            let pageControl = UIPageControl(frame: .zero)
+            pageControl.currentPage = .zero
+            pageControl.isUserInteractionEnabled = false
+            pageControl.numberOfPages = dataSource.count
+            
+            pageControl.pageIndicatorTintColor = .systemGray2
+            pageControl.currentPageIndicatorTintColor = .systemGray
+            return pageControl
+        }()
+        
         scrollView = {
             let scrollView = UIScrollView()
             scrollView.showsVerticalScrollIndicator = false
@@ -112,6 +124,11 @@ class HomeViewController: UIViewController {
             return view
         }()
         
+        commerceView = {
+           let view = UIView()
+            
+            return view
+        }()
         commerceCollectionView = {
             let layout = UICollectionViewFlowLayout()
             layout.scrollDirection = .horizontal
@@ -125,17 +142,6 @@ class HomeViewController: UIViewController {
             cv.tag = 1
             
             return cv
-        }()
-        commerceImageView = {
-            let imageView = UIImageView()
-            let image = UIImage(named: "sampleImage")
-            let resizedImage = image?.resized(to: CGSize(width: view.frame.width, height: 150))
-            imageView.layer.cornerRadius = 15
-            imageView.image = resizedImage
-            imageView.contentMode = .scaleAspectFill
-            
-            imageView.clipsToBounds = true
-            return imageView
         }()
         
         accuaStackView = {
@@ -294,13 +300,19 @@ class HomeViewController: UIViewController {
     func addView() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentStackView)
+    
+//        contentStackView.addArrangedSubview(pager)
+//        contentStackView.addArrangedSubview(commerceCollectionView)
         
-//        contentStackView.addArrangedSubview(commerceImageView)
-        contentStackView.addArrangedSubview(commerceCollectionView)
+        commerceView.addSubview(commerceCollectionView)
+        commerceView.addSubview(pager)
+        
+        contentStackView.addArrangedSubview(commerceView)
         
         [accuaStackView, nanuaStackView, baccuaStackView, dasiStackView].forEach {
             contentStackView.addArrangedSubview($0)
         }
+        
         
         [accuaTitleLabel, accuaMoreButton].forEach {
             accuaTitleStackView.addArrangedSubview($0)
@@ -344,15 +356,19 @@ class HomeViewController: UIViewController {
             $0.width.equalTo(scrollView.frameLayoutGuide).offset(-32)
         }
         
+        commerceView.snp.makeConstraints {
+            $0.height.equalTo(150)
+        }
+        
+        pager.snp.makeConstraints {
+            $0.bottom.equalTo(commerceCollectionView.snp.bottom).inset(10)
+            $0.centerX.equalTo(contentStackView)
+        }
+        
         commerceCollectionView.snp.makeConstraints {
             $0.left.right.equalToSuperview()
             $0.height.equalTo(150)
         }
-        
-//        commerceImageView.snp.makeConstraints {
-//            $0.horizontalEdges.equalTo(contentStackView)
-//            $0.top.equalTo(contentStackView.snp.top)
-//        }
         
         nanuaCollectionView.snp.makeConstraints {
             $0.left.right.equalToSuperview()
@@ -420,6 +436,8 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
         } else {
             index = Int(round(estimatedIndex))
         }
+        pager.currentPage = index
+        print(pager.currentPage)
         
         targetContentOffset.pointee = CGPoint(x: CGFloat(index) * cellWidth, y: 0)
     }

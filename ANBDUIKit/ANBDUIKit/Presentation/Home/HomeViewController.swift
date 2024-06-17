@@ -51,6 +51,8 @@ class HomeViewController: UIViewController {
     private lazy var baccuaDescriptionLabel = UILabel()
     private var baccuaDividerView = UIView()
     private var baccuaMoreButton = UIButton()
+    private lazy var baccuaFirstCell = HomeTradeCell()
+    private lazy var baccuaSecondCell = HomeTradeCell()
     
     private lazy var dasiTitleStackView = UIStackView()
     private lazy var dasiTitleLabel = UILabel()
@@ -261,6 +263,17 @@ class HomeViewController: UIViewController {
             
             return label
         }()
+        baccuaFirstCell = {
+           let cell = HomeTradeCell()
+            cell.bind()
+            return cell
+        }()
+        
+        baccuaSecondCell = {
+            let cell = HomeTradeCell()
+             cell.bind()
+             return cell
+        }()
         
         dasiTitleStackView = {
             let stackView = UIStackView()
@@ -300,9 +313,6 @@ class HomeViewController: UIViewController {
     func addView() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentStackView)
-    
-//        contentStackView.addArrangedSubview(pager)
-//        contentStackView.addArrangedSubview(commerceCollectionView)
         
         commerceView.addSubview(commerceCollectionView)
         commerceView.addSubview(pager)
@@ -312,7 +322,6 @@ class HomeViewController: UIViewController {
         [accuaStackView, nanuaStackView, baccuaStackView, dasiStackView].forEach {
             contentStackView.addArrangedSubview($0)
         }
-        
         
         [accuaTitleLabel, accuaMoreButton].forEach {
             accuaTitleStackView.addArrangedSubview($0)
@@ -331,7 +340,7 @@ class HomeViewController: UIViewController {
         [baccuaTitleLabel, baccuaMoreButton].forEach {
             baccuaTitleStackView.addArrangedSubview($0)
         }
-        [baccuaTitleStackView, baccuaDescriptionLabel, baccuaDividerView].forEach {
+        [baccuaTitleStackView, baccuaDescriptionLabel, baccuaFirstCell, baccuaSecondCell, baccuaDividerView].forEach {
             baccuaStackView.addArrangedSubview($0)
         }
         
@@ -386,6 +395,13 @@ class HomeViewController: UIViewController {
         baccuaDividerView.snp.makeConstraints {
             $0.height.equalTo(1)
         }
+        
+        baccuaFirstCell.snp.makeConstraints {
+            $0.height.equalTo(100)
+        }
+        baccuaSecondCell.snp.makeConstraints {
+            $0.height.equalTo(100)
+        }
     }
     
     func setCollectionView() {
@@ -437,7 +453,6 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
             index = Int(round(estimatedIndex))
         }
         pager.currentPage = index
-        print(pager.currentPage)
         
         targetContentOffset.pointee = CGPoint(x: CGFloat(index) * cellWidth, y: 0)
     }
@@ -458,13 +473,5 @@ extension HomeViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return dataSource.count
-    }
-}
-
-extension UIImage {
-    func resized(to size: CGSize) -> UIImage {
-        return UIGraphicsImageRenderer(size: size).image { _ in
-            draw(in: CGRect(origin: .zero, size: size))
-        }
     }
 }

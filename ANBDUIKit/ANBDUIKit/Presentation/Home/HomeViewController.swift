@@ -127,7 +127,7 @@ class HomeViewController: UIViewController {
         }()
         
         commerceView = {
-           let view = UIView()
+            let view = UIView()
             
             return view
         }()
@@ -177,7 +177,7 @@ class HomeViewController: UIViewController {
             return stackView
         }()
         accuaMoreButton = {
-           let button = UIButton(configuration: moreButtonConfig)
+            let button = UIButton(configuration: moreButtonConfig)
             return button
         }()
         accuaTitleLabel = {
@@ -211,7 +211,7 @@ class HomeViewController: UIViewController {
             return stackView
         }()
         nanuaMoreButton = {
-           let button = UIButton(configuration: moreButtonConfig)
+            let button = UIButton(configuration: moreButtonConfig)
             return button
         }()
         nanuaTitleLabel = {
@@ -247,7 +247,7 @@ class HomeViewController: UIViewController {
             return stackView
         }()
         baccuaMoreButton = {
-           let button = UIButton(configuration: moreButtonConfig)
+            let button = UIButton(configuration: moreButtonConfig)
             return button
         }()
         baccuaTitleLabel = {
@@ -264,15 +264,15 @@ class HomeViewController: UIViewController {
             return label
         }()
         baccuaFirstCell = {
-           let cell = HomeTradeCell()
+            let cell = HomeTradeCell()
             cell.bind()
             return cell
         }()
         
         baccuaSecondCell = {
             let cell = HomeTradeCell()
-             cell.bind()
-             return cell
+            cell.bind()
+            return cell
         }()
         
         dasiTitleStackView = {
@@ -281,7 +281,7 @@ class HomeViewController: UIViewController {
             return stackView
         }()
         dasiMoreButton = {
-           let button = UIButton(configuration: moreButtonConfig)
+            let button = UIButton(configuration: moreButtonConfig)
             return button
         }()
         dasiTitleLabel = {
@@ -329,7 +329,7 @@ class HomeViewController: UIViewController {
         [accuaTitleStackView, accuaDescriptionLabel, accuaImageView, accuaDividerView].forEach {
             accuaStackView.addArrangedSubview($0)
         }
-
+        
         [nanuaTitleLabel, nanuaMoreButton].forEach {
             nanuaTitleStackView.addArrangedSubview($0)
         }
@@ -413,7 +413,7 @@ class HomeViewController: UIViewController {
         commerceCollectionView.dataSource = self
         commerceCollectionView.delegate = self
         //이거 작동 안 됨! ㅠ
-//        commerceCollectionView.isPagingEnabled = true
+        //        commerceCollectionView.isPagingEnabled = true
         //center로 paging 맞춰주기 위한 설정
         commerceCollectionView.decelerationRate = .fast
         commerceCollectionView.isPagingEnabled = false

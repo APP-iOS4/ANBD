@@ -24,7 +24,8 @@ final class NanuaCollectionViewCell: UICollectionViewCell {
         self.contentView.addSubview(image)
         
         image.snp.makeConstraints {
-            $0.leading.trailing.top.bottom.equalTo(contentView)
+            $0.top.bottom.equalTo(contentView)
+            $0.left.right.equalTo(contentView).offset(-10)
         }
     }
     

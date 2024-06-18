@@ -178,6 +178,7 @@ class HomeViewController: UIViewController {
         }()
         accuaMoreButton = {
             let button = UIButton(configuration: moreButtonConfig)
+            button.addTarget(self, action: #selector(accauMoreButtonAction), for: .touchUpInside)
             return button
         }()
         accuaTitleLabel = {
@@ -417,6 +418,13 @@ class HomeViewController: UIViewController {
         //center로 paging 맞춰주기 위한 설정
         commerceCollectionView.decelerationRate = .fast
         commerceCollectionView.isPagingEnabled = false
+    }
+    
+    @objc
+    func accauMoreButtonAction() {
+        let vc = ArticleViewController()
+        vc.title = "아껴쓰기"
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 

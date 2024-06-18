@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		131E49742C0EE13D00D2AB20 /* ArticleCreateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 131E49732C0EE13D00D2AB20 /* ArticleCreateViewController.swift */; };
+		131E49762C0F1CAF00D2AB20 /* RoundedLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 131E49752C0F1CAF00D2AB20 /* RoundedLabel.swift */; };
+		13398E172C0DD59800E664B5 /* TabHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13398E162C0DD59800E664B5 /* TabHeaderView.swift */; };
+		13398E192C0E058900E664B5 /* ArticleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13398E182C0E058900E664B5 /* ArticleCell.swift */; };
+		13F39BDD2C0F52A300EFCF04 /* PhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13F39BDC2C0F52A300EFCF04 /* PhotoCell.swift */; };
+		13F39BDF2C0F59A800EFCF04 /* ArticleDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13F39BDE2C0F59A800EFCF04 /* ArticleDetailViewController.swift */; };
 		A86379952C1DA59600F612B4 /* TradeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86379942C1DA59600F612B4 /* TradeCell.swift */; };
 		A8D62CD32C09519100C281D8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D62CD22C09519100C281D8 /* AppDelegate.swift */; };
 		A8D62CD52C09519100C281D8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D62CD42C09519100C281D8 /* SceneDelegate.swift */; };
@@ -17,8 +23,8 @@
 		A8D62CEF2C09529400C281D8 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D62CEE2C09529400C281D8 /* Util.swift */; };
 		A8D62CF82C0952EA00C281D8 /* Mypage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D62CF72C0952EA00C281D8 /* Mypage.swift */; };
 		A8D62CFA2C0952F700C281D8 /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D62CF92C0952F700C281D8 /* Chat.swift */; };
+		A8D62CFE2C09530300C281D8 /* ArticleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D62CFD2C09530300C281D8 /* ArticleViewController.swift */; };
 		A8D62CFC2C0952FD00C281D8 /* TradeDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D62CFB2C0952FD00C281D8 /* TradeDetailViewController.swift */; };
-		A8D62CFE2C09530300C281D8 /* Article.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D62CFD2C09530300C281D8 /* Article.swift */; };
 		A8D62D002C09530900C281D8 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D62CFF2C09530900C281D8 /* HomeViewController.swift */; };
 		A8D62D022C09531200C281D8 /* Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D62D012C09531200C281D8 /* Authentication.swift */; };
 		A8D62D042C09531E00C281D8 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D62D032C09531E00C281D8 /* Common.swift */; };
@@ -31,7 +37,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A86379942C1DA59600F612B4 /* TradeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeCell.swift; sourceTree = "<group>"; };
+		131E49732C0EE13D00D2AB20 /* ArticleCreateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleCreateViewController.swift; sourceTree = "<group>"; };
+		131E49752C0F1CAF00D2AB20 /* RoundedLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundedLabel.swift; sourceTree = "<group>"; };
+		13398E162C0DD59800E664B5 /* TabHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabHeaderView.swift; sourceTree = "<group>"; };
+		13398E182C0E058900E664B5 /* ArticleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleCell.swift; sourceTree = "<group>"; };
+		13F39BDC2C0F52A300EFCF04 /* PhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCell.swift; sourceTree = "<group>"; };
+		13F39BDE2C0F59A800EFCF04 /* ArticleDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleDetailViewController.swift; sourceTree = "<group>"; };
 		A8D62CCF2C09519100C281D8 /* ANBDUIKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ANBDUIKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8D62CD22C09519100C281D8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A8D62CD42C09519100C281D8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -43,8 +54,8 @@
 		A8D62CEE2C09529400C281D8 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 		A8D62CF72C0952EA00C281D8 /* Mypage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mypage.swift; sourceTree = "<group>"; };
 		A8D62CF92C0952F700C281D8 /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
+		A8D62CFD2C09530300C281D8 /* ArticleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleViewController.swift; sourceTree = "<group>"; };
 		A8D62CFB2C0952FD00C281D8 /* TradeDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeDetailViewController.swift; sourceTree = "<group>"; };
-		A8D62CFD2C09530300C281D8 /* Article.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Article.swift; sourceTree = "<group>"; };
 		A8D62CFF2C09530900C281D8 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		A8D62D012C09531200C281D8 /* Authentication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authentication.swift; sourceTree = "<group>"; };
 		A8D62D032C09531E00C281D8 /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
@@ -182,7 +193,13 @@
 		A8D62CF32C0952CA00C281D8 /* Article */ = {
 			isa = PBXGroup;
 			children = (
-				A8D62CFD2C09530300C281D8 /* Article.swift */,
+				13398E162C0DD59800E664B5 /* TabHeaderView.swift */,
+				A8D62CFD2C09530300C281D8 /* ArticleViewController.swift */,
+				13F39BDE2C0F59A800EFCF04 /* ArticleDetailViewController.swift */,
+				131E49732C0EE13D00D2AB20 /* ArticleCreateViewController.swift */,
+				13398E182C0E058900E664B5 /* ArticleCell.swift */,
+				131E49752C0F1CAF00D2AB20 /* RoundedLabel.swift */,
+				13F39BDC2C0F52A300EFCF04 /* PhotoCell.swift */,
 			);
 			path = Article;
 			sourceTree = "<group>";
@@ -296,17 +313,23 @@
 				A86379952C1DA59600F612B4 /* TradeCell.swift in Sources */,
 				CBC6B0E32C20414300D36671 /* HomeTradeCell.swift in Sources */,
 				A8D62CD32C09519100C281D8 /* AppDelegate.swift in Sources */,
+				A8D62CFE2C09530300C281D8 /* ArticleViewController.swift in Sources */,
+				13398E192C0E058900E664B5 /* ArticleCell.swift in Sources */,
+				13F39BDD2C0F52A300EFCF04 /* PhotoCell.swift in Sources */,
 				A8D62D002C09530900C281D8 /* HomeViewController.swift in Sources */,
-				A8D62CFE2C09530300C281D8 /* Article.swift in Sources */,
 				A8D62D042C09531E00C281D8 /* Common.swift in Sources */,
 				A8D62CFA2C0952F700C281D8 /* Chat.swift in Sources */,
+				13F39BDF2C0F59A800EFCF04 /* ArticleDetailViewController.swift in Sources */,
 				A8D62CEF2C09529400C281D8 /* Util.swift in Sources */,
+				13398E172C0DD59800E664B5 /* TabHeaderView.swift in Sources */,
 				CB6EEB282C1839F100902751 /* NanuaCollectionViewCell.swift in Sources */,
 				A8D62CED2C09527A00C281D8 /* View+Extension.swift in Sources */,
 				CBC6B0E12C2035DB00D36671 /* UIImage+Extension.swift in Sources */,
 				A8D62CF82C0952EA00C281D8 /* Mypage.swift in Sources */,
+				131E49742C0EE13D00D2AB20 /* ArticleCreateViewController.swift in Sources */,
 				A8D62CFC2C0952FD00C281D8 /* TradeDetailViewController.swift in Sources */,
 				A8D62CD52C09519100C281D8 /* SceneDelegate.swift in Sources */,
+				131E49762C0F1CAF00D2AB20 /* RoundedLabel.swift in Sources */,
 				A8D62D022C09531200C281D8 /* Authentication.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

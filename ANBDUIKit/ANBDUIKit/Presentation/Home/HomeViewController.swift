@@ -283,6 +283,7 @@ class HomeViewController: UIViewController {
         }()
         dasiMoreButton = {
             let button = UIButton(configuration: moreButtonConfig)
+            button.addTarget(self, action: #selector(dasiMoreButtonAction), for: .touchUpInside)
             return button
         }()
         dasiTitleLabel = {
@@ -422,8 +423,15 @@ class HomeViewController: UIViewController {
     
     @objc
     func accauMoreButtonAction() {
-        let vc = ArticleViewController()
+        let vc = ArticleMoreViewController()
         vc.title = "아껴쓰기"
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc
+    func dasiMoreButtonAction() {
+        let vc = ArticleMoreViewController()
+        vc.title = "다시쓰기"
         navigationController?.pushViewController(vc, animated: true)
     }
 }

@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import SafariServices
 
 class HomeViewController: UIViewController {
     
@@ -201,8 +202,12 @@ class HomeViewController: UIViewController {
             imageView.layer.cornerRadius = 15
             imageView.image = resizedImage
             imageView.contentMode = .scaleAspectFill
-            
             imageView.clipsToBounds = true
+            
+            let tap = UITapGestureRecognizer(target: self, action: #selector(articleImageTapped))
+            imageView.addGestureRecognizer(tap)
+            imageView.isUserInteractionEnabled = true
+            
             return imageView
         }()
         
@@ -306,8 +311,12 @@ class HomeViewController: UIViewController {
             imageView.layer.cornerRadius = 15
             imageView.image = resizedImage
             imageView.contentMode = .scaleAspectFill
-            
             imageView.clipsToBounds = true
+            
+            let tap = UITapGestureRecognizer(target: self, action: #selector(articleImageTapped))
+            imageView.addGestureRecognizer(tap)
+            imageView.isUserInteractionEnabled = true
+            
             return imageView
         }()
     }
@@ -414,8 +423,6 @@ class HomeViewController: UIViewController {
         commerceCollectionView.register(CommerceCollectionViewCell.self, forCellWithReuseIdentifier: "CommerceCell")
         commerceCollectionView.dataSource = self
         commerceCollectionView.delegate = self
-        //이거 작동 안 됨! ㅠ
-        //        commerceCollectionView.isPagingEnabled = true
         //center로 paging 맞춰주기 위한 설정
         commerceCollectionView.decelerationRate = .fast
         commerceCollectionView.isPagingEnabled = false
@@ -434,6 +441,13 @@ class HomeViewController: UIViewController {
         vc.title = "다시쓰기"
         navigationController?.pushViewController(vc, animated: true)
     }
+    
+    @objc
+    func articleImageTapped() {
+        // 아껴쓰기, 다시쓰기
+        let vc = ArticleDetailViewController()
+        navigationController?.pushViewController(vc, animated: true)
+    }
 }
 
 extension HomeViewController: UICollectionViewDelegateFlowLayout {
@@ -444,16 +458,21 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
     
     // 셀과 뷰의 간격
     func collectionView( _ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        if collectionView.tag == 1 {
-            return UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10)
-        } else {
-            return UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10)
-        }
+        return UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10)
     }
     
     // 셀이 눌렸을 때
-    //    func collectionView( _ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    //    }
+    func collectionView( _ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView.tag == 1 {
+            // TODO: 웹 뷰 연결
+            guard let url = URL(string: "https://www.naver.com") else { return }
+            let safariViewController = SFSafariViewController(url: url)
+            present(safariViewController, animated: true)
+        } else {
+            let vc = TradeDetailViewController()
+            navigationController?.pushViewController(vc, animated: true)
+        }
+    }
     
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         guard let layout = self.commerceCollectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }

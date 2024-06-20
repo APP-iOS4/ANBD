@@ -10,9 +10,9 @@ import SnapKit
 
 final class ArticleMoreViewController: UIViewController {
     
-    private lazy var tabScrollView = UIScrollView()
-    private lazy var tabStackView = UIStackView()
-    private lazy var accuaTableView = UITableView()
+    private lazy var scrollView = UIScrollView()
+    private lazy var contentStackView = UIStackView()
+    private lazy var tableView = UITableView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,21 +24,21 @@ final class ArticleMoreViewController: UIViewController {
     private func initAttribute() {
         view.backgroundColor = .systemBackground
         
-        tabScrollView = {
+        scrollView = {
             let scrollView = UIScrollView()
             scrollView.isPagingEnabled = true
             scrollView.showsHorizontalScrollIndicator = false
             return scrollView
         }()
         
-        tabStackView = {
+        contentStackView = {
             let stackView = UIStackView()
             stackView.axis = .horizontal
             stackView.distribution = .fillEqually
             return stackView
         }()
         
-        accuaTableView = {
+        tableView = {
             let tableView = UITableView()
             tableView.separatorStyle = .none
             tableView.contentInset = .init(top: 8, left: 0, bottom: 8, right: 0)
@@ -54,25 +54,25 @@ final class ArticleMoreViewController: UIViewController {
     private func initLayout() {
         let safeArea = view.safeAreaLayoutGuide
         
-        [tabScrollView].forEach {
+        [scrollView].forEach {
             view.addSubview($0)
         }
         
-        tabScrollView.addSubview(tabStackView)
+        scrollView.addSubview(contentStackView)
         
-        [accuaTableView].forEach {
-            tabStackView.addArrangedSubview($0)
+        [tableView].forEach {
+            contentStackView.addArrangedSubview($0)
         }
         
-        tabScrollView.snp.makeConstraints {
+        scrollView.snp.makeConstraints {
             $0.horizontalEdges.bottom.equalTo(safeArea)
             $0.top.equalTo(safeArea)
         }
         
-        tabStackView.snp.makeConstraints {
-            $0.edges.equalTo(tabScrollView.contentLayoutGuide)
-            $0.width.equalTo(view).multipliedBy(2)
-            $0.height.equalTo(tabScrollView.frameLayoutGuide)
+        contentStackView.snp.makeConstraints {
+            $0.edges.equalTo(scrollView.contentLayoutGuide)
+            $0.width.equalTo(view)
+            $0.height.equalTo(scrollView.frameLayoutGuide)
         }
     }
 }
@@ -89,7 +89,7 @@ extension ArticleMoreViewController: UITableViewDelegate {
 extension ArticleMoreViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if tableView == accuaTableView {
+        if tableView == tableView {
             return 10
         } else {
             return 5

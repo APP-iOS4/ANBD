@@ -32,13 +32,14 @@
 		CB6EEB2A2C1C23AA00902751 /* CommerceCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6EEB292C1C23AA00902751 /* CommerceCollectionViewCell.swift */; };
 		CBC6B0E12C2035DB00D36671 /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBC6B0E02C2035DB00D36671 /* UIImage+Extension.swift */; };
 		CBC6B0E32C20414300D36671 /* HomeTradeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBC6B0E22C20414300D36671 /* HomeTradeCell.swift */; };
-		D7579A492C22599400BDC70D /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = D7579A482C22599400BDC70D /* SnapKit */; };
 		D7FC7F7B2C25DAA8002C0A0D /* PagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FC7F762C25DAA8002C0A0D /* PagerView.swift */; };
 		D7FC7F7C2C25DAA8002C0A0D /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FC7F772C25DAA8002C0A0D /* TabView.swift */; };
 		D7FC7F7D2C25DAA8002C0A0D /* UserActivityListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FC7F782C25DAA8002C0A0D /* UserActivityListViewController.swift */; };
 		D7FC7F7E2C25DAA8002C0A0D /* ScrollFitable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FC7F792C25DAA8002C0A0D /* ScrollFitable.swift */; };
 		D7FC7F7F2C25DAA8002C0A0D /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FC7F7A2C25DAA8002C0A0D /* EditProfileViewController.swift */; };
 		D7FC7F812C25DAC0002C0A0D /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FC7F802C25DAC0002C0A0D /* SettingsViewController.swift */; };
+		D7FC7F842C25DC6C002C0A0D /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = D7FC7F832C25DC6C002C0A0D /* SnapKit */; };
+		D7FC7F862C25DC6C002C0A0D /* SnapKit-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = D7FC7F852C25DC6C002C0A0D /* SnapKit-Dynamic */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -81,7 +82,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D7579A492C22599400BDC70D /* SnapKit in Frameworks */,
+				D7FC7F842C25DC6C002C0A0D /* SnapKit in Frameworks */,
+				D7FC7F862C25DC6C002C0A0D /* SnapKit-Dynamic in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -263,7 +265,8 @@
 			);
 			name = ANBDUIKit;
 			packageProductDependencies = (
-				D7579A482C22599400BDC70D /* SnapKit */,
+				D7FC7F832C25DC6C002C0A0D /* SnapKit */,
+				D7FC7F852C25DC6C002C0A0D /* SnapKit-Dynamic */,
 			);
 			productName = ANBDUIKit;
 			productReference = A8D62CCF2C09519100C281D8 /* ANBDUIKit.app */;
@@ -294,7 +297,7 @@
 			);
 			mainGroup = A8D62CC62C09519100C281D8;
 			packageReferences = (
-				D7579A472C22599400BDC70D /* XCRemoteSwiftPackageReference "SnapKit" */,
+				D7FC7F822C25DC6C002C0A0D /* XCRemoteSwiftPackageReference "SnapKit" */,
 			);
 			productRefGroup = A8D62CD02C09519100C281D8 /* Products */;
 			projectDirPath = "";
@@ -577,7 +580,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		D7579A472C22599400BDC70D /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+		D7FC7F822C25DC6C002C0A0D /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit";
 			requirement = {
@@ -588,10 +591,15 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		D7579A482C22599400BDC70D /* SnapKit */ = {
+		D7FC7F832C25DC6C002C0A0D /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D7579A472C22599400BDC70D /* XCRemoteSwiftPackageReference "SnapKit" */;
+			package = D7FC7F822C25DC6C002C0A0D /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
+		};
+		D7FC7F852C25DC6C002C0A0D /* SnapKit-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D7FC7F822C25DC6C002C0A0D /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = "SnapKit-Dynamic";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

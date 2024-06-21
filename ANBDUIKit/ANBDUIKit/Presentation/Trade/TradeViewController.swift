@@ -16,6 +16,8 @@ final class TradeViewController: UIViewController {
     private lazy var nanuaTableView = UITableView()
     private lazy var baccuaTableView = UITableView()
     
+    private lazy var writeButton = UIButton()
+    
     private var selectedTab: Tab = .nanua {
         didSet {
             headerView.selectedTab = selectedTab
@@ -71,12 +73,22 @@ final class TradeViewController: UIViewController {
             tableView.register(TradeCell.self, forCellReuseIdentifier: TradeCell.identifier)
             return tableView
         }()
+        
+        writeButton = {
+            let button = UIButton(configuration: .borderedProminent())
+            button.setTitle("글쓰기", for: .normal)
+            button.setImage(.init(systemName: "plus"), for: .normal)
+            button.layer.cornerRadius = 25
+            button.clipsToBounds = true
+            button.addTarget(self, action: #selector(tapWriteButton), for: .touchUpInside)
+            return button
+        }()
     }
     
     private func initLayout() {
         let safeArea = view.safeAreaLayoutGuide
         
-        [headerView, tabScrollView].forEach {
+        [headerView, tabScrollView, writeButton].forEach {
             view.addSubview($0)
         }
         
@@ -102,6 +114,11 @@ final class TradeViewController: UIViewController {
             $0.width.equalTo(view).multipliedBy(2)
             $0.height.equalTo(tabScrollView.frameLayoutGuide)
         }
+        
+        writeButton.snp.makeConstraints {
+            $0.right.bottom.equalTo(safeArea).inset(14)
+            $0.height.equalTo(52)
+        }
     }
     
     
@@ -113,6 +130,13 @@ final class TradeViewController: UIViewController {
     @objc
     private func tapBaccuaTab() {
         selectedTab = .baccua
+    }
+    
+    @objc
+    private func tapWriteButton() {
+        let vc = TradeCreateViewController()
+        vc.modalPresentationStyle = .fullScreen
+        self.present(vc, animated: true)
     }
 }
 

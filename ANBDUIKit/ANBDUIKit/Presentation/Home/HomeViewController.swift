@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import SafariServices
 
 class HomeViewController: UIViewController {
     
@@ -51,8 +52,7 @@ class HomeViewController: UIViewController {
     private lazy var baccuaDescriptionLabel = UILabel()
     private var baccuaDividerView = UIView()
     private var baccuaMoreButton = UIButton()
-    private lazy var baccuaFirstCell = HomeTradeCell()
-    private lazy var baccuaSecondCell = HomeTradeCell()
+    private lazy var baccuaTableView = UITableView()
     
     private lazy var dasiTitleStackView = UIStackView()
     private lazy var dasiTitleLabel = UILabel()
@@ -178,6 +178,7 @@ class HomeViewController: UIViewController {
         }()
         accuaMoreButton = {
             let button = UIButton(configuration: moreButtonConfig)
+            button.addTarget(self, action: #selector(accauMoreButtonAction), for: .touchUpInside)
             return button
         }()
         accuaTitleLabel = {
@@ -200,8 +201,12 @@ class HomeViewController: UIViewController {
             imageView.layer.cornerRadius = 15
             imageView.image = resizedImage
             imageView.contentMode = .scaleAspectFill
-            
             imageView.clipsToBounds = true
+            
+            let tap = UITapGestureRecognizer(target: self, action: #selector(articleImageTapped))
+            imageView.addGestureRecognizer(tap)
+            imageView.isUserInteractionEnabled = true
+            
             return imageView
         }()
         
@@ -212,6 +217,7 @@ class HomeViewController: UIViewController {
         }()
         nanuaMoreButton = {
             let button = UIButton(configuration: moreButtonConfig)
+            button.addTarget(self, action: #selector(nanuaMoreButtonAction), for: .touchUpInside)
             return button
         }()
         nanuaTitleLabel = {
@@ -248,6 +254,7 @@ class HomeViewController: UIViewController {
         }()
         baccuaMoreButton = {
             let button = UIButton(configuration: moreButtonConfig)
+            button.addTarget(self, action: #selector(baccuaMoreButtonAction), for: .touchUpInside)
             return button
         }()
         baccuaTitleLabel = {
@@ -263,16 +270,17 @@ class HomeViewController: UIViewController {
             
             return label
         }()
-        baccuaFirstCell = {
-            let cell = HomeTradeCell()
-            cell.bind()
-            return cell
-        }()
         
-        baccuaSecondCell = {
-            let cell = HomeTradeCell()
-            cell.bind()
-            return cell
+        baccuaTableView = {
+            let tableView = UITableView()
+            tableView.separatorStyle = .none
+            tableView.contentInset = .init(top: 8, left: 0, bottom: 8, right: 0)
+            tableView.showsVerticalScrollIndicator = true
+            tableView.delegate = self
+            tableView.dataSource = self
+            tableView.rowHeight = UITableView.automaticDimension
+            tableView.register(HomeTradeCell.self, forCellReuseIdentifier: HomeTradeCell.identifier)
+            return tableView
         }()
         
         dasiTitleStackView = {
@@ -282,6 +290,7 @@ class HomeViewController: UIViewController {
         }()
         dasiMoreButton = {
             let button = UIButton(configuration: moreButtonConfig)
+            button.addTarget(self, action: #selector(dasiMoreButtonAction), for: .touchUpInside)
             return button
         }()
         dasiTitleLabel = {
@@ -304,8 +313,12 @@ class HomeViewController: UIViewController {
             imageView.layer.cornerRadius = 15
             imageView.image = resizedImage
             imageView.contentMode = .scaleAspectFill
-            
             imageView.clipsToBounds = true
+            
+            let tap = UITapGestureRecognizer(target: self, action: #selector(articleImageTapped))
+            imageView.addGestureRecognizer(tap)
+            imageView.isUserInteractionEnabled = true
+            
             return imageView
         }()
     }
@@ -340,7 +353,7 @@ class HomeViewController: UIViewController {
         [baccuaTitleLabel, baccuaMoreButton].forEach {
             baccuaTitleStackView.addArrangedSubview($0)
         }
-        [baccuaTitleStackView, baccuaDescriptionLabel, baccuaFirstCell, baccuaSecondCell, baccuaDividerView].forEach {
+        [baccuaTitleStackView, baccuaDescriptionLabel, baccuaTableView, baccuaDividerView].forEach {
             baccuaStackView.addArrangedSubview($0)
         }
         
@@ -396,11 +409,8 @@ class HomeViewController: UIViewController {
             $0.height.equalTo(1)
         }
         
-        baccuaFirstCell.snp.makeConstraints {
-            $0.height.equalTo(100)
-        }
-        baccuaSecondCell.snp.makeConstraints {
-            $0.height.equalTo(100)
+        baccuaTableView.snp.makeConstraints {
+            $0.height.equalTo(240)
         }
     }
     
@@ -412,11 +422,44 @@ class HomeViewController: UIViewController {
         commerceCollectionView.register(CommerceCollectionViewCell.self, forCellWithReuseIdentifier: "CommerceCell")
         commerceCollectionView.dataSource = self
         commerceCollectionView.delegate = self
-        //이거 작동 안 됨! ㅠ
-        //        commerceCollectionView.isPagingEnabled = true
         //center로 paging 맞춰주기 위한 설정
         commerceCollectionView.decelerationRate = .fast
         commerceCollectionView.isPagingEnabled = false
+    }
+    
+    @objc
+    func accauMoreButtonAction() {
+        let vc = ArticleMoreViewController()
+        vc.title = "아껴쓰기"
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc
+    func dasiMoreButtonAction() {
+        let vc = ArticleMoreViewController()
+        vc.title = "다시쓰기"
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc
+    func nanuaMoreButtonAction() {
+        let vc = TradeMoreViewController()
+        vc.title = "나눠쓰기"
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc
+    func baccuaMoreButtonAction() {
+        let vc = TradeMoreViewController()
+        vc.title = "나눠쓰기"
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc
+    func articleImageTapped() {
+        // 아껴쓰기, 다시쓰기
+        let vc = ArticleDetailViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 
@@ -428,16 +471,21 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
     
     // 셀과 뷰의 간격
     func collectionView( _ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        if collectionView.tag == 1 {
-            return UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10)
-        } else {
-            return UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10)
-        }
+        return UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10)
     }
     
     // 셀이 눌렸을 때
-    //    func collectionView( _ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    //    }
+    func collectionView( _ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView.tag == 1 {
+            // TODO: 웹 뷰 연결
+            guard let url = URL(string: "https://www.naver.com") else { return }
+            let safariViewController = SFSafariViewController(url: url)
+            present(safariViewController, animated: true)
+        } else {
+            let vc = TradeDetailViewController()
+            navigationController?.pushViewController(vc, animated: true)
+        }
+    }
     
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         guard let layout = self.commerceCollectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
@@ -475,3 +523,31 @@ extension HomeViewController: UICollectionViewDataSource {
         return dataSource.count
     }
 }
+
+extension HomeViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let detailView = TradeDetailViewController()
+        self.navigationController?.pushViewController(detailView, animated: true)
+    }
+    
+}
+
+extension HomeViewController: UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 2
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: HomeTradeCell.identifier,
+            for: indexPath
+        ) as? HomeTradeCell else { return .init() }
+        cell.bind()
+        return cell
+    }
+    
+    
+}
+

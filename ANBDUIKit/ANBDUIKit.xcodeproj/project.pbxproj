@@ -38,6 +38,7 @@
 		CBC6B0E12C2035DB00D36671 /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBC6B0E02C2035DB00D36671 /* UIImage+Extension.swift */; };
 		CBC6B0E32C20414300D36671 /* HomeTradeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBC6B0E22C20414300D36671 /* HomeTradeCell.swift */; };
 		CBC6B0EB2C212E3100D36671 /* ArticleMoreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBC6B0EA2C212E3100D36671 /* ArticleMoreViewController.swift */; };
+		CBF315992C2590E7004F07BA /* TradeMoreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF315982C2590E7004F07BA /* TradeMoreViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +72,7 @@
 		CBC6B0E02C2035DB00D36671 /* UIImage+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
 		CBC6B0E22C20414300D36671 /* HomeTradeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTradeCell.swift; sourceTree = "<group>"; };
 		CBC6B0EA2C212E3100D36671 /* ArticleMoreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleMoreViewController.swift; sourceTree = "<group>"; };
+		CBF315982C2590E7004F07BA /* TradeMoreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeMoreViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -222,6 +224,7 @@
 				CB6EEB292C1C23AA00902751 /* CommerceCollectionViewCell.swift */,
 				CBC6B0E22C20414300D36671 /* HomeTradeCell.swift */,
 				CBC6B0EA2C212E3100D36671 /* ArticleMoreViewController.swift */,
+				CBF315982C2590E7004F07BA /* TradeMoreViewController.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -325,6 +328,7 @@
 				A894BADB2C216DFE007E3155 /* TradeCell.swift in Sources */,
 				A86379952C1DA59600F612B4 /* (null) in Sources */,
 				CBC6B0E32C20414300D36671 /* HomeTradeCell.swift in Sources */,
+				CBF315992C2590E7004F07BA /* TradeMoreViewController.swift in Sources */,
 				A8D62CD32C09519100C281D8 /* AppDelegate.swift in Sources */,
 				A8D62CFE2C09530300C281D8 /* ArticleViewController.swift in Sources */,
 				13398E192C0E058900E664B5 /* ArticleCell.swift in Sources */,

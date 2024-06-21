@@ -52,8 +52,7 @@ class HomeViewController: UIViewController {
     private lazy var baccuaDescriptionLabel = UILabel()
     private var baccuaDividerView = UIView()
     private var baccuaMoreButton = UIButton()
-    private lazy var baccuaFirstCell = HomeTradeCell()
-    private lazy var baccuaSecondCell = HomeTradeCell()
+    private lazy var baccuaTableView = UITableView()
     
     private lazy var dasiTitleStackView = UIStackView()
     private lazy var dasiTitleLabel = UILabel()
@@ -218,6 +217,7 @@ class HomeViewController: UIViewController {
         }()
         nanuaMoreButton = {
             let button = UIButton(configuration: moreButtonConfig)
+            button.addTarget(self, action: #selector(nanuaMoreButtonAction), for: .touchUpInside)
             return button
         }()
         nanuaTitleLabel = {
@@ -254,6 +254,7 @@ class HomeViewController: UIViewController {
         }()
         baccuaMoreButton = {
             let button = UIButton(configuration: moreButtonConfig)
+            button.addTarget(self, action: #selector(baccuaMoreButtonAction), for: .touchUpInside)
             return button
         }()
         baccuaTitleLabel = {
@@ -269,16 +270,17 @@ class HomeViewController: UIViewController {
             
             return label
         }()
-        baccuaFirstCell = {
-            let cell = HomeTradeCell()
-            cell.bind()
-            return cell
-        }()
         
-        baccuaSecondCell = {
-            let cell = HomeTradeCell()
-            cell.bind()
-            return cell
+        baccuaTableView = {
+            let tableView = UITableView()
+            tableView.separatorStyle = .none
+            tableView.contentInset = .init(top: 8, left: 0, bottom: 8, right: 0)
+            tableView.showsVerticalScrollIndicator = true
+            tableView.delegate = self
+            tableView.dataSource = self
+            tableView.rowHeight = UITableView.automaticDimension
+            tableView.register(HomeTradeCell.self, forCellReuseIdentifier: HomeTradeCell.identifier)
+            return tableView
         }()
         
         dasiTitleStackView = {
@@ -351,7 +353,7 @@ class HomeViewController: UIViewController {
         [baccuaTitleLabel, baccuaMoreButton].forEach {
             baccuaTitleStackView.addArrangedSubview($0)
         }
-        [baccuaTitleStackView, baccuaDescriptionLabel, baccuaFirstCell, baccuaSecondCell, baccuaDividerView].forEach {
+        [baccuaTitleStackView, baccuaDescriptionLabel, baccuaTableView, baccuaDividerView].forEach {
             baccuaStackView.addArrangedSubview($0)
         }
         
@@ -407,11 +409,8 @@ class HomeViewController: UIViewController {
             $0.height.equalTo(1)
         }
         
-        baccuaFirstCell.snp.makeConstraints {
-            $0.height.equalTo(100)
-        }
-        baccuaSecondCell.snp.makeConstraints {
-            $0.height.equalTo(100)
+        baccuaTableView.snp.makeConstraints {
+            $0.height.equalTo(240)
         }
     }
     
@@ -439,6 +438,20 @@ class HomeViewController: UIViewController {
     func dasiMoreButtonAction() {
         let vc = ArticleMoreViewController()
         vc.title = "다시쓰기"
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc
+    func nanuaMoreButtonAction() {
+        let vc = TradeMoreViewController()
+        vc.title = "나눠쓰기"
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc
+    func baccuaMoreButtonAction() {
+        let vc = TradeMoreViewController()
+        vc.title = "나눠쓰기"
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -510,3 +523,31 @@ extension HomeViewController: UICollectionViewDataSource {
         return dataSource.count
     }
 }
+
+extension HomeViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let detailView = TradeDetailViewController()
+        self.navigationController?.pushViewController(detailView, animated: true)
+    }
+    
+}
+
+extension HomeViewController: UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 2
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: HomeTradeCell.identifier,
+            for: indexPath
+        ) as? HomeTradeCell else { return .init() }
+        cell.bind()
+        return cell
+    }
+    
+    
+}
+

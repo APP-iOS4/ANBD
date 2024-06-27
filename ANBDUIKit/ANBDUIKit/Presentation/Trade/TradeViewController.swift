@@ -11,6 +11,11 @@ import SnapKit
 final class TradeViewController: UIViewController {
     
     private lazy var headerView = TabHeaderView(tab: [.nanua, .baccua])
+    
+    private lazy var filterStackView = UIStackView()
+    private lazy var regionFilterButton = UIButton()
+    private lazy var categoryFilterButton = UIButton()
+    
     private lazy var tabScrollView = UIScrollView()
     private lazy var tabStackView = UIStackView()
     private lazy var nanuaTableView = UITableView()
@@ -43,6 +48,39 @@ final class TradeViewController: UIViewController {
         
         headerView.leftTab.addTarget(nil, action: #selector(tapNanuaTab), for: .touchUpInside)
         headerView.rightTab.addTarget(nil, action: #selector(tapBaccuaTab), for: .touchUpInside)
+        
+        filterStackView = {
+            let stackView = UIStackView()
+            stackView.spacing = 10
+            stackView.axis = .horizontal
+            return stackView
+        }()
+        
+        regionFilterButton = {
+            let button = UIButton()
+            button.backgroundColor = .clear
+            button.layer.cornerRadius = 15
+            button.clipsToBounds = true
+            button.layer.borderWidth = 1
+            button.layer.borderColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
+            button.setTitle("   지역   ", for: .normal)
+            button.setTitleColor(.black, for: .normal)
+            button.titleLabel?.font = .systemFont(ofSize: 15)
+            return button
+        }()
+        
+        categoryFilterButton = {
+            let button = UIButton()
+            button.backgroundColor = .clear
+            button.layer.cornerRadius = 15
+            button.clipsToBounds = true
+            button.layer.borderWidth = 1
+            button.layer.borderColor = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
+            button.setTitle("   카테고리   ", for: .normal)
+            button.setTitleColor(.black, for: .normal)
+            button.titleLabel?.font = .systemFont(ofSize: 15)
+            return button
+        }()
         
         tabScrollView = {
             let scrollView = UIScrollView()
@@ -88,8 +126,12 @@ final class TradeViewController: UIViewController {
     private func initLayout() {
         let safeArea = view.safeAreaLayoutGuide
         
-        [headerView, tabScrollView, writeButton].forEach {
+        [headerView, filterStackView, tabScrollView, writeButton].forEach {
             view.addSubview($0)
+        }
+        
+        [regionFilterButton, categoryFilterButton, UIView()].forEach {
+            filterStackView.addArrangedSubview($0)
         }
         
         tabScrollView.addSubview(tabStackView)
@@ -104,9 +146,15 @@ final class TradeViewController: UIViewController {
             $0.height.equalTo(56)
         }
         
+        filterStackView.snp.makeConstraints {
+            $0.horizontalEdges.equalTo(safeArea).inset(16)
+            $0.top.equalTo(headerView.snp.bottom).offset(10)
+            $0.height.equalTo(30)
+        }
+        
         tabScrollView.snp.makeConstraints {
             $0.horizontalEdges.bottom.equalTo(safeArea)
-            $0.top.equalTo(headerView.snp.bottom)
+            $0.top.equalTo(filterStackView.snp.bottom).offset(10)
         }
         
         tabStackView.snp.makeConstraints {

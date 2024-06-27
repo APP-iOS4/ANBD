@@ -10,6 +10,11 @@ import SnapKit
 
 final class TradeViewController: UIViewController {
     
+    private lazy var searchButton: UIBarButtonItem = {
+        let barButtonItem = UIBarButtonItem()
+        barButtonItem.image = UIImage(systemName: "magnifyingglass")
+        return barButtonItem
+    }()
     private lazy var headerView = TabHeaderView(tab: [.nanua, .baccua])
     
     private lazy var filterStackView = UIStackView()
@@ -45,6 +50,7 @@ final class TradeViewController: UIViewController {
     private func initAttribute() {
         title = "나눔 · 거래"
         view.backgroundColor = .systemBackground
+        navigationItem.rightBarButtonItem = searchButton
         
         headerView.leftTab.addTarget(nil, action: #selector(tapNanuaTab), for: .touchUpInside)
         headerView.rightTab.addTarget(nil, action: #selector(tapBaccuaTab), for: .touchUpInside)

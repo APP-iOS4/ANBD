@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import SafariServices
 
 class SettingsViewController: UIViewController {
     
@@ -25,20 +26,30 @@ class SettingsViewController: UIViewController {
         let editUserInfoButton = createButton(title: "유저 정보 수정")
         editUserInfoButton.addTarget(self, action: #selector(editUserInfoButtonTapped), for: .touchUpInside)
 
-        let blockedUsersButton = createButton(title: "차단 사용자 관리")
-        
+        let blockedUserListButton = createButton(title: "차단 사용자 관리")
+        blockedUserListButton.addTarget(self, action: #selector(blockUserListButtonTapped), for: .touchUpInside)
+
         let otherSettingsLabel = createLabel(text: "기타")
         let termsPoliciesButton = createButton(title: "약관 및 정책")
+        termsPoliciesButton.addTarget(self, action: #selector(termsPoliciesButtonTapped), for: .touchUpInside)
+
         let openSourceLicenseButton = createButton(title: "오픈소스 라이선스")
+        openSourceLicenseButton.addTarget(self, action: #selector(openSourceLicenseButtonTapped), for: .touchUpInside)
+
         let clearCacheButton = createButtonWithDetail(title: "캐시 데이터 삭제하기", detail: "1.123 MB")
+        clearCacheButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(clearCacheButtonTapped)))
+        
         let appVersionButton = createButtonWithDetail(title: "앱 버전", detail: "1.0.0")
         let contactEmailButton = createButtonWithEmailDetail(title: "문의 메일", email: "rlvy0513@naver.com")
         let logoutButton = createButton(title: "로그아웃")
+        logoutButton.addTarget(self, action: #selector(logoutButtonTapped), for: .touchUpInside)
+        
         let deleteAccountButton = createButton(title: "회원탈퇴")
+        deleteAccountButton.addTarget(self, action: #selector(deleteAccountButtonTapped), for: .touchUpInside)
         
         view.addSubview(userSettingsLabel)
         view.addSubview(editUserInfoButton)
-        view.addSubview(blockedUsersButton)
+        view.addSubview(blockedUserListButton)
         
         view.addSubview(otherSettingsLabel)
         view.addSubview(termsPoliciesButton)
@@ -49,7 +60,7 @@ class SettingsViewController: UIViewController {
         view.addSubview(logoutButton)
         view.addSubview(deleteAccountButton)
         
-        addDivider(below: blockedUsersButton)
+        addDivider(below: blockedUserListButton)
     }
     
     private func setupConstraints() {
@@ -138,6 +149,55 @@ class SettingsViewController: UIViewController {
         navigationController.modalPresentationStyle = .fullScreen
         present(navigationController, animated: true, completion: nil)
     }
+
+    @objc private func blockUserListButtonTapped() {
+        let blockUserList = BlockUserListViewController()
+        blockUserList.title = "차단 사용자 관리"
+        navigationController?.pushViewController(blockUserList, animated: true)
+    }
+    
+    @objc private func termsPoliciesButtonTapped() {
+        openSafariViewController(urlString: "https://oval-second-abc.notion.site/ANBD-036716b1ef784b019ab0df8147bd4e65")
+    }
+    
+    @objc private func openSourceLicenseButtonTapped() {
+        openSafariViewController(urlString: "https://oval-second-abc.notion.site/97ddaf4813f7481a84c36ff4f3c3faef")
+    }
+    
+    @objc private func clearCacheButtonTapped() {
+        presentSingleButtonAlert(title: "캐시 삭제 완료", message: "캐시 데이터가 삭제되었습니다.", buttonText: "확인", buttonColor: .systemBlue)
+    }
+
+    @objc private func logoutButtonTapped() {
+        presentAlert(title: "로그아웃", message: "정말 로그아웃 하시겠습니까?", buttonText: "로그아웃", buttonColor: .systemRed)
+    }
+    
+    @objc private func deleteAccountButtonTapped() {
+        presentAlert(title: "회원탈퇴", message: "정말 ANBD를 탈퇴 하시겠습니까?\n회원 탈퇴시 회원 정보가 복구되지 않습니다.", buttonText: "탈퇴하기", buttonColor: .systemRed)
+    }
+    
+    private func presentAlert(title: String?, message: String, buttonText: String, buttonColor: UIColor) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: buttonText, style: .destructive)
+        action.setValue(buttonColor, forKey: "titleTextColor")
+        alertController.addAction(action)
+        alertController.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    private func presentSingleButtonAlert(title: String?, message: String, buttonText: String, buttonColor: UIColor) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: buttonText, style: .default)
+        action.setValue(buttonColor, forKey: "titleTextColor")
+        alertController.addAction(action)
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    private func openSafariViewController(urlString: String) {
+        guard let url = URL(string: urlString) else { return }
+        let safariViewController = SFSafariViewController(url: url)
+        present(safariViewController, animated: true, completion: nil)
+    }
     
     private func createLabel(text: String) -> UILabel {
         let label = UILabel()
@@ -168,6 +228,11 @@ class SettingsViewController: UIViewController {
         stackView.axis = .horizontal
         stackView.distribution = .equalSpacing
         
+        if title == "캐시 데이터 삭제하기" {
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(clearCacheButtonTapped))
+            button.addGestureRecognizer(tapGesture)
+        }
+
         return stackView
     }
     
@@ -196,4 +261,3 @@ class SettingsViewController: UIViewController {
         }
     }
 }
-

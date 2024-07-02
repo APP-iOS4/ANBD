@@ -38,6 +38,7 @@
 		CBC6B0E32C20414300D36671 /* HomeTradeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBC6B0E22C20414300D36671 /* HomeTradeCell.swift */; };
 		CBC6B0EB2C212E3100D36671 /* ArticleMoreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBC6B0EA2C212E3100D36671 /* ArticleMoreViewController.swift */; };
 		CBF315992C2590E7004F07BA /* TradeMoreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF315982C2590E7004F07BA /* TradeMoreViewController.swift */; };
+		D7E1D0E32C33AB6200D55682 /* BlockUserListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E1D0E22C33AB6200D55682 /* BlockUserListViewController.swift */; };
 		D7FC7F7B2C25DAA8002C0A0D /* PagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FC7F762C25DAA8002C0A0D /* PagerView.swift */; };
 		D7FC7F7C2C25DAA8002C0A0D /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FC7F772C25DAA8002C0A0D /* TabView.swift */; };
 		D7FC7F7D2C25DAA8002C0A0D /* UserActivityListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FC7F782C25DAA8002C0A0D /* UserActivityListViewController.swift */; };
@@ -77,6 +78,7 @@
 		CBC6B0E22C20414300D36671 /* HomeTradeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTradeCell.swift; sourceTree = "<group>"; };
 		CBC6B0EA2C212E3100D36671 /* ArticleMoreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleMoreViewController.swift; sourceTree = "<group>"; };
 		CBF315982C2590E7004F07BA /* TradeMoreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeMoreViewController.swift; sourceTree = "<group>"; };
+		D7E1D0E22C33AB6200D55682 /* BlockUserListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockUserListViewController.swift; sourceTree = "<group>"; };
 		D7FC7F762C25DAA8002C0A0D /* PagerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PagerView.swift; sourceTree = "<group>"; };
 		D7FC7F772C25DAA8002C0A0D /* TabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
 		D7FC7F782C25DAA8002C0A0D /* UserActivityListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserActivityListViewController.swift; sourceTree = "<group>"; };
@@ -194,6 +196,7 @@
 				D7FC7F792C25DAA8002C0A0D /* ScrollFitable.swift */,
 				D7FC7F772C25DAA8002C0A0D /* TabView.swift */,
 				D7FC7F782C25DAA8002C0A0D /* UserActivityListViewController.swift */,
+				D7E1D0E22C33AB6200D55682 /* BlockUserListViewController.swift */,
 			);
 			path = Mypage;
 			sourceTree = "<group>";
@@ -370,6 +373,7 @@
 				A8D62CFC2C0952FD00C281D8 /* TradeDetailViewController.swift in Sources */,
 				A8D62CD52C09519100C281D8 /* SceneDelegate.swift in Sources */,
 				131E49762C0F1CAF00D2AB20 /* RoundedLabel.swift in Sources */,
+				D7E1D0E32C33AB6200D55682 /* BlockUserListViewController.swift in Sources */,
 				A8D62D022C09531200C281D8 /* Authentication.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

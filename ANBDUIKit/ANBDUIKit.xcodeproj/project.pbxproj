@@ -38,6 +38,7 @@
 		CBC6B0E32C20414300D36671 /* HomeTradeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBC6B0E22C20414300D36671 /* HomeTradeCell.swift */; };
 		CBC6B0EB2C212E3100D36671 /* ArticleMoreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBC6B0EA2C212E3100D36671 /* ArticleMoreViewController.swift */; };
 		CBF315992C2590E7004F07BA /* TradeMoreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF315982C2590E7004F07BA /* TradeMoreViewController.swift */; };
+		D794511F2C3590FC00034D22 /* ANBDTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D794511E2C3590FC00034D22 /* ANBDTabBarController.swift */; };
 		D7E1D0E32C33AB6200D55682 /* BlockUserListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E1D0E22C33AB6200D55682 /* BlockUserListViewController.swift */; };
 		D7FC7F7B2C25DAA8002C0A0D /* PagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FC7F762C25DAA8002C0A0D /* PagerView.swift */; };
 		D7FC7F7C2C25DAA8002C0A0D /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FC7F772C25DAA8002C0A0D /* TabView.swift */; };
@@ -78,6 +79,7 @@
 		CBC6B0E22C20414300D36671 /* HomeTradeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTradeCell.swift; sourceTree = "<group>"; };
 		CBC6B0EA2C212E3100D36671 /* ArticleMoreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleMoreViewController.swift; sourceTree = "<group>"; };
 		CBF315982C2590E7004F07BA /* TradeMoreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeMoreViewController.swift; sourceTree = "<group>"; };
+		D794511E2C3590FC00034D22 /* ANBDTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ANBDTabBarController.swift; sourceTree = "<group>"; };
 		D7E1D0E22C33AB6200D55682 /* BlockUserListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockUserListViewController.swift; sourceTree = "<group>"; };
 		D7FC7F762C25DAA8002C0A0D /* PagerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PagerView.swift; sourceTree = "<group>"; };
 		D7FC7F772C25DAA8002C0A0D /* TabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
@@ -259,6 +261,7 @@
 			isa = PBXGroup;
 			children = (
 				A8D62D032C09531E00C281D8 /* Common.swift */,
+				D794511E2C3590FC00034D22 /* ANBDTabBarController.swift */,
 			);
 			path = CommonUI;
 			sourceTree = "<group>";
@@ -365,6 +368,7 @@
 				A8D62CED2C09527A00C281D8 /* View+Extension.swift in Sources */,
 				CBC6B0E12C2035DB00D36671 /* UIImage+Extension.swift in Sources */,
 				A894BB3F2C247A42007E3155 /* TradeCreateViewController.swift in Sources */,
+				D794511F2C3590FC00034D22 /* ANBDTabBarController.swift in Sources */,
 				D7FC7F7F2C25DAA8002C0A0D /* EditProfileViewController.swift in Sources */,
 				D7FC7F7E2C25DAA8002C0A0D /* ScrollFitable.swift in Sources */,
 				131E49742C0EE13D00D2AB20 /* ArticleCreateViewController.swift in Sources */,

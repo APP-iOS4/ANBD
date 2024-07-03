@@ -24,7 +24,8 @@
 		A8D62CDF2C09519600C281D8 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = A8D62CDE2C09519600C281D8 /* Base */; };
 		A8D62CED2C09527A00C281D8 /* View+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D62CEC2C09527A00C281D8 /* View+Extension.swift */; };
 		A8D62CEF2C09529400C281D8 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D62CEE2C09529400C281D8 /* Util.swift */; };
-		A8D62CFA2C0952F700C281D8 /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D62CF92C0952F700C281D8 /* Chat.swift */; };
+		A8D62CF82C0952EA00C281D8 /* Mypage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D62CF72C0952EA00C281D8 /* Mypage.swift */; };
+		A8D62CFA2C0952F700C281D8 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D62CF92C0952F700C281D8 /* ChatViewController.swift */; };
 		A8D62CFC2C0952FD00C281D8 /* TradeDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D62CFB2C0952FD00C281D8 /* TradeDetailViewController.swift */; };
 		A8D62CFE2C09530300C281D8 /* ArticleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D62CFD2C09530300C281D8 /* ArticleViewController.swift */; };
 		A8D62D002C09530900C281D8 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D62CFF2C09530900C281D8 /* HomeViewController.swift */; };
@@ -32,6 +33,7 @@
 		A8D62D042C09531E00C281D8 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D62D032C09531E00C281D8 /* Common.swift */; };
 		A8D62D072C09542100C281D8 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = A8D62D062C09542100C281D8 /* SnapKit */; };
 		A8D62D092C09542100C281D8 /* SnapKit-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = A8D62D082C09542100C281D8 /* SnapKit-Dynamic */; };
+		CB1FA5832C3542C20056407F /* ChatListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1FA5822C3542C20056407F /* ChatListCell.swift */; };
 		CB6EEB282C1839F100902751 /* NanuaCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6EEB272C1839F100902751 /* NanuaCollectionViewCell.swift */; };
 		CB6EEB2A2C1C23AA00902751 /* CommerceCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6EEB292C1C23AA00902751 /* CommerceCollectionViewCell.swift */; };
 		CBC6B0E12C2035DB00D36671 /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBC6B0E02C2035DB00D36671 /* UIImage+Extension.swift */; };
@@ -67,12 +69,14 @@
 		A8D62CE02C09519600C281D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A8D62CEC2C09527A00C281D8 /* View+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extension.swift"; sourceTree = "<group>"; };
 		A8D62CEE2C09529400C281D8 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
-		A8D62CF92C0952F700C281D8 /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
+		A8D62CF72C0952EA00C281D8 /* Mypage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mypage.swift; sourceTree = "<group>"; };
+		A8D62CF92C0952F700C281D8 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		A8D62CFB2C0952FD00C281D8 /* TradeDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeDetailViewController.swift; sourceTree = "<group>"; };
 		A8D62CFD2C09530300C281D8 /* ArticleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleViewController.swift; sourceTree = "<group>"; };
 		A8D62CFF2C09530900C281D8 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		A8D62D012C09531200C281D8 /* AuthenticationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationViewController.swift; sourceTree = "<group>"; };
 		A8D62D032C09531E00C281D8 /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
+		CB1FA5822C3542C20056407F /* ChatListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListCell.swift; sourceTree = "<group>"; };
 		CB6EEB272C1839F100902751 /* NanuaCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NanuaCollectionViewCell.swift; sourceTree = "<group>"; };
 		CB6EEB292C1C23AA00902751 /* CommerceCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommerceCollectionViewCell.swift; sourceTree = "<group>"; };
 		CBC6B0E02C2035DB00D36671 /* UIImage+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
@@ -206,7 +210,8 @@
 		A8D62CF12C0952BA00C281D8 /* Chat */ = {
 			isa = PBXGroup;
 			children = (
-				A8D62CF92C0952F700C281D8 /* Chat.swift */,
+				A8D62CF92C0952F700C281D8 /* ChatViewController.swift */,
+				CB1FA5822C3542C20056407F /* ChatListCell.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -360,10 +365,11 @@
 				13F39BDD2C0F52A300EFCF04 /* PhotoCell.swift in Sources */,
 				A8D62D002C09530900C281D8 /* HomeViewController.swift in Sources */,
 				A8D62D042C09531E00C281D8 /* Common.swift in Sources */,
-				A8D62CFA2C0952F700C281D8 /* Chat.swift in Sources */,
+				A8D62CFA2C0952F700C281D8 /* ChatViewController.swift in Sources */,
 				13F39BDF2C0F59A800EFCF04 /* ArticleDetailViewController.swift in Sources */,
 				A8D62CEF2C09529400C281D8 /* Util.swift in Sources */,
 				13398E172C0DD59800E664B5 /* TabHeaderView.swift in Sources */,
+				CB1FA5832C3542C20056407F /* ChatListCell.swift in Sources */,
 				CB6EEB282C1839F100902751 /* NanuaCollectionViewCell.swift in Sources */,
 				A8D62CED2C09527A00C281D8 /* View+Extension.swift in Sources */,
 				CBC6B0E12C2035DB00D36671 /* UIImage+Extension.swift in Sources */,

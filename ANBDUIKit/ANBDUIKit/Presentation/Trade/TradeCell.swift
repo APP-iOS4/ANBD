@@ -57,11 +57,12 @@ final class TradeCell: UITableViewCell {
         return label
     }()
     
-    private let heartImageView: UIImageView = {
-        let view = UIImageView(frame: .init(x: 0, y: 0, width: 28, height: 30))
-        view.image = .init(systemName: "heart")
-        view.tintColor = .lightGray
-        return view
+    private let heartButton: UIButton = {
+        let button = UIButton(frame: .init(x: 0, y: 0, width: 28, height: 30))
+        button.setImage(UIImage(systemName: "heart"), for: .normal)
+        button.tintColor = .lightGray
+        button.addTarget(self, action: #selector(tapHeartButton), for: .touchUpInside)
+        return button
     }()
     
     private let divider: UIView = {
@@ -94,7 +95,7 @@ final class TradeCell: UITableViewCell {
             containerStackView.addArrangedSubview($0)
         }
         
-        [UIView(), heartImageView].forEach {
+        [UIView(), heartButton].forEach {
             heartStackView.addArrangedSubview($0)
         }
         
@@ -119,6 +120,17 @@ final class TradeCell: UITableViewCell {
         
         infoLabel.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(5)
+        }
+    }
+    
+    @objc
+    private func tapHeartButton() {
+        if heartButton.tintColor == .red {
+            heartButton.setImage(UIImage(systemName: "heart"), for: .normal)
+            heartButton.tintColor = .lightGray
+        } else {
+            heartButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+            heartButton.tintColor = .red
         }
     }
 }

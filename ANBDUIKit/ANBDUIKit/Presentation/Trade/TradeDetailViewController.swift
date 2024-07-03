@@ -26,7 +26,7 @@ final class TradeDetailViewController: UIViewController {
     private var tradeDescription = UILabel()
     
     private var footerStackView = UIStackView()
-    private var heartImageView = UIImageView()
+    private var heartButton = UIButton()
     private var productTitle = UILabel()
     
     private var divider1 = UIView()
@@ -136,11 +136,12 @@ final class TradeDetailViewController: UIViewController {
             return stackView
         }()
         
-        heartImageView = {
-            let view = UIImageView(frame: .init(x: 0, y: 0, width: 28, height: 30))
-            view.image = .init(systemName: "heart")
-            view.tintColor = .lightGray
-            return view
+        heartButton = {
+            let button = UIButton(frame: .init(x: 0, y: 0, width: 28, height: 30))
+            button.setImage(UIImage(systemName: "heart"), for: .normal)
+            button.tintColor = .lightGray
+            button.addTarget(self, action: #selector(tapHeartButton), for: .touchUpInside)
+            return button
         }()
         
         productTitle = {
@@ -193,7 +194,7 @@ final class TradeDetailViewController: UIViewController {
             tradeDetailStackView.addArrangedSubview($0)
         }
         
-        [heartImageView, UIView(), productTitle, UIView()].forEach {
+        [heartButton, UIView(), productTitle, UIView()].forEach {
             footerStackView.addArrangedSubview($0)
         }
         
@@ -226,11 +227,22 @@ final class TradeDetailViewController: UIViewController {
         }
         
         productTitle.snp.makeConstraints {
-            $0.leading.equalTo(heartImageView.snp.trailing).offset(10)
+            $0.leading.equalTo(heartButton.snp.trailing).offset(10)
         }
         
         tradeDescription.snp.makeConstraints {
             $0.top.equalTo(tradeSubTitle.snp.bottom).offset(20)
+        }
+    }
+    
+    @objc
+    private func tapHeartButton() {
+        if heartButton.tintColor == .red {
+            heartButton.setImage(UIImage(systemName: "heart"), for: .normal)
+            heartButton.tintColor = .lightGray
+        } else {
+            heartButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+            heartButton.tintColor = .red
         }
     }
 }

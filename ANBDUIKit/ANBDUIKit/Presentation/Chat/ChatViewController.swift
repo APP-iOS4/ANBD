@@ -73,7 +73,7 @@ final class ChatViewController: UIViewController {
 extension ChatViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let detailView = ArticleDetailViewController()
+        let detailView = ChatDetailViewController()
         self.navigationController?.pushViewController(detailView, animated: true)
     }
     

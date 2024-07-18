@@ -9,9 +9,20 @@ import UIKit
 
 final class ChatDetailViewController: UIViewController {
     
+    private lazy var buttonConfig = UIButton.Configuration.borderless()
+    
+    private lazy var contentStackView = UIStackView()
     private lazy var headerView = ChatHeader()
     private lazy var scrollView = UIScrollView()
     private lazy var menuButton = UIBarButtonItem()
+    
+    private lazy var tableView = UITableView()
+    
+    private lazy var bottomStackView = UIStackView()
+    private lazy var pictureButton = UIButton()
+    private lazy var messageTextField = UITextField()
+    private lazy var sendButton = UIButton()
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,16 +37,86 @@ final class ChatDetailViewController: UIViewController {
     func initAttribute() {
         view.backgroundColor = .systemBackground
         
+        buttonConfig.imagePadding = 5
+        buttonConfig.buttonSize = .medium
+        
         menuButton.image = UIImage(systemName: "ellipsis")
         navigationItem.rightBarButtonItem = menuButton
+        
+        contentStackView = {
+           let stackView = UIStackView()
+            stackView.axis = .vertical
+            stackView.alignment = .center
+            return stackView
+        }()
+        
+        scrollView = {
+            let scrollView = UIScrollView()
+            scrollView.backgroundColor = .systemBackground
+            return scrollView
+        }()
+        
+        tableView = {
+            let tableView = UITableView()
+            tableView.separatorStyle = .none
+            tableView.contentInset = .init(top: 8, left: 0, bottom: 8, right: 0)
+            tableView.showsVerticalScrollIndicator = true
+            tableView.delegate = self
+            tableView.dataSource = self
+            tableView.rowHeight = UITableView.automaticDimension
+            tableView.register(ChattingCell.self, forCellReuseIdentifier: ChattingCell.identifier)
+            return tableView
+        }()
+        
+        pictureButton = {
+            let button = UIButton(configuration: buttonConfig)
+            button.setImage(UIImage(systemName: "photo.fill"), for: .normal)
+            button.tintColor = .lightGray
+            return button
+        }()
+        
+        messageTextField = {
+            let textField = UITextField()
+            textField.placeholder = "메시지 보내기"
+            textField.font = .systemFont(ofSize: 15)
+            textField.delegate = self
+            textField.clearButtonMode = .whileEditing
+            textField.backgroundColor = .systemGray6
+            textField.layer.cornerRadius = 20
+            textField.addLeftPadding()
+            return textField
+        }()
+        
+        sendButton = {
+           let button = UIButton(configuration: buttonConfig)
+            button.setImage(UIImage(systemName: "paperplane.fill"), for: .normal)
+            button.contentVerticalAlignment = .fill
+            button.contentHorizontalAlignment = .fill
+            
+            return button
+        }()
+        
+        bottomStackView = {
+           let stackView = UIStackView()
+            stackView.distribution = .equalSpacing
+            stackView.spacing = 20
+            return stackView
+        }()
     }
     
     func initLayout() {
         let safeArea = view.safeAreaLayoutGuide
+        view.addSubview(contentStackView)
         
-        [headerView, scrollView].forEach {
-            view.addSubview($0)
+        [headerView, scrollView, bottomStackView].forEach {
+            contentStackView.addArrangedSubview($0)
         }
+        
+        [pictureButton, messageTextField, sendButton].forEach {
+            bottomStackView.addArrangedSubview($0)
+        }
+        
+        scrollView.addSubview(tableView)
         
         headerView.snp.makeConstraints {
             $0.horizontalEdges.equalTo(safeArea).inset(20)
@@ -43,9 +124,62 @@ final class ChatDetailViewController: UIViewController {
             $0.height.equalTo(80)
         }
         
+        contentStackView.snp.makeConstraints {
+            $0.edges.equalTo(safeArea)
+        }
+        
         scrollView.snp.makeConstraints {
             $0.top.equalTo(headerView.snp.bottom)
-            $0.horizontalEdges.equalTo(scrollView.contentLayoutGuide).inset(16)
+            $0.horizontalEdges.equalTo(safeArea).inset(16)
+            $0.bottom.equalTo(bottomStackView.snp.top)
         }
+        
+        bottomStackView.snp.makeConstraints {
+            $0.bottom.equalTo(safeArea)
+            $0.horizontalEdges.equalTo(safeArea).inset(16)
+            $0.height.equalTo(50)
+        }
+        
+        messageTextField.snp.makeConstraints {
+            $0.left.right.equalTo(bottomStackView).inset(40)
+            $0.top.bottom.equalTo(bottomStackView).inset(5)
+        }
+    }
+}
+
+extension ChatDetailViewController: UITextFieldDelegate {
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        print("didbeginediting")
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        print("end")
+    }
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+}
+
+extension ChatDetailViewController: UITableViewDelegate {
+    
+}
+
+extension ChatDetailViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 5
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: ChattingCell.identifier,
+            for: indexPath
+        ) as? ChattingCell else { return .init() }
+        cell.bind()
+        return cell
     }
 }

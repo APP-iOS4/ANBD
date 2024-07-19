@@ -16,6 +16,7 @@ final class ChatDetailViewController: UIViewController {
     private lazy var scrollView = UIScrollView()
     private lazy var menuButton = UIBarButtonItem()
     
+    private lazy var stackView = UIStackView()
     private lazy var tableView = UITableView()
     
     private lazy var bottomStackView = UIStackView()
@@ -56,6 +57,12 @@ final class ChatDetailViewController: UIViewController {
             return scrollView
         }()
         
+        stackView = {
+            let stackView = UIStackView()
+            stackView.axis = .vertical
+            return stackView
+        }()
+        
         tableView = {
             let tableView = UITableView()
             tableView.separatorStyle = .none
@@ -64,7 +71,8 @@ final class ChatDetailViewController: UIViewController {
             tableView.delegate = self
             tableView.dataSource = self
             tableView.rowHeight = UITableView.automaticDimension
-            tableView.register(ChattingCell.self, forCellReuseIdentifier: ChattingCell.identifier)
+            tableView.register(MyChattingCell.self, forCellReuseIdentifier: MyChattingCell.identifier)
+            tableView.register(YourChattingCell.self, forCellReuseIdentifier: YourChattingCell.identifier)
             return tableView
         }()
         
@@ -112,11 +120,16 @@ final class ChatDetailViewController: UIViewController {
             contentStackView.addArrangedSubview($0)
         }
         
+        scrollView.addSubview(stackView)
+        stackView.addArrangedSubview(tableView)
+        
         [pictureButton, messageTextField, sendButton].forEach {
             bottomStackView.addArrangedSubview($0)
         }
         
-        scrollView.addSubview(tableView)
+        contentStackView.snp.makeConstraints {
+            $0.edges.equalTo(safeArea)
+        }
         
         headerView.snp.makeConstraints {
             $0.horizontalEdges.equalTo(safeArea).inset(20)
@@ -124,14 +137,16 @@ final class ChatDetailViewController: UIViewController {
             $0.height.equalTo(80)
         }
         
-        contentStackView.snp.makeConstraints {
-            $0.edges.equalTo(safeArea)
-        }
-        
         scrollView.snp.makeConstraints {
             $0.top.equalTo(headerView.snp.bottom)
             $0.horizontalEdges.equalTo(safeArea).inset(16)
             $0.bottom.equalTo(bottomStackView.snp.top)
+        }
+        
+        stackView.snp.makeConstraints {
+            $0.edges.equalTo(scrollView.contentLayoutGuide)
+            $0.width.equalTo(view)
+            $0.height.equalTo(scrollView.frameLayoutGuide)
         }
         
         bottomStackView.snp.makeConstraints {
@@ -166,20 +181,29 @@ extension ChatDetailViewController: UITextFieldDelegate {
 }
 
 extension ChatDetailViewController: UITableViewDelegate {
-    
+
 }
 
 extension ChatDetailViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+        return 11
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: ChattingCell.identifier,
-            for: indexPath
-        ) as? ChattingCell else { return .init() }
-        cell.bind()
-        return cell
+        if indexPath.row % 2 == 0 {
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: MyChattingCell.identifier,
+                for: indexPath
+            ) as? MyChattingCell else { return .init() }
+            cell.bind()
+            return cell
+        } else {
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: YourChattingCell.identifier,
+                for: indexPath
+            ) as? YourChattingCell else { return .init() }
+            cell.bind()
+            return cell
+        }
     }
 }

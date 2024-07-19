@@ -36,7 +36,8 @@
 		CB1FA58C2C39744B0056407F /* ChatDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1FA58B2C39744B0056407F /* ChatDetailViewController.swift */; };
 		CB1FA58E2C397BAC0056407F /* ChatHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1FA58D2C397BAC0056407F /* ChatHeader.swift */; };
 		CB1FA5CA2C49258F0056407F /* UITextField+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1FA5C92C49258F0056407F /* UITextField+Extension.swift */; };
-		CB1FA5CC2C4936660056407F /* ChattingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1FA5CB2C4936660056407F /* ChattingCell.swift */; };
+		CB1FA5CC2C4936660056407F /* MyChattingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1FA5CB2C4936660056407F /* MyChattingCell.swift */; };
+		CB1FA5CE2C4A25360056407F /* YourChattingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1FA5CD2C4A25360056407F /* YourChattingCell.swift */; };
 		CB6EEB282C1839F100902751 /* NanuaCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6EEB272C1839F100902751 /* NanuaCollectionViewCell.swift */; };
 		CB6EEB2A2C1C23AA00902751 /* CommerceCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB6EEB292C1C23AA00902751 /* CommerceCollectionViewCell.swift */; };
 		CBC6B0E12C2035DB00D36671 /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBC6B0E02C2035DB00D36671 /* UIImage+Extension.swift */; };
@@ -82,7 +83,8 @@
 		CB1FA58B2C39744B0056407F /* ChatDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatDetailViewController.swift; sourceTree = "<group>"; };
 		CB1FA58D2C397BAC0056407F /* ChatHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatHeader.swift; sourceTree = "<group>"; };
 		CB1FA5C92C49258F0056407F /* UITextField+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Extension.swift"; sourceTree = "<group>"; };
-		CB1FA5CB2C4936660056407F /* ChattingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChattingCell.swift; sourceTree = "<group>"; };
+		CB1FA5CB2C4936660056407F /* MyChattingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyChattingCell.swift; sourceTree = "<group>"; };
+		CB1FA5CD2C4A25360056407F /* YourChattingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YourChattingCell.swift; sourceTree = "<group>"; };
 		CB6EEB272C1839F100902751 /* NanuaCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NanuaCollectionViewCell.swift; sourceTree = "<group>"; };
 		CB6EEB292C1C23AA00902751 /* CommerceCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommerceCollectionViewCell.swift; sourceTree = "<group>"; };
 		CBC6B0E02C2035DB00D36671 /* UIImage+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
@@ -221,7 +223,8 @@
 				CB1FA5822C3542C20056407F /* ChatListCell.swift */,
 				CB1FA58B2C39744B0056407F /* ChatDetailViewController.swift */,
 				CB1FA58D2C397BAC0056407F /* ChatHeader.swift */,
-				CB1FA5CB2C4936660056407F /* ChattingCell.swift */,
+				CB1FA5CB2C4936660056407F /* MyChattingCell.swift */,
+				CB1FA5CD2C4A25360056407F /* YourChattingCell.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -358,6 +361,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CB1FA5CE2C4A25360056407F /* YourChattingCell.swift in Sources */,
 				CB6EEB2A2C1C23AA00902751 /* CommerceCollectionViewCell.swift in Sources */,
 				A8D62CD72C09519100C281D8 /* MyPageViewController.swift in Sources */,
 				D7FC7F7D2C25DAA8002C0A0D /* UserActivityListViewController.swift in Sources */,
@@ -378,7 +382,7 @@
 				A8D62D042C09531E00C281D8 /* Common.swift in Sources */,
 				A8D62CFA2C0952F700C281D8 /* ChatViewController.swift in Sources */,
 				13F39BDF2C0F59A800EFCF04 /* ArticleDetailViewController.swift in Sources */,
-				CB1FA5CC2C4936660056407F /* ChattingCell.swift in Sources */,
+				CB1FA5CC2C4936660056407F /* MyChattingCell.swift in Sources */,
 				A8D62CEF2C09529400C281D8 /* Util.swift in Sources */,
 				13398E172C0DD59800E664B5 /* TabHeaderView.swift in Sources */,
 				CB1FA5832C3542C20056407F /* ChatListCell.swift in Sources */,

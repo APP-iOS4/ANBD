@@ -41,6 +41,7 @@
 		CBF315992C2590E7004F07BA /* TradeMoreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF315982C2590E7004F07BA /* TradeMoreViewController.swift */; };
 		D718A1C22C4AB981008FDDBA /* SignupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D718A1C12C4AB981008FDDBA /* SignupViewController.swift */; };
 		D718A1C42C4AB9AF008FDDBA /* PasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D718A1C32C4AB9AF008FDDBA /* PasswordViewController.swift */; };
+		D718A1C62C4AB9EB008FDDBA /* SettingProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D718A1C52C4AB9EB008FDDBA /* SettingProfileViewController.swift */; };
 		D794511F2C3590FC00034D22 /* ANBDTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D794511E2C3590FC00034D22 /* ANBDTabBarController.swift */; };
 		D7E1D0E32C33AB6200D55682 /* BlockUserListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E1D0E22C33AB6200D55682 /* BlockUserListViewController.swift */; };
 		D7FC7F7B2C25DAA8002C0A0D /* PagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FC7F762C25DAA8002C0A0D /* PagerView.swift */; };
@@ -85,6 +86,7 @@
 		CBF315982C2590E7004F07BA /* TradeMoreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeMoreViewController.swift; sourceTree = "<group>"; };
 		D718A1C12C4AB981008FDDBA /* SignupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignupViewController.swift; sourceTree = "<group>"; };
 		D718A1C32C4AB9AF008FDDBA /* PasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordViewController.swift; sourceTree = "<group>"; };
+		D718A1C52C4AB9EB008FDDBA /* SettingProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingProfileViewController.swift; sourceTree = "<group>"; };
 		D794511E2C3590FC00034D22 /* ANBDTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ANBDTabBarController.swift; sourceTree = "<group>"; };
 		D7E1D0E22C33AB6200D55682 /* BlockUserListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockUserListViewController.swift; sourceTree = "<group>"; };
 		D7FC7F762C25DAA8002C0A0D /* PagerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PagerView.swift; sourceTree = "<group>"; };
@@ -262,6 +264,7 @@
 				A8D62D012C09531200C281D8 /* AuthenticationViewController.swift */,
 				D718A1C12C4AB981008FDDBA /* SignupViewController.swift */,
 				D718A1C32C4AB9AF008FDDBA /* PasswordViewController.swift */,
+				D718A1C52C4AB9EB008FDDBA /* SettingProfileViewController.swift */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";
@@ -359,6 +362,7 @@
 				CBC6B0EB2C212E3100D36671 /* ArticleMoreViewController.swift in Sources */,
 				A894BADB2C216DFE007E3155 /* TradeCell.swift in Sources */,
 				A86379952C1DA59600F612B4 /* (null) in Sources */,
+				D718A1C62C4AB9EB008FDDBA /* SettingProfileViewController.swift in Sources */,
 				CBC6B0E32C20414300D36671 /* HomeTradeCell.swift in Sources */,
 				D718A1C22C4AB981008FDDBA /* SignupViewController.swift in Sources */,
 				D7FC7F7B2C25DAA8002C0A0D /* PagerView.swift in Sources */,

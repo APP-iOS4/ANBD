@@ -44,6 +44,10 @@
 		CBC6B0E32C20414300D36671 /* HomeTradeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBC6B0E22C20414300D36671 /* HomeTradeCell.swift */; };
 		CBC6B0EB2C212E3100D36671 /* ArticleMoreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBC6B0EA2C212E3100D36671 /* ArticleMoreViewController.swift */; };
 		CBF315992C2590E7004F07BA /* TradeMoreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF315982C2590E7004F07BA /* TradeMoreViewController.swift */; };
+		D718A1C22C4AB981008FDDBA /* SignupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D718A1C12C4AB981008FDDBA /* SignupViewController.swift */; };
+		D718A1C42C4AB9AF008FDDBA /* PasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D718A1C32C4AB9AF008FDDBA /* PasswordViewController.swift */; };
+		D718A1C62C4AB9EB008FDDBA /* SettingProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D718A1C52C4AB9EB008FDDBA /* SettingProfileViewController.swift */; };
+		D718A1C82C4ABA11008FDDBA /* TermsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D718A1C72C4ABA11008FDDBA /* TermsViewController.swift */; };
 		D794511F2C3590FC00034D22 /* ANBDTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D794511E2C3590FC00034D22 /* ANBDTabBarController.swift */; };
 		D7E1D0E32C33AB6200D55682 /* BlockUserListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E1D0E22C33AB6200D55682 /* BlockUserListViewController.swift */; };
 		D7FC7F7B2C25DAA8002C0A0D /* PagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FC7F762C25DAA8002C0A0D /* PagerView.swift */; };
@@ -91,6 +95,10 @@
 		CBC6B0E22C20414300D36671 /* HomeTradeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTradeCell.swift; sourceTree = "<group>"; };
 		CBC6B0EA2C212E3100D36671 /* ArticleMoreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleMoreViewController.swift; sourceTree = "<group>"; };
 		CBF315982C2590E7004F07BA /* TradeMoreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeMoreViewController.swift; sourceTree = "<group>"; };
+		D718A1C12C4AB981008FDDBA /* SignupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignupViewController.swift; sourceTree = "<group>"; };
+		D718A1C32C4AB9AF008FDDBA /* PasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordViewController.swift; sourceTree = "<group>"; };
+		D718A1C52C4AB9EB008FDDBA /* SettingProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingProfileViewController.swift; sourceTree = "<group>"; };
+		D718A1C72C4ABA11008FDDBA /* TermsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TermsViewController.swift; sourceTree = "<group>"; };
 		D794511E2C3590FC00034D22 /* ANBDTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ANBDTabBarController.swift; sourceTree = "<group>"; };
 		D7E1D0E22C33AB6200D55682 /* BlockUserListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockUserListViewController.swift; sourceTree = "<group>"; };
 		D7FC7F762C25DAA8002C0A0D /* PagerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PagerView.swift; sourceTree = "<group>"; };
@@ -271,6 +279,10 @@
 			isa = PBXGroup;
 			children = (
 				A8D62D012C09531200C281D8 /* AuthenticationViewController.swift */,
+				D718A1C12C4AB981008FDDBA /* SignupViewController.swift */,
+				D718A1C32C4AB9AF008FDDBA /* PasswordViewController.swift */,
+				D718A1C52C4AB9EB008FDDBA /* SettingProfileViewController.swift */,
+				D718A1C72C4ABA11008FDDBA /* TermsViewController.swift */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";
@@ -370,7 +382,9 @@
 				CB1FA5CA2C49258F0056407F /* UITextField+Extension.swift in Sources */,
 				A894BADB2C216DFE007E3155 /* TradeCell.swift in Sources */,
 				A86379952C1DA59600F612B4 /* (null) in Sources */,
+				D718A1C62C4AB9EB008FDDBA /* SettingProfileViewController.swift in Sources */,
 				CBC6B0E32C20414300D36671 /* HomeTradeCell.swift in Sources */,
+				D718A1C22C4AB981008FDDBA /* SignupViewController.swift in Sources */,
 				D7FC7F7B2C25DAA8002C0A0D /* PagerView.swift in Sources */,
 				CBF315992C2590E7004F07BA /* TradeMoreViewController.swift in Sources */,
 				A8D62CD32C09519100C281D8 /* AppDelegate.swift in Sources */,
@@ -379,6 +393,7 @@
 				A894BADD2C216E12007E3155 /* TradeViewController.swift in Sources */,
 				13F39BDD2C0F52A300EFCF04 /* PhotoCell.swift in Sources */,
 				A8D62D002C09530900C281D8 /* HomeViewController.swift in Sources */,
+				D718A1C82C4ABA11008FDDBA /* TermsViewController.swift in Sources */,
 				A8D62D042C09531E00C281D8 /* Common.swift in Sources */,
 				A8D62CFA2C0952F700C281D8 /* ChatViewController.swift in Sources */,
 				13F39BDF2C0F59A800EFCF04 /* ArticleDetailViewController.swift in Sources */,
@@ -396,6 +411,7 @@
 				D7FC7F7E2C25DAA8002C0A0D /* ScrollFitable.swift in Sources */,
 				131E49742C0EE13D00D2AB20 /* ArticleCreateViewController.swift in Sources */,
 				D7FC7F812C25DAC0002C0A0D /* SettingsViewController.swift in Sources */,
+				D718A1C42C4AB9AF008FDDBA /* PasswordViewController.swift in Sources */,
 				D7FC7F7C2C25DAA8002C0A0D /* TabView.swift in Sources */,
 				A8D62CFC2C0952FD00C281D8 /* TradeDetailViewController.swift in Sources */,
 				CB1FA58E2C397BAC0056407F /* ChatHeader.swift in Sources */,

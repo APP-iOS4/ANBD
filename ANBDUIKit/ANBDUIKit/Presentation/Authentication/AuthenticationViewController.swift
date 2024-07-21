@@ -48,6 +48,7 @@ class AuthenticationViewController: UIViewController {
         textField.borderStyle = .none
         textField.keyboardType = .emailAddress
         textField.autocapitalizationType = .none
+        textField.addTarget(self, action: #selector(loginTextFieldNotEmpty), for: .editingChanged)
         return textField
     }()
     
@@ -62,6 +63,7 @@ class AuthenticationViewController: UIViewController {
         textField.placeholder = "8~16자 (숫자, 영문, 특수기호 중 2개 이상)"
         textField.borderStyle = .none
         textField.isSecureTextEntry = true
+        textField.addTarget(self, action: #selector(loginTextFieldNotEmpty), for: .editingChanged)
         return textField
     }()
     
@@ -78,6 +80,8 @@ class AuthenticationViewController: UIViewController {
         button.backgroundColor = .systemBlue
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 8
+        button.isEnabled = false
+        button.alpha = 0.5
         return button
     }()
     
@@ -106,6 +110,9 @@ class AuthenticationViewController: UIViewController {
         
         emailTextField.delegate = self
         passwordTextField.delegate = self
+        
+        signupButton.addTarget(self, action: #selector(signupButtonTapped), for: .touchUpInside)
+        loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
     }
     
     private func setupViews() {
@@ -182,6 +189,27 @@ class AuthenticationViewController: UIViewController {
             $0.leading.equalTo(signupLabel.snp.trailing).offset(5)
             $0.centerY.equalTo(signupLabel)
         }
+    }
+    
+    @objc private func signupButtonTapped() {
+        let signupVC = SignupViewController()
+        signupVC.title = "회원가입"
+        navigationController?.pushViewController(signupVC, animated: true)
+    }
+    
+    @objc private func loginButtonTapped() {
+        let tabBarController = ANBDTabBarController()
+        tabBarController.modalPresentationStyle = .fullScreen
+        present(tabBarController, animated: true, completion: nil)
+    }
+    
+    @objc private func loginTextFieldNotEmpty(_ textField: UITextField) {
+        let emailText = emailTextField.text ?? ""
+        let passwordText = passwordTextField.text ?? ""
+        let isFormValid = !emailText.isEmpty && !passwordText.isEmpty
+        
+        loginButton.isEnabled = isFormValid
+        loginButton.alpha = isFormValid ? 1.0 : 0.5
     }
 }
 

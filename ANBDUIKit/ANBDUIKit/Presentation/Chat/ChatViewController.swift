@@ -74,6 +74,7 @@ extension ChatViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let detailView = ChatDetailViewController()
+        detailView.hidesBottomBarWhenPushed = true
         self.navigationController?.pushViewController(detailView, animated: true)
     }
     

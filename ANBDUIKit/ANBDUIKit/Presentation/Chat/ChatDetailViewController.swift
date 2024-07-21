@@ -24,7 +24,6 @@ final class ChatDetailViewController: UIViewController {
     private lazy var messageTextField = UITextField()
     private lazy var sendButton = UIButton()
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.navigationBar.topItem?.title = ""

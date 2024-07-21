@@ -431,6 +431,7 @@ class HomeViewController: UIViewController {
     func accauMoreButtonAction() {
         let vc = ArticleMoreViewController()
         vc.title = "아껴쓰기"
+        vc.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -438,6 +439,7 @@ class HomeViewController: UIViewController {
     func dasiMoreButtonAction() {
         let vc = ArticleMoreViewController()
         vc.title = "다시쓰기"
+        vc.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -445,13 +447,15 @@ class HomeViewController: UIViewController {
     func nanuaMoreButtonAction() {
         let vc = TradeMoreViewController()
         vc.title = "나눠쓰기"
+        vc.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc
     func baccuaMoreButtonAction() {
         let vc = TradeMoreViewController()
-        vc.title = "나눠쓰기"
+        vc.title = "바꿔쓰기"
+        vc.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -459,6 +463,7 @@ class HomeViewController: UIViewController {
     func articleImageTapped() {
         // 아껴쓰기, 다시쓰기
         let vc = ArticleDetailViewController()
+        vc.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(vc, animated: true)
     }
 }
@@ -483,6 +488,7 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
             present(safariViewController, animated: true)
         } else {
             let vc = TradeDetailViewController()
+            vc.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(vc, animated: true)
         }
     }
@@ -528,6 +534,7 @@ extension HomeViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let detailView = TradeDetailViewController()
+        detailView.hidesBottomBarWhenPushed = true
         self.navigationController?.pushViewController(detailView, animated: true)
     }
     

@@ -224,18 +224,18 @@ final class MyPageViewModel: ObservableObject {
     }
     
     // MARK: - 사용자 차단하기
-    func blockUser(userID: String, blockingUserID: String) async {
+    func blockUser(userID: String, blockingUserID: String, blockingUserNickname: String) async {
         do {
             try await userUsecase.blockUser(userID: userID, blockUserID: blockingUserID)
             
-            ToastManager.shared.toast = Toast(style: .success, message: "사용자를 차단하였습니다.", duration: 1)
+            ToastManager.shared.toast = Toast(style: .success, message: "\(blockingUserNickname)님을 차단하였습니다.", duration: 1.5)
         } catch {
             #if DEBUG
             print("Failed to block User: \(error.localizedDescription)")
             #endif
             
             guard let error = error as? UserError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "사용자 차단에 실패하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "\(blockingUserNickname)님 차단에 실패하였습니다.")
                 return
             }
             
@@ -243,16 +243,18 @@ final class MyPageViewModel: ObservableObject {
         }
     }
     
-    func unblockUser(userID: String, unblockingUserID: String) async {
+    func unblockUser(userID: String, unblockingUserID: String, blockingUserNickname: String) async {
         do {
             try await userUsecase.unblockUser(userID: userID, unblockUserID: unblockingUserID)
+            
+            ToastManager.shared.toast = Toast(style: .success, message: "\(blockingUserNickname)님 차단을 해제하였습니다.", duration: 1.5)
         } catch {
             #if DEBUG
             print("Failed to unblock User: \(error.localizedDescription)")
             #endif
             
             guard let error = error as? UserError else {
-                ToastManager.shared.toast = Toast(style: .error, message: "사용자 차단 해제에 실패하였습니다.")
+                ToastManager.shared.toast = Toast(style: .error, message: "\(blockingUserNickname)님 차단 해제에 실패하였습니다.")
                 return
             }
             

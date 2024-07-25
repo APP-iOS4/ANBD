@@ -25,7 +25,6 @@ final class TradeViewModel: ObservableObject {
     @Published var selectedItemCategory: ItemCategory = .digital
     @Published var selectedLocation: Location = .seoul
     @Published var detailImages: [URL] = []
-    @Published var detailImagesData: [Data] = []
     
     @State private var isDone: Bool = false
     
@@ -113,7 +112,6 @@ final class TradeViewModel: ObservableObject {
         do {
             self.trade = try await tradeUseCase.loadTrade(tradeID: trade.id)
             self.detailImages = try await loadDetailImages(path: .trade, containerID: self.trade.id, imagePath: self.trade.imagePaths)
-            self.detailImagesData = try await loadOriginImages(path: .trade, containerID: self.trade.id, imagePath: self.trade.imagePaths)
         } catch {
             #if DEBUG
             print("trade 하나 불러오기 실패: \(error)")

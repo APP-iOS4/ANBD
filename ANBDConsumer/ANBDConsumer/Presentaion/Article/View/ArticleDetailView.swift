@@ -368,7 +368,10 @@ struct ArticleDetailView: View {
             
             .onAppear {
                 Task {
+                    writerUser = await myPageViewModel.getUserInfo(userID: article.writerID)
+                    
                     coordinator.isLoading = true
+                    
                     if let articleID {
                         await articleViewModel.loadOneArticle(articleID: articleID)
                     } else {
@@ -378,17 +381,14 @@ struct ArticleDetailView: View {
                     isLiked = user.likeArticles.contains(articleViewModel.article.id)
                     
                     articleViewModel.detailImages = try await articleViewModel.loadDetailImagesURL(path: .article, containerID: articleViewModel.article.id, imagePath: articleViewModel.article.imagePaths)
-                    articleViewModel.detailImagesData = try await articleViewModel.loadDetailImages(path: .article, containerID: articleViewModel.article.id, imagePath: articleViewModel.article.imagePaths)
                     await articleViewModel.loadCommentList(articleID: article.id)
-                    writerUser = await myPageViewModel.getUserInfo(userID: article.writerID)
-                    
                 }
             }
             .fullScreenCover(isPresented: $isShowingArticleCreateView) {
                 ArticleCreateView(isShowingCreateView: $isShowingArticleCreateView, category: article.category, commentCount: articleViewModel.comments.count, isNewArticle: false, article: articleViewModel.article)
             }
             .fullScreenCover(isPresented: $isShowingImageDetailView) {
-                ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $articleViewModel.detailImagesData, idx: $idx)
+                ImageDetailView(isShowingImageDetailView: $isShowingImageDetailView, images: $articleViewModel.detailImages, idx: $idx)
             }
             .fullScreenCover(isPresented: $isShowingCommentEditView) {
                 CommentEditView(isShowingCommentEditView: $isShowingCommentEditView, comment: articleViewModel.comment, isEditComment: false)
@@ -416,7 +416,11 @@ struct ArticleDetailView: View {
             } else if isShowingUserBlockAlertView {
                 CustomAlertView(isShowingCustomAlert: $isShowingUserBlockAlertView, viewType: .userBlocked) {
                     Task {
-                        await articleViewModel.blockUser(userID: UserStore.shared.user.id, blockUserID: articleViewModel.article.writerID)
+                        await myPageViewModel.blockUser(
+                            userID: UserStore.shared.user.id,
+                            blockingUserID: articleViewModel.article.writerID,
+                            blockingUserNickname: articleViewModel.article.writerNickname
+                        )
                         dismiss()
                     }
                 }

@@ -127,7 +127,11 @@ struct UserPageView: View {
             if isShowingBlockingUserAlert {
                 CustomAlertView(isShowingCustomAlert: $isShowingBlockingUserAlert, viewType: .userBlocked) {
                     Task {
-                        await myPageViewModel.blockUser(userID: UserStore.shared.user.id, blockingUserID: writerUser.id)
+                        await myPageViewModel.blockUser(
+                            userID: UserStore.shared.user.id,
+                            blockingUserID: writerUser.id,
+                            blockingUserNickname: writerUser.nickname
+                        )
                         coordinator.pop(2)
                     }
                 }

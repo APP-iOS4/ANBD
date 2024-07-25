@@ -258,7 +258,7 @@ extension Postable where Item == Article {
         limit: Int
     ) async throws -> [Article] {
         var requestQuery: Query = database
-            .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
+//            .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
             .whereField("category", isEqualTo: category.rawValue)
         
         if let orderQuery {
@@ -310,7 +310,7 @@ extension Postable where Item == Article {
             requestQuery = searchQuery
         } else {
             requestQuery = database
-                .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
+//                .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
                 .whereFilter(
                     .orFilter([
                         .andFilter([
@@ -516,7 +516,7 @@ extension Postable where Item == Trade {
             requestQuery = searchQuery
         } else {
             requestQuery = database
-                .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
+//                .whereField("writerID", notIn: blockList.isEmpty ? [""] : blockList)
                 .whereFilter(
                     .orFilter([
                         .whereField("itemCategory", isEqualTo: keyword),

@@ -64,7 +64,6 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
-    @MainActor
     func loadMoreArticles(category: ANBDCategory) async {
         do {
             var newArticles: [Article] = []
@@ -150,7 +149,6 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
-    @MainActor
     func updateArticle(category: ANBDCategory, title: String, content: String, commentCount: Int, addImages: [Data], deletedImagesIndex: [Int]) async {
         
         let user = UserStore.shared.user

@@ -9,6 +9,7 @@ import ANBDModel
 import SwiftUI
 import PhotosUI
 
+@MainActor
 final class TradeViewModel: ObservableObject {
     private let storageManager = StorageManager.shared
     private let tradeUseCase: TradeUsecase = DefaultTradeUsecase()
@@ -49,7 +50,6 @@ final class TradeViewModel: ObservableObject {
     //MARK: - READ
     
     /// 위로 당겨서 새로고침 + 지역, 카테고리가 바뀌었을 경우 호출
-    @MainActor
     func reloadFilteredTrades(category: ANBDCategory) async {
         do {
             if self.selectedLocations.isEmpty && self.selectedItemCategories.isEmpty {
@@ -73,7 +73,6 @@ final class TradeViewModel: ObservableObject {
     }
     
     /// 페이지네이션시 호출
-    @MainActor
     func loadMoreFilteredTrades(category: ANBDCategory) async {
         do {
             var newTrades: [Trade] = []
@@ -107,7 +106,6 @@ final class TradeViewModel: ObservableObject {
     }
     
     /// 뷰모델에 하나의 trade 값 저장
-    @MainActor
     func loadOneTrade(trade: Trade) async {
         do {
             self.trade = try await tradeUseCase.loadTrade(tradeID: trade.id)
@@ -200,7 +198,6 @@ final class TradeViewModel: ObservableObject {
     
     //MARK: - UPDATE
     
-    @MainActor
     func updateTrade(category: ANBDCategory, title: String, content: String, myProduct: String, wantProduct: String, addImages: [Data], deletedImagesIndex: [Int]) async {
         
         let user = UserStore.shared.user
@@ -249,7 +246,6 @@ final class TradeViewModel: ObservableObject {
         }
     }
     
-    @MainActor
     func updateState(trade: Trade) async {
         
         do {
@@ -273,7 +269,6 @@ final class TradeViewModel: ObservableObject {
         }
     }
     
-    @MainActor
     func updateLikeTrade(trade: Trade) async {
         do {
             try await tradeUseCase.likeTrade(tradeID: trade.id)
@@ -315,7 +310,6 @@ final class TradeViewModel: ObservableObject {
     
     //MARK: - SEARCH
     
-    @MainActor
     func searchTrade(keyword: String, category: ANBDCategory?) async {
         do {
             trades = try await tradeUseCase.refreshSearchTradeList(keyword: keyword, limit: 100)

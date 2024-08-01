@@ -53,7 +53,6 @@ final class ArticleViewModel: ObservableObject {
     
     //MARK: - ARTICLE
     
-    @MainActor
     func refreshSortedArticleList(category: ANBDCategory) async {
         do {
             self.filteredArticles = try await articleUseCase.refreshSortedArticleList(category: category, by: self.sortOption, limit: 8)

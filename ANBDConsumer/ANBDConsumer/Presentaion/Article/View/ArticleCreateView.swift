@@ -41,7 +41,6 @@ struct ArticleCreateView: View {
     var body: some View {
         ZStack {
             NavigationStack {
-                if #available(iOS 17.0, *) {
                     articleCreateView
                         .onChange(of: selectedItems) {
                             Task {
@@ -67,35 +66,6 @@ struct ArticleCreateView: View {
                                 content = String(content.prefix(5000))
                             }
                         }
-                } else {
-                    articleCreateView
-                        .onChange(of: selectedItems)  { _ in
-                            Task {
-                                selectedImageData = []
-                                
-                                for newItem in selectedItems {
-                                    
-                                    if let data = try? await newItem.loadTransferable(type: Data.self) {
-                                        selectedImageData.append(data)
-                                    }
-                                    
-                                    if selectedImageData.count > 5 {
-                                        selectedImageData.removeLast()
-                                    }
-                                }
-                            }
-                        }
-                        .onChange(of: title) { _ in
-                            if title.count > 50 {
-                                title = String(title.prefix(50))
-                            }
-                        }
-                        .onChange(of: content) { _ in
-                            if content.count > 5000 {
-                                content = String(content.prefix(5000))
-                            }
-                        }
-                }
             }
             .onTapGesture {
                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)

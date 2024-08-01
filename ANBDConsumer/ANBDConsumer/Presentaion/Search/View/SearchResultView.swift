@@ -17,33 +17,18 @@ struct SearchResultView: View {
     @EnvironmentObject var tradeViewModel: TradeViewModel
     
     var body: some View {
-        if #available(iOS 17.0, *) {
-            searchResultView
-                .onChange(of: category) {
-                    if category == .accua || category == .dasi {
-                        Task {
-                            await articleViewModel.searchArticle(keyword: searchText, category: category)
-                        }
-                    } else {
-                        Task {
-                            await tradeViewModel.searchTrade(keyword: searchText, category: category)
-                        }
+        searchResultView
+            .onChange(of: category) {
+                if category == .accua || category == .dasi {
+                    Task {
+                        await articleViewModel.searchArticle(keyword: searchText, category: category)
+                    }
+                } else {
+                    Task {
+                        await tradeViewModel.searchTrade(keyword: searchText, category: category)
                     }
                 }
-        } else {
-            searchResultView
-                .onChange(of: category) { category in
-                    if category == .accua || category == .dasi {
-                        Task {
-                            await articleViewModel.searchArticle(keyword: searchText, category: category)
-                        }
-                    } else {
-                        Task {
-                            await tradeViewModel.searchTrade(keyword: searchText, category: category)
-                        }
-                    }
-                }
-        }
+            }
     }
     
     private var searchResultView: some View {

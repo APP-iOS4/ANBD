@@ -53,7 +53,6 @@ final class ArticleViewModel: ObservableObject {
     
     //MARK: - ARTICLE
     
-    @MainActor
     func refreshSortedArticleList(category: ANBDCategory) async {
         do {
             self.filteredArticles = try await articleUseCase.refreshSortedArticleList(category: category, by: self.sortOption, limit: 8)
@@ -64,7 +63,6 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
-    @MainActor
     func loadMoreArticles(category: ANBDCategory) async {
         do {
             var newArticles: [Article] = []
@@ -150,7 +148,6 @@ final class ArticleViewModel: ObservableObject {
         }
     }
     
-    @MainActor
     func updateArticle(category: ANBDCategory, title: String, content: String, commentCount: Int, addImages: [Data], deletedImagesIndex: [Int]) async {
         
         let user = UserStore.shared.user

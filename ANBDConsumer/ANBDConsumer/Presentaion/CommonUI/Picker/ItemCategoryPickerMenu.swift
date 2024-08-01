@@ -82,18 +82,9 @@ struct ItemCategoryPickerMenu: View {
         }
         //.frame(width: 250, height: 300)
         .background {
-            if #available(iOS 17.0, *) {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color(uiColor: .systemBackground))
-                    .stroke(Color.gray100, lineWidth: 1)
-            } else {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color(uiColor: .systemBackground))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.gray100, lineWidth: 1)
-                    }
-            }
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color(uiColor: .systemBackground))
+                .stroke(Color.gray100, lineWidth: 1)
         }
         .shadow(radius: 10)
     }

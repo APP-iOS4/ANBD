@@ -47,75 +47,40 @@ struct TradeCreateView: View {
     
     var body: some View {
         NavigationStack {
-            if #available(iOS 17.0, *) {
-                wholeView
-                    .onChange(of: mustTextFields) {
-                        checkIsFinished()
-                    }
-                    .onChange(of: selectedPhotosData) {
-                        checkIsFinished()
-                        isCancelable = false
-                    }
-                    .onChange(of: tmpSelectedData) {
-                        if tmpSelectedData.count != tradeViewModel.trade.imagePaths.count {
-                            checkIsFinished()
-                            isCancelable = false
-                        }
-                    }
-                    .onChange(of: category) {
-                        checkIsFinished()
-                    }
-                    .onChange(of: wantProduct) {
-                        if self.wantProduct != tradeViewModel.trade.wantProduct {
-                            isCancelable = false
-                            checkIsFinished()
-                        }
-                    }
-                
-                    .onChange(of: title) {
-                        if title.count > 50 {
-                            title = String(title.prefix(50))
-                        }
-                    }
-                    .onChange(of: content) {
-                        if content.count > 5000 {
-                            content = String(content.prefix(5000))
-                        }
-                    }
-                
-            } else {
-                wholeView
-                    .onChange(of: mustTextFields) { _ in
-                        checkIsFinished()
-                    }
-                    .onChange(of: selectedPhotosData) { _ in
+            wholeView
+                .onChange(of: mustTextFields) {
+                    checkIsFinished()
+                }
+                .onChange(of: selectedPhotosData) {
+                    checkIsFinished()
+                    isCancelable = false
+                }
+                .onChange(of: tmpSelectedData) {
+                    if tmpSelectedData.count != tradeViewModel.trade.imagePaths.count {
                         checkIsFinished()
                         isCancelable = false
                     }
-                    .onChange(of: tmpSelectedData) { _ in
-                        if tmpSelectedData.count != tradeViewModel.trade.imagePaths.count {
-                            checkIsFinished()
-                            isCancelable = false
-                        }
-                    }
-                    .onChange(of: category) { _ in
+                }
+                .onChange(of: category) {
+                    checkIsFinished()
+                }
+                .onChange(of: wantProduct) {
+                    if self.wantProduct != tradeViewModel.trade.wantProduct {
+                        isCancelable = false
                         checkIsFinished()
                     }
-                    .onChange(of: wantProduct) { _ in
-                        checkIsFinished()
+                }
+            
+                .onChange(of: title) {
+                    if title.count > 50 {
+                        title = String(title.prefix(50))
                     }
-                
-                    .onChange(of: title) { _ in
-                        if title.count > 50 {
-                            title = String(title.prefix(50))
-                        }
+                }
+                .onChange(of: content) {
+                    if content.count > 5000 {
+                        content = String(content.prefix(5000))
                     }
-                    .onChange(of: content) { _ in
-                        if content.count > 5000 {
-                            content = String(content.prefix(5000))
-                        }
-                    }
-            }
+                }
         }
         
     }
@@ -129,39 +94,21 @@ fileprivate extension TradeCreateView {
                 //MARK: - 사진 선택
                 
                 ScrollView {
-                    if #available(iOS 17.0, *) {
-                        photosView
-                            .onChange(of: selectedItems) {
-                                Task {
-                                    selectedPhotosData = []
-                                    for newItem in selectedItems {
-                                        
-                                        if let data = try? await newItem.loadTransferable(type: Data.self) {
-                                            selectedPhotosData.append(data)
-                                        }
-                                        if selectedPhotosData.count > 5 {
-                                            selectedPhotosData.removeLast()
-                                        }
+                    photosView
+                        .onChange(of: selectedItems) {
+                            Task {
+                                selectedPhotosData = []
+                                for newItem in selectedItems {
+                                    
+                                    if let data = try? await newItem.loadTransferable(type: Data.self) {
+                                        selectedPhotosData.append(data)
+                                    }
+                                    if selectedPhotosData.count > 5 {
+                                        selectedPhotosData.removeLast()
                                     }
                                 }
                             }
-                    } else {
-                        photosView
-                            .onChange(of: selectedItems) { _ in
-                                Task {
-                                    selectedPhotosData = []
-                                    for newItem in selectedItems {
-                                        
-                                        if let data = try? await newItem.loadTransferable(type: Data.self) {
-                                            selectedPhotosData.append(data)
-                                        }
-                                        if selectedPhotosData.count > 5 {
-                                            selectedPhotosData.removeLast()
-                                        }
-                                    }
-                                }
-                            }
-                    }
+                        }
                     
                     //MARK: - 제목
                     
@@ -179,31 +126,17 @@ fileprivate extension TradeCreateView {
                     
                     //MARK: - 거래 방식 선택 버튼
                     
-                    if #available(iOS 17.0, *) {
-                        selectCategoryView
-                            .onChange(of: myProduct) {
-                                if myProduct.count > 8 {
-                                    myProduct = String(myProduct.prefix(8))
-                                }
+                    selectCategoryView
+                        .onChange(of: myProduct) {
+                            if myProduct.count > 8 {
+                                myProduct = String(myProduct.prefix(8))
                             }
-                            .onChange(of: wantProduct) {
-                                if wantProduct.count > 8 {
-                                    wantProduct = String(wantProduct.prefix(8))
-                                }
+                        }
+                        .onChange(of: wantProduct) {
+                            if wantProduct.count > 8 {
+                                wantProduct = String(wantProduct.prefix(8))
                             }
-                    } else {
-                        selectCategoryView
-                            .onChange(of: myProduct) { _ in
-                                if myProduct.count > 8 {
-                                    myProduct = String(myProduct.prefix(8))
-                                }
-                            }
-                            .onChange(of: wantProduct) { _ in
-                                if wantProduct.count > 8 {
-                                    wantProduct = String(wantProduct.prefix(8))
-                                }
-                            }
-                    }
+                        }
                     
                     //MARK: - 카테고리 & 지역 선택
                     

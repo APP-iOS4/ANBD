@@ -21,43 +21,23 @@ struct HomeView: View {
     @State private var blogURL: String = "https://www.naver.com"
     
     var body: some View {
-        if #available(iOS 17.0, *) {
-            mainView
-                .onChange(of: networkMonitor.isConnected) {
-                    if networkMonitor.isConnected {
-                        Task {
-                            //광고
-                            await homeViewModel.loadBanners()
-                            blogURL = homeViewModel.bannerItemList.first?.urlString ?? "https://www.naver.com"
-                            //아껴
-                            await homeViewModel.loadArticle(category: .accua)
-                            //나눠
-                            await homeViewModel.loadArticle(category: .nanua)
-                            //다시
-                            await homeViewModel.loadArticle(category: .dasi)
-                            //isLoading = false
-                        }
+        mainView
+            .onChange(of: networkMonitor.isConnected) {
+                if networkMonitor.isConnected {
+                    Task {
+                        //광고
+                        await homeViewModel.loadBanners()
+                        blogURL = homeViewModel.bannerItemList.first?.urlString ?? "https://www.naver.com"
+                        //아껴
+                        await homeViewModel.loadArticle(category: .accua)
+                        //나눠
+                        await homeViewModel.loadArticle(category: .nanua)
+                        //다시
+                        await homeViewModel.loadArticle(category: .dasi)
+                        //isLoading = false
                     }
                 }
-        } else {
-            mainView
-                .onChange(of: networkMonitor.isConnected) { _ in
-                    if networkMonitor.isConnected {
-                        Task {
-                            //광고
-                            await homeViewModel.loadBanners()
-                            blogURL = homeViewModel.bannerItemList.first?.urlString ?? "https://www.naver.com"
-                            //아껴
-                            await homeViewModel.loadArticle(category: .accua)
-                            //나눠
-                            await homeViewModel.loadArticle(category: .nanua)
-                            //다시
-                            await homeViewModel.loadArticle(category: .dasi)
-                            //isLoading = false
-                        }
-                    }
-                }
-        }
+            }
     }
     
     private var mainView: some View {
@@ -357,25 +337,14 @@ struct HomeView: View {
         @EnvironmentObject private var networkMonitor: NetworkMonitor
         
         var body: some View {
-            if #available(iOS 17.0, *) {
-                cellView
-                    .onChange(of: networkMonitor.isConnected) {
-                        if networkMonitor.isConnected {
-                            Task {
-                                imageData = try await homeViewModel.loadThumnailImage(path: .article, containerID: article.id, imagePath: article.thumbnailImagePath)
-                            }
+            cellView
+                .onChange(of: networkMonitor.isConnected) {
+                    if networkMonitor.isConnected {
+                        Task {
+                            imageData = try await homeViewModel.loadThumnailImage(path: .article, containerID: article.id, imagePath: article.thumbnailImagePath)
                         }
                     }
-            } else {
-                cellView
-                    .onChange(of: networkMonitor.isConnected) { _ in
-                        if networkMonitor.isConnected {
-                            Task {
-                                imageData = try await homeViewModel.loadThumnailImage(path: .article, containerID: article.id, imagePath: article.thumbnailImagePath)
-                            }
-                        }
-                    }
-            }
+                }
         }
         
         fileprivate var cellView: some View {
@@ -430,25 +399,14 @@ struct HomeView: View {
         @EnvironmentObject private var networkMonitor: NetworkMonitor
         
         var body: some View {
-            if #available(iOS 17.0, *) {
-                cellView
-                    .onChange(of: networkMonitor.isConnected) {
-                        if networkMonitor.isConnected {
-                            Task {
-                                imageData = try await homeViewModel.loadThumnailImage(path: .trade, containerID: trade.id, imagePath: trade.thumbnailImagePath)
-                            }
+            cellView
+                .onChange(of: networkMonitor.isConnected) {
+                    if networkMonitor.isConnected {
+                        Task {
+                            imageData = try await homeViewModel.loadThumnailImage(path: .trade, containerID: trade.id, imagePath: trade.thumbnailImagePath)
                         }
                     }
-            } else {
-                cellView
-                    .onChange(of: networkMonitor.isConnected) { _ in
-                        if networkMonitor.isConnected {
-                            Task {
-                                imageData = try await homeViewModel.loadThumnailImage(path: .trade, containerID: trade.id, imagePath: trade.thumbnailImagePath)
-                            }
-                        }
-                    }
-            }
+                }
         }
         
         fileprivate var cellView: some View {

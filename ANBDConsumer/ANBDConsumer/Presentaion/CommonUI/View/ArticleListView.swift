@@ -21,6 +21,7 @@ struct ArticleListView: View {
     
     @State private var isShowingLocation: Bool = false
     @State private var isShowingItemCategory: Bool = false
+    @State private var scrollPosition: Int?
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -134,9 +135,11 @@ struct ArticleListView: View {
                             .padding(.horizontal)
                         }
                     }
+                    .scrollTargetLayout()
                     .background(Color(UIColor.systemBackground))
                     .padding(.bottom, 80)
                 }
+                .scrollPosition(id: $scrollPosition)
                 .refreshable {
                     if !isSearchView {
                         if isArticle {

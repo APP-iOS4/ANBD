@@ -199,18 +199,6 @@ struct ChatDetailView: View {
                 }
             }
         }
-        //TODO: deprecated 고치기
-//        .onChange(of: scenePhase) { newPhase in
-//            Task {
-//                guard let channel = chatViewModel.selectedChannel else {return}
-//                
-//                //두명 다 채팅방에 들어와있고
-//                //다른 한명의 앱이 백그라운드로 가도 푸시알림이 오도록
-//                //만약 앱이 다시 active가 되면 푸시알람이 안오도록
-//                if newPhase == .active {await chatViewModel.updateActiveUser(channelID: channel.id, into: true)}
-//                else if newPhase == .background {await chatViewModel.updateActiveUser(channelID: channel.id, into: false)}
-//            }
-//        }
         .onChange(of: scenePhase) { _, newPhase in
             Task {
                 guard let channel = chatViewModel.selectedChannel else {return}

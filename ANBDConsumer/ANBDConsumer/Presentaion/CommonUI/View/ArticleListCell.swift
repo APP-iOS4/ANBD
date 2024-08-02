@@ -29,66 +29,34 @@ struct ArticleListCell: View {
         
         switch value {
         case .article(let article):
-            if #available(iOS 17.0, *) {
-                articleListCell(article)
-                    .onChange(of: networkMonitor.isConnected) {
-                        if networkMonitor.isConnected {
-                            Task {
-                                let url = await articleViewModel.loadCellImageURL(article: article, path: article.thumbnailImagePath)
-                                thumbnailImageURL = url
-                            }
+            articleListCell(article)
+                .onChange(of: networkMonitor.isConnected) {
+                    if networkMonitor.isConnected {
+                        Task {
+                            let url = await articleViewModel.loadCellImageURL(article: article, path: article.thumbnailImagePath)
+                            thumbnailImageURL = url
                         }
                     }
-            } else {
-                articleListCell(article)
-                    .onChange(of: networkMonitor.isConnected) { _ in
-                        if networkMonitor.isConnected {
-                            Task {
-                                let url = await articleViewModel.loadCellImageURL(article: article, path: article.thumbnailImagePath)
-                                thumbnailImageURL = url
-                            }
-                        }
-                    }
-            }
+                }
             
         case .trade(let trade):
-            if #available(iOS 17.0, *) {
-                tradeListCell(trade)
-                    .onChange(of: networkMonitor.isConnected) {
-                        if networkMonitor.isConnected {
-                            Task {
-                                do {
-                                    let image = try await StorageManager.shared.downloadImage(
-                                        path: .trade,
-                                        containerID: "\(trade.id)/thumbnail",
-                                        imagePath: trade.thumbnailImagePath
-                                    )
-                                    thumbnailImageData = image
-                                } catch {
-                                    print(error.localizedDescription)
-                                }
+            tradeListCell(trade)
+                .onChange(of: networkMonitor.isConnected) {
+                    if networkMonitor.isConnected {
+                        Task {
+                            do {
+                                let image = try await StorageManager.shared.downloadImage(
+                                    path: .trade,
+                                    containerID: "\(trade.id)/thumbnail",
+                                    imagePath: trade.thumbnailImagePath
+                                )
+                                thumbnailImageData = image
+                            } catch {
+                                print(error.localizedDescription)
                             }
                         }
                     }
-            } else {
-                tradeListCell(trade)
-                    .onChange(of: networkMonitor.isConnected) { _ in
-                        if networkMonitor.isConnected {
-                            Task {
-                                do {
-                                    let image = try await StorageManager.shared.downloadImage(
-                                        path: .trade,
-                                        containerID: "\(trade.id)/thumbnail",
-                                        imagePath: trade.thumbnailImagePath
-                                    )
-                                    thumbnailImageData = image
-                                } catch {
-                                    print(error.localizedDescription)
-                                }
-                            }
-                        }
-                    }
-            }
+                }
         }
     }
     

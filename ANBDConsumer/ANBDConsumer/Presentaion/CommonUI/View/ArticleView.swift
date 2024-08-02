@@ -23,34 +23,18 @@ struct ArticleView: View {
     @State private var isArticle: Bool = true
     
     var body: some View {
-        
-        if #available(iOS 17.0, *) {
-            listView
-                .onChange(of: category) {
-                    if isArticle {
-                        Task {
-                            await articleViewModel.refreshSortedArticleList(category: category)
-                        }
-                    } else {
-                        Task {
-                            await tradeViewModel.reloadFilteredTrades(category: category)
-                        }
+        listView
+            .onChange(of: category) {
+                if isArticle {
+                    Task {
+                        await articleViewModel.refreshSortedArticleList(category: category)
+                    }
+                } else {
+                    Task {
+                        await tradeViewModel.reloadFilteredTrades(category: category)
                     }
                 }
-        } else {
-            listView
-                .onChange(of: category, perform: { _ in
-                    if isArticle {
-                        Task {
-                            await articleViewModel.refreshSortedArticleList(category: category)
-                        }
-                    } else {
-                        Task {
-                            await tradeViewModel.reloadFilteredTrades(category: category)
-                        }
-                    }
-                })
-        }
+            }
     }
     
     // MARK: - article 서브뷰

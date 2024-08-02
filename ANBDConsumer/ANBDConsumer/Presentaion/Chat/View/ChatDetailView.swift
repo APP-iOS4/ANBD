@@ -82,7 +82,7 @@ struct ChatDetailView: View {
                                 }
                             }
                     }
-                    .onChange(of: chatViewModel.messages) { message in
+                    .onChange(of: chatViewModel.messages) {
                         Task {
                             if let channel = chatViewModel.selectedChannel {
                                 try await chatViewModel.resetUnreadCount(channelID: channel.id)
@@ -93,23 +93,13 @@ struct ChatDetailView: View {
                 .rotationEffect(Angle(degrees: 180))
                 .scaleEffect(x: -1.0, y: 1.0, anchor: .center)
                 
-                if #available(iOS 17.0, *) {
-                    messageSendView
-                        .padding()
-                        .onChange(of: selectedImage) {
-                            if let image = selectedImage {
-                                sendImageMessage(image: image)
-                            }
+                messageSendView
+                    .padding()
+                    .onChange(of: selectedImage) {
+                        if let image = selectedImage {
+                            sendImageMessage(image: image)
                         }
-                } else {
-                    messageSendView
-                        .padding()
-                        .onChange(of: selectedImage) { image in
-                            if let image = image {
-                                sendImageMessage(image: image)
-                            }
-                        }
-                }
+                    }
             }
             
             if isShowingStateChangeCustomAlert {
@@ -162,7 +152,6 @@ struct ChatDetailView: View {
                                 }
                             } else {
                                 isShowingUserBlockAlertView.toggle()
-                                ToastManager.shared.toast = Toast(style: .success, message: "\(chatViewModel.selectedUser.nickname)님을 차단했습니다.")
                             }
                         } label: {
                             Label("\(chatViewModel.isBlocked ? "차단 해제하기": "사용자 차단하기")", systemImage: "person.slash")
@@ -210,7 +199,7 @@ struct ChatDetailView: View {
                 }
             }
         }
-        .onChange(of: scenePhase) { newPhase in
+        .onChange(of: scenePhase) { _, newPhase in
             Task {
                 guard let channel = chatViewModel.selectedChannel else {return}
                 

@@ -33,23 +33,13 @@ struct UserPageView: View {
         ZStack {
             VStack(spacing: 20) {
                 HStack {
-                    if #available(iOS 17.0, *) {
-                        userProfileImage
-                            .onChange(of: myPageViewModel.tempUserProfileImage) {
-                                Task {
-                                    try await Task.sleep(nanoseconds: 800_000_000)
-                                    refreshView.toggle()
-                                }
+                    userProfileImage
+                        .onChange(of: myPageViewModel.tempUserProfileImage) {
+                            Task {
+                                try await Task.sleep(nanoseconds: 800_000_000)
+                                refreshView.toggle()
                             }
-                    } else {
-                        userProfileImage
-                            .onChange(of: myPageViewModel.tempUserProfileImage) { _ in
-                                Task {
-                                    try await Task.sleep(nanoseconds: 800_000_000)
-                                    refreshView.toggle()
-                                }
-                            }
-                    }
+                        }
                     
                     VStack(alignment: .leading, spacing: 3) {
                         Text("\(myPageViewModel.user.nickname)")
@@ -156,7 +146,7 @@ struct UserPageView: View {
                         } label: {
                             Label("사용자 차단하기", systemImage: "person.slash")
                         }
-
+                        
                         Button(role: .destructive) {
                             coordinator.reportType = .user
                             coordinator.reportedObjectID = writerUser.id

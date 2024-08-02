@@ -16,6 +16,9 @@ struct ImageDetailView: View {
     @State private var currentZoom = 0.0
     @State private var totalZoom = 1.0
     
+    @State private var offset: CGSize = .zero
+    @State private var lastOffset: CGSize = .zero
+    
     var body: some View {
         ZStack(alignment: .top) {
             VStack {
@@ -74,13 +77,29 @@ struct ImageDetailView: View {
             }
         }
         .background(.black.opacity(0.95))
-        .gesture(drag)
+        .gesture(swipeDownToDismiss)
     }
     
     var drag: some Gesture {
         DragGesture()
             .onEnded { _ in
                 isShowingImageDetailView.toggle()
+            }
+    }
+    
+    var swipeDownToDismiss: some Gesture {
+        DragGesture()
+            .onChanged { gesture in
+                if gesture.translation.height > 0 {
+                    offset = gesture.translation
+                }
+            }
+            .onEnded { _ in
+                if abs(offset.height) > 100 {
+                    isShowingImageDetailView.toggle()
+                } else {
+                    offset = .zero
+                }
             }
     }
 }

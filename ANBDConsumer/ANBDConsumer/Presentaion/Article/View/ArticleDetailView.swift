@@ -36,6 +36,8 @@ struct ArticleDetailView: View {
     
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) private var dismiss
+
+    @State private var isCommentButtonDisabled: Bool = false
     
     init(article: Article, articleID: String?) {
         self.article = article
@@ -291,7 +293,6 @@ struct ArticleDetailView: View {
                 }
                 
                 // MARK: - 댓글 입력 부분
-                if #available(iOS 17.0, *) {
                     commentTextView
                         .onChange(of: commentText) {
                             if commentText.count > 800 {
@@ -303,19 +304,6 @@ struct ArticleDetailView: View {
                                 proxy.scrollTo("댓글 목록", anchor: .top)
                             }
                         }
-                } else {
-                    commentTextView
-                        .onChange(of: commentText) { _ in
-                            if commentText.count > 800 {
-                                commentText = String(commentText.prefix(800))
-                            }
-                        }
-                        .onTapGesture {
-                            withAnimation(.easeInOut(duration: 1)) {
-                                proxy.scrollTo("댓글 목록", anchor: .top)
-                            }
-                        }
-                }
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -449,8 +437,10 @@ struct ArticleDetailView: View {
                     Button {
                         if !trimmedCommentText.isEmpty {
                             Task {
+                                isCommentButtonDisabled = true
                                 await articleViewModel.writeComment(articleID: article.id, commentText: trimmedCommentText)
                                 commentText = ""
+                                isCommentButtonDisabled = false
                             }
                         }
                     } label: {
@@ -460,7 +450,7 @@ struct ArticleDetailView: View {
                             .padding(.trailing, 4)
                             .foregroundStyle(commentText.isEmpty || trimmedCommentText.isEmpty ? (colorScheme == .dark ? .gray600 : .gray300) : .accent)
                     }
-                    .disabled(commentText.isEmpty || trimmedCommentText.isEmpty)
+                    .disabled(isCommentButtonDisabled || commentText.isEmpty || trimmedCommentText.isEmpty)
                 }
                 .padding(.horizontal, 10)
                 .padding(.bottom, 5)

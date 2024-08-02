@@ -88,7 +88,7 @@ struct CustomAlertView: View {
             .padding(.vertical, 35)
             .background(
                 RoundedRectangle(cornerRadius: 20)
-                .fill(Color(UIColor.systemBackground))
+                    .fill(Color(UIColor.systemBackground))
             )
             .padding(.horizontal, 45)
         }
@@ -132,7 +132,7 @@ extension CustomAlertView {
         case .signOut:
             return "로그아웃"
         case .withdrawal:
-            return "회원 탈퇴"
+            return "회원 탈퇴하기"
         case .duplicatedEmail:
             return "중복된 이메일"
         case .duplicatedNickname:
@@ -140,17 +140,17 @@ extension CustomAlertView {
         case .signInFail:
             return "로그인 실패"
         case .changeState:
-            return "거래 상태 변경"
+            return "거래 상태 변경하기"
         case .tradeDelete:
-            return "거래글 삭제"
+            return "거래글 삭제하기"
         case .articleEdit, .commentEdit:
-            return "수정 취소"
+            return "수정 그만두기"
         case .commentDelete:
-            return "댓글 삭제"
+            return "댓글 삭제하기"
         case .writingCancel, .articleCreate:
-            return "작성 취소"
+            return "작성 그만두기"
         case .report:
-            return "신고"
+            return "신고하기"
         case .imageSelelct:
             return "이미지 개수 제한"
         case .editingCancel:
@@ -162,9 +162,9 @@ extension CustomAlertView {
         case .emailRerequest:
             return "뒤로가기"
         case .articleDelete:
-            return "게시글 삭제"
+            return "게시글 삭제하기"
         case .userKicked:
-            return "접근 권한이 없습니다"
+            return "접근 권한이 없음"
         case .deletedCachingData:
             return "캐시 데이터 삭제 완료"
         case .userBlocked:
@@ -175,7 +175,7 @@ extension CustomAlertView {
     private var description: String {
         switch viewType {
         case .leaveChatRoom:
-            return "정말 채팅방을 나가시겠습니까?\n채팅 내용은 복구되지 않습니다."
+            return "정말 채팅방을 나가시겠습니까?\n모든 채팅 내용은 사라집니다."
         case .signOut:
             return "정말 로그아웃 하시겠습니까?"
         case .withdrawal:
@@ -185,27 +185,27 @@ extension CustomAlertView {
         case .duplicatedNickname:
             return "이미 사용중인 닉네임 입니다."
         case .signInFail:
-            return "이메일 또는 비밀번호를 확인하세요."
+            return "이메일 또는 비밀번호를 확인해 주세요."
         case .changeState:
             return "거래 상태를 변경하시겠습니까?"
         case .tradeDelete:
-            return "상품을 삭제하시겠습니까?\n삭제 시 상품 정보는 복구되지 않습니다."
+            return "해당 상품을 삭제하시겠습니까?\n삭제 시 상품 정보는 복구되지 않습니다."
         case .articleEdit:
-            return "게시글 수정을 취소하시겠습니까?\n취소한 수정사항은 복구되지 않습니다."
+            return "게시글 수정을 그만두시겠습니까?\n변경된 내용은 저장되지 않습니다."
         case .articleDelete:
             return "해당 게시글을 삭제하시겠습니까?\n삭제한 게시글은 복구되지 않습니다."
         case .commentDelete:
             return "해당 댓글을 삭제하시겠습니까?\n삭제한 댓글은 복구되지 않습니다."
         case .writingCancel:
-            return "작성하던 내용을 삭제하고\n돌아가시겠습니까?"
+            return "거래글 작성을 그만두시겠습니까?\n작성된 내용은 저장되지 않습니다."
         case .report:
-            return "해당 내역을 신고하시겠습니까?"
+            return "해당 내용으로 신고하시겠습니까?\n적절하지 않은 신고 사유일 경우,\n해당 신고는 접수되지 않을 수 있습니다."
         case .commentEdit:
-            return "댓글 수정을 취소하시겠습니까?\n취소한 수정사항은 복구되지 않습니다."
+            return "댓글 수정을 그만두시겠습니까?\n변경된 내용은 저장되지 않습니다."
         case .imageSelelct:
             return "이미지는 최대 5장만 가능합니다."
         case .articleCreate:
-            return "게시글 작성을 취소하시겠습니까?\n취소한 작성사항은 복구되지 않습니다."
+            return "게시글 작성을 그만두시겠습니까?\n작성된 내용은 저장되지 않습니다."
         case .editingCancel:
             return "변경된 내용은 저장되지 않습니다."
         case .validEmail:
@@ -215,38 +215,32 @@ extension CustomAlertView {
         case .emailRerequest:
             return "이메일 인증을 다시 진행해야합니다.\n돌아가시겠습니까?"
         case .userKicked:
-            return "문의 사항은 이메일로 연락 바랍니다."
+            return "사용자님은 관리자에 의해 차단되었습니다.\n문의 사항은 아래 이메일로 연락 바랍니다.\njrjr4426@gmail.com"
         case .deletedCachingData:
             return "캐시 데이터가 삭제되었습니다."
         case .userBlocked:
-            return "해당 사용자를 차단하시겠습니까?\n차단한 사용자가 작성한 글이나 채팅은\n확인할 수 없습니다."
+            return "해당 사용자를 차단하시겠습니까?\n차단한 사용자의 글이나 채팅은\n확인할 수 없습니다."
         }
     }
     
     private var confirmMessage: String {
         switch viewType {
         case .leaveChatRoom:
-            return "채팅방 나가기"
+            return "나가기"
         case .signOut:
             return "로그아웃하기"
         case .withdrawal:
             return "탈퇴하기"
-        case .duplicatedEmail, .duplicatedNickname, .signInFail, .imageSelelct, .userKicked, .deletedCachingData:
+        case .duplicatedEmail, .duplicatedNickname, .signInFail, .imageSelelct, .userKicked, .deletedCachingData, .validEmail:
             return "확인"
         case .changeState:
             return "변경하기"
         case .tradeDelete, .articleDelete, .commentDelete:
             return "삭제하기"
-        case .articleCreate:
-            return "취소하기"
         case .report:
             return "신고하기"
-        case .editingCancel:
+        case .writingCancel, .signUpCancel, .emailRerequest, .articleEdit, .commentEdit, .editingCancel, .articleCreate:
             return "그만두기"
-        case .writingCancel, .signUpCancel, .emailRerequest, .articleEdit, .commentEdit:
-            return "돌아가기"
-        case .validEmail:
-            return "확인"
         case .userBlocked:
             return "차단하기"
         }
@@ -254,9 +248,9 @@ extension CustomAlertView {
     
     private var confirmButtonColor: Color {
         switch viewType {
-        case .leaveChatRoom, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .imageSelelct, .signOut, .editingCancel, .writingCancel, .validEmail, .signUpCancel, .emailRerequest, .userKicked, .deletedCachingData, .userBlocked:
+        case .leaveChatRoom, .duplicatedEmail, .duplicatedNickname, .signInFail, .changeState, .imageSelelct, .signOut, .editingCancel, .writingCancel, .validEmail, .signUpCancel, .emailRerequest, .userKicked, .deletedCachingData, .userBlocked, .articleEdit, .commentEdit, .articleCreate:
             return .accent
-        case .withdrawal, .tradeDelete, .articleEdit, .articleDelete, .commentDelete, .report, .commentEdit, .articleCreate:
+        case .withdrawal, .tradeDelete, .articleDelete, .commentDelete, .report:
             return .heartRed
         }
     }

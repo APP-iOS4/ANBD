@@ -152,7 +152,6 @@ struct ChatDetailView: View {
                                 }
                             } else {
                                 isShowingUserBlockAlertView.toggle()
-                                ToastManager.shared.toast = Toast(style: .success, message: "\(chatViewModel.selectedUser.nickname)님을 차단했습니다.")
                             }
                         } label: {
                             Label("\(chatViewModel.isBlocked ? "차단 해제하기": "사용자 차단하기")", systemImage: "person.slash")
@@ -200,8 +199,7 @@ struct ChatDetailView: View {
                 }
             }
         }
-        //TODO: deprecated 고치기
-        .onChange(of: scenePhase) { newPhase in
+        .onChange(of: scenePhase) { _, newPhase in
             Task {
                 guard let channel = chatViewModel.selectedChannel else {return}
                 

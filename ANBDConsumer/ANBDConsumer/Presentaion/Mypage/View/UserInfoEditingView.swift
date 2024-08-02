@@ -31,31 +31,17 @@ struct UserInfoEditingView: View {
         NavigationStack {
             ZStack {
                 VStack(spacing: 40) {
-                    if #available(iOS 17.0, *) {
-                        userProfilImageButton
-                            .onChange(of: photosPickerItem) {
-                                Task {
-                                    if let photosPickerItem, let data = try? await photosPickerItem.loadTransferable(type: Data.self) {
-                                        if let image = await UIImage(data: data)?.byPreparingThumbnail(ofSize: .init(width: 512, height: 512)) {
-                                            myPageViewModel.tempUserProfileImage = image.jpegData(compressionQuality: 0.5)!
-                                        }
+                    userProfilImageButton
+                        .onChange(of: photosPickerItem) {
+                            Task {
+                                if let photosPickerItem, let data = try? await photosPickerItem.loadTransferable(type: Data.self) {
+                                    if let image = await UIImage(data: data)?.byPreparingThumbnail(ofSize: .init(width: 512, height: 512)) {
+                                        myPageViewModel.tempUserProfileImage = image.jpegData(compressionQuality: 0.5)!
                                     }
                                 }
-                                isChangedProfileImage = true
                             }
-                    } else {
-                        userProfilImageButton
-                            .onChange(of: photosPickerItem, perform: { _ in
-                                Task {
-                                    if let photosPickerItem, let data = try? await photosPickerItem.loadTransferable(type: Data.self) {
-                                        if let image = await UIImage(data: data)?.byPreparingThumbnail(ofSize: .init(width: 512, height: 512)) {
-                                            myPageViewModel.tempUserProfileImage = image.jpegData(compressionQuality: 0.5)!
-                                        }
-                                    }
-                                }
-                                isChangedProfileImage = true
-                            })
-                    }
+                            isChangedProfileImage = true
+                        }
                     
                     VStack(alignment: .leading) {
                         Text("닉네임")
@@ -63,17 +49,10 @@ struct UserInfoEditingView: View {
                             .foregroundStyle(Color.gray400)
                             .padding(.bottom, 5)
                         
-                        if #available(iOS 17.0, *) {
-                            nicknameTextField
-                                .onChange(of: myPageViewModel.tempUserNickname) {
-                                    myPageViewModel.tempUserNickname = myPageViewModel.checkNicknameLength(myPageViewModel.tempUserNickname)
-                                }
-                        } else {
-                            nicknameTextField
-                                .onChange(of: myPageViewModel.tempUserNickname) { _ in
-                                    myPageViewModel.tempUserNickname = myPageViewModel.checkNicknameLength(myPageViewModel.tempUserNickname)
-                                }
-                        }
+                        nicknameTextField
+                            .onChange(of: myPageViewModel.tempUserNickname) {
+                                myPageViewModel.tempUserNickname = myPageViewModel.checkNicknameLength(myPageViewModel.tempUserNickname)
+                            }
                         
                         Divider()
                         

@@ -76,16 +76,10 @@ struct SettingsView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         })
                         
-                        if #available(iOS 16.1, *) {
-                            Text("\(String(format: "%.3f", cacheData / 1024 / 1024)) MB")
-                                .fontDesign(.monospaced)
-                                .font(.system(size: 15))
-                                .foregroundStyle(Color.gray500)
-                        } else {
-                            Text("\(String(format: "%.3f", cacheData / 1024 / 1024)) MB")
-                                .font(.system(size: 15))
-                                .foregroundStyle(Color.gray500)
-                        }
+                        Text("\(String(format: "%.3f", cacheData / 1024 / 1024)) MB")
+                            .fontDesign(.monospaced)
+                            .font(.system(size: 15))
+                            .foregroundStyle(Color.gray500)
                     }
                     
                     HStack {
@@ -94,16 +88,10 @@ struct SettingsView: View {
                         
                         Spacer()
                         
-                        if #available(iOS 16.1, *) {
-                            Text("\(myPageViewModel.getCurrentAppVersion())")
-                                .fontDesign(.monospaced)
-                                .font(.system(size: 15))
-                                .foregroundStyle(Color.gray500)
-                        } else {
-                            Text("\(myPageViewModel.getCurrentAppVersion())")
-                                .font(.system(size: 15))
-                                .foregroundStyle(Color.gray500)
-                        }
+                        Text("\(myPageViewModel.getCurrentAppVersion())")
+                            .fontDesign(.monospaced)
+                            .font(.system(size: 15))
+                            .foregroundStyle(Color.gray500)
                     }
                     
                     HStack {
@@ -112,16 +100,10 @@ struct SettingsView: View {
                         
                         Spacer()
                         
-                        if #available(iOS 16.1, *) {
-                            Text("jrjr4426@gmail.com")
-                                .fontDesign(.monospaced)
-                                .font(.system(size: 14))
-                                .foregroundStyle(Color.gray500)
-                        } else {
-                            Text("jrjr4426@gmail.com")
-                                .font(.system(size: 14))
-                                .foregroundStyle(Color.gray500)
-                        }
+                        Text("jrjr4426@gmail.com")
+                            .fontDesign(.monospaced)
+                            .font(.system(size: 14))
+                            .foregroundStyle(Color.gray500)
                     }
                     
                     Button(action: {

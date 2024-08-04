@@ -140,6 +140,9 @@ struct AuthenticationView: View {
                     authenticationViewModel.clearSignUpDatas()
                     authenticationViewModel.checkAuthState()
                 }
+                .onTapGesture {
+                    endTextEditing()
+                }
             }
         }
     }
